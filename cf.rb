@@ -4,197 +4,660 @@ require 'json'
 class Ref
 end
 
-class Tag
+class Join
 end
 
-class Prop
-  def initialize(arity, types)
-    @arity = arity
-    @types = types
+class FindInMap
+end
+
+class GetAtt
+end
+
+class Cidr
+end
+
+class VpcId
+end
+
+class KeyName
+end
+
+class UnrecognisedProp
+  def initialize(resource_type:, name:)
+    @resource_type = resource_type
+    @name = name
+  end
+
+  def validate(context)
+    Result.fail(:property, @name, "Unrecognised property for resource #@resource_type", context + [@name])
   end
 end
 
-class Resource
+class Prop
+  def initialize(definition:, name:, value:)
+    @definition = definition
+    @name = name
+    @value = value
+  end
+
+  def validate(context)
+    if !@definition.arity_matches_type?(@value)
+      Result.fail(:property, @name, 'Invalid type', context + [@name])
+    else
+      Result.pass(:property, @name, nil, context + [@name])
+    end
+  end
+end
+
+class UnrecognisedPropDefinition
+  def initialize(resource_type:, name:)
+    @resource_type = resource_type
+    @name = name
+  end
+
+  def to_prop(name, value)
+    UnrecognisedProp.new(resource_type: @resource_type, name: @name)
+  end
+end
+
+class PropDefinition
+  def initialize(name:, arity: :scala, types: [])
+    @name = name
+    @arity = arity
+    @types = types
+  end
+
+  def arity_matches_type?(prop)
+    (@arity == :array && prop.is_a?(Array)) || true
+  end
+
+  def to_prop(name, value)
+    Prop.new(definition: self, name: name, value: value)
+  end
+
+  def self.unrecognised(resource_type:, name:)
+    UnrecognisedPropDefinition.new(
+      resource_type: resource_type,
+      name: name
+    )
+  end
+end
+
+class ResourceDefinition
   def initialize(aws_type:, prop_types:)
     @aws_type = aws_type
     @prop_types = prop_types
   end
 
-  def validate(template_resource)
-    true
+  def to_resource(logical_id:, json:)
+    Resource.new(
+      definition: self,
+      logical_id: logical_id,
+      properties: parse_resource_properties(json['Properties'])
+    )
+  end
+
+  def self.unrecognised(type)
+    ResourceDefinition.new(aws_type: type, prop_types: {})
+  end
+
+  private
+  def parse_resource_properties(json)
+    return {} unless json
+
+    json.map do |name,value|
+      definition = @prop_types[name] || PropDefinition.unrecognised(resource_type: @aws_type, name: name)
+      [name, definition.to_prop(name, value)]
+    end
   end
 end
 
-RESOURCES = [
-  'AWS::AutoScalingGroup::AutoScalingGroup' => Resource.new(
-    aws_type: 'AWS::AutoScaling::AutoScalingGroup',
-    prop_types: {
-      "AvailabilityZones" => Prop.new(:array, [String, Ref]),
-      "DesiredCapacity" => Prop.new(:scala, [String, Integer, Ref]),
-      "LaunchConfigurationName" => Prop.new(:scala, [String, Ref]),
-      "LoadBalancerNames" => Prop.new(:array, [String, Ref]),
-      "MaxSize" => Prop.new(:scala, [String, Integer, Ref]),
-      "MinSize" => Prop.new(:scala, [String, Integer, Ref]),
-      "Tags" => Prop.new(:array, [Tag]),
-      "VPCZoneIdentifier" => Prop.new(:array, [String, Ref]),
-    }
-  )
-]
+class Resource
+  def initialize(definition:, logical_id:, properties:)
+    @definition = definition
+    @logical_id = logical_id
+    @properties = properties
+  end
 
-VALID_RESOURCE_TYPES = [
-  'AWS::AutoScaling::AutoScalingGroup',
-  'AWS::AutoScaling::LaunchConfiguration',
-  'AWS::CloudFront::Distribution',
-  'AWS::CloudWatch::Alarm',
-  'AWS::EC2::EIP',
-  'AWS::EC2::Instance',
-  'AWS::EC2::InternetGateway',
-  'AWS::EC2::Route',
-  'AWS::EC2::RouteTable',
-  'AWS::EC2::SecurityGroup',
-  'AWS::EC2::SecurityGroupIngress',
-  'AWS::EC2::Subnet',
-  'AWS::EC2::SubnetRouteTableAssociation',
-  'AWS::EC2::VPCGatewayAttachment',
-  'AWS::ElastiCache::CacheCluster',
-  'AWS::ElastiCache::SubnetGroup',
-  'AWS::ElasticBeanstalk::Application',
-  'AWS::ElasticBeanstalk::ApplicationVersion',
-  'AWS::ElasticBeanstalk::ConfigurationTemplate',
-  'AWS::ElasticBeanstalk::Environment',
-  'AWS::ElasticLoadBalancing::LoadBalancer',
-  'AWS::IAM::InstanceProfile',
-  'AWS::IAM::Policy',
-  'AWS::IAM::Role',
-  'AWS::Route53::RecordSet',
-  'AWS::S3::Bucket',
-  'AWS::SNS::Topic',
-]
+  def validate(context)
+    @properties
+      .map {|name,value| value.validate(context + [@logical_id, 'Properties']) }
+      .flatten
+  end
+end
 
-# see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html
-GETTABLE_ATTRIBUTES = {
-  'AWS::CloudFormation::WaitCondition' => [
-    'Data'
-  ],
-  'AWS::CloudFormation::Stack' => [
-    'Outputs.NestedStackOutputName', # Yeah this won't work...
-  ],
-  'AWS::CloudFront::Distribution' => [
-    'DomainName'
-  ],
-  'AWS::Config::ConfigRule' => [
-    'Arn',
-    'ConfigRuleId',
-    'Compliance.Type'
-  ],
-  'AWS::DirectoryService::MicrosoftAD' => [
-    'Alias',
-    'DnsIpAddresses'
-  ],
-  'AWS::DirectoryService::SimpleAD' => [
-    'Alias',
-    'DnsIpAddresses'
-  ],
-  'AWS::DynamoDB::Table' => [
-    'StreamArn'
-  ],
-  'AWS::EC2::EIP' => [
-    'AllocationId'
-  ],
-  'AWS::EC2::Instance' => [
-    'AvailabilityZone',
-    'PrivateDnsName',
-    'PublicDnsName',
-    'PrivateIp',
-    'PublicIp'
-  ],
-  'AWS::EC2::NetworkInterface' => [
-    'PrimaryPrivateIpAddress',
-    'SecondaryPrivateIpAddresses'
-  ],
-  'AWS::EC2::SecurityGroup' => [
-    'GroupId'
-  ],
-  'AWS::EC2::Subnet' => [
-    'AvailabilityZone'
-  ],
-  'AWS::EC2::SubnetNetworkAclAssociation' => [
-    'AssociationId'
-  ],
-  'AWS::EC2::VPC' => [
-    'CidrBlock',
-    'DefaultNetworkAcl',
-    'DefaultSecurityGroup'
-  ],
-  'AWS::ElastiCache::CacheCluster' => [
-    'ConfigurationEndpoint.Address',
-    'ConfigurationEndpoint.Port'
-  ],
-  'AWS::ElastiCache::ReplicationGroup' => [
-    'PrimaryEndPoint.Address',
-    'PrimaryEndPoint.Port',
-    'ReadEndPoint.Addresses',
-    'ReadEndPoint.Ports',
-    'ReadEndPoint.Addresses.List',
-    'ReadEndPoint.Ports.List'
-  ],
-  'AWS::ElasticBeanstalk::Environment' => [
-    'EndpointURL'
-  ],
-  'AWS::ElasticLoadBalancing::LoadBalancer' => [
-    'CanonicalHostedZoneName',
-    'CanonicalHostedZoneNameID',
-    'DNSName',
-    'SourceSecurityGroup.GroupName',
-    'SourceSecurityGroup.OwnerAlias'
-  ],
-  'AWS::IAM::AccessKey' => [
-    'SecretAccessKey'
-  ],
-  'AWS::IAM::Group' => [
-    'Arn'
-  ],
-  'AWS::IAM::InstanceProfile' => [
-    'Arn'
-  ],
-  'AWS::IAM::Role' => [
-    'Arn'
-  ],
-  'AWS::IAM::User' => [
-    'Arn'
-  ],
-  'AWS::Kinesis::Stream' => [
-    'Arn'
-  ],
-  'AWS::Lambda::Function' => [
-    'Arn'
-  ],
-  'AWS::Logs::LogGroup' => [
-    'Arn'
-  ],
-  'AWS::Redshift::Cluster' => [
-    'Endpoint.Address',
-    'Endpoint.Port'
-  ],
-  'AWS::RDS::DBCluster' => [
-    'Endpoint.Address',
-    'Endpoint.Port'
-  ],
-  'AWS::RDS::DBInstance' => [
-    'Endpoint.Address',
-    'Endpoint.Port',
-  ],
-  'AWS::S3::Bucket' => [
-    'DomainName',
-    'WebsiteURL',
-  ],
-  'AWS::SNS::Topic' => [
-    'TopicName'
-  ],
-  'AWS::SQS::Queue' => [
-    'Arn',
-    'QueueName'
-  ]
+class AggregateTypeMatcher
+  def initialize(matchers)
+    @matchers = matchers
+  end
+
+  def match?
+    raise 'AggregateTypeMatcher not implemented'
+  end
+end
+
+class TypeMatcher
+  def initialize(type)
+    @type = type
+  end
+
+  def match?
+    raise 'Type matcher not implemented'
+  end
+end
+
+class EnumTypeMatcher
+  def initialize(options)
+    @options = options
+  end
+
+  def match?
+    raise 'EnumTypeMatcher not implemented'
+  end
+end
+
+
+def built_in_fns_and(*types)
+  matchers = (types + [Ref, Join, FindInMap, GetAtt])
+    .flatten
+    .map {|type| TypeMatcher.new type }
+  AggregateTypeMatcher.new matchers
+end
+
+def enum_of(options)
+  EnumTypeMatcher.new options
+end
+
+class ResourceDefinitionBuilder
+  def initialize(type)
+    @aws_type = type
+    @properties = {}
+  end
+
+  def property(name, type, required: :optional, update: :no_interruption)
+    types = [type]
+      .flatten
+      .map {|type| type.is_a?(Class) ? TypeMatcher.new(type) : type }
+    @properties[name] = PropDefinition.new(name: name, types: types)
+  end
+
+  def array_property(name, type, required: :optional, update: :no_interruption)
+    types = [type]
+      .flatten
+      .map {|type| type.is_a?(Class) ? TypeMatcher.new(type) : type }
+
+    @properties[name] = PropDefinition.new(name: name, types: types, arity: :array)
+  end
+
+  def ref(nickname, type)
+    # TODO: ref return value for resource
+  end
+
+  def to_resource_definition
+    ResourceDefinition.new(aws_type: @aws_type, prop_types: @properties)
+  end
+end
+
+def resource(type, &block)
+  builder = ResourceDefinitionBuilder.new type
+  block.call builder
+  builder.to_resource_definition
+end
+
+alias_target = resource('AliasTarget') do |res|
+  res.property 'DNSName', built_in_fns_and(String), required: :present
+  res.property 'EvaluateTargetHealth', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'HostedZoneId', built_in_fns_and(String), required: :present
+end
+
+geo_location = resource('GeoLocation') do |res|
+  res.property 'CountryCode', built_in_fns_and(enum_of(%W{AF AN AS EU OC NA SA})),
+    required: -> (resource) { resource.has_prop?('ContinentCode') ? :absent : :present }
+
+  res.property 'ContinentCode', built_in_fns_and(enum_of(%W{
+    AO BF BI BJ BW CD CF CG CI CM CV DJ DZ EG ER ET GA GH GM GN GQ GW KE KM LR LS LY MA MG ML MR MU MW MZ NA NE NG RE RW SC SD SH SL SN SO SS ST SZ TD TG TN TZ UG YT ZA ZM ZW
+    AQ GS TF
+    AE AF AM AZ BD BH BN BT CC CN GE HK ID IL IN IO IQ IR JO JP KG KH KP KR KW KZ LA LB LK MM MN MO MV MY NP OM PH PK PS QA SA SG SY TH TJ TM TR TW UZ VN YE
+    AD AL AT AX BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS RU SE SI SJ SK SM UA VA XK
+    AG AI AW BB BL BM BQ BS BZ CA CR CU CW DM DO GD GL GP GT HN HT JM KN KY LC MF MQ MS MX NI PA PM PR SV SX TC TT US VC VG VI
+    AS AU CK FJ FM GU KI MH MP NC NF NR NU NZ PF PG PN PW SB TK TL TO TV UM VU WF WS
+    AR BO BR CL CO EC FK GF GY PE PY SR UY VE
+  })),
+    required: -> (resource) { resource.has_prop?('CountryCode') ? :absent : :present }
+
+  res.property 'SubdivisionCode', built_in_fns_and(enum_of(%W{AK AL AR AZ CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY})),
+    required: -> (resource) { resource.has_prop?('CountryCode', 'US') ? :optional : :absent }
+end
+
+metrics_collection = resource('MetricsCollection') do |res|
+  res.property 'Granularity', built_in_fns_and(String), required: :present
+  res.array_property 'Metrics', built_in_fns_and(String)
+end
+
+notification_configurations = resource('NotificationConfigurations') do |res|
+  res.array_property 'NotificationTypes', built_in_fns_and(enum_of(%W{autoscaling:EC2_INSTANCE_LAUNCH autoscaling:EC2_INSTANCE_LAUNCH_ERROR autoscaling:EC2_INSTANCE_TERMINATE autoscaling:EC2_INSTANCE_TERMINATE_ERROR autoscaling:TEST_NOTIFICATION})),
+    required: :present
+  res.property 'TopicARN', built_in_fns_and(String), required: :present
+end
+
+auto_scaling_tag = resource('AutoScalingTag') do |res|
+  res.property 'Key', built_in_fns_and(String), required: :present
+  res.property 'Value', built_in_fns_and(String), required: :present
+  res.property 'PropagateAtLaunch', built_in_fns_and(TrueClass, FalseClass), required: :present
+end
+
+resource_tag = resource('ResourceTag') do |res|
+  res.property 'Key', built_in_fns_and(String), required: :present
+  res.property 'Value', built_in_fns_and(String), required: :present
+end
+
+ebs_block_device = resource('EbsBlockDevice') do |res|
+  res.property 'DeleteOnTermination', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'Encrypted', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'Iops', built_in_fns_and(Integer)
+  res.property 'SnapshotId', built_in_fns_and(String)
+  res.property 'VolumeSize', built_in_fns_and(Integer), update: :interruptions
+  res.property 'VolumeType', built_in_fns_and('String')
+end
+
+block_device_mapping = resource('BlockDeviceMapping') do |res|
+  res.property 'DeviceName', built_in_fns_and(String), required: :present
+  res.property 'Ebs', ebs_block_device,
+    required: -> (resource) { resource.has_prop?('VirtualName') ? :absent : :present }
+  res.property 'NoDevice', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'VirtualName', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('Ebs') ? :absent : :present }
+end
+
+security_group_ingress_rule = resource('SecurityGroupIngressRule') do |res|
+  res.property 'CidrIp', built_in_fns_and(Cidr),
+    required: -> (resource) { resource.has_any_prop?(%W{SourceSecurityGroupName SourceSecurityGroupId}) ? :absent : :present }
+  res.property 'FromPort', built_in_fns_and(Integer), required: :present
+  res.property 'IpProtocol', built_in_fns_and(enum_of(%W{tcp udp icmp -1})), required: :present
+  res.property 'SourceSecurityGroupId', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('CidrIp') ? :absent : :present }
+  res.property 'SourceSecurityGroupName', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('CidrIp') ? :absent : :present }
+  res.property 'SourceSecurityGroupOwnerId', built_in_fns_and(String)
+  res.property 'ToPort', built_in_fns_and(Integer), required: :present
+end
+
+security_group_egress_rule = resource('SecurityGroupEgressRule') do |res|
+  res.property 'CidrIp', built_in_fns_and(Cidr),
+    required: -> (resource) { resource.has_any_prop?(%W{SourceSecurityGroupName SourceSecurityGroupId}) ? :absent : :present }
+  res.property 'DestinationSecurityGroupId', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('CidrIp') ? :absent : :present }
+  res.property 'FromPort', built_in_fns_and(Integer), required: :present
+  res.property 'IpProtocol', built_in_fns_and(enum_of(%W{tcp udp icmp -1})), required: :present
+  res.property 'ToPort', built_in_fns_and(Integer), required: :present
+end
+
+private_ip_address_specification = resource('PrivateIpAddressSpecification') do |res|
+  res.property 'PrivateIpAddress', built_in_fns_and(String), required: :present
+  res.property 'Primary', built_in_fns_and(TrueClass, FalseClass), required: :present
+end
+
+network_interface = resource('NetworkInterface') do |res|
+  res.property 'AssociatePublicIpAddress', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'DeleteOnTermination', built_in_fns_and(TrueClass, FalseClass)
+  res.property 'Description', built_in_fns_and(String)
+  res.property 'DeviceIndex', built_in_fns_and(String), required: :present
+  res.array_property 'GroupSet', built_in_fns_and(String)
+  res.property 'NetworkInterfaceId', built_in_fns_and(String)
+  res.property 'PrivateIpAddress', built_in_fns_and(String)
+  res.array_property 'PrivateIpAddresses', private_ip_address_specification
+  res.property 'SecondaryPrivateIpAddressCount', built_in_fns_and(Integer)
+  res.property 'SubnetId', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('NetworkInterfaceId') ? :optional : :present }
+end
+
+ssm_association_parameter = resource('SsmAssociationParameter') do |res|
+  res.property 'Key', built_in_fns_and(String), required: :present
+  res.array_property 'Value', built_in_fns_and(String), required: :present
+end
+
+ssm_association = resource('SsmAssociation') do |res|
+  res.array_property 'AssociationParameters', ssm_association_parameter
+  res.property 'DocumentName', built_in_fns_and(String), required: :present
+end
+
+mount_point = resource('MountPoint') do |res|
+  res.property 'Device', built_in_fns_and(String), required: :present
+  res.property 'VolumeId', built_in_fns_and(String), required: :present
+end
+
+s3_cors_configuration_rule = resource('S3CorsConfigurationRule') do |res|
+  res.array_property 'AllowedHeaders', built_in_fns_and(String)
+  res.array_property 'AllowedMethods', built_in_fns_and(String), required: :present
+  res.array_property 'AllowedOrigins', built_in_fns_and(String), required: :present
+  res.array_property 'ExposedHeaders', built_in_fns_and(String)
+  res.property 'Id', built_in_fns_and(String)
+  res.property 'MaxAge', built_in_fns_and(Integer)
+end
+
+s3_cors_configuration = resource('S3CorsConfiguration') do |res|
+  res.array_property 'CorsRules', s3_cors_configuration_rule, required: :present
+end
+
+s3_lifecycle_rule_noncurrent_version_transition = resource('S3LifecycleRuleNoncurrentVersionTransition') do |res|
+  res.property 'StorageClass', built_in_fns_and(enum_of(%W{STANDARD_IA GLACIER})), required: :present
+  res.property 'TransitionInDays', built_in_fns_and(Integer), required: :present
+end
+
+s3_lifecycle_rule_transition = resource('S3LifecycleRuleTransition') do |res|
+  res.property 'StorageClass', built_in_fns_and(enum_of(%W{STANDARD_IA GLACIER})), required: :present
+  res.property 'TransitionDate', built_in_fns_and(String)
+  res.property 'TransitionInDays', built_in_fns_and(Integer)
+end
+
+s3_lifecycle_rule = resource('S3LifecycleRule') do |res|
+  res.property 'ExpirationDate', built_in_fns_and(String),
+    required: -> (resource) { resource.has_any_prop?(%W{ExpirationInDays NoncurrentVersionExpirationInDays NoncurrentVersionTransition Transition}) ? :optional : :present }
+  res.property 'ExpirationInDays', built_in_fns_and(Integer),
+    required: -> (resource) { resource.has_any_prop?(%W{ExpirationDate NoncurrentVersionExpirationInDays NoncurrentVersionTransition Transition}) ? :optional : :present }
+  res.property 'Id', built_in_fns_and(String)
+  res.property 'NoncurrentVersionExpirationInDays', built_in_fns_and(Integer),
+    required: -> (resource) { resource.has_any_prop?(%W{ExpirationDate ExpirationInDays NoncurrentVersionTransition Transition}) ? :optional : :present }
+  res.property 'NoncurrentVersionTransition', s3_lifecycle_rule_noncurrent_version_transition,
+    required: -> (resource) { resource.has_any_prop?(%W{ExpirationDate ExpirationInDays NoncurrentVersionExpirationInDays Transition}) ? :optional : :present }
+  res.property 'Prefix', built_in_fns_and(String)
+  res.property 'Status', built_in_fns_and(String), required: :present
+  res.property 'Transition', s3_lifecycle_rule_transition,
+    required: -> (resource) { resource.has_any_prop?(%W{ExpirationDate ExpirationInDays NoncurrentVersionExpirationInDays NoncurrentVersionTransition}) ? :optional : :present }
+end
+
+s3_lifecycle_configuration = resource('S3LifecycleConfiguration') do |res|
+  res.array_property 'Rules', s3_lifecycle_rule, required: :present
+end
+
+s3_logging_configuration = resource('S3LoggingConfiguration') do |res|
+  res.property 'DestinationBucketName', built_in_fns_and(String)
+  res.property 'LogFilePrefix', built_in_fns_and(String)
+end
+
+s3_notification_configuration_config_filter_s3key_rule = resource('S3NotificationConfigurationConfigFilterS3KeyRule') do |res|
+  res.property 'Name', built_in_fns_and(String), required: :present
+  res.property 'Value', built_in_fns_and(String), required: :present
+end
+
+s3_notification_configuration_config_filter_s3key = resource('S3NotificationConfigurationConfigFilterS3Key') do |res|
+  res.array_property 'Rules', s3_notification_configuration_config_filter_s3key_rule, required: :present
+end
+
+s3_notification_configuration_config_filter = resource('S3NotificationConfigurationConfigFilter') do |res|
+  res.property 'S3Key', s3_notification_configuration_config_filter_s3key, required: :present
+end
+
+s3_notification_configuration_lambda = resource('S3NotificationConfigurationLambdaConfiguration') do |res|
+  res.property 'Event', built_in_fns_and(String), required: :present
+  res.property 'Filter', s3_notification_configuration_config_filter
+  res.property 'Function', built_in_fns_and(String), required: :present
+end
+
+s3_notification_configuration_queue = resource('S3NotificationConfigurationQueueConfiguration') do |res|
+  res.property 'Event', built_in_fns_and(String), required: :present
+  res.property 'Filter', s3_notification_configuration_config_filter
+  res.property 'Queue', built_in_fns_and(String), required: :present
+end
+
+s3_notification_configuration_topic = resource('S3NotificationConfigurationTopicConfiguration') do |res|
+  res.property 'Event', built_in_fns_and(String), required: :present
+  res.property 'Filter', s3_notification_configuration_config_filter
+  res.property 'Topic', built_in_fns_and(String), required: :present
+end
+
+s3_notification_configuration = resource('S3NotificationConfiguration') do |res|
+  res.array_property 'LambdaConfigurations', s3_notification_configuration_lambda
+  res.array_property 'QueueConfigurations', s3_notification_configuration_queue
+  res.array_property 'TopicConfigurations', s3_notification_configuration_topic
+end
+
+s3_replication_configuration_rule_destination = resource('S3ReplicationConfigurationRuleDestination') do |res|
+  res.property 'Bucket', built_in_fns_and(String), required: :present
+  res.property 'StorageClass', built_in_fns_and(enum_of(%W{STANDARD_IA GLACIER}))
+end
+
+s3_replication_configuration_rule = resource('S3ReplicationConfigurationRule') do |res|
+  res.property 'Destination', s3_replication_configuration_rule_destination, required: :present
+  res.property 'Id', built_in_fns_and(String)
+  res.property 'Prefix', built_in_fns_and(String), required: :present
+  res.property 'Status', built_in_fns_and(enum_of(%W{Enabled Disabled})), required: :present
+end
+
+s3_replication_configuration = resource('S3ReplicationConfiguration') do |res|
+  res.property 'Role', built_in_fns_and(String), required: :present
+  res.array_property 'Rules', s3_replication_configuration_rule, required: :present
+end
+
+s3_versioning_configuration = resource('S3VersioningConfiguration') do |res|
+  res.property 'Status', built_in_fns_and(String), required: :present
+end
+
+s3_website_configuration_redirect = resource('S3WebsiteConfigurationRedirect') do |res|
+  res.property 'HostName', built_in_fns_and(String), required: :present
+  res.property 'Protocol', built_in_fns_and(enum_of(%W{http https}))
+end
+
+s3_website_configuration_routing_rule_redirect = resource('S3WebsiteConfigurationRoutingRuleRedirect') do |res|
+  res.property 'HostName', built_in_fns_and(String)
+  res.property 'HttpRedirectCode', built_in_fns_and(String)
+  res.property 'Protocol', built_in_fns_and(enum_of(%W{http https}))
+  res.property 'ReplaceKeyPrefixWith', built_in_fns_and(String),
+    required: -> (resource) { resource.has_property?('ReplaceKeyWith') ? :absent : :optional }
+  res.property 'ReplaceKeyWith', built_in_fns_and(String),
+    required: -> (resource) { resource.has_property?('ReplaceKeyPrefixWith') ? :absent : :optional }
+end
+
+s3_website_configuration_routing_rule_condition = resource('S3WebsiteConfigurationRoutingRuleCondition') do |res|
+  res.property 'HttpErrorCodeReturnedEquals', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('KeyPrefixEquals') ? :optional : :present}
+  res.property 'KeyPrefixEquals', built_in_fns_and(String),
+    required: -> (resource) { resource.has_prop?('HttpErrorCodeReturnedEquals') ? :optional : :present}
+end
+
+s3_website_configuration_routing_rule = resource('S3WebsiteConfigurationRoutingRule') do |res|
+  res.property 'RedirectRule', s3_website_configuration_routing_rule_redirect, required: :present
+  res.property 'RoutingRuleCondition', s3_website_configuration_routing_rule_condition
+end
+
+s3_website_configuration = resource('S3WebsiteConfiguration') do |res|
+  not_redirect = -> (resource) { resource.has_prop?('RedirectAllRequestsTo') ? :absent : :optional }
+
+  res.property 'ErrorDocument', built_in_fns_and(String), required: not_redirect
+  res.property 'IndexDocument', built_in_fns_and(String), required: not_redirect
+  res.property 'RedirectAllRequestsTo', s3_website_configuration_redirect
+  res.array_property 'RoutingRules', s3_website_configuration_routing_rule, required: not_redirect
+end
+
+RESOURCES = {
+  'AWS::AutoScaling::AutoScalingGroup' => resource('AWS::AutoScaling::AutoScalingGroup') do |res|
+    res.array_property 'AvailabilityZones', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('VPCZoneIdentifier') ? :optional : :present }
+    res.property 'Cooldown', built_in_fns_and(String)
+    res.property 'DesiredCapacity', built_in_fns_and(String)
+    res.property 'HealthCheckGracePeriod', built_in_fns_and(Integer)
+    res.property 'HealthCheckType', built_in_fns_and(enum_of(%W{EC2 ELB}))
+    res.property 'InstanceId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('LaunchConfigurationName') ? :absent : :present },
+      update: :replace
+    res.property 'LaunchConfigurationName', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('InstanceId') ? :absent : :present }
+    res.array_property 'LoadBalancerNames', built_in_fns_and(String),
+      update: :replace
+    res.property 'MaxSize', built_in_fns_and(String),
+      required: :present
+    res.array_property 'MetricsCollection', metrics_collection
+    res.property 'MinSize', built_in_fns_and(String),
+      required: :present
+    res.array_property 'NotificationConfigurations', notification_configurations
+    res.property 'PlacementGroup', built_in_fns_and(String)
+    res.array_property 'Tags', auto_scaling_tag
+    res.array_property 'TerminationPolicies', built_in_fns_and(String)
+    res.array_property 'VPCZoneIdentifier', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('AvailabilityZones') ? :optional : :present },
+      update: :interrupt
+
+    res.ref 'Name', String
+  end,
+
+  'AWS::AutoScaling::LaunchConfiguration' => resource('AWS::AutoScaling::LaunchConfiguration') do |res|
+    res.property 'AssociatePublicIpAddress', built_in_fns_and(TrueClass, FalseClass), update: :replace
+    res.array_property 'BlockDeviceMappings', block_device_mapping, update: :replace
+    res.property 'ClassicLinkVPCId', built_in_fns_and(String), update: :replace
+    res.array_property 'ClassicLinkVPCSecurityGroups', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('ClassicLinkVPCId') ? :present : :absent },
+      update: :replace
+    res.property 'EbsOptimized', built_in_fns_and(TrueClass, FalseClass), update: :replace
+    res.property 'IamInstanceProfile', built_in_fns_and(String), update: :replace
+    res.property 'ImageId', built_in_fns_and(String), required: :present, update: :replace
+    res.property 'InstanceId', built_in_fns_and(String), update: :replace
+    res.property 'InstanceMonitoring', built_in_fns_and(TrueClass, FalseClass), update: :replace
+    res.property 'InstanceType', built_in_fns_and(String), required: :present, update: :replace
+    res.property 'KernelId', built_in_fns_and(String), update: :replace
+    res.property 'KeyName', built_in_fns_and(KeyName), update: :replace
+    res.property 'PlacementTenancy', built_in_fns_and(String), update: :replace
+    res.property 'RamDiskId', built_in_fns_and(String), update: :replace
+    res.array_property 'SecurityGroups', built_in_fns_and(String), update: :replace
+    res.property 'SpotPrice', built_in_fns_and(String), update: :replace
+    res.property 'UserData', built_in_fns_and(String), update: :replace
+  end,
+
+  'AWS::EC2::EIP' => resource('AWS::EC2::EIP') do |res|
+    res.property 'InstanceId', built_in_fns_and(String)
+    res.property 'Domain', built_in_fns_and(String), update: :replace
+  end,
+
+  'AWS::EC2::Instance' => resource('AWS::EC2::Instance') do |res|
+    is_instance_store = lambda do |resource|
+      return false unless resource.has_prop? 'BlockDeviceMappings'
+      resource.properties['BlockDeviceMappings'].any? { |mapping| mapping.has_prop? 'VirtualName' }
+    end
+    is_ebs = lambda do |resource|
+      return false unless resource.has_prop? 'BlockDeviceMappings'
+      resource.properties['BlockDeviceMappings'].any? { |mapping| mapping.has_prop? 'Ebs' }
+    end
+    replace_if_ebs_interrupt_if_instance_store = -> (resource) { is_instance_store.call(resource) ? :interrupt : is_ebs.call(resource) ? :replace : :no_interruption }
+
+    res.property 'AvailabilityZone', built_in_fns_and(String), update: :replace
+    res.array_property 'BlockDeviceMappings', block_device_mapping, update: :replace
+    res.property 'DisableApiTermination', built_in_fns_and(TrueClass, FalseClass)
+    res.property 'EbsOptimized', built_in_fns_and(TrueClass, FalseClass), update: replace_if_ebs_interrupt_if_instance_store
+    res.property 'IamInstanceProfile', built_in_fns_and(String), update: :replace
+    res.property 'ImageId', built_in_fns_and(String), required: :present, update: :replace
+    res.property 'InstanceInitiatedShutdownBehavior', built_in_fns_and(String)
+    res.property 'InstanceType', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
+    res.property 'KernelId', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
+    res.property 'KeyName', built_in_fns_and(KeyName), update: :replace
+    res.property 'Monitoring', built_in_fns_and(TrueClass, FalseClass)
+    res.array_property 'NetworkInterfaces', network_interface, update: :replace
+    res.property 'PlacementGroupName', built_in_fns_and(String), update: :replace
+    res.property 'PrivateIpAddress', built_in_fns_and(String), update: :replace
+    res.property 'RamdiskId', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
+    res.array_property 'SecurityGroupIds', built_in_fns_and(String)
+    res.array_property 'SecurityGroups', built_in_fns_and(String), update: :replace
+    res.property 'SourceDestCheck', built_in_fns_and(TrueClass, FalseClass)
+    res.array_property 'SsmAssociations', ssm_association
+    res.property 'SubnetId', built_in_fns_and(String), update: :replace
+    res.array_property 'Tags', resource_tag
+    res.property 'Tenancy', built_in_fns_and(String), update: :replace
+    res.property 'UserData', built_in_fns_and(String),
+      update: -> (resource) { is_ebs.call(resource) ? :interrupt : :no_interruption }
+    res.array_property 'Volumes', mount_point
+    res.property 'AdditionalInfo', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
+  end,
+
+  'AWS::EC2::Route' => resource('AWS::EC2::Route') do |res|
+    res.property 'DestinationCidrBlock', built_in_fns_and(Cidr), required: :present, update: :replace
+    res.property 'GatewayId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_any_prop?(%W{InstanceId NetworkInterfaceId VpcPeeringConnectionId}) ? :absent : :present }
+    res.property 'InstanceId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_any_prop?(%W{GatewayId NetworkInterfaceId VpcPeeringConnectionId}) ? :absent : :present }
+    res.property 'NetworkInterfaceId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_any_prop?(%W{GatewayId InstanceId VpcPeeringConnectionId}) ? :absent : :present }
+    res.property 'RouteTableId', built_in_fns_and(String), required: :present, update: :replacement
+    res.property 'VpcPeeringConnectionId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_any_prop?(%W{GatewayId InstanceId NetworkInterfaceId}) ? :absent : :present }
+  end,
+
+  'AWS::EC2::RouteTable' => resource('AWS::EC2::RouteTable') do |res|
+    res.property 'VpcId', VpcId, required: :present, update: :replace
+    res.array_property 'Tags', resource_tag
+  end,
+
+  'AWS::EC2::SecurityGroup' => resource('AWS::EC2::SecurityGroup') do |res|
+    res.property 'GroupDescription', built_in_fns_and(String), required: :present, update: :replace
+    res.array_property 'SecurityGroupEgress', security_group_egress_rule
+    res.array_property 'SecurityGroupIngress', security_group_ingress_rule
+    res.array_property 'Tags', resource_tag
+    res.property 'VpcId', built_in_fns_and(String), update: :replace
+  end,
+
+  'AWS::Route53::RecordSet' => resource('AWS::Route53::RecordSet') do |res|
+    res.property 'AliasTarget', alias_target
+    res.property 'Failover', built_in_fns_and(String)
+    res.property 'GeoLocation', geo_location
+    res.property 'HealthCheckId', built_in_fns_and(String)
+    res.property 'HostedZoneId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('HostedZoneName') ? :absent : :present },
+      update: :replace
+    res.property 'HostedZoneName', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('HostedZoneId') ? :absent : :present },
+      update: :replace
+    res.property 'Name', built_in_fns_and(String),
+      required: :present
+    res.property 'Region', built_in_fns_and(String)
+    res.array_property 'ResourceRecords', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('AliasTarget') ? :absent : :present }
+    res.property 'SetIdentifier', built_in_fns_and(String),
+      required: -> (resource) { resource.has_any_prop?('Weight', 'TTL', 'Failover', 'GeoLocation') ? :present : :absent }
+    res.property 'TTL', built_in_fns_and(String, Integer),
+      required: -> (resource) { resource.has_prop?('AliasTarget') ? :absent : :present }
+    res.property 'Type', built_in_fns_and(enum_of(%W{A AAAA CNAME MX NS PTR SOA SPF SRV TXT})),
+      required: :present
+    res.property 'Weight', built_in_fns_and(Integer)
+
+    res.ref 'DomainName', String
+  end,
+
+  'AWS::EC2::Subnet' => resource('AWS::EC2::Subnet') do |res|
+    res.property 'AvailabilityZone', built_in_fns_and(String),
+      update: :replace
+    res.property 'CidrBlock', built_in_fns_and(Cidr),
+      required: :present,
+      update: :replace
+    res.property 'MapPublicIpOnLaunch', built_in_fns_and(TrueClass, FalseClass)
+    res.array_property 'Tags', resource_tag
+    res.property 'VpcId', built_in_fns_and(VpcId),
+      required: :present,
+      update: :replace
+  end,
+
+  'AWS::EC2::SubnetRouteTableAssociation' => resource('AWS::EC2::SubnetRouteTableAssociation') do |res|
+    res.property 'RouteTableId', built_in_fns_and(String), required: :present
+    res.property 'SubnetId', built_in_fns_and(String), required: :present, update: :replace
+  end,
+
+  'AWS::EC2::VPCGatewayAttachment' => resource('AWS::EC2::VPCGatewayAttachment') do |res|
+    res.property 'InternetGatewayId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('VpnGatewayId') ? :absent : :present }
+    res.property 'VpcId', built_in_fns_and(String),
+      required: :present
+    res.property 'VpnGatewayId', built_in_fns_and(String),
+      required: -> (resource) { resource.has_prop?('InternetGatewayId') ? :absent : :present }
+  end,
+
+  'AWS::S3::Bucket' => resource('AWS::S3::Bucket') do |res|
+    res.property 'AccessControl', built_in_fns_and(enum_of(%W{AuthenticatedRead AwsExecRead BucketOwnerRead BucketOwnerFullControl LogDeliveryWrite Private PublicRead PublicReadWrite}))
+    res.property 'BucketName', built_in_fns_and(String), update: :replace
+    res.property 'CorsConfiguration', s3_cors_configuration
+    res.property 'LifecycleConfiguration', s3_lifecycle_configuration
+    res.property 'LoggingConfiguration', s3_logging_configuration
+    res.property 'NotificationConfiguration', s3_notification_configuration
+    res.property 'ReplicationConfiguration', s3_replication_configuration
+    res.array_property 'Tags', resource_tag
+    res.property 'VersioningConfiguration', s3_versioning_configuration
+    res.property 'WebsiteConfiguration', s3_website_configuration
+  end,
 }
 
 def is_valid_attribute_for_resource(resource, attribute)
@@ -427,17 +890,30 @@ RESOURCE_MATCHERS = {
 
 class CfTemplate
   def initialize(json)
-    @json = json
+    @resources = parse_resources(json['Resources'])
     @results = []
   end
 
-  def verify
-    verify_resources
-    # TODO: verify resource metadata
-    # TODO: verify_parameters
-    # TODO: verify_mappings
-    verify_outputs
-    @results
+  def parse_resources(json)
+    return {} unless json
+
+    Hash[json.map do |logical_id,resource_json|
+      type = resource_json['Type']
+      definition = RESOURCES[type] || ResourceDefinition.unrecognised(type)
+
+      [
+        logical_id,
+        definition.to_resource(logical_id: logical_id, json: resource_json)
+      ]
+    end]
+  end
+
+  def validate
+    validate_resources(['Resources'])
+    # TODO: validate resource metadata
+    # TODO: validate_parameters
+    # TODO: validate_mappings
+    # validate_outputs
   end
 
   def parameter_names
@@ -450,10 +926,6 @@ class CfTemplate
 
   def resource_names
     resources.keys
-  end
-
-  def resources
-    @json['Resources']
   end
 
   def mappings
@@ -482,16 +954,13 @@ class CfTemplate
     end
   end
 
-  def verify_resources
-    walk(resources, []) do |key,value,context|
-      matcher = RESOURCE_MATCHERS[key]
-      next unless matcher
-      result = [matcher.call(self, value, context)].flatten
-      @results = @results + result
-    end
+  def validate_resources(context)
+    @resources
+      .map { |_,resource| resource.validate(context) }
+      .flatten
   end
 
-  def verify_outputs
+  def validate_outputs
     return unless @json['Outputs']
 
     outputs = @json['Outputs']
@@ -499,9 +968,9 @@ class CfTemplate
     if outputs.is_a? Hash
       outputs.each do |key,value|
         @results += [
-          verify_output_description(key, value),
-          verify_output_value(key, value),
-          # TODO: verify_output_condition(key, value),
+          validate_output_description(key, value),
+          validate_output_value(key, value),
+          # TODO: validate_output_condition(key, value),
         ].flatten
       end
     else
@@ -509,7 +978,7 @@ class CfTemplate
     end
   end
 
-  def verify_output_description(logical_id, output)
+  def validate_output_description(logical_id, output)
     context = ['Outputs', logical_id]
     description = output['Description']
 
@@ -523,7 +992,7 @@ class CfTemplate
     results
   end
 
-  def verify_output_value(logical_id, output)
+  def validate_output_value(logical_id, output)
     context = ['Outputs', logical_id]
     value = output['Value']
 
@@ -559,7 +1028,7 @@ class CfTemplate
 end
 
 def format_context(context)
-  "Resources.#{(context || []).join('.')}"
+  (context || []).join('.')
 end
 
 fail_only = true
@@ -571,7 +1040,7 @@ rescue => ex
   exit 1
 end
 
-results = CfTemplate.new(json).verify
+results = CfTemplate.new(json).validate
 
 max_name_length = results
   .select { |result| fail_only ? result.fail? : true }
