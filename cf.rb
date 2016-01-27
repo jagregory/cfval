@@ -2,6 +2,17 @@
 require 'json'
 
 class Ref
+  def initialize(target)
+    @target = target
+  end
+
+  def self.parse(json)
+    if json.is_a?(Hash) && json.keys.length == 1 && json.keys.first == 'Ref'
+      Ref.new(json['Ref'])
+    else
+      nil
+    end
+  end
 end
 
 class Join
@@ -41,7 +52,7 @@ class Prop
   end
 
   def validate(context)
-    if !@definition.arity_matches_type?(@value)
+    if !@definition.type_matcher.match? @value
       Result.fail(:property, @name, 'Invalid type', context + [@name])
     else
       Result.pass(:property, @name, nil, context + [@name])
@@ -61,18 +72,15 @@ class UnrecognisedPropDefinition
 end
 
 class PropDefinition
-  def initialize(name:, arity: :scala, types: [])
-    @name = name
-    @arity = arity
-    @types = types
-  end
+  attr_reader :type_matcher
 
-  def arity_matches_type?(prop)
-    (@arity == :array && prop.is_a?(Array)) || true
+  def initialize(name:, type_matcher:)
+    @name = name
+    @type_matcher = type_matcher
   end
 
   def to_prop(name, value)
-    Prop.new(definition: self, name: name, value: value)
+    Prop.new(definition: self, name: name, value: parse_value(value))
   end
 
   def self.unrecognised(resource_type:, name:)
@@ -80,6 +88,11 @@ class PropDefinition
       resource_type: resource_type,
       name: name
     )
+  end
+
+  private
+  def parse_value(value)
+    Ref.parse(value) || value
   end
 end
 
@@ -95,6 +108,10 @@ class ResourceDefinition
       logical_id: logical_id,
       properties: parse_resource_properties(json['Properties'])
     )
+  end
+
+  def to_s
+    "<ResourceDefinition:#@aws_type>"
   end
 
   def self.unrecognised(type)
@@ -131,8 +148,8 @@ class AggregateTypeMatcher
     @matchers = matchers
   end
 
-  def match?
-    raise 'AggregateTypeMatcher not implemented'
+  def match? value
+    @matchers.any? { |matcher| matcher.match? value }
   end
 end
 
@@ -141,8 +158,12 @@ class TypeMatcher
     @type = type
   end
 
-  def match?
-    raise 'Type matcher not implemented'
+  def match? value
+    if @type.is_a? ResourceDefinition
+      value.definition == @type
+    else
+      value.is_a? @type
+    end
   end
 end
 
@@ -156,6 +177,15 @@ class EnumTypeMatcher
   end
 end
 
+class ArrayTypeMatcher
+  def initialize(item_matcher)
+    @item_matcher = item_matcher
+  end
+
+  def match? value
+    value.all? { |item| @item_matcher.match? item }
+  end
+end
 
 def built_in_fns_and(*types)
   matchers = (types + [Ref, Join, FindInMap, GetAtt])
@@ -168,25 +198,26 @@ def enum_of(options)
   EnumTypeMatcher.new options
 end
 
+def array_of(item_matcher)
+  item_matcher = TypeMatcher.new(item_matcher) unless item_matcher.respond_to? :match?
+
+  ArrayTypeMatcher.new(item_matcher)
+end
+
 class ResourceDefinitionBuilder
   def initialize(type)
     @aws_type = type
     @properties = {}
   end
 
-  def property(name, type, required: :optional, update: :no_interruption)
-    types = [type]
-      .flatten
-      .map {|type| type.is_a?(Class) ? TypeMatcher.new(type) : type }
-    @properties[name] = PropDefinition.new(name: name, types: types)
-  end
+  def property(name, type_matcher, required: :optional, update: :no_interruption)
+    type_matcher = TypeMatcher.new(type_matcher) unless type_matcher.respond_to? :match?
 
-  def array_property(name, type, required: :optional, update: :no_interruption)
-    types = [type]
-      .flatten
-      .map {|type| type.is_a?(Class) ? TypeMatcher.new(type) : type }
-
-    @properties[name] = PropDefinition.new(name: name, types: types, arity: :array)
+    if type_matcher.is_a? ResourceDefinition
+      @properties[name] = type_matcher
+    else
+      @properties[name] = PropDefinition.new(name: name, type_matcher: type_matcher)
+    end
   end
 
   def ref(nickname, type)
@@ -231,11 +262,11 @@ end
 
 metrics_collection = resource('MetricsCollection') do |res|
   res.property 'Granularity', built_in_fns_and(String), required: :present
-  res.array_property 'Metrics', built_in_fns_and(String)
+  res.property 'Metrics', array_of(built_in_fns_and(String))
 end
 
 notification_configurations = resource('NotificationConfigurations') do |res|
-  res.array_property 'NotificationTypes', built_in_fns_and(enum_of(%W{autoscaling:EC2_INSTANCE_LAUNCH autoscaling:EC2_INSTANCE_LAUNCH_ERROR autoscaling:EC2_INSTANCE_TERMINATE autoscaling:EC2_INSTANCE_TERMINATE_ERROR autoscaling:TEST_NOTIFICATION})),
+  res.property 'NotificationTypes', array_of(built_in_fns_and(enum_of(%W{autoscaling:EC2_INSTANCE_LAUNCH autoscaling:EC2_INSTANCE_LAUNCH_ERROR autoscaling:EC2_INSTANCE_TERMINATE autoscaling:EC2_INSTANCE_TERMINATE_ERROR autoscaling:TEST_NOTIFICATION}))),
     required: :present
   res.property 'TopicARN', built_in_fns_and(String), required: :present
 end
@@ -302,10 +333,10 @@ network_interface = resource('NetworkInterface') do |res|
   res.property 'DeleteOnTermination', built_in_fns_and(TrueClass, FalseClass)
   res.property 'Description', built_in_fns_and(String)
   res.property 'DeviceIndex', built_in_fns_and(String), required: :present
-  res.array_property 'GroupSet', built_in_fns_and(String)
+  res.property 'GroupSet', array_of(built_in_fns_and(String))
   res.property 'NetworkInterfaceId', built_in_fns_and(String)
   res.property 'PrivateIpAddress', built_in_fns_and(String)
-  res.array_property 'PrivateIpAddresses', private_ip_address_specification
+  res.property 'PrivateIpAddresses', array_of(private_ip_address_specification)
   res.property 'SecondaryPrivateIpAddressCount', built_in_fns_and(Integer)
   res.property 'SubnetId', built_in_fns_and(String),
     required: -> (resource) { resource.has_prop?('NetworkInterfaceId') ? :optional : :present }
@@ -313,11 +344,11 @@ end
 
 ssm_association_parameter = resource('SsmAssociationParameter') do |res|
   res.property 'Key', built_in_fns_and(String), required: :present
-  res.array_property 'Value', built_in_fns_and(String), required: :present
+  res.property 'Value', array_of(built_in_fns_and(String)), required: :present
 end
 
 ssm_association = resource('SsmAssociation') do |res|
-  res.array_property 'AssociationParameters', ssm_association_parameter
+  res.property 'AssociationParameters', array_of(ssm_association_parameter)
   res.property 'DocumentName', built_in_fns_and(String), required: :present
 end
 
@@ -327,16 +358,16 @@ mount_point = resource('MountPoint') do |res|
 end
 
 s3_cors_configuration_rule = resource('S3CorsConfigurationRule') do |res|
-  res.array_property 'AllowedHeaders', built_in_fns_and(String)
-  res.array_property 'AllowedMethods', built_in_fns_and(String), required: :present
-  res.array_property 'AllowedOrigins', built_in_fns_and(String), required: :present
-  res.array_property 'ExposedHeaders', built_in_fns_and(String)
+  res.property 'AllowedHeaders', array_of(built_in_fns_and(String))
+  res.property 'AllowedMethods', array_of(built_in_fns_and(String)), required: :present
+  res.property 'AllowedOrigins', array_of(built_in_fns_and(String)), required: :present
+  res.property 'ExposedHeaders', array_of(built_in_fns_and(String))
   res.property 'Id', built_in_fns_and(String)
   res.property 'MaxAge', built_in_fns_and(Integer)
 end
 
 s3_cors_configuration = resource('S3CorsConfiguration') do |res|
-  res.array_property 'CorsRules', s3_cors_configuration_rule, required: :present
+  res.property 'CorsRules', array_of(s3_cors_configuration_rule), required: :present
 end
 
 s3_lifecycle_rule_noncurrent_version_transition = resource('S3LifecycleRuleNoncurrentVersionTransition') do |res|
@@ -367,7 +398,7 @@ s3_lifecycle_rule = resource('S3LifecycleRule') do |res|
 end
 
 s3_lifecycle_configuration = resource('S3LifecycleConfiguration') do |res|
-  res.array_property 'Rules', s3_lifecycle_rule, required: :present
+  res.property 'Rules', array_of(s3_lifecycle_rule), required: :present
 end
 
 s3_logging_configuration = resource('S3LoggingConfiguration') do |res|
@@ -381,7 +412,7 @@ s3_notification_configuration_config_filter_s3key_rule = resource('S3Notificatio
 end
 
 s3_notification_configuration_config_filter_s3key = resource('S3NotificationConfigurationConfigFilterS3Key') do |res|
-  res.array_property 'Rules', s3_notification_configuration_config_filter_s3key_rule, required: :present
+  res.property 'Rules', array_of(s3_notification_configuration_config_filter_s3key_rule), required: :present
 end
 
 s3_notification_configuration_config_filter = resource('S3NotificationConfigurationConfigFilter') do |res|
@@ -407,9 +438,9 @@ s3_notification_configuration_topic = resource('S3NotificationConfigurationTopic
 end
 
 s3_notification_configuration = resource('S3NotificationConfiguration') do |res|
-  res.array_property 'LambdaConfigurations', s3_notification_configuration_lambda
-  res.array_property 'QueueConfigurations', s3_notification_configuration_queue
-  res.array_property 'TopicConfigurations', s3_notification_configuration_topic
+  res.property 'LambdaConfigurations', array_of(s3_notification_configuration_lambda)
+  res.property 'QueueConfigurations', array_of(s3_notification_configuration_queue)
+  res.property 'TopicConfigurations', array_of(s3_notification_configuration_topic)
 end
 
 s3_replication_configuration_rule_destination = resource('S3ReplicationConfigurationRuleDestination') do |res|
@@ -426,7 +457,7 @@ end
 
 s3_replication_configuration = resource('S3ReplicationConfiguration') do |res|
   res.property 'Role', built_in_fns_and(String), required: :present
-  res.array_property 'Rules', s3_replication_configuration_rule, required: :present
+  res.property 'Rules', array_of(s3_replication_configuration_rule), required: :present
 end
 
 s3_versioning_configuration = resource('S3VersioningConfiguration') do |res|
@@ -466,12 +497,12 @@ s3_website_configuration = resource('S3WebsiteConfiguration') do |res|
   res.property 'ErrorDocument', built_in_fns_and(String), required: not_redirect
   res.property 'IndexDocument', built_in_fns_and(String), required: not_redirect
   res.property 'RedirectAllRequestsTo', s3_website_configuration_redirect
-  res.array_property 'RoutingRules', s3_website_configuration_routing_rule, required: not_redirect
+  res.property 'RoutingRules', array_of(s3_website_configuration_routing_rule), required: not_redirect
 end
 
 RESOURCES = {
   'AWS::AutoScaling::AutoScalingGroup' => resource('AWS::AutoScaling::AutoScalingGroup') do |res|
-    res.array_property 'AvailabilityZones', built_in_fns_and(String),
+    res.property 'AvailabilityZones', array_of(built_in_fns_and(String)),
       required: -> (resource) { resource.has_prop?('VPCZoneIdentifier') ? :optional : :present }
     res.property 'Cooldown', built_in_fns_and(String)
     res.property 'DesiredCapacity', built_in_fns_and(String)
@@ -482,18 +513,18 @@ RESOURCES = {
       update: :replace
     res.property 'LaunchConfigurationName', built_in_fns_and(String),
       required: -> (resource) { resource.has_prop?('InstanceId') ? :absent : :present }
-    res.array_property 'LoadBalancerNames', built_in_fns_and(String),
+    res.property 'LoadBalancerNames', array_of(built_in_fns_and(String)),
       update: :replace
     res.property 'MaxSize', built_in_fns_and(String),
       required: :present
-    res.array_property 'MetricsCollection', metrics_collection
+    res.property 'MetricsCollection', array_of(metrics_collection)
     res.property 'MinSize', built_in_fns_and(String),
       required: :present
-    res.array_property 'NotificationConfigurations', notification_configurations
+    res.property 'NotificationConfigurations', array_of(notification_configurations)
     res.property 'PlacementGroup', built_in_fns_and(String)
-    res.array_property 'Tags', auto_scaling_tag
-    res.array_property 'TerminationPolicies', built_in_fns_and(String)
-    res.array_property 'VPCZoneIdentifier', built_in_fns_and(String),
+    res.property 'Tags', array_of(auto_scaling_tag)
+    res.property 'TerminationPolicies', array_of(built_in_fns_and(String))
+    res.property 'VPCZoneIdentifier', array_of(built_in_fns_and(String)),
       required: -> (resource) { resource.has_prop?('AvailabilityZones') ? :optional : :present },
       update: :interrupt
 
@@ -502,9 +533,9 @@ RESOURCES = {
 
   'AWS::AutoScaling::LaunchConfiguration' => resource('AWS::AutoScaling::LaunchConfiguration') do |res|
     res.property 'AssociatePublicIpAddress', built_in_fns_and(TrueClass, FalseClass), update: :replace
-    res.array_property 'BlockDeviceMappings', block_device_mapping, update: :replace
+    res.property 'BlockDeviceMappings', array_of(block_device_mapping), update: :replace
     res.property 'ClassicLinkVPCId', built_in_fns_and(String), update: :replace
-    res.array_property 'ClassicLinkVPCSecurityGroups', built_in_fns_and(String),
+    res.property 'ClassicLinkVPCSecurityGroups', array_of(built_in_fns_and(String)),
       required: -> (resource) { resource.has_prop?('ClassicLinkVPCId') ? :present : :absent },
       update: :replace
     res.property 'EbsOptimized', built_in_fns_and(TrueClass, FalseClass), update: :replace
@@ -517,7 +548,7 @@ RESOURCES = {
     res.property 'KeyName', built_in_fns_and(KeyName), update: :replace
     res.property 'PlacementTenancy', built_in_fns_and(String), update: :replace
     res.property 'RamDiskId', built_in_fns_and(String), update: :replace
-    res.array_property 'SecurityGroups', built_in_fns_and(String), update: :replace
+    res.property 'SecurityGroups', array_of(built_in_fns_and(String)), update: :replace
     res.property 'SpotPrice', built_in_fns_and(String), update: :replace
     res.property 'UserData', built_in_fns_and(String), update: :replace
   end,
@@ -539,7 +570,7 @@ RESOURCES = {
     replace_if_ebs_interrupt_if_instance_store = -> (resource) { is_instance_store.call(resource) ? :interrupt : is_ebs.call(resource) ? :replace : :no_interruption }
 
     res.property 'AvailabilityZone', built_in_fns_and(String), update: :replace
-    res.array_property 'BlockDeviceMappings', block_device_mapping, update: :replace
+    res.property 'BlockDeviceMappings', array_of(block_device_mapping), update: :replace
     res.property 'DisableApiTermination', built_in_fns_and(TrueClass, FalseClass)
     res.property 'EbsOptimized', built_in_fns_and(TrueClass, FalseClass), update: replace_if_ebs_interrupt_if_instance_store
     res.property 'IamInstanceProfile', built_in_fns_and(String), update: :replace
@@ -549,20 +580,20 @@ RESOURCES = {
     res.property 'KernelId', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
     res.property 'KeyName', built_in_fns_and(KeyName), update: :replace
     res.property 'Monitoring', built_in_fns_and(TrueClass, FalseClass)
-    res.array_property 'NetworkInterfaces', network_interface, update: :replace
+    res.property 'NetworkInterfaces', array_of(network_interface), update: :replace
     res.property 'PlacementGroupName', built_in_fns_and(String), update: :replace
     res.property 'PrivateIpAddress', built_in_fns_and(String), update: :replace
     res.property 'RamdiskId', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
-    res.array_property 'SecurityGroupIds', built_in_fns_and(String)
-    res.array_property 'SecurityGroups', built_in_fns_and(String), update: :replace
+    res.property 'SecurityGroupIds', array_of(built_in_fns_and(String))
+    res.property 'SecurityGroups', array_of(built_in_fns_and(String)), update: :replace
     res.property 'SourceDestCheck', built_in_fns_and(TrueClass, FalseClass)
-    res.array_property 'SsmAssociations', ssm_association
+    res.property 'SsmAssociations', array_of(ssm_association)
     res.property 'SubnetId', built_in_fns_and(String), update: :replace
-    res.array_property 'Tags', resource_tag
+    res.property 'Tags', array_of(resource_tag)
     res.property 'Tenancy', built_in_fns_and(String), update: :replace
     res.property 'UserData', built_in_fns_and(String),
       update: -> (resource) { is_ebs.call(resource) ? :interrupt : :no_interruption }
-    res.array_property 'Volumes', mount_point
+    res.property 'Volumes', array_of(mount_point)
     res.property 'AdditionalInfo', built_in_fns_and(String), update: replace_if_ebs_interrupt_if_instance_store
   end,
 
@@ -581,14 +612,14 @@ RESOURCES = {
 
   'AWS::EC2::RouteTable' => resource('AWS::EC2::RouteTable') do |res|
     res.property 'VpcId', VpcId, required: :present, update: :replace
-    res.array_property 'Tags', resource_tag
+    res.property 'Tags', array_of(resource_tag)
   end,
 
   'AWS::EC2::SecurityGroup' => resource('AWS::EC2::SecurityGroup') do |res|
     res.property 'GroupDescription', built_in_fns_and(String), required: :present, update: :replace
-    res.array_property 'SecurityGroupEgress', security_group_egress_rule
-    res.array_property 'SecurityGroupIngress', security_group_ingress_rule
-    res.array_property 'Tags', resource_tag
+    res.property 'SecurityGroupEgress', array_of(security_group_egress_rule)
+    res.property 'SecurityGroupIngress', array_of(security_group_ingress_rule)
+    res.property 'Tags', array_of(resource_tag)
     res.property 'VpcId', built_in_fns_and(String), update: :replace
   end,
 
@@ -606,7 +637,7 @@ RESOURCES = {
     res.property 'Name', built_in_fns_and(String),
       required: :present
     res.property 'Region', built_in_fns_and(String)
-    res.array_property 'ResourceRecords', built_in_fns_and(String),
+    res.property 'ResourceRecords', array_of(built_in_fns_and(String)),
       required: -> (resource) { resource.has_prop?('AliasTarget') ? :absent : :present }
     res.property 'SetIdentifier', built_in_fns_and(String),
       required: -> (resource) { resource.has_any_prop?('Weight', 'TTL', 'Failover', 'GeoLocation') ? :present : :absent }
@@ -626,7 +657,7 @@ RESOURCES = {
       required: :present,
       update: :replace
     res.property 'MapPublicIpOnLaunch', built_in_fns_and(TrueClass, FalseClass)
-    res.array_property 'Tags', resource_tag
+    res.property 'Tags', array_of(resource_tag)
     res.property 'VpcId', built_in_fns_and(VpcId),
       required: :present,
       update: :replace
@@ -654,7 +685,7 @@ RESOURCES = {
     res.property 'LoggingConfiguration', s3_logging_configuration
     res.property 'NotificationConfiguration', s3_notification_configuration
     res.property 'ReplicationConfiguration', s3_replication_configuration
-    res.array_property 'Tags', resource_tag
+    res.property 'Tags', array_of(resource_tag)
     res.property 'VersioningConfiguration', s3_versioning_configuration
     res.property 'WebsiteConfiguration', s3_website_configuration
   end,
