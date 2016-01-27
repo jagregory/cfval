@@ -8,7 +8,7 @@ import (
 	"flag"
 )
 
-var bail = flag.Bool("bail", false, "Bail if unrecognised resource encountered")
+var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
 
 type Resource interface {
 	Validate(t Template, context []string) (bool, []Failure)
@@ -45,7 +45,7 @@ func main() {
     return
   }
 
-	template,err := parseTemplateJSON(bytes, *bail)
+	template,err := parseTemplateJSON(bytes, *forgiving)
 	if err != nil {
     fmt.Println("Error parsing JSON:", err)
     return

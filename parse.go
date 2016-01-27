@@ -5,7 +5,14 @@ import (
 	"fmt"
 )
 
-func parseTemplateJSON(data []byte, bailOnScary bool) (*Template, error) {
+type UnrecognisedResource struct {
+	logicalId, awsType string
+}
+func (r UnrecognisedResource) Validate(t Template, context []string) (bool, []Failure) {
+	return false, []Failure{NewFailure(fmt.Sprintf("Unrecognised resource %s (%s)", r.logicalId, r.awsType), context)}
+}
+
+func parseTemplateJSON(data []byte, forgiving bool) (*Template, error) {
 	var temp struct {
 		Parameters map[string]Parameter
 		Resources map[string]struct {
@@ -33,8 +40,11 @@ func parseTemplateJSON(data []byte, bailOnScary bool) (*Template, error) {
 				return nil, err
 			}
 			template.Resources[key] = res
-		} else if bailOnScary {
-			return nil, fmt.Errorf("Unrecognised resource %s (%s)", key, rawResource.Type)
+		} else if !forgiving {
+			template.Resources[key] = UnrecognisedResource{
+				logicalId: key,
+				awsType: rawResource.Type,
+			}
 		}
 	}
 
