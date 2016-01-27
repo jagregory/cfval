@@ -5,7 +5,10 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"flag"
 )
+
+var bail = flag.Bool("bail", false, "Bail if unrecognised resource encountered")
 
 type Resource interface {
 	Validate(t Template, context []string) (bool, []Failure)
@@ -34,15 +37,17 @@ func printFailures(failures []Failure) {
 }
 
 func main() {
+	flag.Parse()
+
   bytes, err := ioutil.ReadAll(os.Stdin)
   if err != nil {
     fmt.Println("Error reading JSON from Stdin")
     return
   }
 
-	template,err := parseTemplateJSON(bytes)
+	template,err := parseTemplateJSON(bytes, *bail)
 	if err != nil {
-    fmt.Println("Error parsing JSON")
+    fmt.Println("Error parsing JSON:", err)
     return
   }
 
