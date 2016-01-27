@@ -1,22 +1,18 @@
 package main
 
-import "os"
-import "io/ioutil"
-import "encoding/json"
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+)
 
 type Resource interface {
 	Validate(t Template, context []string) (bool, []Failure)
 }
 
-func main() {
-  bytes, err := ioutil.ReadAll(os.Stdin)
-
-  if err != nil {
-    fmt.Println("Error reading JSON")
-    return
-  }
-
+func parseTemplateJSON(data []byte) (*Template, error) {
 	var temp struct {
 		Resources map[string]struct {
 			Type       string
@@ -24,11 +20,10 @@ func main() {
 		}
 	}
 
-	err = json.Unmarshal(bytes, &temp)
+	err := json.Unmarshal(data, &temp)
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return nil, err
 	}
 
 	template := &Template{
@@ -40,16 +35,52 @@ func main() {
 			var res Aws_Ec2_Subnet
 			err = json.Unmarshal(rawResource.Properties, &res)
 			if err != nil {
-				fmt.Println(err)
-				return
+				return nil, err
 			}
 			template.Resources[key] = res
 		}
 	}
 
-	if ok,errors := template.Validate(); !ok {
-		for _,err := range errors {
-			fmt.Println(err)
+	return template, nil
+}
+
+func printFailures(failures []Failure) {
+	maxLength := 0
+	for _,failure := range failures {
+		context := strings.Join(failure.Context, ".")
+		if len(context) > maxLength {
+			maxLength = len(context)
 		}
+	}
+
+	for _,failure := range failures {
+		context := strings.Join(failure.Context, ".")
+
+		fmt.Print(context)
+		fmt.Print(" ")
+		for i := 0; i < maxLength - len(context); i++ {
+			fmt.Print(".")
+		}
+		fmt.Print("... ")
+		fmt.Printf("%s\n", failure.Message)
+	}
+}
+
+func main() {
+  bytes, err := ioutil.ReadAll(os.Stdin)
+  if err != nil {
+    fmt.Println("Error reading JSON from Stdin")
+    return
+  }
+
+	template,err := parseTemplateJSON(bytes)
+	if err != nil {
+    fmt.Println("Error parsing JSON")
+    return
+  }
+
+	if ok,errors := template.Validate(); !ok {
+		printFailures(errors)
+		return
 	}
 }

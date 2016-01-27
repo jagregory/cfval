@@ -1,18 +1,10 @@
 package main
 
-import (
-  "fmt"
-  "strings"
-)
-
 type Failure struct {
-  message, context string
-}
-
-func (f Failure) String() string {
-  return fmt.Sprintf("%s\t(See: %s)", f.message, f.context)
+  Message string
+  Context []string
 }
 
 func NewFailure(message string, context []string) Failure {
-  return Failure{message, strings.Join(context, ".")}
+  return Failure{message, context}
 }

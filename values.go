@@ -18,7 +18,7 @@ func (ref Ref) String() string {
 }
 func (ref Ref) Validate(t Template, context []string) (bool, []Failure) {
 	if _, ok := t.Parameters[ref.Target]; !ok {
-		return false, []Failure{NewFailure(fmt.Sprintf("No parameter named %s", ref.Target), context)}
+		return false, []Failure{NewFailure(fmt.Sprintf("Invalid Ref '%s'", ref.Target), context)}
 	}
 	return true, nil
 }
