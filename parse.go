@@ -4,6 +4,7 @@ import "encoding/json"
 
 func parseTemplateJSON(data []byte) (*Template, error) {
 	var temp struct {
+		Parameters map[string]Parameter
 		Resources map[string]struct {
 			Type       string
 			Properties json.RawMessage
@@ -19,6 +20,7 @@ func parseTemplateJSON(data []byte) (*Template, error) {
 	template := &Template{
 		Resources: make(map[string]Resource),
 	}
+	template.Parameters = temp.Parameters
 
 	for key, rawResource := range temp.Resources {
 		if rawResource.Type == "AWS::EC2::Subnet" {
