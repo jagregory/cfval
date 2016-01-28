@@ -1,18 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"sort"
-	"flag"
 )
 
 var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
-
-type Resource interface {
-	Validate(t Template, context []string) (bool, []Failure)
-}
 
 type ByContext []Failure
 
@@ -24,19 +20,19 @@ func printFailures(failures []Failure) {
 	sort.Sort(ByContext(failures))
 
 	maxLength := 0
-	for _,failure := range failures {
+	for _, failure := range failures {
 		context := failure.ContextReadable
 		if len(context) > maxLength {
 			maxLength = len(context)
 		}
 	}
 
-	for _,failure := range failures {
+	for _, failure := range failures {
 		context := failure.ContextReadable
 
 		fmt.Print(context)
 		fmt.Print(" ")
-		for i := 0; i < maxLength - len(context); i++ {
+		for i := 0; i < maxLength-len(context); i++ {
 			fmt.Print(".")
 		}
 		fmt.Print("... ")
@@ -47,19 +43,19 @@ func printFailures(failures []Failure) {
 func main() {
 	flag.Parse()
 
-  bytes, err := ioutil.ReadAll(os.Stdin)
-  if err != nil {
-    fmt.Println("Error reading JSON from Stdin")
-    return
-  }
-
-	template,err := parseTemplateJSON(bytes, *forgiving)
+	bytes, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
-    fmt.Println("Error parsing JSON:", err)
-    return
-  }
+		fmt.Println("Error reading JSON from Stdin")
+		return
+	}
 
-	if ok,errors := template.Validate(); !ok {
+	template, err := parseTemplateJSON(bytes, *forgiving)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	if ok, errors := template.Validate(); !ok {
 		printFailures(errors)
 		return
 	}

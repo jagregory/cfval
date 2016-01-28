@@ -1,23 +1,20 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "encoding/json"
 
-type UnrecognisedResource struct {
-	logicalId, awsType string
-}
-func (r UnrecognisedResource) Validate(t Template, context []string) (bool, []Failure) {
-	return false, []Failure{NewFailure(fmt.Sprintf("Unrecognised resource %s", r.awsType), context)}
+type resourceCtor func() Resource
+
+var typeCtors = map[string]resourceCtor{
+	"AWS::AutoScaling::AutoScalingGroup": autoScalingGroup,
+	"AWS::EC2::Subnet":                   subnet,
 }
 
 func parseTemplateJSON(data []byte, forgiving bool) (*Template, error) {
 	var temp struct {
 		Parameters map[string]Parameter
-		Resources map[string]struct {
+		Resources  map[string]struct {
 			Type       string
-			Properties json.RawMessage
+			Properties map[string]interface{}
 		}
 	}
 
@@ -28,23 +25,18 @@ func parseTemplateJSON(data []byte, forgiving bool) (*Template, error) {
 	}
 
 	template := &Template{
-		Resources: make(map[string]Resource),
+		Resources: make(map[string]TemplateResource),
 	}
 	template.Parameters = temp.Parameters
 
 	for key, rawResource := range temp.Resources {
-		if rawResource.Type == "AWS::EC2::Subnet" {
-			var res Aws_Ec2_Subnet
-			err = json.Unmarshal(rawResource.Properties, &res)
-			if err != nil {
-				return nil, err
+		if ctor, ok := typeCtors[rawResource.Type]; ok {
+			template.Resources[key] = TemplateResource{
+				Definition: ctor(),
+				Properties: rawResource.Properties,
 			}
-			template.Resources[key] = res
 		} else if !forgiving {
-			template.Resources[key] = UnrecognisedResource{
-				logicalId: key,
-				awsType: rawResource.Type,
-			}
+			template.Resources[key] = NewUnrecognisedResource(rawResource.Type)
 		}
 	}
 
