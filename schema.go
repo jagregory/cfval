@@ -55,6 +55,15 @@ func validateValueType(valueType interface{}, value interface{}, t Template, con
 	return false
 }
 
+var PseudoParameters = map[string]bool{
+	"AWS::AccountId":        true,
+	"AWS::NotificationARNs": true,
+	"AWS::NoValue":          true,
+	"AWS::Region":           true,
+	"AWS::StackId":          true,
+	"AWS::StackName":        true,
+}
+
 func validateRef(value interface{}, t Template, context []string) (bool, []Failure) {
 	if ref, ok := value.(string); ok {
 		if _, ok := t.Resources[ref]; ok {
@@ -63,6 +72,10 @@ func validateRef(value interface{}, t Template, context []string) (bool, []Failu
 			return true, nil
 		} else if _, ok := t.Parameters[ref]; ok {
 			// ref is to a parameter and we've found it
+			// TODO: validate parameter type is correct for property
+			return true, nil
+		} else if _, ok := PseudoParameters[ref]; ok {
+			// ref is to a cloudformation pseudo parameter and we've found it
 			// TODO: validate parameter type is correct for property
 			return true, nil
 		}
