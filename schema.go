@@ -78,7 +78,31 @@ func validateFind(value interface{}, t Template, context []string) (bool, []Fail
 }
 
 func validateJoin(value interface{}, t Template, context []string) (bool, []Failure) {
-	return false, []Failure{NewFailure("Value is an Fn::Join but this isn't supported yet", context)}
+	if items, ok := value.([]interface{}); ok {
+		if len(items) != 2 {
+			return false, []Failure{NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %s)", len(items)), context)}
+		}
+
+		_, ok := items[0].(string)
+		if !ok {
+			return false, []Failure{NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
+		}
+
+		parts, ok := items[1].([]interface{})
+		if !ok {
+			return false, []Failure{NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
+		}
+
+		failures := make([]Failure, 0, len(parts))
+		for i, part := range parts {
+			if ok, errs := validateProperty(Schema{Type: TypeString}, part, t, append(context, "Join", "1", strconv.Itoa(i))); !ok {
+				failures = append(failures, errs...)
+			}
+		}
+		return len(failures) == 0, failures
+	}
+
+	return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }
 
 func validateGetAtt(value interface{}, t Template, context []string) (bool, []Failure) {
@@ -183,9 +207,9 @@ func EnumSchema(options ...string) Schema {
 
 				if found {
 					return true, nil
-				} else {
-					return false, []Failure{NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", str, strings.Join(options, ", ")), context)}
 				}
+
+				return false, []Failure{NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", str, strings.Join(options, ", ")), context)}
 			}
 
 			return false, []Failure{NewInvalidTypeFailure(TypeEnum, value, context)}
