@@ -50,6 +50,10 @@ func validateValueType(valueType interface{}, value interface{}, t Template, con
 		if _, ok := value.(float64); ok {
 			return true
 		}
+	case TypeMap:
+		if _, ok := value.(map[string]interface{}); ok {
+			return true
+		}
 	}
 
 	return false
@@ -211,6 +215,7 @@ const (
 	TypeString
 	TypeBool
 	TypeInteger
+	TypeMap
 )
 
 func EnumSchema(options ...string) Schema {
