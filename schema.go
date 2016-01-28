@@ -6,14 +6,81 @@ import (
 	"strings"
 )
 
-func validateType(valueType interface{}, value interface{}, t Template, context []string) bool {
-	if _, ok := value.(bool); valueType == TypeBool && ok {
-		return true
-	} else if _, ok := value.(string); (valueType == TypeString || valueType == TypeEnum) && ok {
-		return true
+func validateProperty(s Schema, value interface{}, t Template, context []string) (bool, []Failure) {
+	if ok := validateValueType(s.Type, value, t, context); !ok {
+		if complex, ok := value.(map[string]interface{}); ok {
+			return validateBuiltinFns(complex, t, context)
+		}
+
+		return false, []Failure{NewInvalidTypeFailure(s.Type, value, context)}
+	}
+
+	if s.ValidateFunc != nil {
+		return s.ValidateFunc(value, t, context)
+	}
+
+	return true, nil
+}
+func validateValueType(valueType interface{}, value interface{}, t Template, context []string) bool {
+	switch valueType {
+	case TypeBool:
+		if _, ok := value.(bool); ok {
+			return true
+		}
+	case TypeEnum:
+		fallthrough
+	case TypeString:
+		if _, ok := value.(string); ok {
+			return true
+		}
 	}
 
 	return false
+}
+
+func validateRef(ref string, t Template, context []string) (bool, []Failure) {
+	if _, ok := t.Resources[ref]; ok {
+		// ref is to a resource and we've found it
+		// TODO: validate resource ref value is correct type for property
+		return true, nil
+	} else if _, ok := t.Parameters[ref]; ok {
+		// ref is to a parameter and we've found it
+		// TODO: validate parameter type is correct for property
+		return true, nil
+	}
+
+	return false, []Failure{NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
+}
+
+func validateBuiltinFns(value map[string]interface{}, t Template, context []string) (bool, []Failure) {
+	if ref, ok := value["Ref"]; ok {
+		fmt.Println("Reffing:", ref)
+		if refstr, ok := ref.(string); ok {
+			return validateRef(refstr, t, context)
+		}
+
+		return false, []Failure{NewFailure(fmt.Sprintf("Ref has invalid value '%s'", ref), context)}
+	}
+
+	if _, ok := value["Fn::Find"]; ok {
+		panic("Find not supported")
+		// if findstr, ok := find.(string); ok {
+		// 	return validateRef(refstr, t, context)
+		// }
+		//
+		// return false, []Failure{NewFailure(fmt.Sprintf("Find has invalid value '%s'", ref), context)}
+	}
+
+	if _, ok := value["Fn::GetAtt"]; ok {
+		// panic("GetAtt not supported")
+		// if findstr, ok := find.(string); ok {
+		// 	return validateRef(refstr, t, context)
+		// }
+		//
+		// return false, []Failure{NewFailure(fmt.Sprintf("Find has invalid value '%s'", ref), context)}
+	}
+
+	return false, nil
 }
 
 type ValidateFunc func(interface{}, Template, []string) (bool, []Failure)
@@ -30,28 +97,16 @@ func (s Schema) Validate(value interface{}, t Template, context []string) (bool,
 		return true, nil
 	}
 
-	var validate = func(item interface{}, ctx []string) (bool, []Failure) {
-		basicValidityPassed := validateType(s.Type, item, t, ctx)
-
-		if basicValidityPassed && s.ValidateFunc != nil {
-			return s.ValidateFunc(item, t, ctx)
-		} else if !basicValidityPassed {
-			return false, []Failure{NewInvalidTypeFailure(s.Type, item, ctx)}
-		}
-
-		return true, nil
-	}
-
 	failures := make([]Failure, 0, 20)
 
 	if s.Array {
 		for i, item := range value.([]interface{}) {
-			if ok, errs := validate(item, append(context, strconv.Itoa(i))); !ok {
+			if ok, errs := validateProperty(s, item, t, append(context, strconv.Itoa(i))); !ok {
 				failures = append(failures, errs...)
 			}
 		}
 	} else {
-		if ok, errs := validate(value, context); !ok {
+		if ok, errs := validateProperty(s, value, t, context); !ok {
 			failures = append(failures, errs...)
 		}
 	}
