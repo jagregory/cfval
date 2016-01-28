@@ -9,7 +9,7 @@ type UnrecognisedResource struct {
 	logicalId, awsType string
 }
 func (r UnrecognisedResource) Validate(t Template, context []string) (bool, []Failure) {
-	return false, []Failure{NewFailure(fmt.Sprintf("Unrecognised resource %s (%s)", r.logicalId, r.awsType), context)}
+	return false, []Failure{NewFailure(fmt.Sprintf("Unrecognised resource %s", r.awsType), context)}
 }
 
 func parseTemplateJSON(data []byte, forgiving bool) (*Template, error) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
+	"sort"
 	"flag"
 )
 
@@ -14,17 +14,25 @@ type Resource interface {
 	Validate(t Template, context []string) (bool, []Failure)
 }
 
+type ByContext []Failure
+
+func (a ByContext) Len() int           { return len(a) }
+func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].ContextReadable }
+
 func printFailures(failures []Failure) {
+	sort.Sort(ByContext(failures))
+
 	maxLength := 0
 	for _,failure := range failures {
-		context := strings.Join(failure.Context, ".")
+		context := failure.ContextReadable
 		if len(context) > maxLength {
 			maxLength = len(context)
 		}
 	}
 
 	for _,failure := range failures {
-		context := strings.Join(failure.Context, ".")
+		context := failure.ContextReadable
 
 		fmt.Print(context)
 		fmt.Print(" ")
