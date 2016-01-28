@@ -160,6 +160,14 @@ func validateBuiltinFns(value map[string]interface{}, t Template, context []stri
 		return validateGetAtt(getatt, t, context)
 	}
 
+	if _, ok := value["Fn::FindInMap"]; ok {
+		return false, []Failure{NewFailure("Value is an Fn::FindInMap which isn't supported yet", context)}
+	}
+
+	if _, ok := value["Fn::Base64"]; ok {
+		return false, []Failure{NewFailure("Value is an Fn::Base64 which isn't supported yet", context)}
+	}
+
 	return false, []Failure{NewFailure("Value is a map but isn't a builtin", context)}
 }
 

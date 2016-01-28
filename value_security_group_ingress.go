@@ -1,7 +1,7 @@
 package main
 
-var SecurityGroupIngress = Schema{
-	Type: Resource{
+func securityGroupIngress() Resource {
+	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
 		Properties: map[string]Schema{
 			"CidrIp":                     Cidr,
@@ -12,5 +12,10 @@ var SecurityGroupIngress = Schema{
 			"SourceSecurityGroupOwnerId": Schema{Type: TypeString},
 			"ToPort":                     Schema{Type: TypeInteger, Required: true},
 		},
-	},
+	}
+}
+
+// TODO: this is a bit weird
+var SecurityGroupIngress = Schema{
+	Type: securityGroupIngress(),
 }
