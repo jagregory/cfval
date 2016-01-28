@@ -1,8 +1,8 @@
 package main
 
-var ResourceTag = Schema{
+var AutoScalingTag = Schema{
 	Type: Resource{
-		AwsType: "Resource Tag",
+		AwsType: "AutoScaling Tag",
 		Properties: map[string]Schema{
 			"Key": Schema{
 				Type:     TypeString,
@@ -12,6 +12,10 @@ var ResourceTag = Schema{
 			"Value": Schema{
 				Type:     TypeString,
 				Required: true,
+			},
+
+			"PropagateAtLaunch": Schema{
+				Type: TypeBool,
 			},
 		},
 	},

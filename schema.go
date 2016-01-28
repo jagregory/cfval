@@ -6,7 +6,19 @@ import (
 	"strings"
 )
 
+func validateResourceProperty(r Resource, value interface{}, t Template, context []string) (bool, []Failure) {
+	if properties, ok := value.(map[string]interface{}); ok {
+		return r.Validate(t, properties, context)
+	}
+
+	return false, []Failure{NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, r.AwsType), context)}
+}
+
 func validateProperty(s Schema, value interface{}, t Template, context []string) (bool, []Failure) {
+	if resource, ok := s.Type.(Resource); ok {
+		return validateResourceProperty(resource, value, t, context)
+	}
+
 	if ok := validateValueType(s.Type, value, t, context); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
 			return validateBuiltinFns(complex, t, context)
@@ -21,6 +33,7 @@ func validateProperty(s Schema, value interface{}, t Template, context []string)
 
 	return true, nil
 }
+
 func validateValueType(valueType interface{}, value interface{}, t Template, context []string) bool {
 	switch valueType {
 	case TypeBool:
@@ -62,24 +75,18 @@ func validateBuiltinFns(value map[string]interface{}, t Template, context []stri
 	}
 
 	if _, ok := value["Fn::Find"]; ok {
-		panic("Find not supported")
-		// if findstr, ok := find.(string); ok {
-		// 	return validateRef(refstr, t, context)
-		// }
-		//
-		// return false, []Failure{NewFailure(fmt.Sprintf("Find has invalid value '%s'", ref), context)}
+		return false, []Failure{NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
+	}
+
+	if _, ok := value["Fn::Join"]; ok {
+		return false, []Failure{NewFailure("Value is an Fn::Join but this isn't supported yet", context)}
 	}
 
 	if _, ok := value["Fn::GetAtt"]; ok {
-		// panic("GetAtt not supported")
-		// if findstr, ok := find.(string); ok {
-		// 	return validateRef(refstr, t, context)
-		// }
-		//
-		// return false, []Failure{NewFailure(fmt.Sprintf("Find has invalid value '%s'", ref), context)}
+		return false, []Failure{NewFailure("Value is an Fn::GetAtt but this isn't supported yet", context)}
 	}
 
-	return false, nil
+	return false, []Failure{NewFailure("Value is a map but isn't a builtin", context)}
 }
 
 type ValidateFunc func(interface{}, Template, []string) (bool, []Failure)
