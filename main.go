@@ -40,6 +40,10 @@ func printFailures(failures []Failure) {
 	}
 }
 
+func printSummary(failures []Failure) {
+	fmt.Printf("%d failures\n", len(failures))
+}
+
 func main() {
 	flag.Parse()
 
@@ -55,8 +59,11 @@ func main() {
 		return
 	}
 
-	if ok, errors := template.Validate(); !ok {
+	if ok, errors := template.Validate(); ok {
+		fmt.Println("Pass, no errors found.")
+	} else {
 		printFailures(errors)
-		return
+		fmt.Println()
+		printSummary(errors)
 	}
 }
