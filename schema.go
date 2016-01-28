@@ -46,44 +46,81 @@ func validateValueType(valueType interface{}, value interface{}, t Template, con
 		if _, ok := value.(string); ok {
 			return true
 		}
+	case TypeInteger:
+		if _, ok := value.(float64); ok {
+			return true
+		}
 	}
 
 	return false
 }
 
-func validateRef(ref string, t Template, context []string) (bool, []Failure) {
-	if _, ok := t.Resources[ref]; ok {
-		// ref is to a resource and we've found it
-		// TODO: validate resource ref value is correct type for property
-		return true, nil
-	} else if _, ok := t.Parameters[ref]; ok {
-		// ref is to a parameter and we've found it
-		// TODO: validate parameter type is correct for property
-		return true, nil
+func validateRef(value interface{}, t Template, context []string) (bool, []Failure) {
+	if ref, ok := value.(string); ok {
+		if _, ok := t.Resources[ref]; ok {
+			// ref is to a resource and we've found it
+			// TODO: validate resource ref value is correct type for property
+			return true, nil
+		} else if _, ok := t.Parameters[ref]; ok {
+			// ref is to a parameter and we've found it
+			// TODO: validate parameter type is correct for property
+			return true, nil
+		}
+
+		return false, []Failure{NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
 	}
 
-	return false, []Failure{NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
+	return false, []Failure{NewFailure(fmt.Sprintf("Ref has invalid value '%s'", value), context)}
+}
+
+func validateFind(value interface{}, t Template, context []string) (bool, []Failure) {
+	return false, []Failure{NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
+}
+
+func validateJoin(value interface{}, t Template, context []string) (bool, []Failure) {
+	return false, []Failure{NewFailure("Value is an Fn::Join but this isn't supported yet", context)}
+}
+
+func validateGetAtt(value interface{}, t Template, context []string) (bool, []Failure) {
+	if items, ok := value.([]interface{}); ok {
+		if len(items) != 2 {
+			return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %s)", len(items)), context)}
+		}
+
+		if resourceID, ok := items[0].(string); ok {
+			if _, ok := t.Resources[resourceID]; ok {
+				if _, ok := items[1].(string); ok {
+					// TODO: Check attr is actually a valid attribute for the resource type
+					return true, nil
+				}
+			} else {
+				// resource not found
+				return false, []Failure{NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
+			}
+		} else {
+			// resource not a string
+			return false, []Failure{NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
+		}
+	}
+
+	return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }
 
 func validateBuiltinFns(value map[string]interface{}, t Template, context []string) (bool, []Failure) {
 	if ref, ok := value["Ref"]; ok {
-		if refstr, ok := ref.(string); ok {
-			return validateRef(refstr, t, context)
-		}
-
-		return false, []Failure{NewFailure(fmt.Sprintf("Ref has invalid value '%s'", ref), context)}
+		return validateRef(ref, t, context)
 	}
 
-	if _, ok := value["Fn::Find"]; ok {
-		return false, []Failure{NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
+	if find, ok := value["Fn::Find"]; ok {
+		return validateFind(find, t, context)
 	}
 
-	if _, ok := value["Fn::Join"]; ok {
-		return false, []Failure{NewFailure("Value is an Fn::Join but this isn't supported yet", context)}
+	if join, ok := value["Fn::Join"]; ok {
+		return validateJoin(join, t, context)
 	}
 
-	if _, ok := value["Fn::GetAtt"]; ok {
-		return false, []Failure{NewFailure("Value is an Fn::GetAtt but this isn't supported yet", context)}
+	if getatt, ok := value["Fn::GetAtt"]; ok {
+		return validateGetAtt(getatt, t, context)
 	}
 
 	return false, []Failure{NewFailure("Value is a map but isn't a builtin", context)}
