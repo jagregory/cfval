@@ -54,7 +54,6 @@ func validateRef(ref string, t Template, context []string) (bool, []Failure) {
 
 func validateBuiltinFns(value map[string]interface{}, t Template, context []string) (bool, []Failure) {
 	if ref, ok := value["Ref"]; ok {
-		fmt.Println("Reffing:", ref)
 		if refstr, ok := ref.(string); ok {
 			return validateRef(refstr, t, context)
 		}

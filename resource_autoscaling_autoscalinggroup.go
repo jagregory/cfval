@@ -2,6 +2,7 @@ package main
 
 func autoScalingGroup() Resource {
 	return Resource{
+		AwsType: "AWS::AutoScaling::AutoScalingGroup",
 		Properties: map[string]Schema{
 			"AvailabilityZones": ArrayOf(AvailabilityZone),
 
@@ -16,6 +17,8 @@ func autoScalingGroup() Resource {
 			"HealthCheckGracePeriod": Schema{
 				Type: TypeInteger,
 			},
+
+			"Tags": ArrayOf(ResourceTag),
 		},
 	}
 }
