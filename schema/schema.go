@@ -120,8 +120,8 @@ func validateBuiltinFns(value map[string]interface{}, t Template, context []stri
 		return validateGetAtt(getatt, t, append(context, "Fn::GetAtt"))
 	}
 
-	if _, ok := value["Fn::FindInMap"]; ok {
-		return false, []reporting.Failure{reporting.NewFailure("Value is an Fn::FindInMap which isn't supported yet", append(context, "Fn::FindInMap"))}
+	if find, ok := value["Fn::FindInMap"]; ok {
+		return validateFindInMap(find, t, append(context, "Fn::FindInMap"))
 	}
 
 	if base64, ok := value["Fn::Base64"]; ok {
@@ -164,6 +164,51 @@ func validateRef(value interface{}, t Template, context []string) (bool, []repor
 
 func validateFind(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	return false, []reporting.Failure{reporting.NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
+}
+
+// TODO: Supported functions within a function
+func validateFindInMap(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
+	find, ok := value.([]interface{})
+	if !ok {
+		return false, []reporting.Failure{reporting.NewFailure("Options need to be an array", context)}
+	}
+
+	if len(find) != 3 {
+		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
+	}
+
+	mapName := find[0]
+	_, mapNameIsString := mapName.(string)
+	if ok, errs := validateProperty(Schema{Type: TypeString}, mapName, t, append(context, "0")); !ok {
+		return false, errs
+	}
+
+	if mapNameIsString {
+		// map name is a string, so we can do some further interrogation
+		// TODO: lookup whether MapName is a valid Map
+	}
+
+	topLevelKey := find[1]
+	_, topLevelKeyIsString := topLevelKey.(string)
+	if ok, errs := validateProperty(Schema{Type: TypeString}, topLevelKey, t, append(context, "1")); !ok {
+		return false, errs
+	}
+
+	if mapNameIsString && topLevelKeyIsString {
+		// TODO: lookup whether topLevelKey is in mapName
+	}
+
+	secondLevelKey := find[2]
+	_, secondLevelKeyIsString := secondLevelKey.(string)
+	if ok, errs := validateProperty(Schema{Type: TypeString}, secondLevelKey, t, append(context, "2")); !ok {
+		return false, errs
+	}
+
+	if mapNameIsString && topLevelKeyIsString && secondLevelKeyIsString {
+		// TODO: lookup whether secondLevelKeyIsString is in topLevelKey
+	}
+
+	return true, nil
 }
 
 func validateBase64(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
