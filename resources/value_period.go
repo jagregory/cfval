@@ -1,14 +1,25 @@
 package resources
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/jagregory/cfval/reporting"
 	. "github.com/jagregory/cfval/schema"
 )
 
 var period = Schema{
 	Type: TypeString,
-	ValidateFunc: func(interface{}, Template, []string) (bool, []reporting.Failure) {
-		// TODO: Period. The time over which the specified statistic is applied. You must specify a time in seconds that is also a multiple of 60.
+	ValidateFunc: func(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
+		num, err := strconv.Atoi(value.(string))
+		if err != nil {
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Period is not a number: %s", value), context)}
+		}
+
+		if num == 0 || num%60 != 0 {
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Period is not a multiple of 60: %s", value), context)}
+		}
+
 		return true, nil
 	},
 }
