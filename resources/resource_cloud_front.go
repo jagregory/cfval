@@ -10,7 +10,7 @@ func Distribution() Resource {
 				Type: Resource{
 					AwsType: "CloudFront DistributionConfig",
 					Properties: map[string]Schema{
-						"Aliases": ArrayOf(Schema{Type: TypeString}),
+						"Aliases": Schema{Type: TypeString, Array: true},
 						// "CacheBehaviors": ArrayOf(CacheBehavior),
 						"Comment": Schema{Type: TypeString},
 						// "CustomErrorResponses": ArrayOf(CustomErrorResponse),
@@ -36,12 +36,12 @@ func Distribution() Resource {
 														Properties: map[string]Schema{
 															"Forward": Schema{Type: TypeString, Required: true},
 
-															"WhitelistedNames": ArrayOf(Schema{Type: TypeString}),
+															"WhitelistedNames": Schema{Type: TypeString, Array: true},
 														},
 													},
 												},
 
-												"Headers": ArrayOf(Schema{Type: TypeString}),
+												"Headers": Schema{Type: TypeString, Array: true},
 
 												"QueryString": Schema{Type: TypeBool, Required: true},
 											},
@@ -56,7 +56,7 @@ func Distribution() Resource {
 
 									"TargetOriginId": Schema{Type: TypeString, Required: true},
 
-									"TrustedSigners": ArrayOf(Schema{Type: TypeString}),
+									"TrustedSigners": Schema{Type: TypeString, Array: true},
 
 									"ViewerProtocolPolicy": Schema{Type: TypeString, Required: true},
 								},
@@ -74,7 +74,8 @@ func Distribution() Resource {
 								},
 							},
 						},
-						"Origins": ArrayOf(Schema{
+						"Origins": Schema{
+							Array:    true,
 							Required: true,
 							Type: Resource{
 								AwsType: "CloudFront DistributionConfig Origin",
@@ -108,7 +109,7 @@ func Distribution() Resource {
 									},
 								},
 							},
-						}),
+						},
 
 						"PriceClass": Schema{Type: TypeString},
 						// "Restrictions": Restrictions,

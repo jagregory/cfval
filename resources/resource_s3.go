@@ -27,14 +27,14 @@ func Bucket() Resource {
 				Type: Resource{
 					AwsType: "S3 Lifecycle Configuration",
 					Properties: map[string]Schema{
-						"Rules": ArrayOf(Schema{Type: s3LifecycleRule}),
+						"Rules": Schema{Type: s3LifecycleRule, Array: true},
 					},
 				},
 			},
 			// "LoggingConfiguration":      s3_logging_configuration,
 			// "NotificationConfiguration": s3_notification_configuration,
 			// "ReplicationConfiguration":  s3_replication_configuration,
-			"Tags": ArrayOf(resourceTag),
+			"Tags": ArrayOf(Schema{Type: resourceTag}),
 			// "VersioningConfiguration": s3_versioning_configuration,
 			"WebsiteConfiguration": Schema{
 				Type: Resource{

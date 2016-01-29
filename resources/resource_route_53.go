@@ -23,7 +23,7 @@ func RecordSet() Resource {
 			"HostedZoneName": Schema{Type: TypeString},
 			"Name":           Schema{Type: TypeString, Required: true},
 			// "Region":          Schema{Type: TypeString},
-			"ResourceRecords": ArrayOf(Schema{Type: TypeString}),
+			"ResourceRecords": Schema{Type: TypeString, Required: true},
 			// "SetIdentifier":   Schema{Type: TypeString},
 			"TTL":  Schema{Type: TypeString},
 			"Type": Required(EnumOf("A", "AAAA", "CNAME", "MX", "NS", "PTR", "SOA", "SPF", "SRV", "TXT")),

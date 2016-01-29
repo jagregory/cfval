@@ -6,11 +6,11 @@ func Policy() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Policy",
 		Properties: map[string]Schema{
-			"Groups":         ArrayOf(Schema{Type: TypeString}),
+			"Groups":         Schema{Type: TypeString, Array: true},
 			"PolicyDocument": Required(json),
 			"PolicyName":     Schema{Type: TypeString, Required: true},
-			"Roles":          ArrayOf(Schema{Type: TypeString}),
-			"Users":          ArrayOf(Schema{Type: TypeString}),
+			"Roles":          Schema{Type: TypeString, Array: true},
+			"Users":          Schema{Type: TypeString, Array: true},
 		},
 	}
 }
@@ -20,9 +20,10 @@ func Role() Resource {
 		AwsType: "AWS::IAM::Role",
 		Properties: map[string]Schema{
 			"AssumeRolePolicyDocument": Required(json),
-			"ManagedPolicyArns":        ArrayOf(Schema{Type: TypeString}),
+			"ManagedPolicyArns":        Schema{Type: TypeString, Array: true},
 			"Path":                     Schema{Type: TypeString},
-			"Policies": ArrayOf(Schema{
+			"Policies": Schema{
+				Array: true,
 				Type: Resource{
 					AwsType: "IAM Role Policy",
 					Properties: map[string]Schema{
@@ -30,7 +31,7 @@ func Role() Resource {
 						"PolicyName":     Schema{Type: TypeString, Required: true},
 					},
 				},
-			}),
+			},
 		},
 	}
 }
@@ -40,7 +41,7 @@ func InstanceProfile() Resource {
 		AwsType: "AWS::IAM::InstanceProfile",
 		Properties: map[string]Schema{
 			"Path":  Schema{Type: TypeString, Required: true},
-			"Roles": Required(ArrayOf(Schema{Type: TypeString})),
+			"Roles": Schema{Type: TypeString, Array: true, Required: true},
 		},
 	}
 }

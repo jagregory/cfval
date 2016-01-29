@@ -17,7 +17,7 @@ func DBInstance() Resource {
 			"DBInstanceIdentifier":       Schema{Type: TypeString},
 			"DBName":                     Schema{Type: TypeString},
 			"DBParameterGroupName":       Schema{Type: TypeString},
-			"DBSecurityGroups":           ArrayOf(Schema{Type: TypeString}),
+			"DBSecurityGroups":           Schema{Type: TypeString, Array: true},
 			"DBSnapshotIdentifier":       Schema{Type: TypeString},
 			"DBSubnetGroupName":          Schema{Type: TypeString},
 			"Engine":                     Schema{Type: TypeString},
@@ -36,8 +36,8 @@ func DBInstance() Resource {
 			"SourceDBInstanceIdentifier": Schema{Type: TypeString},
 			"StorageEncrypted":           Schema{Type: TypeBool},
 			"StorageType":                Schema{Type: TypeString},
-			"Tags":                       ArrayOf(resourceTag),
-			"VPCSecurityGroups":          ArrayOf(Schema{Type: TypeString}),
+			"Tags":                       Schema{Type: resourceTag, Array: true},
+			"VPCSecurityGroups":          Schema{Type: TypeString, Array: true},
 		},
 	}
 }
@@ -47,8 +47,8 @@ func DBSubnetGroup() Resource {
 		AwsType: "AWS::RDS::DBSubnetGroup",
 		Properties: map[string]Schema{
 			"DBSubnetGroupDescription": Schema{Type: TypeString, Required: true},
-			"SubnetIds":                ArrayOf(Schema{Type: TypeString, Required: true}),
-			"Tags":                     ArrayOf(resourceTag),
+			"SubnetIds":                Schema{Type: TypeString, Required: true, Array: true},
+			"Tags":                     Schema{Type: resourceTag, Array: true},
 		},
 	}
 }

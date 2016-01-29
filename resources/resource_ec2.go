@@ -31,12 +31,12 @@ func Instance() Resource {
 			// "PlacementGroupName":                Schema{Type: TypeString},
 			// "PrivateIpAddress":                  Schema{Type: TypeString},
 			// "RamdiskId":                         Schema{Type: TypeString},
-			// "SecurityGroupIds":                  ArrayOf(Schema{Type: TypeString}),
-			// "SecurityGroups":                    ArrayOf(Schema{Type: TypeString}),
+			// "SecurityGroupIds":                  Schema{Type: TypeString, Array: true},
+			// "SecurityGroups":                    Schema{Type: TypeString, Array: true},
 			"SourceDestCheck": Schema{Type: TypeBool},
 			// "SsmAssociations":                   ArrayOf(SsmAssociation),
 			"SubnetId": Schema{Type: TypeString},
-			"Tags":     ArrayOf(resourceTag),
+			"Tags":     Schema{Type: resourceTag, Array: true},
 			// "Tenancy":                           Schema{Type: TypeString},
 			// "UserData":                          Schema{Type: TypeString},
 			// "Volumes":                           ArrayOf(MountPoint),
@@ -71,7 +71,7 @@ func RouteTable() Resource {
 		AwsType: "AWS::EC2::RouteTable",
 		Properties: map[string]Schema{
 			"VpcId": Required(vpcId),
-			"Tags":  ArrayOf(resourceTag),
+			"Tags":  Schema{Type: resourceTag, Array: true},
 		},
 	}
 }
@@ -81,7 +81,8 @@ func SecurityGroup() Resource {
 		AwsType: "AWS::EC2::SecurityGroup",
 		Properties: map[string]Schema{
 			"GroupDescription": Schema{Type: TypeString},
-			"SecurityGroupIngress": ArrayOf(Schema{
+			"SecurityGroupIngress": Schema{
+				Array: true,
 				Type: Resource{
 					AwsType: "EC2 Security Group Rule Ingress",
 					Properties: map[string]Schema{
@@ -94,7 +95,7 @@ func SecurityGroup() Resource {
 						"ToPort":                     Schema{Type: TypeInteger, Required: true},
 					},
 				},
-			}),
+			},
 			"VpcId": Schema{Type: TypeString},
 		},
 	}
@@ -124,7 +125,7 @@ func Subnet() Resource {
 			"AvailabilityZone":    availabilityZone,
 			"CidrBlock":           Required(cidr),
 			"MapPublicIpOnLaunch": Schema{Type: TypeBool},
-			"Tags":                ArrayOf(resourceTag),
+			"Tags":                Schema{Type: resourceTag, Array: true},
 			"VpcId":               Required(vpcId),
 		},
 	}

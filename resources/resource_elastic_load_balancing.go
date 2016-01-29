@@ -12,7 +12,7 @@ func LoadBalancer() Resource {
 			// AppCookieStickinessPolicy
 			// Type: A list of AppCookieStickinessPolicy objects.
 
-			"AvailabilityZones": ArrayOf(Schema{Type: TypeString}),
+			"AvailabilityZones": Schema{Type: TypeString, Array: true},
 
 			"ConnectionDrainingPolicy": Schema{
 				Type: Resource{
@@ -60,7 +60,7 @@ func LoadBalancer() Resource {
 						"InstancePort":     Schema{Type: TypeString, Required: true},
 						"InstanceProtocol": EnumOf("HTTP", "HTTPS", "TCP", "SSL"),
 						"LoadBalancerPort": Schema{Type: TypeString, Required: true},
-						"PolicyNames":      ArrayOf(Schema{Type: TypeString}),
+						"PolicyNames":      Schema{Type: TypeString, Array: true},
 						"Protocol":         Required(EnumOf("HTTP", "HTTPS", "TCP", "SSL")),
 						"SSLCertificateId": Schema{Type: TypeString},
 					},
@@ -72,11 +72,11 @@ func LoadBalancer() Resource {
 			//
 			"Scheme": Schema{Type: TypeString},
 
-			"SecurityGroups": ArrayOf(Schema{Type: TypeString}),
+			"SecurityGroups": Schema{Type: TypeString, Array: true},
 
-			"Subnets": ArrayOf(Schema{Type: TypeString}),
+			"Subnets": Schema{Type: TypeString, Array: true},
 
-			"Tags": ArrayOf(resourceTag),
+			"Tags": Schema{Type: resourceTag, Array: true},
 		},
 	}
 }

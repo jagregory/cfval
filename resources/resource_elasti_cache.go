@@ -10,7 +10,7 @@ func CacheCluster() Resource {
 			"AZMode":                  Schema{Type: TypeString},
 			"CacheNodeType":           Schema{Type: TypeString, Required: true},
 			"CacheParameterGroupName": Schema{Type: TypeString},
-			"CacheSecurityGroupNames": ArrayOf(Schema{Type: TypeString}),
+			"CacheSecurityGroupNames": Schema{Type: TypeString, Array: true},
 			"CacheSubnetGroupName":    Schema{Type: TypeString},
 			"ClusterName":             Schema{Type: TypeString},
 			"Engine":                  Schema{Type: TypeString, Required: true},
@@ -19,14 +19,14 @@ func CacheCluster() Resource {
 			"NumCacheNodes":           Schema{Type: TypeString, Required: true},
 			"Port":                    Schema{Type: TypeInteger},
 			"PreferredAvailabilityZone":  Schema{Type: TypeString},
-			"PreferredAvailabilityZones": ArrayOf(Schema{Type: TypeString}),
+			"PreferredAvailabilityZones": Schema{Type: TypeString, Array: true},
 			"PreferredMaintenanceWindow": Schema{Type: TypeString},
-			"SnapshotArns":               ArrayOf(Schema{Type: TypeString}),
+			"SnapshotArns":               Schema{Type: TypeString, Array: true},
 			"SnapshotName":               Schema{Type: TypeString},
 			"SnapshotRetentionLimit":     Schema{Type: TypeInteger},
 			"SnapshotWindow":             Schema{Type: TypeString},
-			"Tags":                       ArrayOf(resourceTag),
-			"VpcSecurityGroupIds":        ArrayOf(Schema{Type: TypeString}),
+			"Tags":                       Schema{Type: resourceTag, Array: true},
+			"VpcSecurityGroupIds":        Schema{Type: TypeString, Array: true},
 		},
 	}
 }
@@ -36,7 +36,7 @@ func SubnetGroup() Resource {
 		AwsType: "AWS::ElastiCache::SubnetGroup",
 		Properties: map[string]Schema{
 			"Description": Schema{Type: TypeString, Required: true},
-			"SubnetIds":   Required(ArrayOf(Schema{Type: TypeString, Required: true})),
+			"SubnetIds":   Schema{Type: TypeString, Required: true, Array: true},
 		},
 	}
 }
