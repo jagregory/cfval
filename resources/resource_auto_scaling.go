@@ -23,6 +23,24 @@ var autoScalingTag = Schema{
 	},
 }
 
+var metricsCollection = Schema{
+	Type: Resource{
+		AwsType:    "Auto Scaling MetricsCollection",
+		Properties: map[string]Schema{
+		// TODO
+		},
+	},
+}
+
+var notificationConfiguration = Schema{
+	Type: Resource{
+		AwsType:    "Auto Scaling NotificationConfiguration",
+		Properties: map[string]Schema{
+		// TODO
+		},
+	},
+}
+
 func AutoScalingGroup() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
