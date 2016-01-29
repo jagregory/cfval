@@ -13,14 +13,6 @@ func policy() Resource {
 	}
 }
 
-var IamPolicy = Schema{
-	Type: policy(),
-}
-
-var Json = Schema{
-	Type: TypeMap,
-}
-
 func role() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Role",
@@ -28,7 +20,25 @@ func role() Resource {
 			"AssumeRolePolicyDocument": Required(Json),
 			"ManagedPolicyArns":        ArrayOf(Schema{Type: TypeString}),
 			"Path":                     Schema{Type: TypeString},
-			"Policies":                 ArrayOf(IamPolicy),
+			"Policies": ArrayOf(Schema{
+				Type: Resource{
+					AwsType: "IAM Role Policy",
+					Properties: map[string]Schema{
+						"PolicyDocument": Required(Json),
+						"PolicyName":     Schema{Type: TypeString, Required: true},
+					},
+				},
+			}),
+		},
+	}
+}
+
+func instanceProfile() Resource {
+	return Resource{
+		AwsType: "AWS::IAM::InstanceProfile",
+		Properties: map[string]Schema{
+			"Path":  Schema{Type: TypeString, Required: true},
+			"Roles": Required(ArrayOf(Schema{Type: TypeString})),
 		},
 	}
 }

@@ -16,29 +16,37 @@ var S3LifecycleRule = Schema{
 	},
 }
 
-var S3LifecycleConfiguration = Schema{
-	Type: Resource{
-		AwsType: "AWS::S3::LifecycleConfiguration",
-		Properties: map[string]Schema{
-			"Rules": Required(ArrayOf(S3LifecycleRule)),
-		},
-	},
-}
-
 func bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
 		Properties: map[string]Schema{
-			// "AccessControl":             EnumSchema("AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"),
-			"BucketName": Schema{Type: TypeString},
+			"AccessControl": EnumSchema("AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"),
+			"BucketName":    Schema{Type: TypeString},
 			// "CorsConfiguration":         s3_cors_configuration,
-			"LifecycleConfiguration": S3LifecycleConfiguration,
+			"LifecycleConfiguration": Schema{
+				Type: Resource{
+					AwsType: "S3 Lifecycle Configuration",
+					Properties: map[string]Schema{
+						"Rules": Required(ArrayOf(S3LifecycleRule)),
+					},
+				},
+			},
 			// "LoggingConfiguration":      s3_logging_configuration,
 			// "NotificationConfiguration": s3_notification_configuration,
 			// "ReplicationConfiguration":  s3_replication_configuration,
 			"Tags": ArrayOf(ResourceTag),
 			// "VersioningConfiguration": s3_versioning_configuration,
-			// "WebsiteConfiguration":    s3_website_configuration,
+			"WebsiteConfiguration": Schema{
+				Type: Resource{
+					AwsType: "S3 Website Configuration",
+					Properties: map[string]Schema{
+						"ErrorDocument": Schema{Type: TypeString},
+						"IndexDocument": Schema{Type: TypeString, Required: true},
+						// "RedirectAllRequestsTo": Schema{Type: ... }
+						// "RoutingRules": Schema{Type: ...}
+					},
+				},
+			},
 		},
 	}
 }

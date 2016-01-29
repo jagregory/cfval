@@ -78,9 +78,39 @@ func securityGroup() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroup",
 		Properties: map[string]Schema{
-			"GroupDescription":     Schema{Type: TypeString},
-			"SecurityGroupIngress": ArrayOf(SecurityGroupIngress),
-			"VpcId":                Schema{Type: TypeString},
+			"GroupDescription": Schema{Type: TypeString},
+			"SecurityGroupIngress": ArrayOf(Schema{
+				Type: Resource{
+					AwsType: "EC2 Security Group Rule Ingress",
+					Properties: map[string]Schema{
+						"CidrIp":                     Schema{Type: TypeString},
+						"FromPort":                   Schema{Type: TypeInteger, Required: true},
+						"IpProtocol":                 Schema{Type: TypeString, Required: true},
+						"SourceSecurityGroupId":      Schema{Type: TypeString},
+						"SourceSecurityGroupName":    Schema{Type: TypeString},
+						"SourceSecurityGroupOwnerId": Schema{Type: TypeString},
+						"ToPort":                     Schema{Type: TypeInteger, Required: true},
+					},
+				},
+			}),
+			"VpcId": Schema{Type: TypeString},
+		},
+	}
+}
+
+func securityGroupIngress() Resource {
+	return Resource{
+		AwsType: "AWS::EC2::SecurityGroupIngress",
+		Properties: map[string]Schema{
+			"CidrIp":                     Cidr,
+			"FromPort":                   Schema{Type: TypeInteger, Required: true},
+			"GroupId":                    Schema{Type: TypeString},
+			"GroupName":                  Schema{Type: TypeString},
+			"IpProtocol":                 Required(EnumSchema("tcp", "udp", "icmp", "-1")),
+			"SourceSecurityGroupId":      Schema{Type: TypeString},
+			"SourceSecurityGroupName":    Schema{Type: TypeString},
+			"SourceSecurityGroupOwnerId": Schema{Type: TypeString},
+			"ToPort":                     Schema{Type: TypeInteger, Required: true},
 		},
 	}
 }
