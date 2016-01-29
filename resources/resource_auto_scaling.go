@@ -39,22 +39,71 @@ func AutoScalingGroup() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
 		Properties: map[string]Schema{
-			"AvailabilityZones":          ArrayOf(availabilityZone),
-			"Cooldown":                   Schema{Type: TypeString},
-			"DesiredCapacity":            Schema{Type: TypeString},
-			"HealthCheckGracePeriod":     Schema{Type: TypeInteger},
-			"HealthCheckType":            EnumOf("EC2", "ELB"),
-			"InstanceId":                 Schema{Type: TypeString},
-			"LaunchConfigurationName":    Schema{Type: TypeString},
-			"LoadBalancerNames":          Schema{Type: TypeString, Array: true},
-			"MaxSize":                    Schema{Type: TypeString},
-			"MetricsCollection":          Schema{Type: metricsCollection, Array: true},
-			"MinSize":                    Schema{Type: TypeString},
-			"NotificationConfigurations": Schema{Type: notificationConfiguration, Array: true},
-			"PlacementGroup":             Schema{Type: TypeString},
-			"Tags":                       Schema{Type: autoScalingTag, Array: true},
-			"TerminationPolicies":        Schema{Type: TypeString, Array: true},
-			"VPCZoneIdentifier":          Schema{Type: TypeString, Array: true},
+			"AvailabilityZones": ArrayOf(availabilityZone),
+
+			"Cooldown": Schema{
+				Type: TypeString,
+			},
+
+			"DesiredCapacity": Schema{
+				Type: TypeString,
+			},
+
+			"HealthCheckGracePeriod": Schema{
+				Type: TypeInteger,
+			},
+
+			"HealthCheckType": EnumOf("EC2", "ELB"),
+
+			"InstanceId": Schema{
+				Type: TypeString,
+			},
+
+			"LaunchConfigurationName": Schema{
+				Type: TypeString,
+			},
+
+			"LoadBalancerNames": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
+
+			"MaxSize": Schema{
+				Type: TypeString,
+			},
+
+			"MetricsCollection": Schema{
+				Type:  metricsCollection,
+				Array: true,
+			},
+
+			"MinSize": Schema{
+				Type: TypeString,
+			},
+
+			"NotificationConfigurations": Schema{
+				Type:  notificationConfiguration,
+				Array: true,
+			},
+
+			"PlacementGroup": Schema{
+				Type: TypeString,
+			},
+
+			"Tags": Schema{
+				Type:  autoScalingTag,
+				Array: true,
+			},
+
+			"TerminationPolicies": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
+
+			"VPCZoneIdentifier": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
 		},
 	}
 }
@@ -68,18 +117,40 @@ func LaunchConfiguration() Resource {
 			// "ClassicLinkVPCId" : String,
 			// "ClassicLinkVPCSecurityGroups" : [ String, ... ],
 			// "EbsOptimized" : Boolean,
-			"IamInstanceProfile": Schema{Type: TypeString},
-			"ImageId":            Schema{Type: TypeString},
+
+			"IamInstanceProfile": Schema{
+				Type: TypeString,
+			},
+
+			"ImageId": Schema{
+				Type: TypeString,
+			},
+
 			// "InstanceId" : String,
 			// "InstanceMonitoring" : Boolean,
-			"InstanceType": Schema{Type: TypeString},
+
+			"InstanceType": Schema{
+				Type: TypeString,
+			},
+
 			// "KernelId" : String,
-			"KeyName": Schema{Type: TypeString},
+			"KeyName": Schema{
+				Type: TypeString,
+			},
+
 			// "PlacementTenancy" : String,
 			// "RamDiskId" : String,
-			"SecurityGroups": Schema{Type: TypeString, Array: true},
+
+			"SecurityGroups": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
+
 			// "SpotPrice" : String,
-			"UserData": Schema{Type: TypeString},
+
+			"UserData": Schema{
+				Type: TypeString,
+			},
 		},
 	}
 }
