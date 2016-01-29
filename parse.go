@@ -13,6 +13,8 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::AutoScaling::LaunchConfiguration":        resources.LaunchConfiguration,
 	"AWS::CloudFront::Distribution":                resources.Distribution,
 	"AWS::CloudWatch::Alarm":                       resources.Alarm,
+	"AWS::RDS::DBInstance":                         resources.DBInstance,
+	"AWS::RDS::DBSubnetGroup":                      resources.DBSubnetGroup,
 	"AWS::EC2::EIP":                                resources.Eip,
 	"AWS::EC2::Instance":                           resources.Instance,
 	"AWS::EC2::InternetGateway":                    resources.InternetGateway,
