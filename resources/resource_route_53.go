@@ -50,12 +50,12 @@ var geoLocation = Resource{
 		"SubdivisionCode": Schema{
 			Type:      TypeString,
 			Conflicts: []string{"ContinentCode"},
-			ValidateFunc: func(value interface{}, t Template, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+			ValidateFunc: func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 				if !tr.HasProperty("CountryCode", "US") {
 					return false, []reporting.Failure{reporting.NewFailure("Can only be set when CountryCode is US", context)}
 				}
 
-				return EnumValidate("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY")(value, t, tr, context)
+				return EnumValidate("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY")(value, tr, context)
 			},
 		},
 	},

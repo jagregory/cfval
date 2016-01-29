@@ -7,8 +7,13 @@ import (
 )
 
 type TemplateResource struct {
+	Template   *Template
 	Definition Resource
 	Properties map[string]interface{}
+}
+
+func (tr TemplateResource) Validate(context []string) (bool, []reporting.Failure) {
+	return tr.Definition.Validate(tr, context)
 }
 
 func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
@@ -19,10 +24,11 @@ func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
 	return false
 }
 
-func NewUnrecognisedResource(awsType string) TemplateResource {
+func NewUnrecognisedResource(template *Template, awsType string) TemplateResource {
 	return TemplateResource{
+		Template: template,
 		Definition: Resource{
-			ValidateFunc: func(t Template, properties map[string]interface{}, context []string) (bool, []reporting.Failure) {
+			ValidateFunc: func(tr TemplateResource, context []string) (bool, []reporting.Failure) {
 				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
 			},
 		},
@@ -38,7 +44,7 @@ func (t Template) Validate() (bool, []reporting.Failure) {
 	errors := make([]reporting.Failure, 0, 100)
 
 	for logicalId, resource := range t.Resources {
-		if ok, errs := resource.Definition.Validate(t, resource, resource.Properties, []string{"Resources", logicalId}); !ok {
+		if ok, errs := resource.Validate([]string{"Resources", logicalId}); !ok {
 			errors = append(errors, errs...)
 		}
 	}

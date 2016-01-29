@@ -8,7 +8,7 @@ import (
 )
 
 func EnumValidate(options ...string) ValidateFunc {
-	return func(value interface{}, t Template, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 		if str, ok := value.(string); ok {
 			found := false
 			for _, option := range options {

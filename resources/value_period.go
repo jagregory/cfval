@@ -8,7 +8,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var period = func(value interface{}, t Template, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+var period = func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 	num, err := strconv.Atoi(value.(string))
 	if err != nil {
 		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Period is not a number: %s", value), context)}

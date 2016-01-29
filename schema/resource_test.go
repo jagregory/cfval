@@ -5,8 +5,7 @@ import (
 )
 
 func TestResourcePropertyConflictValidation(t *testing.T) {
-	template := Template{}
-	tr := TemplateResource{}
+	template := &Template{}
 	context := []string{}
 
 	resource := Resource{
@@ -23,38 +22,37 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := map[string]interface{}{}
-	option1Set := map[string]interface{}{
+	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
+	option1Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
-	}
-	option2Set := map[string]interface{}{
+	}}
+	option2Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option2": "value",
-	}
-	bothSet := map[string]interface{}{
+	}}
+	bothSet := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
-	}
+	}}
 
-	if ok, _ := resource.Validate(template, tr, nothingSet, context); !ok {
+	if ok, _ := nothingSet.Validate(context); !ok {
 		t.Error("Resource should pass if both neither Option1 or Option2 are set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option1Set, context); !ok {
+	if ok, _ := option1Set.Validate(context); !ok {
 		t.Error("Resource should pass if only Option1 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option2Set, context); !ok {
+	if ok, _ := option2Set.Validate(context); !ok {
 		t.Error("Resource should pass if only Option2 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, bothSet, context); ok {
+	if ok, _ := bothSet.Validate(context); ok {
 		t.Error("Resource should fail if both Option1 or Option2 are set")
 	}
 }
 
 func TestResourcePropertyRequiredIfValidation(t *testing.T) {
-	template := Template{}
-	tr := TemplateResource{}
+	template := &Template{}
 	context := []string{}
 
 	resource := Resource{
@@ -70,38 +68,37 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := map[string]interface{}{}
-	option1Set := map[string]interface{}{
+	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
+	option1Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
-	}
-	option2Set := map[string]interface{}{
+	}}
+	option2Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option2": "value",
-	}
-	bothSet := map[string]interface{}{
+	}}
+	bothSet := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
-	}
+	}}
 
-	if ok, _ := resource.Validate(template, tr, nothingSet, context); !ok {
+	if ok, _ := nothingSet.Validate(context); !ok {
 		t.Error("Resource should pass if neither Option1 or Option2 are set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option1Set, context); !ok {
+	if ok, _ := option1Set.Validate(context); !ok {
 		t.Error("Resource should pass if only Option1 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option2Set, context); ok {
+	if ok, _ := option2Set.Validate(context); ok {
 		t.Error("Resource should fail if only Option2 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, bothSet, context); !ok {
+	if ok, _ := bothSet.Validate(context); !ok {
 		t.Error("Resource should pass if both Option1 and Option2 are set")
 	}
 }
 
 func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
-	template := Template{}
-	tr := TemplateResource{}
+	template := &Template{}
 	context := []string{}
 
 	resource := Resource{
@@ -117,31 +114,31 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := map[string]interface{}{}
-	option1Set := map[string]interface{}{
+	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
+	option1Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
-	}
-	option2Set := map[string]interface{}{
+	}}
+	option2Set := TemplateResource{template, resource, map[string]interface{}{
 		"Option2": "value",
-	}
-	bothSet := map[string]interface{}{
+	}}
+	bothSet := TemplateResource{template, resource, map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
-	}
+	}}
 
-	if ok, _ := resource.Validate(template, tr, nothingSet, context); ok {
+	if ok, _ := nothingSet.Validate(context); ok {
 		t.Error("Resource should fail if neither Option1 or Option2 are set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option1Set, context); !ok {
+	if ok, _ := option1Set.Validate(context); !ok {
 		t.Error("Resource should pass if only Option1 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, option2Set, context); !ok {
+	if ok, _ := option2Set.Validate(context); !ok {
 		t.Error("Resource should pass if only Option2 set")
 	}
 
-	if ok, _ := resource.Validate(template, tr, bothSet, context); !ok {
+	if ok, _ := bothSet.Validate(context); !ok {
 		t.Error("Resource should pass if both Option1 and Option2 are set")
 	}
 }
