@@ -19,9 +19,9 @@ func Distribution() Resource {
 							Type: Resource{
 								AwsType: "CloudFront DefaultCacheBehaviour",
 								Properties: map[string]Schema{
-									"AllowedMethods": ArrayOf(EnumSchema("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT")),
+									"AllowedMethods": ArrayOf(EnumOf("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT")),
 
-									"CachedMethods": ArrayOf(EnumSchema("GET", "HEAD", "OPTIONS")),
+									"CachedMethods": ArrayOf(EnumOf("GET", "HEAD", "OPTIONS")),
 
 									"DefaultTTL": Schema{Type: TypeInteger},
 

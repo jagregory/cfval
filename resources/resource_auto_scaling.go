@@ -2,42 +2,36 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var autoScalingTag = Schema{
-	Type: Resource{
-		AwsType: "AutoScaling Tag",
-		Properties: map[string]Schema{
-			"Key": Schema{
-				Type:     TypeString,
-				Required: true,
-			},
+var autoScalingTag = Resource{
+	AwsType: "AutoScaling Tag",
+	Properties: map[string]Schema{
+		"Key": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
 
-			"Value": Schema{
-				Type:     TypeString,
-				Required: true,
-			},
+		"Value": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
 
-			"PropagateAtLaunch": Schema{
-				Type: TypeBool,
-			},
+		"PropagateAtLaunch": Schema{
+			Type: TypeBool,
 		},
 	},
 }
 
-var metricsCollection = Schema{
-	Type: Resource{
-		AwsType:    "Auto Scaling MetricsCollection",
-		Properties: map[string]Schema{
-		// TODO
-		},
+var metricsCollection = Resource{
+	AwsType:    "Auto Scaling MetricsCollection",
+	Properties: map[string]Schema{
+	// TODO
 	},
 }
 
-var notificationConfiguration = Schema{
-	Type: Resource{
-		AwsType:    "Auto Scaling NotificationConfiguration",
-		Properties: map[string]Schema{
-		// TODO
-		},
+var notificationConfiguration = Resource{
+	AwsType:    "Auto Scaling NotificationConfiguration",
+	Properties: map[string]Schema{
+	// TODO
 	},
 }
 
@@ -49,16 +43,16 @@ func AutoScalingGroup() Resource {
 			"Cooldown":                   Schema{Type: TypeString},
 			"DesiredCapacity":            Schema{Type: TypeString},
 			"HealthCheckGracePeriod":     Schema{Type: TypeInteger},
-			"HealthCheckType":            EnumSchema("EC2", "ELB"),
+			"HealthCheckType":            EnumOf("EC2", "ELB"),
 			"InstanceId":                 Schema{Type: TypeString},
 			"LaunchConfigurationName":    Schema{Type: TypeString},
 			"LoadBalancerNames":          ArrayOf(Schema{Type: TypeString}),
 			"MaxSize":                    Schema{Type: TypeString},
-			"MetricsCollection":          ArrayOf(metricsCollection),
+			"MetricsCollection":          ArrayOf(Schema{Type: metricsCollection}),
 			"MinSize":                    Schema{Type: TypeString},
-			"NotificationConfigurations": ArrayOf(notificationConfiguration),
+			"NotificationConfigurations": ArrayOf(Schema{Type: notificationConfiguration}),
 			"PlacementGroup":             Schema{Type: TypeString},
-			"Tags":                       ArrayOf(autoScalingTag),
+			"Tags":                       ArrayOf(Schema{Type: autoScalingTag}),
 			"TerminationPolicies":        ArrayOf(Schema{Type: TypeString}),
 			"VPCZoneIdentifier":          ArrayOf(Schema{Type: TypeString}),
 		},

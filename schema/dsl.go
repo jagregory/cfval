@@ -7,7 +7,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func EnumSchema(options ...string) Schema {
+func EnumOf(options ...string) Schema {
 	return Schema{
 		Type: TypeEnum,
 		ValidateFunc: func(value interface{}, t Template, context []string) (bool, []reporting.Failure) {

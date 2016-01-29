@@ -108,7 +108,7 @@ func SecurityGroupIngress() Resource {
 			"FromPort":                   Schema{Type: TypeInteger, Required: true},
 			"GroupId":                    Schema{Type: TypeString},
 			"GroupName":                  Schema{Type: TypeString},
-			"IpProtocol":                 Required(EnumSchema("tcp", "udp", "icmp", "-1")),
+			"IpProtocol":                 Required(EnumOf("tcp", "udp", "icmp", "-1")),
 			"SourceSecurityGroupId":      Schema{Type: TypeString},
 			"SourceSecurityGroupName":    Schema{Type: TypeString},
 			"SourceSecurityGroupOwnerId": Schema{Type: TypeString},

@@ -58,10 +58,10 @@ func LoadBalancer() Resource {
 					AwsType: "ElasticLoadBalancing Listener",
 					Properties: map[string]Schema{
 						"InstancePort":     Schema{Type: TypeString, Required: true},
-						"InstanceProtocol": EnumSchema("HTTP", "HTTPS", "TCP", "SSL"),
+						"InstanceProtocol": EnumOf("HTTP", "HTTPS", "TCP", "SSL"),
 						"LoadBalancerPort": Schema{Type: TypeString, Required: true},
 						"PolicyNames":      ArrayOf(Schema{Type: TypeString}),
-						"Protocol":         Required(EnumSchema("HTTP", "HTTPS", "TCP", "SSL")),
+						"Protocol":         Required(EnumOf("HTTP", "HTTPS", "TCP", "SSL")),
 						"SSLCertificateId": Schema{Type: TypeString},
 					},
 				},
