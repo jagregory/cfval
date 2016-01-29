@@ -1,6 +1,8 @@
-package main
+package resources
 
-func distribution() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func Distribution() Resource {
 	return Resource{
 		AwsType: "AWS::CloudFront::Distribution",
 		Properties: map[string]Schema{

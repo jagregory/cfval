@@ -1,20 +1,22 @@
-package main
+package schema
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/jagregory/cfval/reporting"
 )
 
-func validateResourceProperty(r Resource, value interface{}, t Template, context []string) (bool, []Failure) {
+func validateResourceProperty(r Resource, value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if properties, ok := value.(map[string]interface{}); ok {
 		return r.Validate(t, properties, context)
 	}
 
-	return false, []Failure{NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, r.AwsType), context)}
+	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, r.AwsType), context)}
 }
 
-func validateProperty(s Schema, value interface{}, t Template, context []string) (bool, []Failure) {
+func validateProperty(s Schema, value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if resource, ok := s.Type.(Resource); ok {
 		return validateResourceProperty(resource, value, t, context)
 	}
@@ -24,7 +26,7 @@ func validateProperty(s Schema, value interface{}, t Template, context []string)
 			return validateBuiltinFns(complex, t, context)
 		}
 
-		return false, []Failure{NewInvalidTypeFailure(s.Type, value, context)}
+		return false, []reporting.Failure{reporting.NewInvalidTypeFailure(s.Type, value, context)}
 	}
 
 	if s.ValidateFunc != nil {
@@ -68,7 +70,7 @@ var PseudoParameters = map[string]bool{
 	"AWS::StackName":        true,
 }
 
-func validateRef(value interface{}, t Template, context []string) (bool, []Failure) {
+func validateRef(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if ref, ok := value.(string); ok {
 		if _, ok := t.Resources[ref]; ok {
 			// ref is to a resource and we've found it
@@ -84,33 +86,33 @@ func validateRef(value interface{}, t Template, context []string) (bool, []Failu
 			return true, nil
 		}
 
-		return false, []Failure{NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
+		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
 	}
 
-	return false, []Failure{NewFailure(fmt.Sprintf("Ref has invalid value '%s'", value), context)}
+	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref has invalid value '%s'", value), context)}
 }
 
-func validateFind(value interface{}, t Template, context []string) (bool, []Failure) {
-	return false, []Failure{NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
+func validateFind(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
+	return false, []reporting.Failure{reporting.NewFailure("Value is an Fn::Find but this isn't supported yet", context)}
 }
 
-func validateJoin(value interface{}, t Template, context []string) (bool, []Failure) {
+func validateJoin(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return false, []Failure{NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %s)", len(items)), context)}
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return false, []Failure{NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return false, []Failure{NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
 		}
 
-		failures := make([]Failure, 0, len(parts))
+		failures := make([]reporting.Failure, 0, len(parts))
 		for i, part := range parts {
 			if ok, errs := validateProperty(Schema{Type: TypeString}, part, t, append(context, "Join", "1", strconv.Itoa(i))); !ok {
 				failures = append(failures, errs...)
@@ -119,13 +121,13 @@ func validateJoin(value interface{}, t Template, context []string) (bool, []Fail
 		return len(failures) == 0, failures
 	}
 
-	return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }
 
-func validateGetAtt(value interface{}, t Template, context []string) (bool, []Failure) {
+func validateGetAtt(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %s)", len(items)), context)}
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
 		}
 
 		if resourceID, ok := items[0].(string); ok {
@@ -136,18 +138,18 @@ func validateGetAtt(value interface{}, t Template, context []string) (bool, []Fa
 				}
 			} else {
 				// resource not found
-				return false, []Failure{NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
+				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
 			}
 		} else {
 			// resource not a string
-			return false, []Failure{NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
 		}
 	}
 
-	return false, []Failure{NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }
 
-func validateBuiltinFns(value map[string]interface{}, t Template, context []string) (bool, []Failure) {
+func validateBuiltinFns(value map[string]interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if ref, ok := value["Ref"]; ok {
 		return validateRef(ref, t, context)
 	}
@@ -165,17 +167,17 @@ func validateBuiltinFns(value map[string]interface{}, t Template, context []stri
 	}
 
 	if _, ok := value["Fn::FindInMap"]; ok {
-		return false, []Failure{NewFailure("Value is an Fn::FindInMap which isn't supported yet", context)}
+		return false, []reporting.Failure{reporting.NewFailure("Value is an Fn::FindInMap which isn't supported yet", context)}
 	}
 
 	if _, ok := value["Fn::Base64"]; ok {
-		return false, []Failure{NewFailure("Value is an Fn::Base64 which isn't supported yet", context)}
+		return false, []reporting.Failure{reporting.NewFailure("Value is an Fn::Base64 which isn't supported yet", context)}
 	}
 
-	return false, []Failure{NewFailure("Value is a map but isn't a builtin", context)}
+	return false, []reporting.Failure{reporting.NewFailure("Value is a map but isn't a builtin", context)}
 }
 
-type ValidateFunc func(interface{}, Template, []string) (bool, []Failure)
+type ValidateFunc func(interface{}, Template, []string) (bool, []reporting.Failure)
 
 type Schema struct {
 	Array        bool
@@ -184,12 +186,12 @@ type Schema struct {
 	ValidateFunc ValidateFunc
 }
 
-func (s Schema) Validate(value interface{}, t Template, context []string) (bool, []Failure) {
+func (s Schema) Validate(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if !s.Required && value == nil {
 		return true, nil
 	}
 
-	failures := make([]Failure, 0, 20)
+	failures := make([]reporting.Failure, 0, 20)
 
 	if s.Array {
 		for i, item := range value.([]interface{}) {
@@ -221,7 +223,7 @@ const (
 func EnumSchema(options ...string) Schema {
 	return Schema{
 		Type: TypeEnum,
-		ValidateFunc: func(value interface{}, t Template, context []string) (bool, []Failure) {
+		ValidateFunc: func(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 			if str, ok := value.(string); ok {
 				found := false
 				for _, option := range options {
@@ -235,10 +237,10 @@ func EnumSchema(options ...string) Schema {
 					return true, nil
 				}
 
-				return false, []Failure{NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", str, strings.Join(options, ", ")), context)}
+				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", str, strings.Join(options, ", ")), context)}
 			}
 
-			return false, []Failure{NewInvalidTypeFailure(TypeEnum, value, context)}
+			return false, []reporting.Failure{reporting.NewInvalidTypeFailure(TypeEnum, value, context)}
 		},
 	}
 }

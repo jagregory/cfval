@@ -6,17 +6,19 @@ import (
 	"io/ioutil"
 	"os"
 	"sort"
+
+	"github.com/jagregory/cfval/reporting"
 )
 
 var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
 
-type ByContext []Failure
+type ByContext []reporting.Failure
 
 func (a ByContext) Len() int           { return len(a) }
 func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].ContextReadable }
 
-func printFailures(failures []Failure) {
+func printFailures(failures []reporting.Failure) {
 	sort.Sort(ByContext(failures))
 
 	maxLength := 0
@@ -40,7 +42,7 @@ func printFailures(failures []Failure) {
 	}
 }
 
-func printSummary(failures []Failure) {
+func printSummary(failures []reporting.Failure) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 

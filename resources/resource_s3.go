@@ -1,6 +1,8 @@
-package main
+package resources
 
-var S3LifecycleRule = Schema{
+import . "github.com/jagregory/cfval/schema"
+
+var s3LifecycleRule = Schema{
 	Type: Resource{
 		AwsType: "AWS::S3::LifecycleRule",
 		Properties: map[string]Schema{
@@ -16,7 +18,7 @@ var S3LifecycleRule = Schema{
 	},
 }
 
-func bucket() Resource {
+func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
 		Properties: map[string]Schema{
@@ -27,14 +29,14 @@ func bucket() Resource {
 				Type: Resource{
 					AwsType: "S3 Lifecycle Configuration",
 					Properties: map[string]Schema{
-						"Rules": Required(ArrayOf(S3LifecycleRule)),
+						"Rules": Required(ArrayOf(s3LifecycleRule)),
 					},
 				},
 			},
 			// "LoggingConfiguration":      s3_logging_configuration,
 			// "NotificationConfiguration": s3_notification_configuration,
 			// "ReplicationConfiguration":  s3_replication_configuration,
-			"Tags": ArrayOf(ResourceTag),
+			"Tags": ArrayOf(resourceTag),
 			// "VersioningConfiguration": s3_versioning_configuration,
 			"WebsiteConfiguration": Schema{
 				Type: Resource{

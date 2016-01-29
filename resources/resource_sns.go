@@ -1,6 +1,8 @@
-package main
+package resources
 
-func topic() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func Topic() Resource {
 	return Resource{
 		AwsType: "AWS::SNS::Topic",
 		Properties: map[string]Schema{

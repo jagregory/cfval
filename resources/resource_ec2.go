@@ -1,6 +1,8 @@
-package main
+package resources
 
-func eip() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func Eip() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::EIP",
 		Properties: map[string]Schema{
@@ -10,7 +12,7 @@ func eip() Resource {
 	}
 }
 
-func instance() Resource {
+func Instance() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Instance",
 		Properties: map[string]Schema{
@@ -34,7 +36,7 @@ func instance() Resource {
 			"SourceDestCheck": Schema{Type: TypeBool},
 			// "SsmAssociations":                   ArrayOf(SsmAssociation),
 			"SubnetId": Schema{Type: TypeString},
-			"Tags":     ArrayOf(ResourceTag),
+			"Tags":     ArrayOf(resourceTag),
 			// "Tenancy":                           Schema{Type: TypeString},
 			// "UserData":                          Schema{Type: TypeString},
 			// "Volumes":                           ArrayOf(MountPoint),
@@ -43,18 +45,18 @@ func instance() Resource {
 	}
 }
 
-func internetGateway() Resource {
+func InternetGateway() Resource {
 	return Resource{
 		AwsType:    "AWS::EC2::InternetGateway",
 		Properties: map[string]Schema{},
 	}
 }
 
-func route() Resource {
+func Route() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Route",
 		Properties: map[string]Schema{
-			"DestinationCidrBlock":   Required(Cidr),
+			"DestinationCidrBlock":   Required(cidr),
 			"GatewayId":              Schema{Type: TypeString},
 			"InstanceId":             Schema{Type: TypeString},
 			"NetworkInterfaceId":     Schema{Type: TypeString},
@@ -64,17 +66,17 @@ func route() Resource {
 	}
 }
 
-func routeTable() Resource {
+func RouteTable() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::RouteTable",
 		Properties: map[string]Schema{
-			"VpcId": Required(VpcId),
-			"Tags":  ArrayOf(ResourceTag),
+			"VpcId": Required(vpcId),
+			"Tags":  ArrayOf(resourceTag),
 		},
 	}
 }
 
-func securityGroup() Resource {
+func SecurityGroup() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroup",
 		Properties: map[string]Schema{
@@ -98,11 +100,11 @@ func securityGroup() Resource {
 	}
 }
 
-func securityGroupIngress() Resource {
+func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
 		Properties: map[string]Schema{
-			"CidrIp":                     Cidr,
+			"CidrIp":                     cidr,
 			"FromPort":                   Schema{Type: TypeInteger, Required: true},
 			"GroupId":                    Schema{Type: TypeString},
 			"GroupName":                  Schema{Type: TypeString},
@@ -115,20 +117,20 @@ func securityGroupIngress() Resource {
 	}
 }
 
-func subnet() Resource {
+func Subnet() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Subnet",
 		Properties: map[string]Schema{
-			"AvailabilityZone":    AvailabilityZone,
-			"CidrBlock":           Required(Cidr),
+			"AvailabilityZone":    availabilityZone,
+			"CidrBlock":           Required(cidr),
 			"MapPublicIpOnLaunch": Schema{Type: TypeBool},
-			"Tags":                ArrayOf(ResourceTag),
-			"VpcId":               Required(VpcId),
+			"Tags":                ArrayOf(resourceTag),
+			"VpcId":               Required(vpcId),
 		},
 	}
 }
 
-func subnetRouteTableAssociation() Resource {
+func SubnetRouteTableAssociation() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SubnetRouteTableAssociation",
 		Properties: map[string]Schema{
@@ -138,7 +140,7 @@ func subnetRouteTableAssociation() Resource {
 	}
 }
 
-func vpcGatewayAttachment() Resource {
+func VpcGatewayAttachment() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::VPCGatewayAttachment",
 		Properties: map[string]Schema{

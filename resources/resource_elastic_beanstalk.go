@@ -1,6 +1,8 @@
-package main
+package resources
 
-func application() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func Application() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Application",
 		Properties: map[string]Schema{
@@ -10,7 +12,7 @@ func application() Resource {
 	}
 }
 
-func applicationVersion() Resource {
+func ApplicationVersion() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::ApplicationVersion",
 		Properties: map[string]Schema{
@@ -39,7 +41,7 @@ var optionsSettings = Resource{
 	},
 }
 
-func configurationTemplate() Resource {
+func ConfigurationTemplate() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::ConfigurationTemplate",
 		Properties: map[string]Schema{
@@ -53,7 +55,7 @@ func configurationTemplate() Resource {
 	}
 }
 
-func environment() Resource {
+func Environment() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Environment",
 		Properties: map[string]Schema{
@@ -63,7 +65,7 @@ func environment() Resource {
 			"EnvironmentName":   Schema{Type: TypeString},
 			"OptionSettings":    ArrayOf(Schema{Type: optionsSettings}),
 			"SolutionStackName": Schema{Type: TypeString},
-			"Tags":              ArrayOf(ResourceTag),
+			"Tags":              ArrayOf(resourceTag),
 			"TemplateName":      Schema{Type: TypeString},
 			// "Tier": Schema{...}
 			"VersionLabel": Schema{Type: TypeString},

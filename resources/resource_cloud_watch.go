@@ -1,14 +1,19 @@
-package main
+package resources
 
-var Period = Schema{
+import (
+	"github.com/jagregory/cfval/reporting"
+	. "github.com/jagregory/cfval/schema"
+)
+
+var period = Schema{
 	Type: TypeString,
-	ValidateFunc: func(interface{}, Template, []string) (bool, []Failure) {
+	ValidateFunc: func(interface{}, Template, []string) (bool, []reporting.Failure) {
 		// TODO: The time over which the specified statistic is applied. You must specify a time in seconds that is also a multiple of 60.
 		return true, nil
 	},
 }
 
-var MetricDimension = Schema{
+var metricDimension = Schema{
 	Type: Resource{
 		AwsType: "CloudWatch Alarm MetricDimension",
 		Properties: map[string]Schema{
@@ -18,7 +23,7 @@ var MetricDimension = Schema{
 	},
 }
 
-func alarm() Resource {
+func Alarm() Resource {
 	return Resource{
 		AwsType: "AWS::CloudWatch::Alarm",
 		Properties: map[string]Schema{
@@ -27,13 +32,13 @@ func alarm() Resource {
 			"AlarmDescription":        Schema{Type: TypeString},
 			"AlarmName":               Schema{Type: TypeString},
 			"ComparisonOperator":      Required(EnumSchema("GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold")),
-			"Dimensions":              ArrayOf(MetricDimension),
+			"Dimensions":              ArrayOf(metricDimension),
 			"EvaluationPeriods":       Required(Schema{Type: TypeString}),
 			"InsufficientDataActions": ArrayOf(Schema{Type: TypeString}),
 			"MetricName":              Schema{Type: TypeString, Required: true},
 			"Namespace":               Schema{Type: TypeString, Required: true},
 			"OKActions":               ArrayOf(Schema{Type: TypeString}),
-			"Period":                  Required(Period),
+			"Period":                  Required(period),
 			"Statistic":               Required(EnumSchema("SampleCount", "Average", "Sum", "Minimum", "Maximum")),
 			"Threshold":               Schema{Type: TypeString, Required: true},
 			"Unit":                    EnumSchema("Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"),

@@ -1,11 +1,13 @@
-package main
+package resources
 
-func policy() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func Policy() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Policy",
 		Properties: map[string]Schema{
 			"Groups":         ArrayOf(Schema{Type: TypeString}),
-			"PolicyDocument": Required(Json),
+			"PolicyDocument": Required(json),
 			"PolicyName":     Schema{Type: TypeString, Required: true},
 			"Roles":          ArrayOf(Schema{Type: TypeString}),
 			"Users":          ArrayOf(Schema{Type: TypeString}),
@@ -13,18 +15,18 @@ func policy() Resource {
 	}
 }
 
-func role() Resource {
+func Role() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Role",
 		Properties: map[string]Schema{
-			"AssumeRolePolicyDocument": Required(Json),
+			"AssumeRolePolicyDocument": Required(json),
 			"ManagedPolicyArns":        ArrayOf(Schema{Type: TypeString}),
 			"Path":                     Schema{Type: TypeString},
 			"Policies": ArrayOf(Schema{
 				Type: Resource{
 					AwsType: "IAM Role Policy",
 					Properties: map[string]Schema{
-						"PolicyDocument": Required(Json),
+						"PolicyDocument": Required(json),
 						"PolicyName":     Schema{Type: TypeString, Required: true},
 					},
 				},
@@ -33,7 +35,7 @@ func role() Resource {
 	}
 }
 
-func instanceProfile() Resource {
+func InstanceProfile() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::InstanceProfile",
 		Properties: map[string]Schema{

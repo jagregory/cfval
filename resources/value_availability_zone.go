@@ -1,6 +1,8 @@
-package main
+package resources
 
-var AvailabilityZone = EnumSchema(
+import . "github.com/jagregory/cfval/schema"
+
+var availabilityZone = EnumSchema(
 	"ap-northeast-1a",
 	"ap-northeast-1b",
 	"ap-northeast-1c",

@@ -1,6 +1,8 @@
-package main
+package resources
 
-var ResourceTag = Schema{
+import . "github.com/jagregory/cfval/schema"
+
+var resourceTag = Schema{
 	Type: Resource{
 		AwsType: "Resource Tag",
 		Properties: map[string]Schema{

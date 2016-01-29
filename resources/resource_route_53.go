@@ -1,6 +1,8 @@
-package main
+package resources
 
-var AliasTarget = Schema{
+import . "github.com/jagregory/cfval/schema"
+
+var aliasTarget = Schema{
 	Type: Resource{
 		AwsType: "Route53 RecordSet AliasTarget",
 		Properties: map[string]Schema{
@@ -11,11 +13,11 @@ var AliasTarget = Schema{
 	},
 }
 
-func recordSet() Resource {
+func RecordSet() Resource {
 	return Resource{
 		AwsType: "AWS::Route53::RecordSet",
 		Properties: map[string]Schema{
-			"AliasTarget": AliasTarget,
+			"AliasTarget": aliasTarget,
 			// "Failover": Schema{Type: TypeString},
 			// "GeoLocation":     GeoLocation,
 			// "HealthCheckId":   Schema{Type: TypeString},

@@ -1,6 +1,10 @@
-package main
+package schema
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/jagregory/cfval/reporting"
+)
 
 type TemplateResource struct {
 	Definition Resource
@@ -10,8 +14,8 @@ type TemplateResource struct {
 func NewUnrecognisedResource(awsType string) TemplateResource {
 	return TemplateResource{
 		Definition: Resource{
-			ValidateFunc: func(t Template, properties map[string]interface{}, context []string) (bool, []Failure) {
-				return false, []Failure{NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+			ValidateFunc: func(t Template, properties map[string]interface{}, context []string) (bool, []reporting.Failure) {
+				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
 			},
 		},
 	}
@@ -22,8 +26,8 @@ type Template struct {
 	Parameters map[string]Parameter
 }
 
-func (t Template) Validate() (bool, []Failure) {
-	errors := make([]Failure, 0, 100)
+func (t Template) Validate() (bool, []reporting.Failure) {
+	errors := make([]reporting.Failure, 0, 100)
 
 	for logicalId, resource := range t.Resources {
 		if ok, errs := resource.Definition.Validate(t, resource.Properties, []string{"Resources", logicalId}); !ok {

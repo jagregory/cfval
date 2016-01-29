@@ -1,6 +1,8 @@
-package main
+package resources
 
-func loadBalancer() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func LoadBalancer() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
 		Properties: map[string]Schema{
@@ -74,7 +76,7 @@ func loadBalancer() Resource {
 
 			"Subnets": ArrayOf(Schema{Type: TypeString}),
 
-			"Tags": ArrayOf(ResourceTag),
+			"Tags": ArrayOf(resourceTag),
 		},
 	}
 }

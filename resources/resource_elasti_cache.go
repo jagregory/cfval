@@ -1,6 +1,8 @@
-package main
+package resources
 
-func cacheCluster() Resource {
+import . "github.com/jagregory/cfval/schema"
+
+func CacheCluster() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::CacheCluster",
 		Properties: map[string]Schema{
@@ -23,13 +25,13 @@ func cacheCluster() Resource {
 			"SnapshotName":               Schema{Type: TypeString},
 			"SnapshotRetentionLimit":     Schema{Type: TypeInteger},
 			"SnapshotWindow":             Schema{Type: TypeString},
-			"Tags":                       ArrayOf(ResourceTag),
+			"Tags":                       ArrayOf(resourceTag),
 			"VpcSecurityGroupIds":        ArrayOf(Schema{Type: TypeString}),
 		},
 	}
 }
 
-func subnetGroup() Resource {
+func SubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::SubnetGroup",
 		Properties: map[string]Schema{
