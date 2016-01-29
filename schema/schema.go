@@ -36,20 +36,23 @@ func (s Schema) Validate(value interface{}, t Template, context []string) (bool,
 	}
 
 	failures := make([]reporting.Failure, 0, 20)
+	pass := true
 
 	if s.Array {
 		for i, item := range value.([]interface{}) {
 			if ok, errs := validateProperty(s, item, t, append(context, strconv.Itoa(i))); !ok {
 				failures = append(failures, errs...)
+				pass = false
 			}
 		}
 	} else {
 		if ok, errs := validateProperty(s, value, t, context); !ok {
 			failures = append(failures, errs...)
+			pass = false
 		}
 	}
 
-	return len(failures) == 0, failures
+	return pass, failures
 }
 
 func validateResourceProperty(r Resource, value interface{}, t Template, context []string) (bool, []reporting.Failure) {
