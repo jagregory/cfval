@@ -93,7 +93,10 @@ func LoadBalancer() Resource {
 							Required: true,
 						},
 
-						"InstanceProtocol": EnumOf("HTTP", "HTTPS", "TCP", "SSL"),
+						"InstanceProtocol": Schema{
+							Type:         TypeString,
+							ValidateFunc: EnumValidate("HTTP", "HTTPS", "TCP", "SSL"),
+						},
 
 						"LoadBalancerPort": Schema{
 							Type:     TypeString,
@@ -105,7 +108,11 @@ func LoadBalancer() Resource {
 							Array: true,
 						},
 
-						"Protocol": Required(EnumOf("HTTP", "HTTPS", "TCP", "SSL")),
+						"Protocol": Schema{
+							Required:     true,
+							Type:         TypeString,
+							ValidateFunc: EnumValidate("HTTP", "HTTPS", "TCP", "SSL"),
+						},
 
 						"SSLCertificateId": Schema{
 							Type: TypeString,

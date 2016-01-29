@@ -46,8 +46,8 @@ func RecordSet() Resource {
 			// "Region":          Schema{Type: TypeString},
 
 			"ResourceRecords": Schema{
-				Type:     TypeString,
-				Required: true,
+				Array: true,
+				Type:  TypeString,
 			},
 
 			// "SetIdentifier":   Schema{Type: TypeString},
@@ -56,7 +56,11 @@ func RecordSet() Resource {
 				Type: TypeString,
 			},
 
-			"Type": Required(EnumOf("A", "AAAA", "CNAME", "MX", "NS", "PTR", "SOA", "SPF", "SRV", "TXT")),
+			"Type": Schema{
+				Type:         TypeString,
+				Required:     true,
+				ValidateFunc: EnumValidate("A", "AAAA", "CNAME", "MX", "NS", "PTR", "SOA", "SPF", "SRV", "TXT"),
+			},
 
 			// "Weight":          Schema{Type: TypeInteger},
 		},

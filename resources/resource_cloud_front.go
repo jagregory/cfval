@@ -39,9 +39,17 @@ var forwardedValues = Resource{
 var defaultCacheBehaviour = Resource{
 	AwsType: "CloudFront DefaultCacheBehaviour",
 	Properties: map[string]Schema{
-		"AllowedMethods": ArrayOf(EnumOf("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT")),
+		"AllowedMethods": Schema{
+			Array:        true,
+			Type:         TypeString,
+			ValidateFunc: EnumValidate("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"),
+		},
 
-		"CachedMethods": ArrayOf(EnumOf("GET", "HEAD", "OPTIONS")),
+		"CachedMethods": Schema{
+			Array:        true,
+			Type:         TypeString,
+			ValidateFunc: EnumValidate("GET", "HEAD", "OPTIONS"),
+		},
 
 		"DefaultTTL": Schema{
 			Type: TypeInteger,

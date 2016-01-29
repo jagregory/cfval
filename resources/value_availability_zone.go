@@ -2,7 +2,7 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var availabilityZone = EnumOf(
+var availabilityZone = EnumValidate(
 	"ap-northeast-1a",
 	"ap-northeast-1b",
 	"ap-northeast-1c",

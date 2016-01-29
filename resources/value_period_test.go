@@ -10,22 +10,22 @@ func TestPeriodValidation(t *testing.T) {
 	template := schema.Template{}
 	context := []string{}
 
-	if ok, _ := period.Validate("", template, context); ok {
+	if ok, _ := period("", template, context); ok {
 		t.Error("Period should fail on empty string")
 	}
 
-	if ok, _ := period.Validate("abc", template, context); ok {
+	if ok, _ := period("abc", template, context); ok {
 		t.Error("Period should fail on anything which isn't a period")
 	}
 
 	for _, ex := range []string{"0", "10", "119", "260"} {
-		if ok, _ := period.Validate(ex, template, context); ok {
+		if ok, _ := period(ex, template, context); ok {
 			t.Errorf("Period should fail on number which isn't a multiple of 60 (ex: %s)", ex)
 		}
 	}
 
 	for _, ex := range []string{"60", "120", "240"} {
-		if ok, _ := period.Validate(ex, template, context); !ok {
+		if ok, _ := period(ex, template, context); !ok {
 			t.Errorf("Cidr should pass with numbers which are multiples of 60 (ex: %s)", ex)
 		}
 	}

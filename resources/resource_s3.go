@@ -31,7 +31,10 @@ func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
 		Properties: map[string]Schema{
-			"AccessControl": EnumOf("AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"),
+			"AccessControl": Schema{
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"),
+			},
 
 			"BucketName": Schema{
 				Type: TypeString,

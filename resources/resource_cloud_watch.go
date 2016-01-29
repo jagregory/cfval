@@ -37,7 +37,11 @@ func Alarm() Resource {
 				Type: TypeString,
 			},
 
-			"ComparisonOperator": Required(EnumOf("GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold")),
+			"ComparisonOperator": Schema{
+				Required:     true,
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"),
+			},
 
 			"Dimensions": ArrayOf(Schema{
 				Type: metricDimension,
@@ -61,20 +65,32 @@ func Alarm() Resource {
 				Required: true,
 			},
 
-			"OKActions": ArrayOf(Schema{
-				Type: TypeString,
-			}),
+			"OKActions": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
 
-			"Period": Required(period),
+			"Period": Schema{
+				Type:         TypeString,
+				Required:     true,
+				ValidateFunc: period,
+			},
 
-			"Statistic": Required(EnumOf("SampleCount", "Average", "Sum", "Minimum", "Maximum")),
+			"Statistic": Schema{
+				Type:         TypeString,
+				Required:     true,
+				ValidateFunc: EnumValidate("SampleCount", "Average", "Sum", "Minimum", "Maximum"),
+			},
 
 			"Threshold": Schema{
 				Type:     TypeString,
 				Required: true,
 			},
 
-			"Unit": EnumOf("Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"),
+			"Unit": Schema{
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"),
+			},
 		},
 	}
 }

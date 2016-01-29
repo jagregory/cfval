@@ -39,7 +39,11 @@ func AutoScalingGroup() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
 		Properties: map[string]Schema{
-			"AvailabilityZones": ArrayOf(availabilityZone),
+			"AvailabilityZones": Schema{
+				Array:        true,
+				Type:         TypeString,
+				ValidateFunc: availabilityZone,
+			},
 
 			"Cooldown": Schema{
 				Type: TypeString,
@@ -53,7 +57,10 @@ func AutoScalingGroup() Resource {
 				Type: TypeInteger,
 			},
 
-			"HealthCheckType": EnumOf("EC2", "ELB"),
+			"HealthCheckType": Schema{
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("EC2", "ELB"),
+			},
 
 			"InstanceId": Schema{
 				Type: TypeString,

@@ -89,7 +89,11 @@ func Route() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Route",
 		Properties: map[string]Schema{
-			"DestinationCidrBlock": Required(cidr),
+			"DestinationCidrBlock": Schema{
+				Type:         TypeString,
+				Required:     true,
+				ValidateFunc: cidr,
+			},
 
 			"GatewayId": Schema{
 				Type: TypeString,
@@ -184,7 +188,10 @@ func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
 		Properties: map[string]Schema{
-			"CidrIp": cidr,
+			"CidrIp": Schema{
+				Type:         TypeString,
+				ValidateFunc: cidr,
+			},
 
 			"FromPort": Schema{
 				Type:     TypeInteger,
@@ -199,7 +206,11 @@ func SecurityGroupIngress() Resource {
 				Type: TypeString,
 			},
 
-			"IpProtocol": Required(EnumOf("tcp", "udp", "icmp", "-1")),
+			"IpProtocol": Schema{
+				Required:     true,
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("tcp", "udp", "icmp", "-1"),
+			},
 
 			"SourceSecurityGroupId": Schema{
 				Type: TypeString,
@@ -225,9 +236,16 @@ func Subnet() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Subnet",
 		Properties: map[string]Schema{
-			"AvailabilityZone": availabilityZone,
+			"AvailabilityZone": Schema{
+				Type:         TypeString,
+				ValidateFunc: availabilityZone,
+			},
 
-			"CidrBlock": Required(cidr),
+			"CidrBlock": Schema{
+				Type:         TypeString,
+				Required:     true,
+				ValidateFunc: cidr,
+			},
 
 			"MapPublicIpOnLaunch": Schema{
 				Type: TypeBool,
