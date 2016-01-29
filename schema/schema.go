@@ -31,6 +31,8 @@ type Schema struct {
 func (s Schema) Validate(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
 	if !s.Required && value == nil {
 		return true, nil
+	} else if s.Required && value == nil {
+		return false, []reporting.Failure{reporting.NewFailure("Required property is missing", context)}
 	}
 
 	failures := make([]reporting.Failure, 0, 20)
