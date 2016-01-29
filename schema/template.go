@@ -11,6 +11,14 @@ type TemplateResource struct {
 	Properties map[string]interface{}
 }
 
+func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
+	if value, found := tr.Properties[name]; found {
+		return value == expected
+	}
+
+	return false
+}
+
 func NewUnrecognisedResource(awsType string) TemplateResource {
 	return TemplateResource{
 		Definition: Resource{
@@ -30,7 +38,7 @@ func (t Template) Validate() (bool, []reporting.Failure) {
 	errors := make([]reporting.Failure, 0, 100)
 
 	for logicalId, resource := range t.Resources {
-		if ok, errs := resource.Definition.Validate(t, resource.Properties, []string{"Resources", logicalId}); !ok {
+		if ok, errs := resource.Definition.Validate(t, resource, resource.Properties, []string{"Resources", logicalId}); !ok {
 			errors = append(errors, errs...)
 		}
 	}

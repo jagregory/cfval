@@ -7,7 +7,7 @@ import (
 
 var vpcId = Schema{
 	Type: TypeString,
-	ValidateFunc: func(value interface{}, t Template, context []string) (bool, []reporting.Failure) {
+	ValidateFunc: func(value interface{}, t Template, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 		// TODO: VpcId
 		return true, nil
 	},
