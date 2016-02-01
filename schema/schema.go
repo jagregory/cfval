@@ -317,10 +317,9 @@ func validateGetAtt(value interface{}, tr TemplateResource, context []string) (b
 					// TODO: Check attr is actually a valid attribute for the resource type
 					return true, nil
 				}
-			} else {
-				// resource not found
-				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
 			}
+			// resource not found
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
 		} else {
 			// resource not a string
 			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
