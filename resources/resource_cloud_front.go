@@ -189,6 +189,82 @@ var viewerCertificate = Resource{
 	},
 }
 
+var cacheBehaviour = Resource{
+	AwsType: "CloudFront DistributionConfig CacheBehavior",
+	Properties: map[string]Schema{
+		"AllowedMethods": Schema{
+			Type:  TypeString,
+			Array: true,
+			ArrayValidateFunc: FixedArrayValidate(
+				[]string{"HEAD", "GET"},
+				[]string{"GET", "HEAD", "OPTIONS"},
+				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
+			),
+		},
+
+		"CachedMethods": Schema{
+			Type:  TypeString,
+			Array: true,
+			ArrayValidateFunc: FixedArrayValidate(
+				[]string{"HEAD", "GET"},
+				[]string{"GET", "HEAD", "OPTIONS"},
+			),
+		},
+
+		"DefaultTTL": Schema{
+			Type: TypeInteger,
+		},
+
+		"ForwardedValues": Schema{
+			Type:     forwardedValues,
+			Required: true,
+		},
+
+		"MaxTTL": Schema{
+			Type: TypeInteger,
+		},
+
+		"MinTTL": Schema{
+			Type: TypeInteger,
+		},
+
+		"PathPattern": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"SmoothStreaming": Schema{
+			Type: TypeBool,
+		},
+
+		"TargetOriginId": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"TrustedSigners": Schema{
+			Type:  TypeString,
+			Array: true,
+		},
+
+		"ViewerProtocolPolicy": Schema{
+			Type:         TypeString,
+			Required:     true,
+			ValidateFunc: EnumValidate("allow-all", "redirect-to-https", "https"),
+		},
+	},
+}
+
+var customErrorResponse = Resource{
+	AwsType:    "CloudFront DistributionConfig CustomErrorResponse",
+	Properties: map[string]Schema{},
+}
+
+var restrictions = Resource{
+	AwsType:    "CloudFront DistributionConfiguration Restrictions",
+	Properties: map[string]Schema{},
+}
+
 var distributionConfig = Resource{
 	AwsType: "CloudFront DistributionConfig",
 	Properties: map[string]Schema{
@@ -197,13 +273,19 @@ var distributionConfig = Resource{
 			Array: true,
 		},
 
-		// "CacheBehaviors": ArrayOf(CacheBehavior),
+		"CacheBehaviors": Schema{
+			Type:  cacheBehaviour,
+			Array: true,
+		},
 
 		"Comment": Schema{
 			Type: TypeString,
 		},
 
-		// "CustomErrorResponses": ArrayOf(CustomErrorResponse),
+		"CustomErrorResponses": Schema{
+			Type:  customErrorResponse,
+			Array: true,
+		},
 
 		"DefaultCacheBehavior": Schema{
 			Required: true,
@@ -230,16 +312,21 @@ var distributionConfig = Resource{
 		},
 
 		"PriceClass": Schema{
-			Type: TypeString,
+			Type:         TypeString,
+			ValidateFunc: EnumValidate("PriceClass_All", "PriceClass_200", "PriceClass_100"),
 		},
 
-		// "Restrictions": Restrictions,
+		"Restrictions": Schema{
+			Type: restrictions,
+		},
 
 		"ViewerCertificate": Schema{
 			Type: viewerCertificate,
 		},
 
-		// "WebACLId": Schema{Type:TypeString},
+		"WebACLId": Schema{
+			Type: TypeString,
+		},
 	},
 }
 
