@@ -22,14 +22,14 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
-	option1Set := TemplateResource{template, resource, map[string]interface{}{
+	nothingSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{}}
+	option1Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 	}}
-	option2Set := TemplateResource{template, resource, map[string]interface{}{
+	option2Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option2": "value",
 	}}
-	bothSet := TemplateResource{template, resource, map[string]interface{}{
+	bothSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
 	}}
@@ -68,14 +68,14 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
-	option1Set := TemplateResource{template, resource, map[string]interface{}{
+	nothingSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{}}
+	option1Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 	}}
-	option2Set := TemplateResource{template, resource, map[string]interface{}{
+	option2Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option2": "value",
 	}}
-	bothSet := TemplateResource{template, resource, map[string]interface{}{
+	bothSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
 	}}
@@ -114,14 +114,14 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		},
 	}
 
-	nothingSet := TemplateResource{template, resource, map[string]interface{}{}}
-	option1Set := TemplateResource{template, resource, map[string]interface{}{
+	nothingSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{}}
+	option1Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 	}}
-	option2Set := TemplateResource{template, resource, map[string]interface{}{
+	option2Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option2": "value",
 	}}
-	bothSet := TemplateResource{template, resource, map[string]interface{}{
+	bothSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
 		"Option1": "value",
 		"Option2": "value",
 	}}
