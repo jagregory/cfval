@@ -7,6 +7,50 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
+func validateJson(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+	switch t := value.(type) {
+	case map[string]interface{}:
+		failures := make([]reporting.Failure, 0, 100)
+
+		if ok, errs := validateBuiltinFns(t, tr, context); !ok && errs != nil {
+			failures = append(failures, errs...)
+		} else {
+			for key, value := range t {
+				if ok, errs := validateJson(value, tr, append(context, key)); !ok {
+					failures = append(failures, errs...)
+				}
+			}
+		}
+
+		return len(failures) == 0, failures
+	case []interface{}:
+		failures := make([]reporting.Failure, 0, 100)
+
+		for i, value := range t {
+			if ok, errs := validateJson(value, tr, append(context, strconv.Itoa(i))); !ok {
+				failures = append(failures, errs...)
+			}
+		}
+
+		return len(failures) == 0, failures
+	case string:
+		return validateProperty(Schema{Type: TypeString}, t, tr, context)
+	case float64:
+		return validateProperty(Schema{Type: TypeInteger}, t, tr, context)
+	}
+
+	return false, []reporting.Failure{reporting.NewFailure("Value is not a JSON map", context)}
+}
+
+var Json Schema
+
+func init() {
+	Json = Schema{
+		Type:         TypeMap,
+		ValidateFunc: validateJson,
+	}
+}
+
 //go:generate stringer -type=ValueType
 
 type ValueType int
@@ -82,7 +126,16 @@ func validateProperty(s Schema, value interface{}, tr TemplateResource, context 
 
 	if ok := validateValueType(s.Type, value, context); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			return validateBuiltinFns(complex, tr, context)
+			ok, errs := validateBuiltinFns(complex, tr, context)
+			if ok {
+				return true, nil
+			}
+
+			if errs != nil {
+				return false, errs
+			}
+
+			return false, []reporting.Failure{reporting.NewFailure("Value is a map but isn't a builtin", context)}
 		}
 
 		return false, []reporting.Failure{reporting.NewInvalidTypeFailure(s.Type, value, context)}
@@ -141,7 +194,7 @@ func validateBuiltinFns(value map[string]interface{}, tr TemplateResource, conte
 		return validateBase64(base64, tr, append(context, "Fn::Base64"))
 	}
 
-	return false, []reporting.Failure{reporting.NewFailure("Value is a map but isn't a builtin", context)}
+	return false, nil // not a builtin, but this isn't necessarily bad so we don't return an error here
 }
 
 var pseudoParameters = map[string]bool{
