@@ -11,7 +11,8 @@ func CacheCluster() Resource {
 			},
 
 			"AZMode": Schema{
-				Type: TypeString,
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("single-az", "cross-az"),
 			},
 
 			"CacheNodeType": Schema{
