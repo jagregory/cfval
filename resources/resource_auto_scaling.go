@@ -22,16 +22,34 @@ var autoScalingTag = Resource{
 }
 
 var metricsCollection = Resource{
-	AwsType:    "Auto Scaling MetricsCollection",
+	AwsType: "Auto Scaling MetricsCollection",
 	Properties: map[string]Schema{
-	// TODO
+		"Granularity": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"Metrics": Schema{
+			Type:  TypeString,
+			Array: true,
+		},
 	},
 }
 
 var notificationConfiguration = Resource{
-	AwsType:    "Auto Scaling NotificationConfiguration",
+	AwsType: "Auto Scaling NotificationConfiguration",
 	Properties: map[string]Schema{
-	// TODO
+		"NotificationTypes": Schema{
+			Type:         TypeString,
+			Required:     true,
+			Array:        true,
+			ValidateFunc: EnumValidate("autoscaling:EC2_INSTANCE_LAUNCH", "autoscaling:EC2_INSTANCE_LAUNCH_ERROR", "autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR", "autoscaling:TEST_NOTIFICATION"),
+		},
+
+		"TopicARN": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
 	},
 }
 
@@ -40,9 +58,10 @@ func AutoScalingGroup() Resource {
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
 		Properties: map[string]Schema{
 			"AvailabilityZones": Schema{
-				Array:        true,
-				Type:         TypeString,
-				ValidateFunc: availabilityZone,
+				Array:          true,
+				Type:           TypeString,
+				ValidateFunc:   availabilityZone,
+				RequiredUnless: []string{"VPCZoneIdentifier"},
 			},
 
 			"Cooldown": Schema{
@@ -63,11 +82,13 @@ func AutoScalingGroup() Resource {
 			},
 
 			"InstanceId": Schema{
-				Type: TypeString,
+				Type:           TypeString,
+				RequiredUnless: []string{"LaunchConfigurationName"},
 			},
 
 			"LaunchConfigurationName": Schema{
-				Type: TypeString,
+				Type:           TypeString,
+				RequiredUnless: []string{"InstanceId"},
 			},
 
 			"LoadBalancerNames": Schema{
@@ -108,8 +129,9 @@ func AutoScalingGroup() Resource {
 			},
 
 			"VPCZoneIdentifier": Schema{
-				Type:  TypeString,
-				Array: true,
+				Type:           TypeString,
+				Array:          true,
+				RequiredUnless: []string{"AvailabilityZones"},
 			},
 		},
 	}
