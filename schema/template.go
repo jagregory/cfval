@@ -10,10 +10,21 @@ type TemplateResource struct {
 	Template   *Template
 	Definition Resource
 	Properties map[string]interface{}
+	Metadata   map[string]interface{}
 }
 
 func (tr TemplateResource) Validate(context []string) (bool, []reporting.Failure) {
-	return tr.Definition.Validate(tr, context)
+	failures := make([]reporting.Failure, 0, 50)
+
+	if ok, errs := tr.Definition.Validate(tr, context); !ok {
+		failures = append(failures, errs...)
+	}
+
+	if ok, errs := Json.Validate(tr.Metadata, tr, append(context, "Metadata")); !ok {
+		failures = append(failures, errs...)
+	}
+
+	return len(failures) == 0, failures
 }
 
 func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {

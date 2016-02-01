@@ -113,7 +113,7 @@ func (s Schema) Validate(value interface{}, tr TemplateResource, context []strin
 
 func validateResourceProperty(r Resource, value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 	if properties, ok := value.(map[string]interface{}); ok {
-		return TemplateResource{tr.Template, r, properties}.Validate(context)
+		return TemplateResource{Template: tr.Template, Definition: r, Properties: properties}.Validate(context)
 	}
 
 	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, r.AwsType), context)}

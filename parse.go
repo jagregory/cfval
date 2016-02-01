@@ -46,6 +46,7 @@ func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
 		Resources  map[string]struct {
 			Type       string
 			Properties map[string]interface{}
+			Metadata   map[string]interface{}
 		}
 	}
 
@@ -66,6 +67,7 @@ func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
 				Template:   template,
 				Definition: ctor(),
 				Properties: rawResource.Properties,
+				Metadata:   rawResource.Metadata,
 			}
 		} else if !forgiving {
 			template.Resources[key] = schema.NewUnrecognisedResource(template, rawResource.Type)
