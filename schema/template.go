@@ -54,8 +54,8 @@ type Template struct {
 func (t Template) Validate() (bool, []reporting.Failure) {
 	errors := make([]reporting.Failure, 0, 100)
 
-	for logicalId, resource := range t.Resources {
-		if ok, errs := resource.Validate([]string{"Resources", logicalId}); !ok {
+	for logicalID, resource := range t.Resources {
+		if ok, errs := resource.Validate([]string{"Resources", logicalID}); !ok {
 			errors = append(errors, errs...)
 		}
 	}
