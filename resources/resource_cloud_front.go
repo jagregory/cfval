@@ -40,15 +40,22 @@ var defaultCacheBehaviour = Resource{
 	AwsType: "CloudFront DefaultCacheBehaviour",
 	Properties: map[string]Schema{
 		"AllowedMethods": Schema{
-			Array:        true,
-			Type:         TypeString,
-			ValidateFunc: EnumValidate("DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"),
+			Array: true,
+			Type:  TypeString,
+			ArrayValidateFunc: FixedArrayValidate(
+				[]string{"HEAD", "GET"},
+				[]string{"GET", "HEAD", "OPTIONS"},
+				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
+			),
 		},
 
 		"CachedMethods": Schema{
-			Array:        true,
-			Type:         TypeString,
-			ValidateFunc: EnumValidate("GET", "HEAD", "OPTIONS"),
+			Array: true,
+			Type:  TypeString,
+			ArrayValidateFunc: FixedArrayValidate(
+				[]string{"HEAD", "GET"},
+				[]string{"GET", "HEAD", "OPTIONS"},
+			),
 		},
 
 		"DefaultTTL": Schema{

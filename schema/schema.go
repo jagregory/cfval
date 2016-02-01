@@ -20,15 +20,17 @@ const (
 )
 
 type ValidateFunc func(interface{}, TemplateResource, []string) (bool, []reporting.Failure)
+type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (bool, []reporting.Failure)
 
 type Schema struct {
-	Array          bool
-	Conflicts      []string
-	Required       bool
-	RequiredIf     []string
-	RequiredUnless []string
-	Type           interface{}
-	ValidateFunc   ValidateFunc
+	Array             bool
+	Conflicts         []string
+	Required          bool
+	RequiredIf        []string
+	RequiredUnless    []string
+	Type              interface{}
+	ValidateFunc      ValidateFunc
+	ArrayValidateFunc ArrayValidateFunc
 }
 
 func (s Schema) Validate(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
@@ -42,10 +44,17 @@ func (s Schema) Validate(value interface{}, tr TemplateResource, context []strin
 	pass := true
 
 	if s.Array {
-		for i, item := range value.([]interface{}) {
-			if ok, errs := validateProperty(s, item, tr, append(context, strconv.Itoa(i))); !ok {
+		if s.ArrayValidateFunc != nil {
+			if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, context); !ok {
 				failures = append(failures, errs...)
 				pass = false
+			}
+		} else {
+			for i, item := range value.([]interface{}) {
+				if ok, errs := validateProperty(s, item, tr, append(context, strconv.Itoa(i))); !ok {
+					failures = append(failures, errs...)
+					pass = false
+				}
 			}
 		}
 	} else {
