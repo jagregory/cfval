@@ -91,12 +91,12 @@ The following resources are either implemented or partially implemented:
   - [ ] AWS::ECS::TaskDefinition
   - [ ] AWS::EFS::FileSystem
   - [ ] AWS::EFS::MountTarget
-  - [ ] AWS::ElastiCache::CacheCluster
+  - 🕒 AWS::ElastiCache::CacheCluster
   - [ ] AWS::ElastiCache::ParameterGroup
-  - [ ] AWS::ElastiCache::ReplicationGroup
+  - 🕒 AWS::ElastiCache::ReplicationGroup
   - [ ] AWS::ElastiCache::SecurityGroup
   - [ ] AWS::ElastiCache::SecurityGroupIngress
-  - [ ] AWS::ElastiCache::SubnetGroup
+  - 🕒 AWS::ElastiCache::SubnetGroup
   - [ ] AWS::ElasticBeanstalk::Application
   - [ ] AWS::ElasticBeanstalk::ApplicationVersion
   - [ ] AWS::ElasticBeanstalk::ConfigurationTemplate

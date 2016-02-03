@@ -26,6 +26,7 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::EC2::SubnetRouteTableAssociation":        resources.SubnetRouteTableAssociation,
 	"AWS::EC2::VPCGatewayAttachment":               resources.VpcGatewayAttachment,
 	"AWS::ElastiCache::CacheCluster":               resources.CacheCluster,
+	"AWS::ElastiCache::ReplicationGroup":           resources.ReplicationGroup,
 	"AWS::ElastiCache::SubnetGroup":                resources.SubnetGroup,
 	"AWS::ElasticBeanstalk::Application":           resources.Application,
 	"AWS::ElasticBeanstalk::ApplicationVersion":    resources.ApplicationVersion,
@@ -43,6 +44,7 @@ var typeCtors = map[string]resourceCtor{
 func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
 	var temp struct {
 		Parameters map[string]schema.Parameter
+		Outputs    map[string]schema.Output
 		Resources  map[string]struct {
 			Type       string
 			Properties map[string]interface{}
@@ -60,6 +62,7 @@ func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
 		Resources: make(map[string]schema.TemplateResource),
 	}
 	template.Parameters = temp.Parameters
+	template.Outputs = temp.Outputs
 
 	for key, rawResource := range temp.Resources {
 		if ctor, ok := typeCtors[rawResource.Type]; ok {
