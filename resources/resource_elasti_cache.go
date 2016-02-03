@@ -108,6 +108,7 @@ func CacheCluster() Resource {
 	}
 }
 
+// You cannot enable automatic failover for Redis versions earlier than 2.8.6 or for T1 and T2 cache node types.
 func automaticFailoverEnabled(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 	if version, found := tr.Properties["EngineVersion"]; found {
 		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
@@ -131,7 +132,6 @@ func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
 		Properties: map[string]Schema{
-			// You cannot enable automatic failover for Redis versions earlier than 2.8.6 or for T1 and T2 cache node types.
 			// TODO: Default: true, so NumCacheClusters validation can work
 			"AutomaticFailoverEnabled": Schema{
 				Type:         TypeBool,

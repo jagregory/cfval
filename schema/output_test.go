@@ -6,49 +6,42 @@ import (
 
 func TestOutputValidation(t *testing.T) {
 	template := &Template{
-		Outputs: map[string]Output{},
+		Resources: map[string]TemplateResource{
+			"MyResource": TemplateResource{},
+		},
 	}
 	context := []string{}
 
-	resource := Resource{
-		Properties: map[string]Schema{
-			"Option1": Schema{
-				Type:      TypeString,
-				Conflicts: []string{"Option2"},
-			},
-
-			"Option2": Schema{
-				Type:      TypeString,
-				Conflicts: []string{"Option1"},
-			},
-		},
+	goodResourceOutput := Output{
+		Description: "Ref with valid resource",
+		Value:       map[string]interface{}{"Ref": "MyResource"},
+	}
+	badResourceOutput := Output{
+		Description: "Ref with invalid resource",
+		Value:       map[string]interface{}{"Ref": "Missing"},
+	}
+	goodAttrOutput := Output{
+		Description: "GetAtt with valid resource",
+		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}},
+	}
+	badAttrOutput := Output{
+		Description: "GetAtt with invalid resource",
+		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}},
 	}
 
-	nothingSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{}}
-	option1Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
-		"Option1": "value",
-	}}
-	option2Set := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
-		"Option2": "value",
-	}}
-	bothSet := TemplateResource{Template: template, Definition: resource, Properties: map[string]interface{}{
-		"Option1": "value",
-		"Option2": "value",
-	}}
-
-	if ok, _ := nothingSet.Validate(context); !ok {
-		t.Error("Resource should pass if both neither Option1 or Option2 are set")
+	if ok, errs := goodResourceOutput.Validate(template, context); !ok {
+		t.Error("Resource output should pass if resource exists", errs)
 	}
 
-	if ok, _ := option1Set.Validate(context); !ok {
-		t.Error("Resource should pass if only Option1 set")
+	if ok, errs := badResourceOutput.Validate(template, context); ok {
+		t.Error("Resource output should fail if resource doesn't exist", errs)
 	}
 
-	if ok, _ := option2Set.Validate(context); !ok {
-		t.Error("Resource should pass if only Option2 set")
+	if ok, errs := goodAttrOutput.Validate(template, context); !ok {
+		t.Error("GetAtt output should pass if resource exists", errs)
 	}
 
-	if ok, _ := bothSet.Validate(context); ok {
-		t.Error("Resource should fail if both Option1 or Option2 are set")
+	if ok, errs := badAttrOutput.Validate(template, context); ok {
+		t.Error("GetAtt output should fail if resource doesn't exist", errs)
 	}
 }

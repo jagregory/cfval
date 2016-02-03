@@ -1,14 +1,12 @@
 package schema
 
-import (
-	"fmt"
-
-	"github.com/jagregory/cfval/reporting"
-)
+import "github.com/jagregory/cfval/reporting"
 
 type Output struct {
 	Description, Value interface{}
 }
+
+var outputSchema = Schema{Type: TypeString, Required: true}
 
 func (o Output) Validate(template *Template, context []string) (bool, []reporting.Failure) {
 	failures := make([]reporting.Failure, 0, 10)
@@ -17,10 +15,9 @@ func (o Output) Validate(template *Template, context []string) (bool, []reportin
 		failures = append(failures, reporting.NewFailure("Expected a string", append(context, "Description")))
 	}
 
-	fmt.Println("validating output", context)
-	if ok, errs := validateProperty(Schema{Type: TypeString, Required: true}, o.Value, TemplateResource{Template: template}, append(context, "Value")); !ok {
+	if ok, errs := validateProperty(outputSchema, o.Value, TemplateResource{Template: template}, append(context, "Value")); !ok {
 		failures = append(failures, errs...)
 	}
 
-	return true, nil
+	return len(failures) == 0, failures
 }
