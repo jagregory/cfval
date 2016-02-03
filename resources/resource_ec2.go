@@ -286,9 +286,10 @@ func VpcGatewayAttachment() Resource {
 				Type: TypeString,
 			},
 
-			"VpcId": Required(Schema{
-				Type: TypeString,
-			}),
+			"VpcId": Schema{
+				Required: true,
+				Type:     TypeString,
+			},
 
 			"VpnGatewayId": Schema{
 				Type: TypeString,

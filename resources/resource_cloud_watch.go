@@ -25,9 +25,10 @@ func Alarm() Resource {
 				Type: TypeBool,
 			},
 
-			"AlarmActions": ArrayOf(Schema{
-				Type: TypeString,
-			}),
+			"AlarmActions": Schema{
+				Array: true,
+				Type:  TypeString,
+			},
 
 			"AlarmDescription": Schema{
 				Type: TypeString,
@@ -43,17 +44,20 @@ func Alarm() Resource {
 				ValidateFunc: EnumValidate("GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"),
 			},
 
-			"Dimensions": ArrayOf(Schema{
-				Type: metricDimension,
-			}),
+			"Dimensions": Schema{
+				Type:  metricDimension,
+				Array: true,
+			},
 
-			"EvaluationPeriods": Required(Schema{
-				Type: TypeString,
-			}),
+			"EvaluationPeriods": Schema{
+				Type:     TypeString,
+				Required: true,
+			},
 
-			"InsufficientDataActions": ArrayOf(Schema{
-				Type: TypeString,
-			}),
+			"InsufficientDataActions": Schema{
+				Type:  TypeString,
+				Array: true,
+			},
 
 			"MetricName": Schema{
 				Type:     TypeString,

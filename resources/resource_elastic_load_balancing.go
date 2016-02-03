@@ -84,7 +84,9 @@ func LoadBalancer() Resource {
 			// LoadBalancerName
 			// Type: String
 
-			"Listeners": Required(ArrayOf(Schema{
+			"Listeners": Schema{
+				Array:    true,
+				Required: true,
 				Type: Resource{
 					AwsType: "ElasticLoadBalancing Listener",
 					Properties: map[string]Schema{
@@ -119,7 +121,7 @@ func LoadBalancer() Resource {
 						},
 					},
 				},
-			})),
+			},
 
 			// Policies
 			// Type: A list of ElasticLoadBalancing policy objects.

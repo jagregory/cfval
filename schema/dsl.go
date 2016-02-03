@@ -83,11 +83,6 @@ func FixedArrayValidate(options ...[]string) ArrayValidateFunc {
 	}
 }
 
-func ArrayOf(schema Schema) Schema {
-	schema.Array = true
-	return schema
-}
-
 func Required(schema Schema) Schema {
 	schema.Required = true
 	return schema
