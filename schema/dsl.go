@@ -57,6 +57,18 @@ func IntegerRangeValidate(start, end float64) ValidateFunc {
 	}
 }
 
+func StringLengthValidate(min, max int) ValidateFunc {
+	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+		str := value.(string)
+
+		if len(str) < min || len(str) > max {
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
+		}
+
+		return true, nil
+	}
+}
+
 // TODO: this is really dumb, but it's late and I'm tired
 func match(left []string, right []interface{}) bool {
 	if len(left) != len(right) {

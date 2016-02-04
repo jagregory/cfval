@@ -68,3 +68,19 @@ func TestIntegerRangeValidateHelper(t *testing.T) {
 		}
 	}
 }
+
+func TestStringLengthValidateHelper(t *testing.T) {
+	validator := StringLengthValidate(5, 10)
+
+	for _, valid := range []string{"abcde", "abcdefghij"} {
+		if ok, _ := validator(valid, TemplateResource{}, []string{}); !ok {
+			t.Error("Should pass on valid value", valid)
+		}
+	}
+
+	for _, invalid := range []string{"", "abcd", "abcdefghijk"} {
+		if ok, _ := validator(invalid, TemplateResource{}, []string{}); ok {
+			t.Error("Should fail on invalid value", invalid)
+		}
+	}
+}
