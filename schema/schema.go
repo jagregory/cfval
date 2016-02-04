@@ -176,7 +176,7 @@ func validateValueType(valueType interface{}, value interface{}, context []strin
 
 func validateBuiltinFns(value map[string]interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 	if ref, ok := value["Ref"]; ok {
-		return validateRef(ref, tr.Template, append(context, "Ref"))
+		return NewRef(ref.(string)).Validate(tr.Template, append(context, "Ref"))
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
@@ -196,37 +196,6 @@ func validateBuiltinFns(value map[string]interface{}, tr TemplateResource, conte
 	}
 
 	return false, nil // not a builtin, but this isn't necessarily bad so we don't return an error here
-}
-
-var pseudoParameters = map[string]bool{
-	"AWS::AccountId":        true,
-	"AWS::NotificationARNs": true,
-	"AWS::NoValue":          true,
-	"AWS::Region":           true,
-	"AWS::StackId":          true,
-	"AWS::StackName":        true,
-}
-
-func validateRef(value interface{}, t *Template, context []string) (bool, []reporting.Failure) {
-	if ref, ok := value.(string); ok {
-		if _, ok := t.Resources[ref]; ok {
-			// ref is to a resource and we've found it
-			// TODO: validate resource ref value is correct type for property
-			return true, nil
-		} else if _, ok := t.Parameters[ref]; ok {
-			// ref is to a parameter and we've found it
-			// TODO: validate parameter type is correct for property
-			return true, nil
-		} else if _, ok := pseudoParameters[ref]; ok {
-			// ref is to a cloudformation pseudo parameter and we've found it
-			// TODO: validate parameter type is correct for property
-			return true, nil
-		}
-
-		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource or parameter", ref), context)}
-	}
-
-	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref has invalid value '%s'", value), context)}
 }
 
 // TODO: Supported functions within a function
