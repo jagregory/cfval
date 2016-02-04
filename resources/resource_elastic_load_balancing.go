@@ -42,6 +42,7 @@ func LoadBalancer() Resource {
 			// Type: Boolean
 			//
 			"HealthCheck": Schema{
+				// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-health-check.html
 				Type: Resource{
 					AwsType: "ElasticLoadBalancing HealthCheck",
 					Properties: map[string]Schema{
