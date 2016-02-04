@@ -2,6 +2,7 @@ package schema
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/jagregory/cfval/reporting"
@@ -26,6 +27,21 @@ func EnumValidate(options ...string) ValidateFunc {
 		}
 
 		return false, []reporting.Failure{reporting.NewInvalidTypeFailure(TypeEnum, value, context)}
+	}
+}
+
+func RegexpValidate(pattern, message string) ValidateFunc {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		panic(err)
+	}
+
+	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+		if re.MatchString(value.(string)) {
+			return true, nil
+		}
+
+		return false, []reporting.Failure{reporting.NewFailure(message, context)}
 	}
 }
 

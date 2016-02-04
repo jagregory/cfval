@@ -31,3 +31,24 @@ func TestFixedArrayValidateHelper(t *testing.T) {
 		t.Error("Should pass on unordered expected list")
 	}
 }
+
+func TestRegexpValidateHelper(t *testing.T) {
+	validator := RegexpValidate("^a string$", "Match failed")
+
+	ok, errs := validator("a string", TemplateResource{}, []string{})
+	if !ok {
+		t.Error("Should pass on a valid string")
+	}
+	if len(errs) > 0 {
+		t.Error("Should pass on a valid string", errs)
+	}
+
+	ok, errs = validator("no match", TemplateResource{}, []string{})
+	if ok {
+		t.Error("Should fail on a non-matching string")
+	}
+
+	if len(errs) == 0 || errs[0].Message != "Match failed" {
+		t.Error("Should fail with supplied message")
+	}
+}
