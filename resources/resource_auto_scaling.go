@@ -214,39 +214,70 @@ func LaunchConfiguration() Resource {
 				Type:  blockDeviceMapping,
 				Array: true,
 			},
-			// "ClassicLinkVPCId" : String,
-			// "ClassicLinkVPCSecurityGroups" : [ String, ... ],
-			// "EbsOptimized" : Boolean,
+
+			"ClassicLinkVPCId": Schema{
+				Type: TypeString,
+			},
+
+			"ClassicLinkVPCSecurityGroups": Schema{
+				Type:       TypeString,
+				Array:      true,
+				RequiredIf: []string{"ClassicLinkVPCId"},
+			},
+
+			"EbsOptimized": Schema{
+				Type:    TypeBool,
+				Default: false,
+			},
 
 			"IamInstanceProfile": Schema{
-				Type: TypeString,
+				Type:         TypeString,
+				ValidateFunc: StringLengthValidate(1, 1600),
 			},
 
 			"ImageId": Schema{
 				Type: TypeString,
 			},
 
-			// "InstanceId" : String,
-			// "InstanceMonitoring" : Boolean,
+			"InstanceId": Schema{
+				Type: TypeString,
+			},
+
+			"InstanceMonitoring": Schema{
+				Type:    TypeBool,
+				Default: true,
+			},
 
 			"InstanceType": Schema{
 				Type: TypeString,
 			},
 
-			// "KernelId" : String,
+			"KernelId": Schema{
+				Type: TypeString,
+			},
+
 			"KeyName": Schema{
 				Type: TypeString,
 			},
 
-			// "PlacementTenancy" : String,
-			// "RamDiskId" : String,
+			// TODO: If you specify this property, you must specify at least one subnet in the VPCZoneIdentifier property of the AWS::AutoScaling::AutoScalingGroup resource.
+			"PlacementTenancy": Schema{
+				Type:         TypeString,
+				ValidateFunc: EnumValidate("default", "dedicated"),
+			},
+
+			"RamDiskId": Schema{
+				Type: TypeString,
+			},
 
 			"SecurityGroups": Schema{
 				Type:  TypeString,
 				Array: true,
 			},
 
-			// "SpotPrice" : String,
+			"SpotPrice": Schema{
+				Type: TypeString,
+			},
 
 			"UserData": Schema{
 				Type: TypeString,
