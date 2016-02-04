@@ -52,3 +52,19 @@ func TestRegexpValidateHelper(t *testing.T) {
 		t.Error("Should fail with supplied message")
 	}
 }
+
+func TestIntegerRangeValidateHelper(t *testing.T) {
+	validator := IntegerRangeValidate(5, 10)
+
+	for _, valid := range []float64{5, 6, 7, 8, 9, 10} {
+		if ok, _ := validator(valid, TemplateResource{}, []string{}); !ok {
+			t.Error("Should pass on valid value", valid)
+		}
+	}
+
+	for _, invalid := range []float64{-10, 0, 1, 2, 11, 100} {
+		if ok, _ := validator(invalid, TemplateResource{}, []string{}); ok {
+			t.Error("Should fail on invalid value", invalid)
+		}
+	}
+}

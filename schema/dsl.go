@@ -45,6 +45,18 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 	}
 }
 
+func IntegerRangeValidate(start, end float64) ValidateFunc {
+	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+		floatValue := value.(float64)
+
+		if floatValue < start || floatValue > end {
+			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
+		}
+
+		return true, nil
+	}
+}
+
 // TODO: this is really dumb, but it's late and I'm tired
 func match(left []string, right []interface{}) bool {
 	if len(left) != len(right) {
