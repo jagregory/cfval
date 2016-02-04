@@ -132,9 +132,9 @@ func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
 		Properties: map[string]Schema{
-			// TODO: Default: true, so NumCacheClusters validation can work
 			"AutomaticFailoverEnabled": Schema{
 				Type:         TypeBool,
+				Default:      true,
 				ValidateFunc: automaticFailoverEnabled,
 			},
 

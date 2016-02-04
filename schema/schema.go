@@ -69,6 +69,7 @@ type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (bool, []
 type Schema struct {
 	Array             bool
 	Conflicts         []string
+	Default           interface{}
 	Required          bool
 	RequiredIf        []string
 	RequiredUnless    []string
