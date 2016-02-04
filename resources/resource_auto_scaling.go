@@ -53,6 +53,7 @@ var notificationConfiguration = Resource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
 func AutoScalingGroup() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
@@ -137,12 +138,82 @@ func AutoScalingGroup() Resource {
 	}
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
+var ebsBlockDevice = Resource{
+	AwsType: "AutoScaling EBS Block Device",
+	Properties: map[string]Schema{
+		"DeleteOnTermination": Schema{
+			Type:    TypeBool,
+			Default: true,
+		},
+
+		"Encrypted": Schema{
+			Type: TypeBool,
+		},
+
+		"Iops": Schema{
+			Type: TypeInteger,
+		},
+
+		"SnapshotId": Schema{
+			Type: TypeString,
+		},
+
+		"VolumeSize": Schema{
+			Type:         TypeInteger,
+			ValidateFunc: IntegerRangeValidate(1, 1024),
+		},
+
+		"VolumeType": Schema{
+			Type:         TypeString,
+			Default:      "standard",
+			ValidateFunc: EnumValidate("standard", "io1", "gp2"),
+		},
+	},
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-mapping.html
+var blockDeviceMapping = Resource{
+	AwsType: "AutoScaling Block Device Mapping",
+	Properties: map[string]Schema{
+		"DeviceName": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"Ebs": Schema{
+			Type:           ebsBlockDevice,
+			RequiredUnless: []string{"VirtualName"},
+		},
+
+		"NoDevice": Schema{
+			Type: TypeBool,
+		},
+
+		"VirtualName": Schema{
+			Type:           TypeString,
+			RequiredUnless: []string{"Ebs"},
+			ValidateFunc: RegexpValidate(
+				"^ephemeral\\d+$",
+				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
+			),
+		},
+	},
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
 func LaunchConfiguration() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::LaunchConfiguration",
 		Properties: map[string]Schema{
-			// "AssociatePublicIpAddress" : Boolean,
-			// "BlockDeviceMappings" : [ BlockDeviceMapping, ... ],
+			"AssociatePublicIpAddress": Schema{
+				Type: TypeBool,
+			},
+
+			"BlockDeviceMappings": Schema{
+				Type:  blockDeviceMapping,
+				Array: true,
+			},
 			// "ClassicLinkVPCId" : String,
 			// "ClassicLinkVPCSecurityGroups" : [ String, ... ],
 			// "EbsOptimized" : Boolean,
