@@ -20,6 +20,12 @@ var metricDimension = Resource{
 func Alarm() Resource {
 	return Resource{
 		AwsType: "AWS::CloudWatch::Alarm",
+
+		// AlarmName
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"ActionsEnabled": Schema{
 				Type: TypeBool,

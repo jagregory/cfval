@@ -5,6 +5,12 @@ import . "github.com/jagregory/cfval/schema"
 func LoadBalancer() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			// AccessLoggingPolicy
 			// Type: Elastic Load Balancing AccessLoggingPolicy

@@ -2,25 +2,6 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var autoScalingTag = Resource{
-	AwsType: "AutoScaling Tag",
-	Properties: map[string]Schema{
-		"Key": Schema{
-			Type:     TypeString,
-			Required: true,
-		},
-
-		"Value": Schema{
-			Type:     TypeString,
-			Required: true,
-		},
-
-		"PropagateAtLaunch": Schema{
-			Type: TypeBool,
-		},
-	},
-}
-
 var metricsCollection = Resource{
 	AwsType: "Auto Scaling MetricsCollection",
 	Properties: map[string]Schema{
@@ -53,10 +34,35 @@ var notificationConfiguration = Resource{
 	},
 }
 
+var autoScalingTag = Resource{
+	AwsType: "AutoScaling Tag",
+	Properties: map[string]Schema{
+		"Key": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"Value": Schema{
+			Type:     TypeString,
+			Required: true,
+		},
+
+		"PropagateAtLaunch": Schema{
+			Type: TypeBool,
+		},
+	},
+}
+
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
 func AutoScalingGroup() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::AutoScalingGroup",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AvailabilityZones": Schema{
 				Array:          true,
@@ -205,6 +211,12 @@ var blockDeviceMapping = Resource{
 func LaunchConfiguration() Resource {
 	return Resource{
 		AwsType: "AWS::AutoScaling::LaunchConfiguration",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AssociatePublicIpAddress": Schema{
 				Type: TypeBool,

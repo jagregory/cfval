@@ -5,6 +5,12 @@ import . "github.com/jagregory/cfval/schema"
 func DBInstance() Resource {
 	return Resource{
 		AwsType: "AWS::RDS::DBInstance",
+
+		// ID
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AllocatedStorage": Schema{
 				Type: TypeString,

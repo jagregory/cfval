@@ -5,6 +5,12 @@ import . "github.com/jagregory/cfval/schema"
 func Application() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Application",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"ApplicationName": Schema{
 				Type: TypeString,
@@ -20,6 +26,12 @@ func Application() Resource {
 func ApplicationVersion() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::ApplicationVersion",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"ApplicationName": Schema{
 				Type:     TypeString,
@@ -74,6 +86,12 @@ var optionsSettings = Resource{
 func ConfigurationTemplate() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::ConfigurationTemplate",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"ApplicationName": Schema{
 				Type:     TypeString,
@@ -103,6 +121,12 @@ func ConfigurationTemplate() Resource {
 func Environment() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Environment",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"ApplicationName": Schema{
 				Type:     TypeString,

@@ -8,7 +8,8 @@ import (
 
 type Resource struct {
 	AwsType      string
-	Properties   map[string]Schema
+	Properties   Properties
+	ReturnValue  Schema
 	ValidateFunc func(TemplateResource, []string) (bool, []reporting.Failure)
 }
 
@@ -17,10 +18,45 @@ func (rd Resource) Validate(tr TemplateResource, context []string) (bool, []repo
 		return rd.ValidateFunc(tr, context)
 	}
 
-	failures := make([]reporting.Failure, 0, 30)
+	failures, visited := rd.Properties.Validate(tr, context)
+
+	// Reject any properties we weren't expecting
+	for key := range tr.Properties {
+		if !visited[key] {
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for %s", key, rd.AwsType), append(context, key)))
+		}
+	}
+
+	return len(failures) == 0, failures
+}
+
+func collectKeys(m1 map[string]Schema, m2 map[string]interface{}) []string {
+	set := make(map[string]bool)
+	for key := range m1 {
+		set[key] = true
+	}
+	for key := range m2 {
+		set[key] = true
+	}
+
+	keys := make([]string, len(set))
+
+	i := 0
+	for k := range set {
+		keys[i] = k
+		i++
+	}
+
+	return keys
+}
+
+type Properties map[string]Schema
+
+func (p Properties) Validate(tr TemplateResource, context []string) ([]reporting.Failure, map[string]bool) {
+	failures := make([]reporting.Failure, 0, len(p)*2)
 	visited := make(map[string]bool)
 
-	for key, schema := range rd.Properties {
+	for key, schema := range p {
 		visited[key] = true
 
 		value, _ := tr.Properties[key]
@@ -58,32 +94,5 @@ func (rd Resource) Validate(tr TemplateResource, context []string) (bool, []repo
 		}
 	}
 
-	// Reject any properties we weren't expecting
-	for key := range tr.Properties {
-		if !visited[key] {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for %s", key, rd.AwsType), append(context, key)))
-		}
-	}
-
-	return len(failures) == 0, failures
-}
-
-func collectKeys(m1 map[string]Schema, m2 map[string]interface{}) []string {
-	set := make(map[string]bool)
-	for key := range m1 {
-		set[key] = true
-	}
-	for key := range m2 {
-		set[key] = true
-	}
-
-	keys := make([]string, len(set))
-
-	i := 0
-	for k := range set {
-		keys[i] = k
-		i++
-	}
-
-	return keys
+	return failures, visited
 }

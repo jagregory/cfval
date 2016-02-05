@@ -5,6 +5,12 @@ import . "github.com/jagregory/cfval/schema"
 func Eip() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::EIP",
+
+		// PublicIp
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"InstanceId": Schema{
 				Type: TypeString,
@@ -20,6 +26,12 @@ func Eip() Resource {
 func Instance() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Instance",
+
+		// InstanceId
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AvailabilityZone": Schema{
 				Type: TypeString,
@@ -80,7 +92,13 @@ func Instance() Resource {
 
 func InternetGateway() Resource {
 	return Resource{
-		AwsType:    "AWS::EC2::InternetGateway",
+		AwsType: "AWS::EC2::InternetGateway",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{},
 	}
 }
@@ -88,6 +106,12 @@ func InternetGateway() Resource {
 func Route() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Route",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"DestinationCidrBlock": Schema{
 				Type:         TypeString,
@@ -122,6 +146,12 @@ func Route() Resource {
 func RouteTable() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::RouteTable",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"VpcId": Required(vpcId),
 
@@ -136,6 +166,12 @@ func RouteTable() Resource {
 func SecurityGroup() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroup",
+
+		// SecurityGroupName for non-VPC, SecurityGroupId for VPC
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"GroupDescription": Schema{
 				Type: TypeString,
@@ -187,6 +223,7 @@ func SecurityGroup() Resource {
 func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
+
 		Properties: map[string]Schema{
 			"CidrIp": Schema{
 				Type:         TypeString,
@@ -264,6 +301,12 @@ func Subnet() Resource {
 func SubnetRouteTableAssociation() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SubnetRouteTableAssociation",
+
+		// ID
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"RouteTableId": Schema{
 				Type:     TypeString,
@@ -281,6 +324,12 @@ func SubnetRouteTableAssociation() Resource {
 func VpcGatewayAttachment() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::VPCGatewayAttachment",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"InternetGatewayId": Schema{
 				Type: TypeString,

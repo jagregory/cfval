@@ -5,6 +5,12 @@ import . "github.com/jagregory/cfval/schema"
 func Policy() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Policy",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"Groups": Schema{
 				Type:  TypeString,
@@ -34,6 +40,12 @@ func Policy() Resource {
 func Role() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Role",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AssumeRolePolicyDocument": Required(Json),
 
@@ -67,6 +79,12 @@ func Role() Resource {
 func InstanceProfile() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::InstanceProfile",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"Path": Schema{
 				Type:     TypeString,

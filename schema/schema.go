@@ -12,7 +12,7 @@ func validateJson(value interface{}, tr TemplateResource, context []string) (boo
 	case map[string]interface{}:
 		failures := make([]reporting.Failure, 0, 100)
 
-		if ok, errs := validateBuiltinFns(t, tr, context); !ok && errs != nil {
+		if ok, errs := Json.validateBuiltinFns(t, tr, context); !ok && errs != nil {
 			failures = append(failures, errs...)
 		} else {
 			for key, value := range t {
@@ -56,7 +56,8 @@ func init() {
 type ValueType int
 
 const (
-	TypeEnum ValueType = iota
+	TypeUnknown ValueType = iota
+	TypeEnum
 	TypeString
 	TypeBool
 	TypeInteger
@@ -76,6 +77,14 @@ type Schema struct {
 	Type              interface{}
 	ValidateFunc      ValidateFunc
 	ArrayValidateFunc ArrayValidateFunc
+}
+
+func (s Schema) TargetType() ValueType {
+	if t, ok := s.Type.(ValueType); ok {
+		return t
+	}
+
+	return TypeUnknown
 }
 
 func (s Schema) Validate(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
@@ -127,7 +136,7 @@ func validateProperty(s Schema, value interface{}, tr TemplateResource, context 
 
 	if ok := validateValueType(s.Type, value, context); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			ok, errs := validateBuiltinFns(complex, tr, context)
+			ok, errs := s.validateBuiltinFns(complex, tr, context)
 			if ok {
 				return true, nil
 			}
@@ -174,9 +183,9 @@ func validateValueType(valueType interface{}, value interface{}, context []strin
 	return false
 }
 
-func validateBuiltinFns(value map[string]interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+func (s Schema) validateBuiltinFns(value map[string]interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
 	if ref, ok := value["Ref"]; ok {
-		return NewRef(ref.(string)).Validate(tr.Template, append(context, "Ref"))
+		return NewRef(s, ref.(string)).Validate(tr.Template, append(context, "Ref"))
 	}
 
 	if join, ok := value["Fn::Join"]; ok {

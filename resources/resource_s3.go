@@ -30,6 +30,12 @@ var s3LifecycleRule = Resource{
 func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AccessControl": Schema{
 				Type:         TypeString,

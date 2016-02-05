@@ -43,3 +43,13 @@ func TestGetAtt(t *testing.T) {
 	// 	t.Error("Should pass when valid property used for type of resource", errs)
 	// }
 }
+
+func TestSchemaTargetType(t *testing.T) {
+	if (Schema{Type: TypeInteger}).TargetType() != TypeInteger {
+		t.Error("Schema TargetType should match Type")
+	}
+
+	if (Schema{}).TargetType() != TypeUnknown {
+		t.Error("Schema without Type should return TypeUnknown for TargetType")
+	}
+}

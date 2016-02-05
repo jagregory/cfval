@@ -11,6 +11,12 @@ import (
 func CacheCluster() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::CacheCluster",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AutoMinorVersionUpgrade": Schema{
 				Type: TypeBool,
@@ -131,6 +137,12 @@ func automaticFailoverEnabled(value interface{}, tr TemplateResource, context []
 func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
+
+		// Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AutomaticFailoverEnabled": Schema{
 				Type:         TypeBool,

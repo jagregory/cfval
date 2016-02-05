@@ -330,9 +330,16 @@ var distributionConfig = Resource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution.html
 func Distribution() Resource {
 	return Resource{
 		AwsType: "AWS::CloudFront::Distribution",
+
+		// Distribution ID
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"DistributionConfig": Schema{
 				Required: true,

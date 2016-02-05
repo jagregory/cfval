@@ -64,6 +64,12 @@ var geoLocation = Resource{
 func RecordSet() Resource {
 	return Resource{
 		AwsType: "AWS::Route53::RecordSet",
+
+		// Domain Name
+		ReturnValue: Schema{
+			Type: TypeString,
+		},
+
 		Properties: map[string]Schema{
 			"AliasTarget": Schema{
 				Type:      aliasTarget,

@@ -4,9 +4,9 @@ package schema
 
 import "fmt"
 
-const _ValueType_name = "TypeEnumTypeStringTypeBoolTypeIntegerTypeMap"
+const _ValueType_name = "TypeUnknownTypeEnumTypeStringTypeBoolTypeIntegerTypeMap"
 
-var _ValueType_index = [...]uint8{0, 8, 18, 26, 37, 44}
+var _ValueType_index = [...]uint8{0, 11, 19, 29, 37, 48, 55}
 
 func (i ValueType) String() string {
 	if i < 0 || i >= ValueType(len(_ValueType_index)-1) {
