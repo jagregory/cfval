@@ -325,7 +325,7 @@ func SubnetRouteTableAssociation() Resource {
 	}
 }
 
-func VpcGatewayAttachment() Resource {
+func VPCGatewayAttachment() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::VPCGatewayAttachment",
 

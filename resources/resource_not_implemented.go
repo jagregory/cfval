@@ -282,13 +282,6 @@ func VPCEndpoint() Resource {
 	}
 }
 
-func VPCGatewayAttachment() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPCGatewayAttachment",
-		Properties: map[string]Schema{},
-	}
-}
-
 func VPCPeeringConnection() Resource {
 	return Resource{
 		AwsType:    "AWS::EC2::VPCPeeringConnection",
