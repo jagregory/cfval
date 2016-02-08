@@ -2,16 +2,17 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var resourceTag = Resource{
-	AwsType: "Resource Tag",
-	Properties: map[string]Schema{
+var resourceTag = NestedResource{
+	Description: "Resource Tag",
+
+	Properties: Properties{
 		"Key": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Value": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},

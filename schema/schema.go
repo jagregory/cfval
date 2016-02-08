@@ -1,82 +1,93 @@
+// brain dump
+// instead of having all these different ValueType's
+// we should make schema.Type be an interface type which implements ??? and replaces ValidateFunc
+// so instead of using EnumValidate we have a Type which knows that it can only be a certain
+// combination of strings, or a Type which knows it should have an InstanceId format...
+
 package schema
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateJson(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+func validateJson(value interface{}, tr TemplateResource, context []string) (reporting.ValidateResult, []reporting.Failure) {
 	switch t := value.(type) {
 	case map[string]interface{}:
 		failures := make([]reporting.Failure, 0, 100)
 
-		if ok, errs := Json.validateBuiltinFns(t, tr, context); !ok && errs != nil {
-			failures = append(failures, errs...)
-		} else {
-			for key, value := range t {
-				if ok, errs := validateJson(value, tr, append(context, key)); !ok {
-					failures = append(failures, errs...)
-				}
-			}
+		// TODO: Fix this up asap
+		// if ok, errs := Json.validateBuiltinFns(t, tr, context); !ok && errs != nil {
+		// 	failures = append(failures, errs...)
+		// } else {
+		// 	for key, value := range t {
+		// 		if ok, errs := validateJson(value, tr, append(context, key)); !ok {
+		// 			failures = append(failures, errs...)
+		// 		}
+		// 	}
+		// }
+
+		if len(failures) == 0 {
+			return reporting.ValidateOK, nil
 		}
 
-		return len(failures) == 0, failures
+		return reporting.ValidateOK, failures
 	case []interface{}:
 		failures := make([]reporting.Failure, 0, 100)
 
 		for i, value := range t {
-			if ok, errs := validateJson(value, tr, append(context, strconv.Itoa(i))); !ok {
+			if _, errs := validateJson(value, tr, append(context, strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
 
-		return len(failures) == 0, failures
+		if len(failures) == 0 {
+			return reporting.ValidateOK, nil
+		}
+
+		return reporting.ValidateOK, failures
 	case string:
-		return validateProperty(Schema{Type: TypeString}, t, tr, context)
+		return ValueString.Validate(Schema{Type: ValueString}, t, tr, context)
 	case float64:
-		return validateProperty(Schema{Type: TypeInteger}, t, tr, context)
+		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, tr, context)
 	}
 
-	return false, []reporting.Failure{reporting.NewFailure("Value is not a JSON map", context)}
+	return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Value is not a JSON map", context)}
 }
 
 var Json Schema
 
 func init() {
 	Json = Schema{
-		Type:         TypeMap,
-		ValidateFunc: validateJson,
+		Type: ValueMap,
+		// ValidateFunc: validateJson, TODO: Fixme
 	}
 }
 
-//go:generate stringer -type=ValueType
+type PropertyType interface {
+	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure)
+}
 
-type ValueType int
+type FuncType func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure)
 
-const (
-	TypeUnknown ValueType = iota
-	TypeEnum
-	TypeString
-	TypeBool
-	TypeInteger
-	TypeMap
-)
+func (ft FuncType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+	return ft(property, value, self, context)
+}
 
-type ValidateFunc func(interface{}, TemplateResource, []string) (bool, []reporting.Failure)
-type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (bool, []reporting.Failure)
+type ValidateFunc func(interface{}, TemplateResource, []string) (reporting.ValidateResult, []reporting.Failure)
+type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, []reporting.Failure)
 
 type Schema struct {
-	Array             bool
-	Conflicts         []string
-	Default           interface{}
-	Required          bool
-	RequiredIf        []string
-	RequiredUnless    []string
-	Type              interface{}
-	ValidateFunc      ValidateFunc
-	ArrayValidateFunc ArrayValidateFunc
+	Array          bool
+	Conflicts      []string
+	Default        interface{}
+	Required       bool
+	RequiredIf     []string
+	RequiredUnless []string
+	Type           PropertyType
+	// ValidateFunc      ValidateFunc
+	// ArrayValidateFunc ArrayValidateFunc
 }
 
 func (s Schema) TargetType() ValueType {
@@ -84,226 +95,41 @@ func (s Schema) TargetType() ValueType {
 		return t
 	}
 
-	return TypeUnknown
+	return ValueUnknown
 }
 
-func (s Schema) Validate(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
 	if !s.Required && value == nil {
-		return true, nil
+		return reporting.ValidateOK, nil
 	} else if s.Required && value == nil {
-		return false, []reporting.Failure{reporting.NewFailure("Required property is missing", context)}
+		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Required property is missing", context)}
 	}
 
 	failures := make([]reporting.Failure, 0, 20)
-	pass := true
 
 	if s.Array {
-		if s.ArrayValidateFunc != nil {
-			if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, context); !ok {
+		// TODO: fixme
+		// if s.ArrayValidateFunc != nil {
+		// 	if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, context); !ok {
+		// 		failures = append(failures, errs...)
+		// 		pass = false
+		// 	}
+		// } else {
+		for i, item := range value.([]interface{}) {
+			if _, errs := s.Type.Validate(s, item, self, append(context, strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
-				pass = false
-			}
-		} else {
-			for i, item := range value.([]interface{}) {
-				if ok, errs := validateProperty(s, item, tr, append(context, strconv.Itoa(i))); !ok {
-					failures = append(failures, errs...)
-					pass = false
-				}
 			}
 		}
+		// }
 	} else {
-		if ok, errs := validateProperty(s, value, tr, context); !ok {
+		if _, errs := s.Type.Validate(s, value, self, context); errs != nil {
 			failures = append(failures, errs...)
-			pass = false
 		}
 	}
 
-	return pass, failures
-}
-
-func validateResourceProperty(r Resource, value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if properties, ok := value.(map[string]interface{}); ok {
-		return TemplateResource{Template: tr.Template, Definition: r, Properties: properties}.Validate(context)
+	if len(failures) == 0 {
+		return reporting.ValidateOK, nil
 	}
 
-	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, r.AwsType), context)}
-}
-
-func validateProperty(s Schema, value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if resource, ok := s.Type.(Resource); ok {
-		return validateResourceProperty(resource, value, tr, context)
-	}
-
-	if ok := validateValueType(s.Type, value, context); !ok {
-		if complex, ok := value.(map[string]interface{}); ok {
-			ok, errs := s.validateBuiltinFns(complex, tr, context)
-			if ok {
-				return true, nil
-			}
-
-			if errs != nil {
-				return false, errs
-			}
-
-			return false, []reporting.Failure{reporting.NewFailure("Value is a map but isn't a builtin", context)}
-		}
-
-		return false, []reporting.Failure{reporting.NewInvalidTypeFailure(s.Type, value, context)}
-	}
-
-	if s.ValidateFunc != nil {
-		return s.ValidateFunc(value, tr, context)
-	}
-
-	return true, nil
-}
-
-func validateValueType(valueType interface{}, value interface{}, context []string) bool {
-	switch valueType {
-	case TypeBool:
-		if _, ok := value.(bool); ok {
-			return true
-		}
-	case TypeEnum:
-		fallthrough
-	case TypeString:
-		if _, ok := value.(string); ok {
-			return true
-		}
-	case TypeInteger:
-		if _, ok := value.(float64); ok {
-			return true
-		}
-	case TypeMap:
-		if _, ok := value.(map[string]interface{}); ok {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (s Schema) validateBuiltinFns(value map[string]interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if ref, ok := value["Ref"]; ok {
-		return NewRef(s, ref.(string)).Validate(tr.Template, append(context, "Ref"))
-	}
-
-	if join, ok := value["Fn::Join"]; ok {
-		return validateJoin(join, tr, append(context, "Fn::Join"))
-	}
-
-	if getatt, ok := value["Fn::GetAtt"]; ok {
-		return validateGetAtt(getatt, tr, append(context, "Fn::GetAtt"))
-	}
-
-	if find, ok := value["Fn::FindInMap"]; ok {
-		return validateFindInMap(find, tr, append(context, "Fn::FindInMap"))
-	}
-
-	if base64, ok := value["Fn::Base64"]; ok {
-		return validateBase64(base64, tr, append(context, "Fn::Base64"))
-	}
-
-	return false, nil // not a builtin, but this isn't necessarily bad so we don't return an error here
-}
-
-// TODO: Supported functions within a function
-func validateFindInMap(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	find, ok := value.([]interface{})
-	if !ok {
-		return false, []reporting.Failure{reporting.NewFailure("Options need to be an array", context)}
-	}
-
-	if len(find) != 3 {
-		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
-	}
-
-	mapName := find[0]
-	_, mapNameIsString := mapName.(string)
-	if ok, errs := validateProperty(Schema{Type: TypeString}, mapName, tr, append(context, "0")); !ok {
-		return false, errs
-	}
-
-	if mapNameIsString {
-		// map name is a string, so we can do some further interrogation
-		// TODO: lookup whether MapName is a valid Map
-	}
-
-	topLevelKey := find[1]
-	_, topLevelKeyIsString := topLevelKey.(string)
-	if ok, errs := validateProperty(Schema{Type: TypeString}, topLevelKey, tr, append(context, "1")); !ok {
-		return false, errs
-	}
-
-	if mapNameIsString && topLevelKeyIsString {
-		// TODO: lookup whether topLevelKey is in mapName
-	}
-
-	secondLevelKey := find[2]
-	_, secondLevelKeyIsString := secondLevelKey.(string)
-	if ok, errs := validateProperty(Schema{Type: TypeString}, secondLevelKey, tr, append(context, "2")); !ok {
-		return false, errs
-	}
-
-	if mapNameIsString && topLevelKeyIsString && secondLevelKeyIsString {
-		// TODO: lookup whether secondLevelKeyIsString is in topLevelKey
-	}
-
-	return true, nil
-}
-
-func validateBase64(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	return validateProperty(Schema{Type: TypeString}, value, tr, context)
-}
-
-func validateJoin(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if items, ok := value.([]interface{}); ok {
-		if len(items) != 2 {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
-		}
-
-		_, ok := items[0].(string)
-		if !ok {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
-		}
-
-		parts, ok := items[1].([]interface{})
-		if !ok {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
-		}
-
-		failures := make([]reporting.Failure, 0, len(parts))
-		for i, part := range parts {
-			if ok, errs := validateProperty(Schema{Type: TypeString}, part, tr, append(context, "1", strconv.Itoa(i))); !ok {
-				failures = append(failures, errs...)
-			}
-		}
-		return len(failures) == 0, failures
-	}
-
-	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
-}
-
-func validateGetAtt(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if items, ok := value.([]interface{}); ok {
-		if len(items) != 2 {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
-		}
-
-		if resourceID, ok := items[0].(string); ok {
-			if _, ok := tr.Template.Resources[resourceID]; ok {
-				if _, ok := items[1].(string); ok {
-					// TODO: Check attr is actually a valid attribute for the resource type
-					return true, nil
-				}
-			}
-			// resource not found
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
-		} else {
-			// resource not a string
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
-		}
-	}
-
-	return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return reporting.ValidateOK, failures
 }

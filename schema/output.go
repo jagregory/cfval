@@ -6,20 +6,21 @@ type Output struct {
 	Description, Value interface{}
 }
 
-var outputSchema = Schema{Type: TypeString, Required: true}
+var outputSchema = Schema{
+	Type:     ValueString,
+	Required: true,
+}
 
-func (o Output) Validate(template *Template, context []string) (bool, []reporting.Failure) {
-	failures := make([]reporting.Failure, 0, 10)
-
+func (o Output) Validate(template *Template, context []string) (reporting.ValidateResult, []reporting.Failure) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			failures = append(failures, reporting.NewFailure("Expected a string", append(context, "Description")))
+			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Expected a string", append(context, "Description"))}
 		}
 	}
 
-	if ok, errs := validateProperty(outputSchema, o.Value, TemplateResource{Template: template}, append(context, "Value")); !ok {
-		failures = append(failures, errs...)
+	if _, errs := outputSchema.Validate(o.Value, TemplateResource{template: template}, append(context, "Value")); errs != nil {
+		return reporting.ValidateOK, errs
 	}
 
-	return len(failures) == 0, failures
+	return reporting.ValidateOK, nil
 }

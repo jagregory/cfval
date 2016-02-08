@@ -8,12 +8,12 @@ func Topic() Resource {
 
 		// Topic ARN
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"DisplayName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "Subscription": ArrayOf(Schema{
@@ -21,7 +21,7 @@ func Topic() Resource {
 			// }),
 
 			"TopicName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}

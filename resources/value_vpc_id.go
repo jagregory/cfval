@@ -5,10 +5,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var vpcId = Schema{
-	Type: TypeString,
-	ValidateFunc: func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-		// TODO: VpcId
-		return true, nil
-	},
+var vpcID FuncType = func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+	if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
+		return reporting.ValidateOK, errs
+	}
+
+	// TODO: VpcId
+	return reporting.ValidateOK, nil
 }

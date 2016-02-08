@@ -5,58 +5,57 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var aliasTarget = Resource{
-	AwsType: "Route53 RecordSet AliasTarget",
+var aliasTarget = NestedResource{
+	Description: "Route53 RecordSet AliasTarget",
 	Properties: map[string]Schema{
 		"DNSName": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"EvaluateTargetHealth": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"HostedZoneId": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
 }
 
-var geoLocation = Resource{
-	AwsType: "Route 53 Record Set GeoLocation",
+var geoLocation = NestedResource{
+	Description: "Route 53 Record Set GeoLocation",
 	Properties: map[string]Schema{
 		"ContinentCode": Schema{
-			Type:           TypeString,
+			Type:           EnumValue{[]string{"AF", "AN", "AS", "EU", "OC", "NA", "SA"}},
 			RequiredUnless: []string{"CountryCode"},
 			Conflicts:      []string{"CountryCode", "SubdivisionCode"},
-			ValidateFunc:   EnumValidate("AF", "AN", "AS", "EU", "OC", "NA", "SA"),
 		},
 
 		"CountryCode": Schema{
-			Type:           TypeString,
-			RequiredUnless: []string{"ContinentCode"},
-			Conflicts:      []string{"ContinentCode"},
-			ValidateFunc: EnumValidate("AO", "BF", "BI", "BJ", "BW", "CD", "CF", "CG", "CI", "CM", "CV", "DJ", "DZ", "EG", "ER", "ET", "GA", "GH", "GM", "GN", "GQ", "GW", "KE", "KM", "LR", "LS", "LY", "MA", "MG", "ML", "MR", "MU", "MW", "MZ", "NA", "NE", "NG", "RE", "RW", "SC", "SD", "SH", "SL", "SN", "SO", "SS", "ST", "SZ", "TD", "TG", "TN", "TZ", "UG", "YT", "ZA", "ZM", "ZW",
+			Type: EnumValue{[]string{"AO", "BF", "BI", "BJ", "BW", "CD", "CF", "CG", "CI", "CM", "CV", "DJ", "DZ", "EG", "ER", "ET", "GA", "GH", "GM", "GN", "GQ", "GW", "KE", "KM", "LR", "LS", "LY", "MA", "MG", "ML", "MR", "MU", "MW", "MZ", "NA", "NE", "NG", "RE", "RW", "SC", "SD", "SH", "SL", "SN", "SO", "SS", "ST", "SZ", "TD", "TG", "TN", "TZ", "UG", "YT", "ZA", "ZM", "ZW",
 				"AQ", "GS", "TF",
 				"AE", "AF", "AM", "AZ", "BD", "BH", "BN", "BT", "CC", "CN", "GE", "HK", "ID", "IL", "IN", "IO", "IQ", "IR", "JO", "JP", "KG", "KH", "KP", "KR", "KW", "KZ", "LA", "LB", "LK", "MM", "MN", "MO", "MV", "MY", "NP", "OM", "PH", "PK", "PS", "QA", "SA", "SG", "SY", "TH", "TJ", "TM", "TR", "TW", "UZ", "VN", "YE",
 				"AD", "AL", "AT", "AX", "BA", "BE", "BG", "BY", "CH", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FO", "FR", "GB", "GG", "GI", "GR", "HR", "HU", "IE", "IM", "IS", "IT", "JE", "LI", "LT", "LU", "LV", "MC", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT", "RO", "RS", "RU", "SE", "SI", "SJ", "SK", "SM", "UA", "VA", "XK",
 				"AG", "AI", "AW", "BB", "BL", "BM", "BQ", "BS", "BZ", "CA", "CR", "CU", "CW", "DM", "DO", "GD", "GL", "GP", "GT", "HN", "HT", "JM", "KN", "KY", "LC", "MF", "MQ", "MS", "MX", "NI", "PA", "PM", "PR", "SV", "SX", "TC", "TT", "US", "VC", "VG", "VI",
 				"AS", "AU", "CK", "FJ", "FM", "GU", "KI", "MH", "MP", "NC", "NF", "NR", "NU", "NZ", "PF", "PG", "PN", "PW", "SB", "TK", "TL", "TO", "TV", "UM", "VU", "WF", "WS",
-				"AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PE", "PY", "SR", "UY", "VE"),
+				"AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PE", "PY", "SR", "UY", "VE"}},
+			RequiredUnless: []string{"ContinentCode"},
+			Conflicts:      []string{"ContinentCode"},
 		},
 
 		"SubdivisionCode": Schema{
-			Type:      TypeString,
-			Conflicts: []string{"ContinentCode"},
-			ValidateFunc: func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-				if !tr.HasProperty("CountryCode", "US") {
-					return false, []reporting.Failure{reporting.NewFailure("Can only be set when CountryCode is US", context)}
+			Type: FuncType(func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
+					return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Can only be set when CountryCode is US", context)}
 				}
 
-				return EnumValidate("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY")(value, tr, context)
-			},
+				subdivision := EnumValue{[]string{"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"}}
+
+				return subdivision.Validate(property, value, self, context)
+			}),
+			Conflicts: []string{"ContinentCode"},
 		},
 	},
 }
@@ -67,7 +66,7 @@ func RecordSet() Resource {
 
 		// Domain Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
@@ -77,7 +76,7 @@ func RecordSet() Resource {
 			},
 
 			"Failover": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"GeoLocation": Schema{
@@ -87,19 +86,19 @@ func RecordSet() Resource {
 			// "HealthCheckId":   Schema{Type: TypeString},
 
 			"HostedZoneId": Schema{
-				Type:           TypeString,
+				Type:           ValueString,
 				RequiredUnless: []string{"HostedZoneName"},
 				Conflicts:      []string{"HostedZoneName"},
 			},
 
 			"HostedZoneName": Schema{
-				Type:           TypeString,
+				Type:           ValueString,
 				RequiredUnless: []string{"HostedZoneId"},
 				Conflicts:      []string{"HostedZoneId"},
 			},
 
 			"Name": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
@@ -107,29 +106,28 @@ func RecordSet() Resource {
 
 			"ResourceRecords": Schema{
 				Array:          true,
-				Type:           TypeString,
+				Type:           ValueString,
 				Conflicts:      []string{"AliasTarget"},
 				RequiredUnless: []string{"AliasTarget"},
 			},
 
 			"SetIdentifier": Schema{
-				Type:       TypeString,
+				Type:       ValueString,
 				RequiredIf: []string{"Weight", "Latency", "Failover", "GeoLocation"},
 			},
 
 			"TTL": Schema{
-				Type:      TypeString,
+				Type:      ValueString,
 				Conflicts: []string{"AliasTarget"},
 			},
 
 			"Type": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: EnumValidate("A", "AAAA", "CNAME", "MX", "NS", "PTR", "SOA", "SPF", "SRV", "TXT"),
+				Type:     EnumValue{[]string{"A", "AAAA", "CNAME", "MX", "NS", "PTR", "SOA", "SPF", "SRV", "TXT"}},
+				Required: true,
 			},
 
 			"Weight": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 		},
 	}

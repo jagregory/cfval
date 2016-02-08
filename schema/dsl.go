@@ -3,69 +3,58 @@ package schema
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/jagregory/cfval/reporting"
 )
 
-func EnumValidate(options ...string) ValidateFunc {
-	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-		if str, ok := value.(string); ok {
-			found := false
-			for _, option := range options {
-				if option == str {
-					found = true
-					break
-				}
-			}
-
-			if found {
-				return true, nil
-			}
-
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", str, strings.Join(options, ", ")), context)}
-		}
-
-		return false, []reporting.Failure{reporting.NewInvalidTypeFailure(TypeEnum, value, context)}
-	}
-}
-
-func RegexpValidate(pattern, message string) ValidateFunc {
+func RegexpValidate(pattern, message string) FuncType {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
 		panic(err)
 	}
 
-	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-		if re.MatchString(value.(string)) {
-			return true, nil
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
+			return reporting.ValidateOK, errs
 		}
 
-		return false, []reporting.Failure{reporting.NewFailure(message, context)}
+		if re.MatchString(value.(string)) {
+			return reporting.ValidateOK, nil
+		}
+
+		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(message, context)}
 	}
 }
 
-func IntegerRangeValidate(start, end float64) ValidateFunc {
-	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+func IntegerRangeValidate(start, end float64) FuncType {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+		if result, errs := ValueNumber.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
+			return reporting.ValidateOK, errs
+		}
+
 		floatValue := value.(float64)
 
 		if floatValue < start || floatValue > end {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
+			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
 		}
 
-		return true, nil
+		return reporting.ValidateOK, nil
 	}
 }
 
-func StringLengthValidate(min, max int) ValidateFunc {
-	return func(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+func StringLengthValidate(min, max int) FuncType {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
+			return reporting.ValidateOK, errs
+		}
+
 		str := value.(string)
 
 		if len(str) < min || len(str) > max {
-			return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
+			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
 		}
 
-		return true, nil
+		return reporting.ValidateOK, nil
 	}
 }
 
@@ -110,16 +99,17 @@ func contains(all []string, one string) bool {
 	return false
 }
 
-func FixedArrayValidate(options ...[]string) ArrayValidateFunc {
-	return func(value []interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
+// TODO: fixme
+func FixedArrayValidate(options ...[]string) FuncType {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
 		for _, option := range options {
-			if match(option, value) {
-				return true, nil
+			if match(option, value.([]interface{})) {
+				return reporting.ValidateOK, nil
 			}
 		}
 
 		// TODO: this should be []TypeString but we can't specify that with this method
-		return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
+		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
 	}
 }
 

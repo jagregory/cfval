@@ -8,10 +8,10 @@ func LoadBalancer() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			// AccessLoggingPolicy
 			// Type: Elastic Load Balancing AccessLoggingPolicy
 
@@ -19,21 +19,21 @@ func LoadBalancer() Resource {
 			// Type: A list of AppCookieStickinessPolicy objects.
 
 			"AvailabilityZones": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"ConnectionDrainingPolicy": Schema{
-				Type: Resource{
-					AwsType: "Elastic Load Balancing ConnectionDrainingPolicy",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "Elastic Load Balancing ConnectionDrainingPolicy",
+					Properties: Properties{
 						"Enabled": Schema{
-							Type:     TypeBool,
+							Type:     ValueBool,
 							Required: true,
 						},
 
 						"Timeout": Schema{
-							Type: TypeInteger,
+							Type: ValueNumber,
 						},
 					},
 				},
@@ -49,31 +49,31 @@ func LoadBalancer() Resource {
 			//
 			"HealthCheck": Schema{
 				// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-health-check.html
-				Type: Resource{
-					AwsType: "ElasticLoadBalancing HealthCheck",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "ElasticLoadBalancing HealthCheck",
+					Properties: Properties{
 						"HealthyThreshold": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"Interval": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"Target": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						}, // TODO: Could be smarter about this restriction: "The protocol can be TCP, HTTP, HTTPS, or SSL. The range of valid ports is 1 through 65535."
 
 						"Timeout": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						}, // TODO: Could be smarter about this restriction: "This value must be less than the value for Interval."
 
 						"UnhealthyThreshold": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 					},
@@ -81,7 +81,7 @@ func LoadBalancer() Resource {
 			},
 
 			"Instances": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
@@ -94,37 +94,35 @@ func LoadBalancer() Resource {
 			"Listeners": Schema{
 				Array:    true,
 				Required: true,
-				Type: Resource{
-					AwsType: "ElasticLoadBalancing Listener",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "ElasticLoadBalancing Listener",
+					Properties: Properties{
 						"InstancePort": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"InstanceProtocol": Schema{
-							Type:         TypeString,
-							ValidateFunc: EnumValidate("HTTP", "HTTPS", "TCP", "SSL"),
+							Type: EnumValue{[]string{"HTTP", "HTTPS", "TCP", "SSL"}},
 						},
 
 						"LoadBalancerPort": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"PolicyNames": Schema{
-							Type:  TypeString,
+							Type:  ValueString,
 							Array: true,
 						},
 
 						"Protocol": Schema{
-							Required:     true,
-							Type:         TypeString,
-							ValidateFunc: EnumValidate("HTTP", "HTTPS", "TCP", "SSL"),
+							Required: true,
+							Type:     EnumValue{[]string{"HTTP", "HTTPS", "TCP", "SSL"}},
 						},
 
 						"SSLCertificateId": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 					},
 				},
@@ -134,16 +132,16 @@ func LoadBalancer() Resource {
 			// Type: A list of ElasticLoadBalancing policy objects.
 			//
 			"Scheme": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SecurityGroups": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"Subnets": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 

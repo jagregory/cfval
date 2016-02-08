@@ -9,7 +9,7 @@ func TestRefValidate(t *testing.T) {
 			"Resource2": TemplateResource{
 				Definition: Resource{
 					ReturnValue: Schema{
-						Type: TypeString,
+						Type: ValueString,
 					},
 				},
 			},
@@ -17,44 +17,46 @@ func TestRefValidate(t *testing.T) {
 		Parameters: map[string]Parameter{
 			"Parameter1": Parameter{},
 			"Parameter2": Parameter{
-				Type: TypeString,
+				Schema: Schema{
+					Type: ValueString,
+				},
 			},
 		},
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeString}, "Resource1").Validate(template, []string{}); !ok {
+	if _, errs := NewRef(Schema{Type: ValueString}, "Resource1").Validate(template, []string{}); errs != nil {
 		t.Error("Should pass on valid resource ref with Unknown ref type")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeString}, "Resource2").Validate(template, []string{}); !ok {
+	if _, errs := NewRef(Schema{Type: ValueString}, "Resource2").Validate(template, []string{}); errs != nil {
 		t.Error("Should pass on valid resource ref with matching types")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeInteger}, "Resource2").Validate(template, []string{}); ok {
+	if _, errs := NewRef(Schema{Type: ValueNumber}, "Resource2").Validate(template, []string{}); errs == nil {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeString}, "Parameter1").Validate(template, []string{}); !ok {
+	if _, errs := NewRef(Schema{Type: ValueString}, "Parameter1").Validate(template, []string{}); errs != nil {
 		t.Error("Should pass on valid parameter ref with Unknown ref type")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeString}, "Parameter2").Validate(template, []string{}); !ok {
+	if _, errs := NewRef(Schema{Type: ValueString}, "Parameter2").Validate(template, []string{}); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeInteger}, "Parameter2").Validate(template, []string{}); ok {
+	if _, errs := NewRef(Schema{Type: ValueNumber}, "Parameter2").Validate(template, []string{}); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeString}, "AWS::StackName").Validate(template, []string{}); !ok {
+	if _, errs := NewRef(Schema{Type: ValueString}, "AWS::StackName").Validate(template, []string{}); errs != nil {
 		t.Error("Should pass on valid pseudo-parameter ref with matching types")
 	}
 
-	if ok, _ := NewRef(Schema{Type: TypeInteger}, "AWS::StackName").Validate(template, []string{}); ok {
+	if _, errs := NewRef(Schema{Type: ValueNumber}, "AWS::StackName").Validate(template, []string{}); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if ok, _ := NewRef(Schema{}, "invalid").Validate(template, []string{}); ok {
+	if _, errs := NewRef(Schema{}, "invalid").Validate(template, []string{}); errs == nil {
 		t.Error("Should fail on invalid ref")
 	}
 }
@@ -65,7 +67,7 @@ func TestRefInferType(t *testing.T) {
 			"MyResource": TemplateResource{
 				Definition: Resource{
 					ReturnValue: Schema{
-						Type: TypeInteger,
+						Type: ValueNumber,
 					},
 				},
 			},
@@ -73,20 +75,22 @@ func TestRefInferType(t *testing.T) {
 
 		Parameters: map[string]Parameter{
 			"MyParameter": Parameter{
-				Type: TypeBool,
+				Schema: Schema{
+					Type: ValueBool,
+				},
 			},
 		},
 	}
 
-	if (Ref{target: "MyResource"}).InferType(template) != TypeInteger {
+	if (Ref{target: "MyResource"}).InferType(template) != ValueNumber {
 		t.Error("Ref should infer type of resource")
 	}
 
-	if (Ref{target: "MyParameter"}).InferType(template) != TypeBool {
+	if (Ref{target: "MyParameter"}).InferType(template) != ValueBool {
 		t.Error("Ref should infer type of parameter")
 	}
 
-	if (Ref{target: "invalid"}).InferType(template) != TypeUnknown {
+	if (Ref{target: "invalid"}).InferType(template) != ValueUnknown {
 		t.Error("Ref should return unknown for bad ref")
 	}
 }

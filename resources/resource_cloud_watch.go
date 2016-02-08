@@ -2,16 +2,16 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var metricDimension = Resource{
-	AwsType: "CloudWatch Alarm MetricDimension",
-	Properties: map[string]Schema{
+var metricDimension = NestedResource{
+	Description: "CloudWatch Alarm MetricDimension",
+	Properties: Properties{
 		"Name": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Value": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
@@ -23,31 +23,30 @@ func Alarm() Resource {
 
 		// AlarmName
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"ActionsEnabled": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"AlarmActions": Schema{
 				Array: true,
-				Type:  TypeString,
+				Type:  ValueString,
 			},
 
 			"AlarmDescription": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"AlarmName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"ComparisonOperator": Schema{
-				Required:     true,
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"),
+				Required: true,
+				Type:     EnumValue{[]string{"GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"}},
 			},
 
 			"Dimensions": Schema{
@@ -56,50 +55,47 @@ func Alarm() Resource {
 			},
 
 			"EvaluationPeriods": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"InsufficientDataActions": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"MetricName": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Namespace": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"OKActions": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"Period": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: period,
+				Type:     period,
+				Required: true,
 			},
 
 			"Statistic": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: EnumValidate("SampleCount", "Average", "Sum", "Minimum", "Maximum"),
+				Type:     EnumValue{[]string{"SampleCount", "Average", "Sum", "Minimum", "Maximum"}},
+				Required: true,
 			},
 
 			"Threshold": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Unit": Schema{
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"),
+				Type: EnumValue{[]string{"Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"}},
 			},
 		},
 	}

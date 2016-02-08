@@ -2,47 +2,45 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var cookies = Resource{
-	AwsType: "CloudFront ForwardedValues Cookies",
-	Properties: map[string]Schema{
+var cookies = NestedResource{
+	Description: "CloudFront ForwardedValues Cookies",
+	Properties: Properties{
 		"Forward": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"WhitelistedNames": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 	},
 }
 
-var forwardedValues = Resource{
-	AwsType: "CloudFront ForwardedValues",
-	Properties: map[string]Schema{
+var forwardedValues = NestedResource{
+	Description: "CloudFront ForwardedValues",
+	Properties: Properties{
 		"Cookies": Schema{
 			Type: cookies,
 		},
 
 		"Headers": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 
 		"QueryString": Schema{
-			Type:     TypeBool,
+			Type:     ValueBool,
 			Required: true,
 		},
 	},
 }
 
-var defaultCacheBehaviour = Resource{
-	AwsType: "CloudFront DefaultCacheBehaviour",
-	Properties: map[string]Schema{
+var defaultCacheBehaviour = NestedResource{
+	Description: "CloudFront DefaultCacheBehaviour",
+	Properties: Properties{
 		"AllowedMethods": Schema{
-			Array: true,
-			Type:  TypeString,
-			ArrayValidateFunc: FixedArrayValidate(
+			Type: FixedArrayValidate(
 				[]string{"HEAD", "GET"},
 				[]string{"GET", "HEAD", "OPTIONS"},
 				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
@@ -50,16 +48,14 @@ var defaultCacheBehaviour = Resource{
 		},
 
 		"CachedMethods": Schema{
-			Array: true,
-			Type:  TypeString,
-			ArrayValidateFunc: FixedArrayValidate(
+			Type: FixedArrayValidate(
 				[]string{"HEAD", "GET"},
 				[]string{"GET", "HEAD", "OPTIONS"},
 			),
 		},
 
 		"DefaultTTL": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"ForwardedValues": Schema{
@@ -68,98 +64,98 @@ var defaultCacheBehaviour = Resource{
 		},
 
 		"MaxTTL": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"MinTTL": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"SmoothStreaming": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"TargetOriginId": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"TrustedSigners": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 
 		"ViewerProtocolPolicy": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
 }
 
-var logging = Resource{
-	AwsType: "CloudFront Logging",
-	Properties: map[string]Schema{
+var logging = NestedResource{
+	Description: "CloudFront Logging",
+	Properties: Properties{
 		"Bucket": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"IncludeCookies": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"Prefix": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 	},
 }
 
-var customOriginConfig = Resource{
-	AwsType: "CloudFront DistributionConfig Origin CustomOrigin",
-	Properties: map[string]Schema{
+var customOriginConfig = NestedResource{
+	Description: "CloudFront DistributionConfig Origin CustomOrigin",
+	Properties: Properties{
 		"HTTPPort": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"HTTPSPort": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"OriginProtocolPolicy": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
 }
 
-var originConfig = Resource{
-	AwsType: "CloudFront DistributionConfig Origin S3Origin",
-	Properties: map[string]Schema{
+var originConfig = NestedResource{
+	Description: "CloudFront DistributionConfig Origin S3Origin",
+	Properties: Properties{
 		"OriginAccessIdentity": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 	},
 }
 
-var origin = Resource{
-	AwsType: "CloudFront DistributionConfig Origin",
-	Properties: map[string]Schema{
+var origin = NestedResource{
+	Description: "CloudFront DistributionConfig Origin",
+	Properties: Properties{
 		"CustomOriginConfig": Schema{
 			Type: customOriginConfig,
 		},
 
 		"DomainName": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Id": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"OriginPath": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"S3OriginConfig": Schema{
@@ -168,34 +164,32 @@ var origin = Resource{
 	},
 }
 
-var viewerCertificate = Resource{
-	AwsType: "CloudFront DistributionConfiguration ViewerCertificate",
-	Properties: map[string]Schema{
+var viewerCertificate = NestedResource{
+	Description: "CloudFront DistributionConfiguration ViewerCertificate",
+	Properties: Properties{
 		"CloudFrontDefaultCertificate": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"IamCertificateId": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"MinimumProtocolVersion": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"SslSupportMethod": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 	},
 }
 
-var cacheBehaviour = Resource{
-	AwsType: "CloudFront DistributionConfig CacheBehavior",
-	Properties: map[string]Schema{
+var cacheBehaviour = NestedResource{
+	Description: "CloudFront DistributionConfig CacheBehavior",
+	Properties: Properties{
 		"AllowedMethods": Schema{
-			Type:  TypeString,
-			Array: true,
-			ArrayValidateFunc: FixedArrayValidate(
+			Type: FixedArrayValidate(
 				[]string{"HEAD", "GET"},
 				[]string{"GET", "HEAD", "OPTIONS"},
 				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
@@ -203,16 +197,14 @@ var cacheBehaviour = Resource{
 		},
 
 		"CachedMethods": Schema{
-			Type:  TypeString,
-			Array: true,
-			ArrayValidateFunc: FixedArrayValidate(
+			Type: FixedArrayValidate(
 				[]string{"HEAD", "GET"},
 				[]string{"GET", "HEAD", "OPTIONS"},
 			),
 		},
 
 		"DefaultTTL": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"ForwardedValues": Schema{
@@ -221,55 +213,54 @@ var cacheBehaviour = Resource{
 		},
 
 		"MaxTTL": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"MinTTL": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"PathPattern": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"SmoothStreaming": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"TargetOriginId": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"TrustedSigners": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 
 		"ViewerProtocolPolicy": Schema{
-			Type:         TypeString,
-			Required:     true,
-			ValidateFunc: EnumValidate("allow-all", "redirect-to-https", "https"),
+			Type:     EnumValue{[]string{"allow-all", "redirect-to-https", "https"}},
+			Required: true,
 		},
 	},
 }
 
-var customErrorResponse = Resource{
-	AwsType:    "CloudFront DistributionConfig CustomErrorResponse",
-	Properties: map[string]Schema{},
+var customErrorResponse = NestedResource{
+	Description: "CloudFront DistributionConfig CustomErrorResponse",
+	Properties:  Properties{},
 }
 
-var restrictions = Resource{
-	AwsType:    "CloudFront DistributionConfiguration Restrictions",
-	Properties: map[string]Schema{},
+var restrictions = NestedResource{
+	Description: "CloudFront DistributionConfiguration Restrictions",
+	Properties:  Properties{},
 }
 
-var distributionConfig = Resource{
-	AwsType: "CloudFront DistributionConfig",
-	Properties: map[string]Schema{
+var distributionConfig = NestedResource{
+	Description: "CloudFront DistributionConfig",
+	Properties: Properties{
 		"Aliases": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 
@@ -279,7 +270,7 @@ var distributionConfig = Resource{
 		},
 
 		"Comment": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"CustomErrorResponses": Schema{
@@ -293,11 +284,11 @@ var distributionConfig = Resource{
 		},
 
 		"DefaultRootObject": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"Enabled": Schema{
-			Type:     TypeBool,
+			Type:     ValueBool,
 			Required: true,
 		},
 
@@ -312,8 +303,7 @@ var distributionConfig = Resource{
 		},
 
 		"PriceClass": Schema{
-			Type:         TypeString,
-			ValidateFunc: EnumValidate("PriceClass_All", "PriceClass_200", "PriceClass_100"),
+			Type: EnumValue{[]string{"PriceClass_All", "PriceClass_200", "PriceClass_100"}},
 		},
 
 		"Restrictions": Schema{
@@ -325,7 +315,7 @@ var distributionConfig = Resource{
 		},
 
 		"WebACLId": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 	},
 }
@@ -337,10 +327,10 @@ func Distribution() Resource {
 
 		// Distribution ID
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"DistributionConfig": Schema{
 				Required: true,
 				Type:     distributionConfig,

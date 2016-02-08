@@ -165,12 +165,11 @@ func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
 
 	for key, rawResource := range temp.Resources {
 		if ctor, ok := typeCtors[rawResource.Type]; ok {
-			template.Resources[key] = schema.TemplateResource{
-				Template:   template,
-				Definition: ctor(),
-				Properties: rawResource.Properties,
-				Metadata:   rawResource.Metadata,
-			}
+			tr := schema.NewTemplateResource(template)
+			tr.Definition = ctor()
+			tr.Properties = rawResource.Properties
+			tr.Metadata = rawResource.Metadata
+			template.Resources[key] = tr
 		} else if !forgiving {
 			template.Resources[key] = schema.NewUnrecognisedResource(template, rawResource.Type)
 		}

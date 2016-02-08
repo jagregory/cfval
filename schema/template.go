@@ -7,24 +7,41 @@ import (
 )
 
 type TemplateResource struct {
-	Template   *Template
+	template   *Template
 	Definition Resource
 	Properties map[string]interface{}
 	Metadata   map[string]interface{}
 }
 
-func (tr TemplateResource) Validate(context []string) (bool, []reporting.Failure) {
+func (tr TemplateResource) Template() *Template {
+	return tr.template
+}
+
+func (tr TemplateResource) Property(name string) (interface{}, bool) {
+	val, ok := tr.Properties[name]
+	return val, ok
+}
+
+func NewTemplateResource(template *Template) TemplateResource {
+	return TemplateResource{template: template}
+}
+
+func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, []reporting.Failure) {
 	failures := make([]reporting.Failure, 0, 50)
 
-	if ok, errs := tr.Definition.Validate(tr, context); !ok {
+	if _, errs := tr.Definition.Validate(tr, context); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if ok, errs := Json.Validate(tr.Metadata, tr, append(context, "Metadata")); !ok {
+	if _, errs := Json.Validate(tr.Metadata, tr, append(context, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	return len(failures) == 0, failures
+	if len(failures) == 0 {
+		return reporting.ValidateOK, nil
+	}
+
+	return reporting.ValidateOK, failures
 }
 
 func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
@@ -37,13 +54,28 @@ func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
 
 func NewUnrecognisedResource(template *Template, awsType string) TemplateResource {
 	return TemplateResource{
-		Template: template,
+		template: template,
 		Definition: Resource{
-			ValidateFunc: func(tr TemplateResource, context []string) (bool, []reporting.Failure) {
-				return false, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, []reporting.Failure) {
+				return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
 			},
 		},
 	}
+}
+
+type TemplateNestedResource struct {
+	template *Template
+	NestedResource
+	Properties map[string]interface{}
+}
+
+func (tr TemplateNestedResource) Property(name string) (interface{}, bool) {
+	val, ok := tr.Properties[name]
+	return val, ok
+}
+
+func (r TemplateNestedResource) Template() *Template {
+	return r.template
 }
 
 type Template struct {
@@ -56,19 +88,19 @@ func (t *Template) Validate() (bool, []reporting.Failure) {
 	errors := make([]reporting.Failure, 0, 100)
 
 	for logicalID, resource := range t.Resources {
-		if ok, errs := resource.Validate([]string{"Resources", logicalID}); !ok {
+		if _, errs := resource.Validate([]string{"Resources", logicalID}); errs != nil {
 			errors = append(errors, errs...)
 		}
 	}
 
 	for parameterID, parameter := range t.Parameters {
-		if ok, errs := parameter.Validate([]string{"Parameters", parameterID}); !ok {
+		if _, errs := parameter.Validate([]string{"Parameters", parameterID}); errs != nil {
 			errors = append(errors, errs...)
 		}
 	}
 
 	for outputID, output := range t.Outputs {
-		if ok, errs := output.Validate(t, []string{"Outputs", outputID}); !ok {
+		if _, errs := output.Validate(t, []string{"Outputs", outputID}); errs != nil {
 			errors = append(errors, errs...)
 		}
 	}

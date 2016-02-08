@@ -2,16 +2,16 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var s3LifecycleRule = Resource{
-	AwsType: "AWS::S3::LifecycleRule",
-	Properties: map[string]Schema{
+var s3LifecycleRule = NestedResource{
+	Description: "AWS::S3::LifecycleRule",
+	Properties: Properties{
 		// "ExpirationDate":   Schema{Type: TypeString},
 		"ExpirationInDays": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"Id": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		// "NoncurrentVersionExpirationInDays": Schema{Type: TypeInteger},
@@ -19,7 +19,7 @@ var s3LifecycleRule = Resource{
 		// "Prefix":                            Schema{Type: TypeString},
 
 		"Status": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
@@ -33,25 +33,24 @@ func Bucket() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"AccessControl": Schema{
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"),
+				Type: EnumValue{[]string{"AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"}},
 			},
 
 			"BucketName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "CorsConfiguration":         s3_cors_configuration,
 
 			"LifecycleConfiguration": Schema{
-				Type: Resource{
-					AwsType: "S3 Lifecycle Configuration",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "S3 Lifecycle Configuration",
+					Properties: Properties{
 						"Rules": Schema{
 							Type:  s3LifecycleRule,
 							Array: true,
@@ -72,15 +71,15 @@ func Bucket() Resource {
 			// "VersioningConfiguration": s3_versioning_configuration,
 
 			"WebsiteConfiguration": Schema{
-				Type: Resource{
-					AwsType: "S3 Website Configuration",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "S3 Website Configuration",
+					Properties: Properties{
 						"ErrorDocument": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 
 						"IndexDocument": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 

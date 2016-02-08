@@ -8,130 +8,130 @@ func DBInstance() Resource {
 
 		// ID
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"AllocatedStorage": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"AllowMajorVersionUpgrade": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"AutoMinorVersionUpgrade": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"AvailabilityZone": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"BackupRetentionPeriod": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"CharacterSetName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBClusterIdentifier": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBInstanceClass": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"DBInstanceIdentifier": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBParameterGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBSecurityGroups": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"DBSnapshotIdentifier": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DBSubnetGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Engine": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"EngineVersion": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Iops": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			"KmsKeyId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"LicenseModel": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"MasterUsername": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"MasterUserPassword": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"MultiAZ": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"OptionGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Port": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"PreferredBackupWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"PreferredMaintenanceWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"PubliclyAccessible": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"SourceDBInstanceIdentifier": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"StorageEncrypted": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"StorageType": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Tags": Schema{
@@ -140,7 +140,7 @@ func DBInstance() Resource {
 			},
 
 			"VPCSecurityGroups": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 		},
@@ -151,8 +151,8 @@ func DBSubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::RDS::DBSubnetGroup",
 		Properties: map[string]Schema{
-			"DBSubnetGroupDescription": Schema{Type: TypeString, Required: true},
-			"SubnetIds":                Schema{Type: TypeString, Required: true, Array: true},
+			"DBSubnetGroupDescription": Schema{Type: ValueString, Required: true},
+			"SubnetIds":                Schema{Type: ValueString, Required: true, Array: true},
 			"Tags":                     Schema{Type: resourceTag, Array: true},
 		},
 	}

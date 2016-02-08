@@ -8,16 +8,16 @@ func Application() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"ApplicationName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Description": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}
@@ -29,31 +29,31 @@ func ApplicationVersion() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"ApplicationName": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Description": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SourceBundle": Schema{
 				Required: true,
-				Type: Resource{
-					AwsType: "Elastic Beanstalk SourceBundle",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "Elastic Beanstalk SourceBundle",
+					Properties: Properties{
 						"S3Bucket": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"S3Key": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 					},
@@ -63,21 +63,21 @@ func ApplicationVersion() Resource {
 	}
 }
 
-var optionsSettings = Resource{
-	AwsType: "Elastic Beanstalk OptionSettings",
-	Properties: map[string]Schema{
+var optionsSettings = NestedResource{
+	Description: "Elastic Beanstalk OptionSettings",
+	Properties: Properties{
 		"Namespace": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"OptionName": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Value": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
@@ -89,17 +89,17 @@ func ConfigurationTemplate() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"ApplicationName": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Description": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "EnvironmentId": Schema{Type:TypeString},
@@ -110,7 +110,7 @@ func ConfigurationTemplate() Resource {
 			},
 
 			"SolutionStackName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "SourceConfiguration": Schema{Type:...},
@@ -124,25 +124,25 @@ func Environment() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"ApplicationName": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"CNAMEPrefix": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Description": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"EnvironmentName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"OptionSettings": Schema{
@@ -151,7 +151,7 @@ func Environment() Resource {
 			},
 
 			"SolutionStackName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Tags": Schema{
@@ -160,13 +160,13 @@ func Environment() Resource {
 			},
 
 			"TemplateName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "Tier": Schema{...}
 
 			"VersionLabel": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}

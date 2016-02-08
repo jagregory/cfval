@@ -14,91 +14,90 @@ func CacheCluster() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"AutoMinorVersionUpgrade": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"AZMode": Schema{
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("single-az", "cross-az"),
+				Type: EnumValue{[]string{"single-az", "cross-az"}},
 			},
 
 			"CacheNodeType": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"CacheParameterGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"CacheSecurityGroupNames": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"CacheSubnetGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"ClusterName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Engine": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"EngineVersion": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"NotificationTopicArn": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"NumCacheNodes": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Port": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			"PreferredAvailabilityZone": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"PreferredAvailabilityZones": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"PreferredMaintenanceWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SnapshotArns": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"SnapshotName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SnapshotRetentionLimit": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			"SnapshotWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Tags": Schema{
@@ -107,7 +106,7 @@ func CacheCluster() Resource {
 			},
 
 			"VpcSecurityGroupIds": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 		},
@@ -115,23 +114,23 @@ func CacheCluster() Resource {
 }
 
 // You cannot enable automatic failover for Redis versions earlier than 2.8.6 or for T1 and T2 cache node types.
-func automaticFailoverEnabled(value interface{}, tr TemplateResource, context []string) (bool, []reporting.Failure) {
-	if version, found := tr.Properties["EngineVersion"]; found {
+var automaticFailoverEnabled FuncType = func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+	if version, found := self.Property("EngineVersion"); found {
 		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
 			if versionNumber < 2.8 {
-				return false, []reporting.Failure{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", context)}
+				return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", context)}
 			}
 		}
 	}
 
-	if nodeType, found := tr.Properties["CacheNodeType"]; found {
+	if nodeType, found := self.Property("CacheNodeType"); found {
 		split := strings.Split(nodeType.(string), ".")
 		if split[1] == "t1" || split[1] == "t2" {
-			return false, []reporting.Failure{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", context)}
+			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", context)}
 		}
 	}
 
-	return true, nil
+	return reporting.ValidateOK, nil
 }
 
 func ReplicationGroup() Resource {
@@ -140,105 +139,101 @@ func ReplicationGroup() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"AutomaticFailoverEnabled": Schema{
-				Type:         TypeBool,
-				Default:      true,
-				ValidateFunc: automaticFailoverEnabled,
+				Type:    automaticFailoverEnabled,
+				Default: true,
 			},
 
 			// Currently, this property isn't used by ElastiCache.
 			"AutoMinorVersionUpgrade": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"CacheNodeType": Schema{
-				Type:     TypeString,
-				Required: true,
-				ValidateFunc: EnumValidate("cache.t2.micro", "cache.t2.small", "cache.t2.medium",
+				Type: EnumValue{[]string{"cache.t2.micro", "cache.t2.small", "cache.t2.medium",
 					"cache.m3.medium", "cache.m3.large", "cache.m3.xlarge", "cache.m3.2xlarge",
 					"cache.t1.micro", "cache.m1.small", "cache.m1.medium", "cache.m1.large",
 					"cache.m1.xlarge", "cache.c1.xlarge", "cache.r3.large", "cache.r3.xlarge",
 					"cache.r3.2xlarge", "cache.r3.4xlarge", "cache.r3.8xlarge", "cache.m2.xlarge",
-					"cache.m2.2xlarge", "cache.m2.4xlarge"),
+					"cache.m2.2xlarge", "cache.m2.4xlarge"}},
+				Required: true,
 			},
 
 			"CacheParameterGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"CacheSecurityGroupNames": Schema{
-				Type:      TypeString,
+				Type:      ValueString,
 				Array:     true,
 				Conflicts: []string{"SecurityGroupIds"},
 			},
 
 			"CacheSubnetGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Engine": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: EnumValidate("redis"),
+				Type:     EnumValue{[]string{"redis"}},
+				Required: true,
 			},
 
 			"EngineVersion": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"NotificationTopicArn": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// If automatic failover is enabled, you must specify a value greater than 1.
 			"NumCacheClusters": Schema{
-				Type:     TypeInteger,
+				Type:     ValueNumber,
 				Required: true,
 			},
 
 			"Port": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			"PreferredCacheClusterAZs": Schema{
-				Type:         TypeString,
-				Array:        true,
-				ValidateFunc: availabilityZone,
+				Type:  availabilityZone,
+				Array: true,
 			},
 
 			// Use the following format to specify a time range: ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). For example, you can specify sun:22:00-sun:23:30 for Sunday from 10 PM to 11:30 PM.
 			"PreferredMaintenanceWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"ReplicationGroupDescription": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"SecurityGroupIds": Schema{
-				Type:      TypeString,
+				Type:      ValueString,
 				Array:     true,
 				Conflicts: []string{"CacheSecurityGroupNames"},
 			},
 
 			// A single-element string list that specifies an ARN of a Redis .rdb snapshot file that is stored in Amazon Simple Storage Service (Amazon S3). The snapshot file populates the node group. The Amazon S3 object name in the ARN cannot contain commas. For example, you can specify arn:aws:s3:::my_bucket/snapshot1.rdb.
 			"SnapshotArns": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"SnapshotRetentionLimit": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			// The time range (in UTC) when ElastiCache takes a daily snapshot of your node group. For example, you can specify 05:00-09:00.
 			"SnapshotWindow": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}
@@ -249,12 +244,12 @@ func SubnetGroup() Resource {
 		AwsType: "AWS::ElastiCache::SubnetGroup",
 		Properties: map[string]Schema{
 			"Description": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"SubnetIds": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 				Array:    true,
 			},

@@ -8,29 +8,29 @@ func Policy() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"Groups": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"PolicyDocument": Required(Json),
 
 			"PolicyName": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Roles": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"Users": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 		},
@@ -43,30 +43,30 @@ func Role() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
 			"AssumeRolePolicyDocument": Required(Json),
 
 			"ManagedPolicyArns": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"Path": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Policies": Schema{
 				Array: true,
-				Type: Resource{
-					AwsType: "IAM Role Policy",
+				Type: NestedResource{
+					Description: "IAM Role Policy",
 					Properties: map[string]Schema{
 						"PolicyDocument": Required(Json),
 
 						"PolicyName": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 					},
@@ -82,17 +82,17 @@ func InstanceProfile() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: iamInstanceProfileType,
 		},
 
 		Properties: map[string]Schema{
 			"Path": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"Roles": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Array:    true,
 				Required: true,
 			},

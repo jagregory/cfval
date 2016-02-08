@@ -29,19 +29,19 @@ func TestOutputValidation(t *testing.T) {
 		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}},
 	}
 
-	if ok, errs := goodResourceOutput.Validate(template, context); !ok {
+	if _, errs := goodResourceOutput.Validate(template, context); errs != nil {
 		t.Error("Resource output should pass if resource exists", errs)
 	}
 
-	if ok, errs := badResourceOutput.Validate(template, context); ok {
+	if _, errs := badResourceOutput.Validate(template, context); errs == nil {
 		t.Error("Resource output should fail if resource doesn't exist", errs)
 	}
 
-	if ok, errs := goodAttrOutput.Validate(template, context); !ok {
+	if _, errs := goodAttrOutput.Validate(template, context); errs != nil {
 		t.Error("GetAtt output should pass if resource exists", errs)
 	}
 
-	if ok, errs := badAttrOutput.Validate(template, context); ok {
+	if _, errs := badAttrOutput.Validate(template, context); errs == nil {
 		t.Error("GetAtt output should fail if resource doesn't exist", errs)
 	}
 }

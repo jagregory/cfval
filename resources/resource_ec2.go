@@ -8,16 +8,16 @@ func Eip() Resource {
 
 		// PublicIp
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"InstanceId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Domain": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}
@@ -29,12 +29,12 @@ func Instance() Resource {
 
 		// InstanceId
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"AvailabilityZone": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "BlockDeviceMappings":               ArrayOf(BlockDeviceMapping),
@@ -43,20 +43,20 @@ func Instance() Resource {
 			// "IamInstanceProfile":                Schema{Type: TypeString},
 
 			"ImageId": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			// "InstanceInitiatedShutdownBehavior": Schema{Type: TypeString},
 
 			"InstanceType": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "KernelId":                          Schema{Type: TypeString},
 
 			"KeyName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// "Monitoring":                        Schema{Type: TypeBool},
@@ -68,13 +68,13 @@ func Instance() Resource {
 			// "SecurityGroups":                    Schema{Type: TypeString, Array: true},
 
 			"SourceDestCheck": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			// "SsmAssociations":                   ArrayOf(SsmAssociation),
 
 			"SubnetId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Tags": Schema{
@@ -96,10 +96,10 @@ func InternetGateway() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{},
+		Properties: Properties{},
 	}
 }
 
@@ -109,35 +109,34 @@ func Route() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"DestinationCidrBlock": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: cidr,
+				Type:     cidr,
+				Required: true,
 			},
 
 			"GatewayId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"InstanceId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"NetworkInterfaceId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"RouteTableId": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"VpcPeeringConnectionId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}
@@ -149,11 +148,14 @@ func RouteTable() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
-			"VpcId": Required(vpcId),
+		Properties: Properties{
+			"VpcId": Schema{
+				Type:     vpcID,
+				Required: true,
+			},
 
 			"Tags": Schema{
 				Type:  resourceTag,
@@ -169,53 +171,53 @@ func SecurityGroup() Resource {
 
 		// SecurityGroupName for non-VPC, SecurityGroupId for VPC
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"GroupDescription": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SecurityGroupIngress": Schema{
 				Array: true,
-				Type: Resource{
-					AwsType: "EC2 Security Group Rule Ingress",
-					Properties: map[string]Schema{
+				Type: NestedResource{
+					Description: "EC2 Security Group Rule Ingress",
+					Properties: Properties{
 						"CidrIp": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 
 						"FromPort": Schema{
-							Type:     TypeInteger,
+							Type:     ValueNumber,
 							Required: true,
 						},
 
 						"IpProtocol": Schema{
-							Type:     TypeString,
+							Type:     ValueString,
 							Required: true,
 						},
 
 						"SourceSecurityGroupId": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 
 						"SourceSecurityGroupName": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 
 						"SourceSecurityGroupOwnerId": Schema{
-							Type: TypeString,
+							Type: ValueString,
 						},
 
 						"ToPort": Schema{
-							Type:     TypeInteger,
+							Type:     ValueNumber,
 							Required: true,
 						},
 					},
 				},
 			},
-			"VpcId": Schema{Type: TypeString},
+			"VpcId": Schema{Type: ValueString},
 		},
 	}
 }
@@ -224,45 +226,43 @@ func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"CidrIp": Schema{
-				Type:         TypeString,
-				ValidateFunc: cidr,
+				Type: cidr,
 			},
 
 			"FromPort": Schema{
-				Type:     TypeInteger,
+				Type:     ValueNumber,
 				Required: true,
 			},
 
 			"GroupId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"GroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"IpProtocol": Schema{
-				Required:     true,
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("tcp", "udp", "icmp", "-1"),
+				Required: true,
+				Type:     EnumValue{[]string{"tcp", "udp", "icmp", "-1"}},
 			},
 
 			"SourceSecurityGroupId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SourceSecurityGroupName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SourceSecurityGroupOwnerId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"ToPort": Schema{
-				Type:     TypeInteger,
+				Type:     ValueNumber,
 				Required: true,
 			},
 		},
@@ -272,20 +272,18 @@ func SecurityGroupIngress() Resource {
 func Subnet() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Subnet",
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"AvailabilityZone": Schema{
-				Type:         TypeString,
-				ValidateFunc: availabilityZone,
+				Type: availabilityZone,
 			},
 
 			"CidrBlock": Schema{
-				Type:         TypeString,
-				Required:     true,
-				ValidateFunc: cidr,
+				Type:     cidr,
+				Required: true,
 			},
 
 			"MapPublicIpOnLaunch": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"Tags": Schema{
@@ -293,7 +291,10 @@ func Subnet() Resource {
 				Array: true,
 			},
 
-			"VpcId": Required(vpcId),
+			"VpcId": Schema{
+				Type:     vpcID,
+				Required: true,
+			},
 		},
 	}
 }
@@ -304,17 +305,17 @@ func SubnetRouteTableAssociation() Resource {
 
 		// ID
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"RouteTableId": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 
 			"SubnetId": Schema{
-				Type:     TypeString,
+				Type:     ValueString,
 				Required: true,
 			},
 		},
@@ -327,21 +328,21 @@ func VpcGatewayAttachment() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"InternetGatewayId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"VpcId": Schema{
 				Required: true,
-				Type:     TypeString,
+				Type:     ValueString,
 			},
 
 			"VpnGatewayId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}

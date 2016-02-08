@@ -2,53 +2,52 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-var metricsCollection = Resource{
-	AwsType: "Auto Scaling MetricsCollection",
-	Properties: map[string]Schema{
+var metricsCollection = NestedResource{
+	Description: "Auto Scaling MetricsCollection",
+	Properties: Properties{
 		"Granularity": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Metrics": Schema{
-			Type:  TypeString,
+			Type:  ValueString,
 			Array: true,
 		},
 	},
 }
 
-var notificationConfiguration = Resource{
-	AwsType: "Auto Scaling NotificationConfiguration",
-	Properties: map[string]Schema{
+var notificationConfiguration = NestedResource{
+	Description: "Auto Scaling NotificationConfiguration",
+	Properties: Properties{
 		"NotificationTypes": Schema{
-			Type:         TypeString,
-			Required:     true,
-			Array:        true,
-			ValidateFunc: EnumValidate("autoscaling:EC2_INSTANCE_LAUNCH", "autoscaling:EC2_INSTANCE_LAUNCH_ERROR", "autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR", "autoscaling:TEST_NOTIFICATION"),
+			Type:     EnumValue{[]string{"autoscaling:EC2_INSTANCE_LAUNCH", "autoscaling:EC2_INSTANCE_LAUNCH_ERROR", "autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR", "autoscaling:TEST_NOTIFICATION"}},
+			Required: true,
+			Array:    true,
 		},
 
 		"TopicARN": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 	},
 }
 
-var autoScalingTag = Resource{
-	AwsType: "AutoScaling Tag",
-	Properties: map[string]Schema{
+var autoScalingTag = NestedResource{
+	Description: "AutoScaling Tag",
+	Properties: Properties{
 		"Key": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"Value": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
 		"PropagateAtLaunch": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 	},
 }
@@ -60,51 +59,49 @@ func AutoScalingGroup() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"AvailabilityZones": Schema{
 				Array:          true,
-				Type:           TypeString,
-				ValidateFunc:   availabilityZone,
+				Type:           availabilityZone,
 				RequiredUnless: []string{"VPCZoneIdentifier"},
 			},
 
 			"Cooldown": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"DesiredCapacity": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"HealthCheckGracePeriod": Schema{
-				Type: TypeInteger,
+				Type: ValueNumber,
 			},
 
 			"HealthCheckType": Schema{
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("EC2", "ELB"),
+				Type: EnumValue{[]string{"EC2", "ELB"}},
 			},
 
 			"InstanceId": Schema{
-				Type:           TypeString,
+				Type:           ValueString,
 				RequiredUnless: []string{"LaunchConfigurationName"},
 			},
 
 			"LaunchConfigurationName": Schema{
-				Type:           TypeString,
+				Type:           ValueString,
 				RequiredUnless: []string{"InstanceId"},
 			},
 
 			"LoadBalancerNames": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"MaxSize": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"MetricsCollection": Schema{
@@ -113,7 +110,7 @@ func AutoScalingGroup() Resource {
 			},
 
 			"MinSize": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"NotificationConfigurations": Schema{
@@ -122,7 +119,7 @@ func AutoScalingGroup() Resource {
 			},
 
 			"PlacementGroup": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"Tags": Schema{
@@ -131,12 +128,12 @@ func AutoScalingGroup() Resource {
 			},
 
 			"TerminationPolicies": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"VPCZoneIdentifier": Schema{
-				Type:           TypeString,
+				Type:           ValueString,
 				Array:          true,
 				RequiredUnless: []string{"AvailabilityZones"},
 			},
@@ -145,45 +142,43 @@ func AutoScalingGroup() Resource {
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
-var ebsBlockDevice = Resource{
-	AwsType: "AutoScaling EBS Block Device",
-	Properties: map[string]Schema{
+var ebsBlockDevice = NestedResource{
+	Description: "AutoScaling EBS Block Device",
+	Properties: Properties{
 		"DeleteOnTermination": Schema{
-			Type:    TypeBool,
+			Type:    ValueBool,
 			Default: true,
 		},
 
 		"Encrypted": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"Iops": Schema{
-			Type: TypeInteger,
+			Type: ValueNumber,
 		},
 
 		"SnapshotId": Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
 		"VolumeSize": Schema{
-			Type:         TypeInteger,
-			ValidateFunc: IntegerRangeValidate(1, 1024),
+			Type: IntegerRangeValidate(1, 1024),
 		},
 
 		"VolumeType": Schema{
-			Type:         TypeString,
-			Default:      "standard",
-			ValidateFunc: EnumValidate("standard", "io1", "gp2"),
+			Type:    EnumValue{[]string{"standard", "io1", "gp2"}},
+			Default: "standard",
 		},
 	},
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-mapping.html
-var blockDeviceMapping = Resource{
-	AwsType: "AutoScaling Block Device Mapping",
-	Properties: map[string]Schema{
+var blockDeviceMapping = NestedResource{
+	Description: "AutoScaling Block Device Mapping",
+	Properties: Properties{
 		"DeviceName": Schema{
-			Type:     TypeString,
+			Type:     ValueString,
 			Required: true,
 		},
 
@@ -193,19 +188,20 @@ var blockDeviceMapping = Resource{
 		},
 
 		"NoDevice": Schema{
-			Type: TypeBool,
+			Type: ValueBool,
 		},
 
 		"VirtualName": Schema{
-			Type:           TypeString,
-			RequiredUnless: []string{"Ebs"},
-			ValidateFunc: RegexpValidate(
+			Type: FuncType(RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
-			),
+			)),
+			RequiredUnless: []string{"Ebs"},
 		},
 	},
 }
+
+var iamInstanceProfileType = StringLengthValidate(1, 1600)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
 func LaunchConfiguration() Resource {
@@ -214,12 +210,12 @@ func LaunchConfiguration() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: TypeString,
+			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"AssociatePublicIpAddress": Schema{
-				Type: TypeBool,
+				Type: ValueBool,
 			},
 
 			"BlockDeviceMappings": Schema{
@@ -228,71 +224,69 @@ func LaunchConfiguration() Resource {
 			},
 
 			"ClassicLinkVPCId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"ClassicLinkVPCSecurityGroups": Schema{
-				Type:       TypeString,
+				Type:       ValueString,
 				Array:      true,
 				RequiredIf: []string{"ClassicLinkVPCId"},
 			},
 
 			"EbsOptimized": Schema{
-				Type:    TypeBool,
+				Type:    ValueBool,
 				Default: false,
 			},
 
 			"IamInstanceProfile": Schema{
-				Type:         TypeString,
-				ValidateFunc: StringLengthValidate(1, 1600),
+				Type: iamInstanceProfileType,
 			},
 
 			"ImageId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"InstanceId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"InstanceMonitoring": Schema{
-				Type:    TypeBool,
+				Type:    ValueBool,
 				Default: true,
 			},
 
 			"InstanceType": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"KernelId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"KeyName": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			// TODO: If you specify this property, you must specify at least one subnet in the VPCZoneIdentifier property of the AWS::AutoScaling::AutoScalingGroup resource.
 			"PlacementTenancy": Schema{
-				Type:         TypeString,
-				ValidateFunc: EnumValidate("default", "dedicated"),
+				Type: EnumValue{[]string{"default", "dedicated"}},
 			},
 
 			"RamDiskId": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"SecurityGroups": Schema{
-				Type:  TypeString,
+				Type:  ValueString,
 				Array: true,
 			},
 
 			"SpotPrice": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 
 			"UserData": Schema{
-				Type: TypeString,
+				Type: ValueString,
 			},
 		},
 	}
