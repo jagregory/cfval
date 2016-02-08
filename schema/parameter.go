@@ -39,7 +39,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::EC2::KeyPair::KeyName": Schema{
-		Type: TypeKeyName,
+		Type: KeyName,
 	},
 
 	"AWS::EC2::SecurityGroup::GroupName": Schema{
@@ -59,7 +59,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::EC2::VPC::Id": Schema{
-		Type: TypeVPCId,
+		Type: VpcID,
 	},
 
 	"AWS::Route53::HostedZone::Id": Schema{
@@ -102,7 +102,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<AWS::EC2::VPC::Id>": Schema{
-		Type:  TypeVPCId,
+		Type:  VpcID,
 		Array: true,
 	},
 

@@ -264,7 +264,7 @@ func LaunchConfiguration() Resource {
 			},
 
 			"KeyName": Schema{
-				Type: ValueString,
+				Type: KeyName,
 			},
 
 			// TODO: If you specify this property, you must specify at least one subnet in the VPCZoneIdentifier property of the AWS::AutoScaling::AutoScalingGroup resource.

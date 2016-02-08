@@ -153,7 +153,7 @@ func RouteTable() Resource {
 
 		Properties: Properties{
 			"VpcId": Schema{
-				Type:     vpcID,
+				Type:     VpcID,
 				Required: true,
 			},
 
@@ -217,7 +217,10 @@ func SecurityGroup() Resource {
 					},
 				},
 			},
-			"VpcId": Schema{Type: ValueString},
+
+			"VpcId": Schema{
+				Type: VpcID,
+			},
 		},
 	}
 }
@@ -292,7 +295,7 @@ func Subnet() Resource {
 			},
 
 			"VpcId": Schema{
-				Type:     vpcID,
+				Type:     VpcID,
 				Required: true,
 			},
 		},
