@@ -1,8 +1,6 @@
-package resources
+package schema
 
-import . "github.com/jagregory/cfval/schema"
-
-var availabilityZone = EnumValue{
+var AvailabilityZone = EnumValue{
 	Options: []string{
 		"ap-northeast-1a",
 		"ap-northeast-1b",

@@ -27,7 +27,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::EC2::AvailabilityZone::Name": Schema{
-		Type: TypeAvailabilityZoneName,
+		Type: AvailabilityZone,
 	},
 
 	"AWS::EC2::Image::Id": Schema{
@@ -67,7 +67,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<AWS::EC2::AvailabilityZone::Name>": Schema{
-		Type:  TypeAvailabilityZoneName,
+		Type:  AvailabilityZone,
 		Array: true,
 	},
 

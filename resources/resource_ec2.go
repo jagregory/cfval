@@ -277,7 +277,7 @@ func Subnet() Resource {
 		AwsType: "AWS::EC2::Subnet",
 		Properties: Properties{
 			"AvailabilityZone": Schema{
-				Type: availabilityZone,
+				Type: AvailabilityZone,
 			},
 
 			"CidrBlock": Schema{

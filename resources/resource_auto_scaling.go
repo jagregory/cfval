@@ -65,7 +65,7 @@ func AutoScalingGroup() Resource {
 		Properties: Properties{
 			"AvailabilityZones": Schema{
 				Array:          true,
-				Type:           availabilityZone,
+				Type:           AvailabilityZone,
 				RequiredUnless: []string{"VPCZoneIdentifier"},
 			},
 

@@ -201,7 +201,7 @@ func ReplicationGroup() Resource {
 			},
 
 			"PreferredCacheClusterAZs": Schema{
-				Type:  availabilityZone,
+				Type:  AvailabilityZone,
 				Array: true,
 			},
 

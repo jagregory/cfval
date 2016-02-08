@@ -20,7 +20,7 @@ const (
 
 	// TODO: all of these are vestigal from a failed refactor, they should be
 	// using rich types like vpcID
-	TypeAvailabilityZoneName
+	// TypeAvailabilityZoneName
 	TypeImageId
 	TypeInstanceId
 	// TypeKeyName
