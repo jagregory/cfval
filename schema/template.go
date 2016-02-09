@@ -26,8 +26,8 @@ func NewTemplateResource(template *Template) TemplateResource {
 	return TemplateResource{template: template}
 }
 
-func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, []reporting.Failure) {
-	failures := make([]reporting.Failure, 0, 50)
+func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, reporting.Failures) {
+	failures := make(reporting.Failures, 0, 50)
 
 	if _, errs := tr.Definition.Validate(tr, context); errs != nil {
 		failures = append(failures, errs...)
@@ -56,8 +56,8 @@ func NewUnrecognisedResource(template *Template, awsType string) TemplateResourc
 	return TemplateResource{
 		template: template,
 		Definition: Resource{
-			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, []reporting.Failure) {
-				return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
+				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
 			},
 		},
 	}
@@ -84,26 +84,30 @@ type Template struct {
 	Outputs    map[string]Output
 }
 
-func (t *Template) Validate() (bool, []reporting.Failure) {
-	errors := make([]reporting.Failure, 0, 100)
+func (t *Template) Validate() (bool, reporting.Failures) {
+	failures := make(reporting.Failures, 0, 100)
 
 	for logicalID, resource := range t.Resources {
 		if _, errs := resource.Validate([]string{"Resources", logicalID}); errs != nil {
-			errors = append(errors, errs...)
+			failures = append(failures, errs...)
 		}
 	}
 
 	for parameterID, parameter := range t.Parameters {
 		if _, errs := parameter.Validate([]string{"Parameters", parameterID}); errs != nil {
-			errors = append(errors, errs...)
+			failures = append(failures, errs...)
 		}
 	}
 
 	for outputID, output := range t.Outputs {
 		if _, errs := output.Validate(t, []string{"Outputs", outputID}); errs != nil {
-			errors = append(errors, errs...)
+			failures = append(failures, errs...)
 		}
 	}
 
-	return len(errors) == 0, errors
+	if len(failures) == 0 {
+		return true, nil
+	}
+
+	return false, failures
 }

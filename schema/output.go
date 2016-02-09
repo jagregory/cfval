@@ -11,10 +11,10 @@ var outputSchema = Schema{
 	Required: true,
 }
 
-func (o Output) Validate(template *Template, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (o Output) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Expected a string", append(context, "Description"))}
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Expected a string", append(context, "Description"))}
 		}
 	}
 

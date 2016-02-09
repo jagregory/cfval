@@ -24,6 +24,20 @@ var aliasTarget = NestedResource{
 	},
 }
 
+var subdivisionCode = FuncType{
+	Description: "GeoLocation Subdivision Code",
+
+	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+		if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Can only be set when CountryCode is US", context)}
+		}
+
+		subdivision := EnumValue{[]string{"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"}}
+
+		return subdivision.Validate(property, value, self, context)
+	},
+}
+
 var geoLocation = NestedResource{
 	Description: "Route 53 Record Set GeoLocation",
 	Properties: map[string]Schema{
@@ -46,15 +60,7 @@ var geoLocation = NestedResource{
 		},
 
 		"SubdivisionCode": Schema{
-			Type: FuncType(func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
-				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
-					return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Can only be set when CountryCode is US", context)}
-				}
-
-				subdivision := EnumValue{[]string{"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"}}
-
-				return subdivision.Validate(property, value, self, context)
-			}),
+			Type:      subdivisionCode,
 			Conflicts: []string{"ContinentCode"},
 		},
 	},

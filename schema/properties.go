@@ -14,8 +14,8 @@ type SelfRepresentation interface {
 
 type Properties map[string]Schema
 
-func (p Properties) Validate(self SelfRepresentation, values map[string]interface{}, context []string) ([]reporting.Failure, map[string]bool) {
-	failures := make([]reporting.Failure, 0, len(p)*2)
+func (p Properties) Validate(self SelfRepresentation, values map[string]interface{}, context []string) (reporting.Failures, map[string]bool) {
+	failures := make(reporting.Failures, 0, len(p)*2)
 	visited := make(map[string]bool)
 
 	for key, schema := range p {

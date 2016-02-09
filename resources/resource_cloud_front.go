@@ -36,22 +36,34 @@ var forwardedValues = NestedResource{
 	},
 }
 
+var allowedMethods = FuncType{
+	Description: "CloudFront Allowed Methods",
+
+	Fn: FixedArrayValidate(
+		[]string{"HEAD", "GET"},
+		[]string{"GET", "HEAD", "OPTIONS"},
+		[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
+	),
+}
+
+var cachedMethods = FuncType{
+	Description: "CloudFront Cached Methods",
+
+	Fn: FixedArrayValidate(
+		[]string{"HEAD", "GET"},
+		[]string{"GET", "HEAD", "OPTIONS"},
+	),
+}
+
 var defaultCacheBehaviour = NestedResource{
 	Description: "CloudFront DefaultCacheBehaviour",
 	Properties: Properties{
 		"AllowedMethods": Schema{
-			Type: FixedArrayValidate(
-				[]string{"HEAD", "GET"},
-				[]string{"GET", "HEAD", "OPTIONS"},
-				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
-			),
+			Type: allowedMethods,
 		},
 
 		"CachedMethods": Schema{
-			Type: FixedArrayValidate(
-				[]string{"HEAD", "GET"},
-				[]string{"GET", "HEAD", "OPTIONS"},
-			),
+			Type: cachedMethods,
 		},
 
 		"DefaultTTL": Schema{
@@ -189,18 +201,11 @@ var cacheBehaviour = NestedResource{
 	Description: "CloudFront DistributionConfig CacheBehavior",
 	Properties: Properties{
 		"AllowedMethods": Schema{
-			Type: FixedArrayValidate(
-				[]string{"HEAD", "GET"},
-				[]string{"GET", "HEAD", "OPTIONS"},
-				[]string{"DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"},
-			),
+			Type: allowedMethods,
 		},
 
 		"CachedMethods": Schema{
-			Type: FixedArrayValidate(
-				[]string{"HEAD", "GET"},
-				[]string{"GET", "HEAD", "OPTIONS"},
-			),
+			Type: cachedMethods,
 		},
 
 		"DefaultTTL": Schema{

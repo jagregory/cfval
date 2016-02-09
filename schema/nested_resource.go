@@ -11,7 +11,7 @@ type NestedResource struct {
 	Properties  Properties
 }
 
-func (res NestedResource) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (res NestedResource) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if values, ok := value.(map[string]interface{}); ok {
 		tnr := TemplateNestedResource{
 			template:       self.Template(),
@@ -34,5 +34,5 @@ func (res NestedResource) Validate(property Schema, value interface{}, self Self
 		return reporting.ValidateOK, failures
 	}
 
-	return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), context)}
+	return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), context)}
 }

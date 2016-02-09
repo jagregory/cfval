@@ -141,6 +141,12 @@ func AutoScalingGroup() Resource {
 	}
 }
 
+var volumeSize = FuncType{
+	Description: "EBS Block Device Volume Size",
+
+	Fn: IntegerRangeValidate(1, 1024),
+}
+
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
 var ebsBlockDevice = NestedResource{
 	Description: "AutoScaling EBS Block Device",
@@ -163,7 +169,7 @@ var ebsBlockDevice = NestedResource{
 		},
 
 		"VolumeSize": Schema{
-			Type: IntegerRangeValidate(1, 1024),
+			Type: volumeSize,
 		},
 
 		"VolumeType": Schema{
@@ -171,6 +177,15 @@ var ebsBlockDevice = NestedResource{
 			Default: "standard",
 		},
 	},
+}
+
+var virtualName = FuncType{
+	Description: "Block Device Mapping Virtual Name",
+
+	Fn: RegexpValidate(
+		"^ephemeral\\d+$",
+		"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
+	),
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-mapping.html
@@ -192,16 +207,17 @@ var blockDeviceMapping = NestedResource{
 		},
 
 		"VirtualName": Schema{
-			Type: FuncType(RegexpValidate(
-				"^ephemeral\\d+$",
-				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
-			)),
+			Type:           virtualName,
 			RequiredUnless: []string{"Ebs"},
 		},
 	},
 }
 
-var iamInstanceProfileType = StringLengthValidate(1, 1600)
+var iamInstanceProfileType = FuncType{
+	Description: "IAM Instance Profile",
+
+	Fn: StringLengthValidate(1, 1600),
+}
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
 func LaunchConfiguration() Resource {

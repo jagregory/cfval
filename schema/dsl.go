@@ -7,13 +7,15 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func RegexpValidate(pattern, message string) FuncType {
+type FuncTypeValidateFunc func(Schema, interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
+
+func RegexpValidate(pattern, message string) FuncTypeValidateFunc {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
 		panic(err)
 	}
 
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -22,12 +24,12 @@ func RegexpValidate(pattern, message string) FuncType {
 			return reporting.ValidateOK, nil
 		}
 
-		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(message, context)}
+		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(message, context)}
 	}
 }
 
-func IntegerRangeValidate(start, end float64) FuncType {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func IntegerRangeValidate(start, end float64) FuncTypeValidateFunc {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		if result, errs := ValueNumber.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -35,15 +37,15 @@ func IntegerRangeValidate(start, end float64) FuncType {
 		floatValue := value.(float64)
 
 		if floatValue < start || floatValue > end {
-			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
 		}
 
 		return reporting.ValidateOK, nil
 	}
 }
 
-func StringLengthValidate(min, max int) FuncType {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func StringLengthValidate(min, max int) FuncTypeValidateFunc {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -51,7 +53,7 @@ func StringLengthValidate(min, max int) FuncType {
 		str := value.(string)
 
 		if len(str) < min || len(str) > max {
-			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -100,8 +102,8 @@ func contains(all []string, one string) bool {
 }
 
 // TODO: fixme
-func FixedArrayValidate(options ...[]string) FuncType {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func FixedArrayValidate(options ...[]string) FuncTypeValidateFunc {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		for _, option := range options {
 			if match(option, value.([]interface{})) {
 				return reporting.ValidateOK, nil
@@ -109,7 +111,7 @@ func FixedArrayValidate(options ...[]string) FuncType {
 		}
 
 		// TODO: this should be []TypeString but we can't specify that with this method
-		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
+		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
 	}
 }
 

@@ -12,13 +12,13 @@ import (
 
 var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
 
-type ByContext []reporting.Failure
+type ByContext reporting.Failures
 
 func (a ByContext) Len() int           { return len(a) }
 func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].ContextReadable }
 
-func printFailures(failures []reporting.Failure) {
+func printFailures(failures reporting.Failures) {
 	sort.Sort(ByContext(failures))
 
 	maxLength := 0
@@ -42,7 +42,7 @@ func printFailures(failures []reporting.Failure) {
 	}
 }
 
-func printSummary(failures []reporting.Failure) {
+func printSummary(failures reporting.Failures) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 

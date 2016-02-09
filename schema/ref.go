@@ -47,20 +47,20 @@ func NewRef(source Schema, target string) Ref {
 	return Ref{source, target}
 }
 
-func (ref Ref) Validate(template *Template, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (ref Ref) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if template == nil {
 		panic("Template is nil")
 	}
 
 	target := ref.resolveTarget(template)
 	if target == nil {
-		return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), context)}
 	}
 
 	// fail if types don't match, except special case TypeUnknown for types with an unspecified Ref
 	// TODO: Fix up all resources to have Ref types and remove this special case
 	if targetType := target.TargetType(); targetType != ref.source.Type && targetType != ValueUnknown {
-		return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType, ref.source.Type), context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType, ref.source.Type), context)}
 	}
 
 	return reporting.ValidateAbort, nil

@@ -12,10 +12,10 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateJson(value interface{}, tr TemplateResource, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func validateJson(value interface{}, tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
 	switch t := value.(type) {
 	case map[string]interface{}:
-		failures := make([]reporting.Failure, 0, 100)
+		failures := make(reporting.Failures, 0, 100)
 
 		// TODO: Fix this up asap
 		// if ok, errs := Json.validateBuiltinFns(t, tr, context); !ok && errs != nil {
@@ -34,7 +34,7 @@ func validateJson(value interface{}, tr TemplateResource, context []string) (rep
 
 		return reporting.ValidateOK, failures
 	case []interface{}:
-		failures := make([]reporting.Failure, 0, 100)
+		failures := make(reporting.Failures, 0, 100)
 
 		for i, value := range t {
 			if _, errs := validateJson(value, tr, append(context, strconv.Itoa(i))); errs != nil {
@@ -53,7 +53,7 @@ func validateJson(value interface{}, tr TemplateResource, context []string) (rep
 		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, tr, context)
 	}
 
-	return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Value is not a JSON map", context)}
+	return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Value is not a JSON map", context)}
 }
 
 var Json Schema
@@ -66,17 +66,11 @@ func init() {
 }
 
 type PropertyType interface {
-	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure)
+	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
 }
 
-type FuncType func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure)
-
-func (ft FuncType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
-	return ft(property, value, self, context)
-}
-
-type ValidateFunc func(interface{}, TemplateResource, []string) (reporting.ValidateResult, []reporting.Failure)
-type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, []reporting.Failure)
+type ValidateFunc func(interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
+type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
 
 type Schema struct {
 	Array          bool
@@ -98,14 +92,14 @@ func (s Schema) TargetType() ValueType {
 	return ValueUnknown
 }
 
-func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if !s.Required && value == nil {
 		return reporting.ValidateOK, nil
 	} else if s.Required && value == nil {
-		return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Required property is missing", context)}
+		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Required property is missing", context)}
 	}
 
-	failures := make([]reporting.Failure, 0, 20)
+	failures := make(reporting.Failures, 0, 20)
 
 	if s.Array {
 		// TODO: fixme

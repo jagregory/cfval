@@ -32,7 +32,7 @@ const (
 	TypeHostedZoneId
 )
 
-func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
 			builtinResult, errs := vt.validateBuiltinFns(property, complex, self, context)
@@ -44,10 +44,10 @@ func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepres
 				return reporting.ValidateAbort, nil
 			}
 
-			return reporting.ValidateOK, []reporting.Failure{reporting.NewFailure("Value is a map but isn't a builtin", context)}
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Value is a map but isn't a builtin", context)}
 		}
 
-		return reporting.ValidateOK, []reporting.Failure{reporting.NewInvalidTypeFailure(vt, value, context)}
+		return reporting.ValidateOK, reporting.Failures{reporting.NewInvalidTypeFailure(vt, value, context)}
 	}
 
 	return reporting.ValidateOK, nil
@@ -76,7 +76,7 @@ func (vt ValueType) validateValue(value interface{}) bool {
 	return false
 }
 
-func (vt ValueType) validateBuiltinFns(s Schema, value map[string]interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (vt ValueType) validateBuiltinFns(s Schema, value map[string]interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if ref, ok := value["Ref"]; ok {
 		return NewRef(s, ref.(string)).Validate(self.Template(), append(context, "Ref"))
 	}
@@ -102,14 +102,14 @@ func (vt ValueType) validateBuiltinFns(s Schema, value map[string]interface{}, s
 }
 
 // TODO: Supported functions within a function
-func validateFindInMap(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func validateFindInMap(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	find, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure("Options need to be an array", context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Options need to be an array", context)}
 	}
 
 	if len(find) != 3 {
-		return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
 	}
 
 	mapName := find[0]
@@ -146,28 +146,28 @@ func validateFindInMap(value interface{}, self SelfRepresentation, context []str
 	return reporting.ValidateAbort, nil
 }
 
-func validateBase64(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func validateBase64(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	_, errs := ValueString.Validate(Schema{Type: ValueString}, value, self, context)
 	return reporting.ValidateAbort, errs
 }
 
-func validateJoin(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func validateJoin(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
+			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
+			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
+			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
 		}
 
-		failures := make([]reporting.Failure, 0, len(parts))
+		failures := make(reporting.Failures, 0, len(parts))
 		for i, part := range parts {
 			if _, errs := ValueString.Validate(Schema{Type: ValueString}, part, self, append(context, "1", strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
@@ -181,13 +181,13 @@ func validateJoin(value interface{}, self SelfRepresentation, context []string) 
 		return reporting.ValidateAbort, failures
 	}
 
-	return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }
 
-func validateGetAtt(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func validateGetAtt(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
+			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
 		}
 
 		if resourceID, ok := items[0].(string); ok {
@@ -198,12 +198,12 @@ func validateGetAtt(value interface{}, self SelfRepresentation, context []string
 				}
 			}
 			// resource not found
-			return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
+			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
 		}
 
 		// resource not a string
-		return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
 	}
 
-	return reporting.ValidateAbort, []reporting.Failure{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }

@@ -10,10 +10,10 @@ type Resource struct {
 	AwsType      string
 	Properties   Properties
 	ReturnValue  Schema
-	ValidateFunc func(TemplateResource, []string) (reporting.ValidateResult, []reporting.Failure)
+	ValidateFunc func(TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
 }
 
-func (rd Resource) Validate(tr TemplateResource, context []string) (reporting.ValidateResult, []reporting.Failure) {
+func (rd Resource) Validate(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if rd.ValidateFunc != nil {
 		return rd.ValidateFunc(tr, context)
 	}
