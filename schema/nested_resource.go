@@ -11,6 +11,10 @@ type NestedResource struct {
 	Properties  Properties
 }
 
+func (res NestedResource) Describe() string {
+	return res.Description
+}
+
 func (res NestedResource) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if values, ok := value.(map[string]interface{}); ok {
 		tnr := TemplateNestedResource{

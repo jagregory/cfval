@@ -66,6 +66,7 @@ func init() {
 }
 
 type PropertyType interface {
+	Describe() string
 	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
 }
 

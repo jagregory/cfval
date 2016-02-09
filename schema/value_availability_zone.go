@@ -1,6 +1,8 @@
 package schema
 
 var AvailabilityZone = EnumValue{
+	Description: "Availability Zone",
+
 	Options: []string{
 		"ap-northeast-1a",
 		"ap-northeast-1b",

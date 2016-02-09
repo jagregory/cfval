@@ -17,11 +17,23 @@ var metricsCollection = NestedResource{
 	},
 }
 
+var autoScalingNotificationType = EnumValue{
+	Description: "Auto Scaling Notification Type",
+
+	Options: []string{
+		"autoscaling:EC2_INSTANCE_LAUNCH",
+		"autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+		"autoscaling:EC2_INSTANCE_TERMINATE",
+		"autoscaling:EC2_INSTANCE_TERMINATE_ERROR",
+		"autoscaling:TEST_NOTIFICATION",
+	},
+}
+
 var notificationConfiguration = NestedResource{
 	Description: "Auto Scaling NotificationConfiguration",
 	Properties: Properties{
 		"NotificationTypes": Schema{
-			Type:     EnumValue{[]string{"autoscaling:EC2_INSTANCE_LAUNCH", "autoscaling:EC2_INSTANCE_LAUNCH_ERROR", "autoscaling:EC2_INSTANCE_TERMINATE", "autoscaling:EC2_INSTANCE_TERMINATE_ERROR", "autoscaling:TEST_NOTIFICATION"}},
+			Type:     autoScalingNotificationType,
 			Required: true,
 			Array:    true,
 		},
@@ -50,6 +62,12 @@ var autoScalingTag = NestedResource{
 			Type: ValueBool,
 		},
 	},
+}
+
+var healthCheckType = EnumValue{
+	Description: "Auto Scaling Health Check Type",
+
+	Options: []string{"EC2", "ELB"},
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
@@ -82,7 +100,7 @@ func AutoScalingGroup() Resource {
 			},
 
 			"HealthCheckType": Schema{
-				Type: EnumValue{[]string{"EC2", "ELB"}},
+				Type: healthCheckType,
 			},
 
 			"InstanceId": Schema{
@@ -147,6 +165,12 @@ var volumeSize = FuncType{
 	Fn: IntegerRangeValidate(1, 1024),
 }
 
+var volumeType = EnumValue{
+	Description: "EBS Block Device Volume Type",
+
+	Options: []string{"standard", "io1", "gp2"},
+}
+
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
 var ebsBlockDevice = NestedResource{
 	Description: "AutoScaling EBS Block Device",
@@ -173,7 +197,7 @@ var ebsBlockDevice = NestedResource{
 		},
 
 		"VolumeType": Schema{
-			Type:    EnumValue{[]string{"standard", "io1", "gp2"}},
+			Type:    volumeType,
 			Default: "standard",
 		},
 	},
@@ -217,6 +241,12 @@ var iamInstanceProfileType = FuncType{
 	Description: "IAM Instance Profile",
 
 	Fn: StringLengthValidate(1, 1600),
+}
+
+var placementTenancy = EnumValue{
+	Description: "Launch Configuration Placement Tenancy",
+
+	Options: []string{"default", "dedicated"},
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
@@ -285,7 +315,7 @@ func LaunchConfiguration() Resource {
 
 			// TODO: If you specify this property, you must specify at least one subnet in the VPCZoneIdentifier property of the AWS::AutoScaling::AutoScalingGroup resource.
 			"PlacementTenancy": Schema{
-				Type: EnumValue{[]string{"default", "dedicated"}},
+				Type: placementTenancy,
 			},
 
 			"RamDiskId": Schema{

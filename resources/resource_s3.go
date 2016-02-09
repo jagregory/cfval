@@ -27,6 +27,12 @@ var s3LifecycleRule = NestedResource{
 	},
 }
 
+var accessControl = EnumValue{
+	Description: "S3 Bucket AccessControl",
+
+	Options: []string{"AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"},
+}
+
 func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
@@ -38,7 +44,7 @@ func Bucket() Resource {
 
 		Properties: Properties{
 			"AccessControl": Schema{
-				Type: EnumValue{[]string{"AuthenticatedRead", "AwsExecRead", "BucketOwnerRead", "BucketOwnerFullControl", "LogDeliveryWrite", "Private", "PublicRead", "PublicReadWrite"}},
+				Type: accessControl,
 			},
 
 			"BucketName": Schema{

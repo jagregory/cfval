@@ -60,7 +60,7 @@ func (ref Ref) Validate(template *Template, context []string) (reporting.Validat
 	// fail if types don't match, except special case TypeUnknown for types with an unspecified Ref
 	// TODO: Fix up all resources to have Ref types and remove this special case
 	if targetType := target.TargetType(); targetType != ref.source.Type && targetType != ValueUnknown {
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType, ref.source.Type), context)}
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ref.source.Type.Describe()), context)}
 	}
 
 	return reporting.ValidateAbort, nil

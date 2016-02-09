@@ -17,6 +17,52 @@ var metricDimension = NestedResource{
 	},
 }
 
+var comparisonOperator = EnumValue{
+	Description: "Alarm Comparison Operator",
+
+	Options: []string{"GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"},
+}
+
+var statistic = EnumValue{
+	Description: "Alarm Statistic",
+
+	Options: []string{"SampleCount", "Average", "Sum", "Minimum", "Maximum"},
+}
+
+var unit = EnumValue{
+	Description: "Alarm Unit",
+
+	Options: []string{
+		"Seconds",
+		"Microseconds",
+		"Milliseconds",
+		"Bytes",
+		"Kilobytes",
+		"Megabytes",
+		"Gigabytes",
+		"Terabytes",
+		"Bits",
+		"Kilobits",
+		"Megabits",
+		"Gigabits",
+		"Terabits",
+		"Percent",
+		"Count",
+		"Bytes/Second",
+		"Kilobytes/Second",
+		"Megabytes/Second",
+		"Gigabytes/Second",
+		"Terabytes/Second",
+		"Bits/Second",
+		"Kilobits/Second",
+		"Megabits/Second",
+		"Gigabits/Second",
+		"Terabits/Second",
+		"Count/Second",
+		"None",
+	},
+}
+
 func Alarm() Resource {
 	return Resource{
 		AwsType: "AWS::CloudWatch::Alarm",
@@ -46,7 +92,7 @@ func Alarm() Resource {
 
 			"ComparisonOperator": Schema{
 				Required: true,
-				Type:     EnumValue{[]string{"GreaterThanOrEqualToThreshold", "GreaterThanThreshold", "LessThanThreshold", "LessThanOrEqualToThreshold"}},
+				Type:     comparisonOperator,
 			},
 
 			"Dimensions": Schema{
@@ -85,7 +131,7 @@ func Alarm() Resource {
 			},
 
 			"Statistic": Schema{
-				Type:     EnumValue{[]string{"SampleCount", "Average", "Sum", "Minimum", "Maximum"}},
+				Type:     statistic,
 				Required: true,
 			},
 
@@ -95,7 +141,7 @@ func Alarm() Resource {
 			},
 
 			"Unit": Schema{
-				Type: EnumValue{[]string{"Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"}},
+				Type: unit,
 			},
 		},
 	}

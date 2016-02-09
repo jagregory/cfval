@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/jagregory/cfval/reporting"
 )
@@ -31,6 +32,10 @@ const (
 	// TypeVPCId
 	TypeHostedZoneId
 )
+
+func (vt ValueType) Describe() string {
+	return strings.TrimPrefix(vt.String(), "Value")
+}
 
 func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if ok := vt.validateValue(value); !ok {

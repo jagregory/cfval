@@ -4,6 +4,7 @@ import . "github.com/jagregory/cfval/schema"
 
 var cookies = NestedResource{
 	Description: "CloudFront ForwardedValues Cookies",
+
 	Properties: Properties{
 		"Forward": Schema{
 			Type:     ValueString,
@@ -197,6 +198,12 @@ var viewerCertificate = NestedResource{
 	},
 }
 
+var viewerProtocolPolicy = EnumValue{
+	Description: "CloudFront ViewerProtocolPolicy",
+
+	Options: []string{"allow-all", "redirect-to-https", "https"},
+}
+
 var cacheBehaviour = NestedResource{
 	Description: "CloudFront DistributionConfig CacheBehavior",
 	Properties: Properties{
@@ -245,7 +252,7 @@ var cacheBehaviour = NestedResource{
 		},
 
 		"ViewerProtocolPolicy": Schema{
-			Type:     EnumValue{[]string{"allow-all", "redirect-to-https", "https"}},
+			Type:     viewerProtocolPolicy,
 			Required: true,
 		},
 	},
@@ -259,6 +266,12 @@ var customErrorResponse = NestedResource{
 var restrictions = NestedResource{
 	Description: "CloudFront DistributionConfiguration Restrictions",
 	Properties:  Properties{},
+}
+
+var priceClass = EnumValue{
+	Description: "CloudFront PriceClass",
+
+	Options: []string{"PriceClass_All", "PriceClass_200", "PriceClass_100"},
 }
 
 var distributionConfig = NestedResource{
@@ -308,7 +321,7 @@ var distributionConfig = NestedResource{
 		},
 
 		"PriceClass": Schema{
-			Type: EnumValue{[]string{"PriceClass_All", "PriceClass_200", "PriceClass_100"}},
+			Type: priceClass,
 		},
 
 		"Restrictions": Schema{

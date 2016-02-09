@@ -225,6 +225,12 @@ func SecurityGroup() Resource {
 	}
 }
 
+var ipProtocol = EnumValue{
+	Description: "SecurityGroupIngress IpProtocol",
+
+	Options: []string{"tcp", "udp", "icmp", "-1"},
+}
+
 func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
@@ -249,7 +255,7 @@ func SecurityGroupIngress() Resource {
 
 			"IpProtocol": Schema{
 				Required: true,
-				Type:     EnumValue{[]string{"tcp", "udp", "icmp", "-1"}},
+				Type:     ipProtocol,
 			},
 
 			"SourceSecurityGroupId": Schema{

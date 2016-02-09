@@ -2,6 +2,12 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
+var instanceProtocol = EnumValue{
+	Description: "LoadBalancer InstanceProtocol",
+
+	Options: []string{"HTTP", "HTTPS", "TCP", "SSL"},
+}
+
 func LoadBalancer() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
@@ -103,7 +109,7 @@ func LoadBalancer() Resource {
 						},
 
 						"InstanceProtocol": Schema{
-							Type: EnumValue{[]string{"HTTP", "HTTPS", "TCP", "SSL"}},
+							Type: instanceProtocol,
 						},
 
 						"LoadBalancerPort": Schema{
@@ -118,7 +124,7 @@ func LoadBalancer() Resource {
 
 						"Protocol": Schema{
 							Required: true,
-							Type:     EnumValue{[]string{"HTTP", "HTTPS", "TCP", "SSL"}},
+							Type:     instanceProtocol,
 						},
 
 						"SSLCertificateId": Schema{

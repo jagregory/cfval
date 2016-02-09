@@ -8,7 +8,12 @@ import (
 )
 
 type EnumValue struct {
-	Options []string
+	Description string
+	Options     []string
+}
+
+func (enum EnumValue) Describe() string {
+	return enum.Description
 }
 
 func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
