@@ -6,62 +6,47 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func TestCoercionOfKeyNameToString(t *testing.T) {
-	template := &Template{}
-	template.Resources = map[string]TemplateResource{
-		"KeyNameResource": TemplateResource{
-			template: template,
-			Definition: Resource{
-				ReturnValue: Schema{
-					Type: KeyName,
-				},
-			},
-		},
+type coercion struct{ from, to PropertyType }
 
-		"StringResource": TemplateResource{
-			template: template,
-			Definition: Resource{
-				ReturnValue: Schema{
-					Type: ValueString,
-				},
-			},
-		},
+var validCoercions = []coercion{
+	coercion{from: KeyName, to: ValueString},
+	// coercion{from: ValueString, to: KeyName},
+	// coercion{from: ValueNumber, to: ValueString},
+	// coercion{from: ValueString, to: ValueNumber},
+}
 
-		"TestResource": TemplateResource{
-			template: template,
-			Definition: Resource{
-				Properties: map[string]Schema{
-					"StringProp": Schema{
-						Type: ValueString,
-					},
-
-					"KeyNameProp": Schema{
-						Type: KeyName,
+func TestValidCoercions(t *testing.T) {
+	for _, c := range validCoercions {
+		template := &Template{}
+		template.Resources = map[string]TemplateResource{
+			"Source": TemplateResource{
+				template: template,
+				Definition: Resource{
+					ReturnValue: Schema{
+						Type: c.from,
 					},
 				},
 			},
-			Properties: map[string]interface{}{
-				"StringProp":  map[string]interface{}{"Ref": "KeyNameResource"},
-				"KeyNameProp": map[string]interface{}{"Ref": "StringResource"},
+
+			"TestResource": TemplateResource{
+				template: template,
+				Definition: Resource{
+					Properties: map[string]Schema{
+						"Destination": Schema{
+							Type: c.to,
+						},
+					},
+				},
+				Properties: map[string]interface{}{
+					"Destination": map[string]interface{}{"Ref": "Source"},
+				},
 			},
-		},
-	}
+		}
 
-	_, errs := template.Validate()
+		_, errs := template.Validate()
 
-	if i, found := testHasFailure(errs, "Ref value of 'KeyNameResource' is KeyName but is being assigned to a ValueString property"); found {
-		errs[i] = nil
-		t.Error("Should coerce KeyName into String")
-	}
-
-	if i, found := testHasFailure(errs, "Ref value of 'StringResource' is ValueString but is being assigned to a KeyName property"); found {
-		errs[i] = nil
-		t.Error("Should coerce String into KeyName")
-	}
-
-	for _, err := range errs {
-		if err != nil {
-			t.Error("Unexpected error", err.Message)
+		if errs != nil {
+			t.Errorf("Should coerce %s into %s.\nFailures:\n%s", c.from, c.to, errs)
 		}
 	}
 }
