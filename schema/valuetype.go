@@ -15,7 +15,6 @@ const (
 	ValueString
 	ValueBool
 	ValueNumber
-	ValueMap
 )
 
 // TODO: This really feels like it can be simplified
@@ -28,12 +27,8 @@ func (from ValueType) CoercibleTo(to PropertyType) Coercion {
 		return CoercionAlways
 	}
 
-	if from != ValueMap && to == ValueString {
+	if to == ValueString {
 		return CoercionAlways
-	}
-
-	if from == ValueMap || to == ValueMap {
-		return CoercionNever
 	}
 
 	if from == ValueString {
@@ -84,10 +79,6 @@ func (vt ValueType) validateValue(value interface{}) bool {
 		}
 	case ValueNumber:
 		if _, ok := value.(float64); ok {
-			return true
-		}
-	case ValueMap:
-		if _, ok := value.(map[string]interface{}); ok {
 			return true
 		}
 	}

@@ -10,31 +10,21 @@ type testCase struct {
 func data() []testCase {
 	coercions := []testCase{
 		testCase{from: ValueString, to: ValueBool, result: CoercionBegrudgingly},
-		testCase{from: ValueString, to: ValueMap, result: CoercionNever},
 		testCase{from: ValueString, to: ValueNumber, result: CoercionBegrudgingly},
 		testCase{from: ValueString, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueString, to: ValueUnknown, result: CoercionBegrudgingly},
 
 		testCase{from: ValueNumber, to: ValueBool, result: CoercionNever},
-		testCase{from: ValueNumber, to: ValueMap, result: CoercionNever},
 		testCase{from: ValueNumber, to: ValueNumber, result: CoercionAlways},
 		testCase{from: ValueNumber, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueNumber, to: ValueUnknown, result: CoercionBegrudgingly},
 
 		testCase{from: ValueBool, to: ValueBool, result: CoercionAlways},
-		testCase{from: ValueBool, to: ValueMap, result: CoercionNever},
 		testCase{from: ValueBool, to: ValueNumber, result: CoercionNever},
 		testCase{from: ValueBool, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueBool, to: ValueUnknown, result: CoercionBegrudgingly},
 
-		testCase{from: ValueMap, to: ValueBool, result: CoercionNever},
-		testCase{from: ValueMap, to: ValueMap, result: CoercionAlways},
-		testCase{from: ValueMap, to: ValueNumber, result: CoercionNever},
-		testCase{from: ValueMap, to: ValueString, result: CoercionNever},
-		testCase{from: ValueMap, to: ValueUnknown, result: CoercionBegrudgingly},
-
 		testCase{from: ValueUnknown, to: ValueBool, result: CoercionBegrudgingly},
-		testCase{from: ValueUnknown, to: ValueMap, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueNumber, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueString, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueUnknown, result: CoercionBegrudgingly},
@@ -44,13 +34,11 @@ func data() []testCase {
 		coercions = append(coercions, testCase{from: enum, to: enum, result: CoercionAlways})
 
 		coercions = append(coercions, testCase{from: enum, to: ValueBool, result: CoercionNever})
-		coercions = append(coercions, testCase{from: enum, to: ValueMap, result: CoercionNever})
 		coercions = append(coercions, testCase{from: enum, to: ValueNumber, result: CoercionNever})
 		coercions = append(coercions, testCase{from: enum, to: ValueString, result: CoercionAlways})
 		coercions = append(coercions, testCase{from: enum, to: ValueUnknown, result: CoercionBegrudgingly})
 
 		coercions = append(coercions, testCase{from: ValueBool, to: enum, result: CoercionNever})
-		coercions = append(coercions, testCase{from: ValueMap, to: enum, result: CoercionNever})
 		coercions = append(coercions, testCase{from: ValueNumber, to: enum, result: CoercionNever})
 		coercions = append(coercions, testCase{from: ValueString, to: enum, result: CoercionBegrudgingly})
 		coercions = append(coercions, testCase{from: ValueUnknown, to: enum, result: CoercionBegrudgingly})
