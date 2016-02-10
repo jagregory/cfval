@@ -30,7 +30,7 @@ type PropertyType interface {
 	CoercibleTo(PropertyType) Coercion
 }
 
-type ValidateFunc func(interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
+type ValidateFunc func(Schema, interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
 type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
 
 type Schema struct {
@@ -131,7 +131,7 @@ func (s Schema) validateValue(value interface{}, self SelfRepresentation, contex
 	// validate tells us to, otherwise combining the results with any prior
 	// failures
 	if s.ValidateFunc != nil {
-		result, errs := s.ValidateFunc(value, self, context)
+		result, errs := s.ValidateFunc(s, value, self, context)
 		if result == reporting.ValidateAbort {
 			return reporting.ValidateOK, reporting.Safe(errs)
 		}

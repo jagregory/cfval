@@ -7,9 +7,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-type FuncTypeValidateFunc func(Schema, interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
-
-func RegexpValidate(pattern, message string) FuncTypeValidateFunc {
+func RegexpValidate(pattern, message string) ValidateFunc {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
 		panic(err)
@@ -28,7 +26,7 @@ func RegexpValidate(pattern, message string) FuncTypeValidateFunc {
 	}
 }
 
-func IntegerRangeValidate(start, end float64) FuncTypeValidateFunc {
+func IntegerRangeValidate(start, end float64) ValidateFunc {
 	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		if result, errs := ValueNumber.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
@@ -44,7 +42,7 @@ func IntegerRangeValidate(start, end float64) FuncTypeValidateFunc {
 	}
 }
 
-func StringLengthValidate(min, max int) FuncTypeValidateFunc {
+func StringLengthValidate(min, max int) ValidateFunc {
 	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
@@ -102,7 +100,7 @@ func contains(all []string, one string) bool {
 }
 
 // TODO: fixme
-func FixedArrayValidate(options ...[]string) FuncTypeValidateFunc {
+func FixedArrayValidate(options ...[]string) ValidateFunc {
 	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 		for _, option := range options {
 			if match(option, value.([]interface{})) {

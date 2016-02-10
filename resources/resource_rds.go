@@ -151,9 +151,21 @@ func DBSubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::RDS::DBSubnetGroup",
 		Properties: map[string]Schema{
-			"DBSubnetGroupDescription": Schema{Type: ValueString, Required: true},
-			"SubnetIds":                Schema{Type: ValueString, Required: true, Array: true},
-			"Tags":                     Schema{Type: resourceTag, Array: true},
+			"DBSubnetGroupDescription": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"SubnetIds": Schema{
+				Type:     ValueString,
+				Required: true,
+				Array:    true,
+			},
+
+			"Tags": Schema{
+				Type:  resourceTag,
+				Array: true,
+			},
 		},
 	}
 }

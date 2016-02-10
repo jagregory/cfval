@@ -38,19 +38,19 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 		"CacheNodeType": "cache.m3.medium",
 	}
 
-	if _, errs := automaticFailoverEnabled.Validate(schema.Schema{}, true, badVersion, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, context); errs == nil {
 		t.Error("Should fail if has engine less than 2.8")
 	}
 
-	if _, errs := automaticFailoverEnabled.Validate(schema.Schema{}, true, badNodeTypeT1, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, context); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabled.Validate(schema.Schema{}, true, badNodeTypeT2, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, context); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabled.Validate(schema.Schema{}, true, good, context); errs != nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, context); errs != nil {
 		t.Error("Should pass if engine is 2.8 or above and node type isn't t1 or t2")
 	}
 }

@@ -42,23 +42,10 @@ var countryCode = EnumValue{
 		"AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PE", "PY", "SR", "UY", "VE"},
 }
 
-// TODO: These two should really be merged
-var subdivisionEnum = EnumValue{
+var subdivisionCode = EnumValue{
 	Description: "GeoLocation Subdivision Code",
 
 	Options: []string{"AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"},
-}
-
-var subdivisionCode = FuncType{
-	Description: "GeoLocation Subdivision Code",
-
-	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-		if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Can only be set when CountryCode is US", context)}
-		}
-
-		return subdivisionEnum.Validate(property, value, self, context)
-	},
 }
 
 var geoLocation = NestedResource{
@@ -79,6 +66,13 @@ var geoLocation = NestedResource{
 		"SubdivisionCode": Schema{
 			Type:      subdivisionCode,
 			Conflicts: []string{"ContinentCode"},
+			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
+					return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Can only be set when CountryCode is US", context)}
+				}
+
+				return reporting.ValidateOK, nil
+			},
 		},
 	},
 }

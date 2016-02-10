@@ -119,31 +119,6 @@ func CacheCluster() Resource {
 	}
 }
 
-// You cannot enable automatic failover for Redis versions earlier than 2.8.6 or for T1 and T2 cache node types.
-// TODO: This doesn't feel like it should be a type, but it is since the complex type refactor
-var automaticFailoverEnabled = FuncType{
-	Description: "ElastiCache Automatic Failover",
-
-	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-		if version, found := self.Property("EngineVersion"); found {
-			if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
-				if versionNumber < 2.8 {
-					return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", context)}
-				}
-			}
-		}
-
-		if nodeType, found := self.Property("CacheNodeType"); found {
-			split := strings.Split(nodeType.(string), ".")
-			if split[1] == "t1" || split[1] == "t2" {
-				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", context)}
-			}
-		}
-
-		return reporting.ValidateOK, nil
-	},
-}
-
 var cacheNodeType = EnumValue{
 	Description: "ElastiCache NodeType",
 
@@ -161,6 +136,25 @@ var engine = EnumValue{
 	Options: []string{"redis"},
 }
 
+func automaticFailoverEnabledValidation(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	if version, found := self.Property("EngineVersion"); found {
+		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
+			if versionNumber < 2.8 {
+				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", context)}
+			}
+		}
+	}
+
+	if nodeType, found := self.Property("CacheNodeType"); found {
+		split := strings.Split(nodeType.(string), ".")
+		if split[1] == "t1" || split[1] == "t2" {
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", context)}
+		}
+	}
+
+	return reporting.ValidateOK, nil
+}
+
 func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
@@ -172,8 +166,11 @@ func ReplicationGroup() Resource {
 
 		Properties: map[string]Schema{
 			"AutomaticFailoverEnabled": Schema{
-				Type:    automaticFailoverEnabled,
+				Type:    ValueBool,
 				Default: true,
+
+				// You cannot enable automatic failover for Redis versions earlier than 2.8.6 or for T1 and T2 cache node types.
+				ValidateFunc: automaticFailoverEnabledValidation,
 			},
 
 			// Currently, this property isn't used by ElastiCache.

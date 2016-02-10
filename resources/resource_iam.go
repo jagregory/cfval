@@ -91,7 +91,7 @@ func InstanceProfile() Resource {
 
 		// Name
 		ReturnValue: Schema{
-			Type: iamInstanceProfileType,
+			Type: ValueString,
 		},
 
 		Properties: map[string]Schema{
