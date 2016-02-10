@@ -2,48 +2,6 @@ package schema
 
 import "testing"
 
-func TestGetAtt(t *testing.T) {
-	template := &Template{
-		Resources: map[string]TemplateResource{
-			"MyResource": TemplateResource{},
-		},
-	}
-	tr := TemplateResource{
-		template: template,
-	}
-	context := []string{}
-
-	if _, errs := validateGetAtt(nil, tr, context); errs == nil {
-		t.Error("Should fail when no arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt([]interface{}{"a", "b", "c"}, tr, context); errs == nil {
-		t.Error("Should fail when too many arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt([]interface{}{"a"}, tr, context); errs == nil {
-		t.Error("Should fail when too few arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt([]interface{}{"UnknownResource", "prop"}, tr, context); errs == nil {
-		t.Error("Should fail when invalid resource used", errs)
-	}
-
-	// TODO: this test will eventually fail when we implement GetAtt prop validation
-	// uncomment the following tests later
-	if _, errs := validateGetAtt([]interface{}{"MyResource", "prop"}, tr, context); errs != nil {
-		t.Error("Should pass when valid resource used", errs)
-	}
-
-	// if _, errs := validateGetAtt([]interface{}{"MyResource", "BadProp"}, tr, context); errs == nil {
-	// 	t.Error("Should fail when invalid property used for type of resource", errs)
-	// }
-	//
-	// if _, errs := validateGetAtt([]interface{}{"MyResource", "InstanceId"}, tr, context); errs != nil {
-	// 	t.Error("Should pass when valid property used for type of resource", errs)
-	// }
-}
-
 func TestSchemaTargetType(t *testing.T) {
 	if (Schema{Type: ValueNumber}).TargetType() != ValueNumber {
 		t.Error("Schema TargetType should match Type")
@@ -51,5 +9,73 @@ func TestSchemaTargetType(t *testing.T) {
 
 	if (Schema{}).TargetType() != ValueUnknown {
 		t.Error("Schema without Type should return TypeUnknown for TargetType")
+	}
+}
+
+func TestSchemaRequiredValidation(t *testing.T) {
+	self := TemplateResource{}
+	ctx := []string{}
+
+	notRequired := Schema{
+		Type: ValueString,
+	}
+	required := Schema{
+		Type:     ValueString,
+		Required: true,
+	}
+
+	if _, errs := notRequired.Validate(nil, self, ctx); errs != nil {
+		t.Error("Should pass when a not required field is nil")
+	}
+
+	if _, errs := notRequired.Validate("abc", self, ctx); errs != nil {
+		t.Error("Should pass when a not required field has a value")
+	}
+
+	if _, errs := required.Validate(nil, self, ctx); errs == nil {
+		t.Error("Should fail when a required field is nil")
+	}
+
+	if _, errs := required.Validate("abc", self, ctx); errs != nil {
+		t.Error("Should pass when a required field has a value")
+	}
+}
+
+func TestSchemaTypeValidation(t *testing.T) {
+	self := TemplateResource{}
+	ctx := []string{}
+
+	schema := Schema{
+		Type: ValueString,
+	}
+
+	if _, errs := schema.Validate("abc", self, ctx); errs != nil {
+		t.Error("Should pass when value is correct type")
+	}
+
+	if _, errs := schema.Validate(123, self, ctx); errs == nil {
+		t.Error("Should fail when value is incorrect type")
+	}
+}
+
+func TestSchemaArrayValidation(t *testing.T) {
+	self := TemplateResource{}
+	ctx := []string{}
+
+	schema := Schema{
+		Type:  ValueString,
+		Array: true,
+	}
+
+	if _, errs := schema.Validate([]interface{}{"abc"}, self, ctx); errs != nil {
+		t.Error("Should pass when value is an array of the correct type")
+	}
+
+	if _, errs := schema.Validate([]interface{}{"abc", 123}, self, ctx); errs == nil {
+		t.Error("Should fail when value is a mixed array")
+	}
+
+	if _, errs := schema.Validate([]interface{}{123}, self, ctx); errs == nil {
+		t.Error("Should fail when value is an incorrect array")
 	}
 }

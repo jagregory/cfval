@@ -7,7 +7,12 @@ import (
 )
 
 type PropertyType interface {
+	// Describe returns a human-readable description of the type in AWS, which
+	// could be the AWS Resource Type or just any arbitrary description.
 	Describe() string
+
+	// Validate checks that the property is valid, including any built-in function
+	// calls and stuff within the property.
 	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
 
 	// CoercibleTo will return true for types which the value of this property can
@@ -49,10 +54,8 @@ func (s Schema) TargetType() ValueType {
 }
 
 func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-	if !s.Required && value == nil {
-		return reporting.ValidateOK, nil
-	} else if s.Required && value == nil {
-		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Required property is missing", context)}
+	if result, errs := s.validateRequired(value, context); result == reporting.ValidateAbort {
+		return reporting.ValidateOK, errs
 	}
 
 	failures := make(reporting.Failures, 0, 20)
@@ -77,9 +80,15 @@ func (s Schema) Validate(value interface{}, self SelfRepresentation, context []s
 		}
 	}
 
-	if len(failures) == 0 {
-		return reporting.ValidateOK, nil
+	return reporting.ValidateOK, reporting.Safe(failures)
+}
+
+func (s Schema) validateRequired(value interface{}, context []string) (reporting.ValidateResult, reporting.Failures) {
+	if !s.Required && value == nil {
+		return reporting.ValidateAbort, nil
+	} else if s.Required && value == nil {
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Required property is missing", context)}
 	}
 
-	return reporting.ValidateOK, failures
+	return reporting.ValidateOK, nil
 }

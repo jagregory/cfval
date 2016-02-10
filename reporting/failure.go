@@ -37,3 +37,13 @@ func NewWarning(message string, context []string) *Failure {
 func NewInvalidTypeFailure(valueType interface{}, value interface{}, context []string) *Failure {
 	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), context)
 }
+
+// Safe returns either the given list of failures, or nil if there are no
+// failures.
+func Safe(f Failures) Failures {
+	if f == nil || len(f) == 0 {
+		return nil
+	}
+
+	return f
+}
