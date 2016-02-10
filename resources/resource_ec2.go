@@ -114,7 +114,7 @@ func Route() Resource {
 
 		Properties: Properties{
 			"DestinationCidrBlock": Schema{
-				Type:     cidr,
+				Type:     CIDR,
 				Required: true,
 			},
 
@@ -237,7 +237,7 @@ func SecurityGroupIngress() Resource {
 
 		Properties: Properties{
 			"CidrIp": Schema{
-				Type: cidr,
+				Type: CIDR,
 			},
 
 			"FromPort": Schema{
@@ -287,7 +287,7 @@ func Subnet() Resource {
 			},
 
 			"CidrBlock": Schema{
-				Type:     cidr,
+				Type:     CIDR,
 				Required: true,
 			},
 

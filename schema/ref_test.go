@@ -56,7 +56,7 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if _, errs := NewRef(Schema{}, "invalid").Validate(template, []string{}); errs == nil {
+	if _, errs := NewRef(Schema{Type: ValueString}, "invalid").Validate(template, []string{}); errs == nil {
 		t.Error("Should fail on invalid ref")
 	}
 }

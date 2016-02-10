@@ -7,7 +7,7 @@ import (
 )
 
 func TestValueTypeValidation(t *testing.T) {
-	property := Schema{}
+	property := Schema{Type: ValueString}
 	self := TemplateResource{
 		template: &Template{
 			Resources: map[string]TemplateResource{

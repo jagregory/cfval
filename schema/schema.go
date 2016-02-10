@@ -65,9 +65,31 @@ func init() {
 	}
 }
 
+type Coercion int
+
+const (
+	CoercionNever Coercion = iota
+	CoercionAlways
+	CoercionBegrudgingly
+)
+
 type PropertyType interface {
 	Describe() string
 	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
+
+	// CanCoerceTo will return true for types which the value of this property can
+	// be coerced into. e.g. A number can be coerced to a string
+	// CoercionAlways means a type is always coercible to another
+	// 	 e.g. all numbers are valid strings
+	// CoercionNever means a type is never coercible to another
+	//   e.g. a number is never a valid bool
+	// CoercionBegrudgingly means a type can be coerced but results may vary
+	//   e.g. a string can be coerced to a number, but only if it is numerically
+	//        valid.
+	//
+	// CoerceAlways and CoercionBegrudgingly are equivalent right now, but in
+	// future a warning may be issued for begrudging conversions.
+	CoercibleTo(PropertyType) Coercion
 }
 
 type ValidateFunc func(interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)

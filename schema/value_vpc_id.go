@@ -1,8 +1,6 @@
 package schema
 
-import (
-	"github.com/jagregory/cfval/reporting"
-)
+import "github.com/jagregory/cfval/reporting"
 
 var VpcID = FuncType{
 	Description: "VpcID",

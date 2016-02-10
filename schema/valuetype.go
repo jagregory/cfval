@@ -33,6 +33,31 @@ const (
 	TypeHostedZoneId
 )
 
+// TODO: This really feels like it can be simplified
+func (from ValueType) CoercibleTo(to PropertyType) Coercion {
+	if to == from {
+		return CoercionAlways
+	}
+
+	if from != ValueMap && to == ValueString {
+		return CoercionAlways
+	}
+
+	if from == ValueMap || to == ValueMap {
+		return CoercionNever
+	}
+
+	if from == ValueString {
+		return CoercionBegrudgingly
+	}
+
+	if to == ValueBool || to == ValueNumber || from == ValueBool || from == ValueNumber {
+		return CoercionNever
+	}
+
+	return CoercionBegrudgingly
+}
+
 func (vt ValueType) Describe() string {
 	return strings.TrimPrefix(vt.String(), "Value")
 }

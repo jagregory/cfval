@@ -29,6 +29,11 @@ func NewFailure(message string, context []string) *Failure {
 	return &Failure{message, context, strings.Join(context, ".")}
 }
 
+func NewWarning(message string, context []string) *Failure {
+	// TODO: Handle warnings...
+	return NewFailure(message, context)
+}
+
 func NewInvalidTypeFailure(valueType interface{}, value interface{}, context []string) *Failure {
 	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), context)
 }

@@ -9,7 +9,9 @@ func TestEnumValidation(t *testing.T) {
 	tr := NewTemplateResource(template)
 	context := []string{}
 
-	enum := EnumValue{[]string{"a", "b", "c"}}
+	enum := EnumValue{
+		Options: []string{"a", "b", "c"},
+	}
 
 	if _, errs := enum.Validate(Schema{}, "", tr, context); errs == nil {
 		t.Error("Enum should fail on empty string")

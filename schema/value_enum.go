@@ -16,6 +16,18 @@ func (enum EnumValue) Describe() string {
 	return enum.Description
 }
 
+func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
+	if to == ValueString {
+		return CoercionAlways
+	} else if ft, ok := to.(EnumValue); ok && ft.Description == from.Description {
+		return CoercionAlways
+	} else if to == ValueUnknown {
+		return CoercionBegrudgingly
+	}
+
+	return CoercionNever
+}
+
 func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs

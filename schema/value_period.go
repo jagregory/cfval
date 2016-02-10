@@ -1,14 +1,13 @@
-package resources
+package schema
 
 import (
 	"fmt"
 	"strconv"
 
 	"github.com/jagregory/cfval/reporting"
-	. "github.com/jagregory/cfval/schema"
 )
 
-var period = FuncType{
+var Period = FuncType{
 	Description: "Period",
 
 	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {

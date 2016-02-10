@@ -1,62 +1,71 @@
 package schema
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/jagregory/cfval/reporting"
-)
-
-type coercion struct{ from, to PropertyType }
-
-var validCoercions = []coercion{
-	coercion{from: KeyName, to: ValueString},
-	// coercion{from: ValueString, to: KeyName},
-	// coercion{from: ValueNumber, to: ValueString},
-	// coercion{from: ValueString, to: ValueNumber},
+type testCase struct {
+	from, to PropertyType
+	result   Coercion
 }
 
-func TestValidCoercions(t *testing.T) {
-	for _, c := range validCoercions {
-		template := &Template{}
-		template.Resources = map[string]TemplateResource{
-			"Source": TemplateResource{
-				template: template,
-				Definition: Resource{
-					ReturnValue: Schema{
-						Type: c.from,
-					},
-				},
-			},
+func data() []testCase {
+	coercions := []testCase{
+		testCase{from: ValueString, to: ValueBool, result: CoercionBegrudgingly},
+		testCase{from: ValueString, to: ValueMap, result: CoercionNever},
+		testCase{from: ValueString, to: ValueNumber, result: CoercionBegrudgingly},
+		testCase{from: ValueString, to: ValueString, result: CoercionAlways},
 
-			"TestResource": TemplateResource{
-				template: template,
-				Definition: Resource{
-					Properties: map[string]Schema{
-						"Destination": Schema{
-							Type: c.to,
-						},
-					},
-				},
-				Properties: map[string]interface{}{
-					"Destination": map[string]interface{}{"Ref": "Source"},
-				},
-			},
-		}
+		testCase{from: ValueNumber, to: ValueBool, result: CoercionNever},
+		testCase{from: ValueNumber, to: ValueMap, result: CoercionNever},
+		testCase{from: ValueNumber, to: ValueNumber, result: CoercionAlways},
+		testCase{from: ValueNumber, to: ValueString, result: CoercionAlways},
 
-		_, errs := template.Validate()
+		testCase{from: ValueBool, to: ValueBool, result: CoercionAlways},
+		testCase{from: ValueBool, to: ValueMap, result: CoercionNever},
+		testCase{from: ValueBool, to: ValueNumber, result: CoercionNever},
+		testCase{from: ValueBool, to: ValueString, result: CoercionAlways},
 
-		if errs != nil {
-			t.Errorf("Should coerce %s into %s.\nFailures:\n%s", c.from, c.to, errs)
+		testCase{from: ValueMap, to: ValueBool, result: CoercionNever},
+		testCase{from: ValueMap, to: ValueMap, result: CoercionAlways},
+		testCase{from: ValueMap, to: ValueNumber, result: CoercionNever},
+		testCase{from: ValueMap, to: ValueString, result: CoercionNever},
+	}
+
+	for _, enum := range []PropertyType{AvailabilityZone, CIDR, KeyName, Period, VpcID} {
+		coercions = append(coercions, testCase{from: enum, to: enum, result: CoercionAlways})
+
+		coercions = append(coercions, testCase{from: enum, to: ValueBool, result: CoercionNever})
+		coercions = append(coercions, testCase{from: enum, to: ValueMap, result: CoercionNever})
+		coercions = append(coercions, testCase{from: enum, to: ValueNumber, result: CoercionNever})
+		coercions = append(coercions, testCase{from: enum, to: ValueString, result: CoercionAlways})
+
+		coercions = append(coercions, testCase{from: ValueBool, to: enum, result: CoercionNever})
+		coercions = append(coercions, testCase{from: ValueMap, to: enum, result: CoercionNever})
+		coercions = append(coercions, testCase{from: ValueNumber, to: enum, result: CoercionNever})
+		coercions = append(coercions, testCase{from: ValueString, to: enum, result: CoercionBegrudgingly})
+	}
+
+	return coercions
+}
+
+func TestCoercions(t *testing.T) {
+	for _, c := range data() {
+		result := c.from.CoercibleTo(c.to)
+
+		if result != c.result {
+			t.Errorf("%s should %s be coercible to %s but is %s", c.from.Describe(), coercionString(c.result), c.to.Describe(), coercionString(result))
 		}
 	}
 }
 
-func testHasFailure(failures reporting.Failures, message string) (int, bool) {
-	for i, failure := range failures {
-		if failure.Message == message {
-			return i, true
-		}
+func coercionString(c Coercion) string {
+	switch c {
+	case CoercionAlways:
+		return "always"
+	case CoercionNever:
+		return "never"
+	case CoercionBegrudgingly:
+		return "begrudgingly"
+	default:
+		panic("Unexpected coercion")
 	}
-
-	return 0, false
 }

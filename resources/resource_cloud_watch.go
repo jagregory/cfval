@@ -126,7 +126,7 @@ func Alarm() Resource {
 			},
 
 			"Period": Schema{
-				Type:     period,
+				Type:     Period,
 				Required: true,
 			},
 
