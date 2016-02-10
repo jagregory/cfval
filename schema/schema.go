@@ -1,76 +1,9 @@
-// brain dump
-// instead of having all these different ValueType's
-// we should make schema.Type be an interface type which implements ??? and replaces ValidateFunc
-// so instead of using EnumValidate we have a Type which knows that it can only be a certain
-// combination of strings, or a Type which knows it should have an InstanceId format...
-
 package schema
 
 import (
 	"strconv"
 
 	"github.com/jagregory/cfval/reporting"
-)
-
-func validateJson(value interface{}, tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
-	switch t := value.(type) {
-	case map[string]interface{}:
-		failures := make(reporting.Failures, 0, 100)
-
-		// TODO: Fix this up asap
-		// if ok, errs := Json.validateBuiltinFns(t, tr, context); !ok && errs != nil {
-		// 	failures = append(failures, errs...)
-		// } else {
-		// 	for key, value := range t {
-		// 		if ok, errs := validateJson(value, tr, append(context, key)); !ok {
-		// 			failures = append(failures, errs...)
-		// 		}
-		// 	}
-		// }
-
-		if len(failures) == 0 {
-			return reporting.ValidateOK, nil
-		}
-
-		return reporting.ValidateOK, failures
-	case []interface{}:
-		failures := make(reporting.Failures, 0, 100)
-
-		for i, value := range t {
-			if _, errs := validateJson(value, tr, append(context, strconv.Itoa(i))); errs != nil {
-				failures = append(failures, errs...)
-			}
-		}
-
-		if len(failures) == 0 {
-			return reporting.ValidateOK, nil
-		}
-
-		return reporting.ValidateOK, failures
-	case string:
-		return ValueString.Validate(Schema{Type: ValueString}, t, tr, context)
-	case float64:
-		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, tr, context)
-	}
-
-	return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Value is not a JSON map", context)}
-}
-
-var Json Schema
-
-func init() {
-	Json = Schema{
-		Type: ValueMap,
-		// ValidateFunc: validateJson, TODO: Fixme
-	}
-}
-
-type Coercion int
-
-const (
-	CoercionNever Coercion = iota
-	CoercionAlways
-	CoercionBegrudgingly
 )
 
 type PropertyType interface {

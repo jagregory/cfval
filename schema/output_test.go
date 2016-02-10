@@ -7,7 +7,13 @@ import (
 func TestOutputValidation(t *testing.T) {
 	template := &Template{
 		Resources: map[string]TemplateResource{
-			"MyResource": TemplateResource{},
+			"MyResource": TemplateResource{
+				Definition: Resource{
+					ReturnValue: Schema{
+						Type: ValueString,
+					},
+				},
+			},
 		},
 	}
 	context := []string{}

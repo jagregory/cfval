@@ -33,7 +33,7 @@ func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult,
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := Json.Validate(tr.Metadata, tr, append(context, "Metadata")); errs != nil {
+	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, tr, append(context, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 

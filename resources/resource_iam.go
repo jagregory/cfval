@@ -17,7 +17,10 @@ func Policy() Resource {
 				Array: true,
 			},
 
-			"PolicyDocument": Required(Json),
+			"PolicyDocument": Schema{
+				Type:     JSON,
+				Required: true,
+			},
 
 			"PolicyName": Schema{
 				Type:     ValueString,
@@ -47,7 +50,10 @@ func Role() Resource {
 		},
 
 		Properties: map[string]Schema{
-			"AssumeRolePolicyDocument": Required(Json),
+			"AssumeRolePolicyDocument": Schema{
+				Type:     JSON,
+				Required: true,
+			},
 
 			"ManagedPolicyArns": Schema{
 				Type:  ValueString,
@@ -63,7 +69,10 @@ func Role() Resource {
 				Type: NestedResource{
 					Description: "IAM Role Policy",
 					Properties: map[string]Schema{
-						"PolicyDocument": Required(Json),
+						"PolicyDocument": Schema{
+							Type:     JSON,
+							Required: true,
+						},
 
 						"PolicyName": Schema{
 							Type:     ValueString,

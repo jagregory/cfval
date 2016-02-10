@@ -115,6 +115,7 @@ func FixedArrayValidate(options ...[]string) FuncTypeValidateFunc {
 	}
 }
 
+// TODO: delete me
 func Required(schema Schema) Schema {
 	schema.Required = true
 	return schema

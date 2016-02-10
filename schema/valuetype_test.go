@@ -11,7 +11,13 @@ func TestValueTypeValidation(t *testing.T) {
 	self := TemplateResource{
 		template: &Template{
 			Resources: map[string]TemplateResource{
-				"good": TemplateResource{},
+				"good": TemplateResource{
+					Definition: Resource{
+						ReturnValue: Schema{
+							Type: ValueString,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -31,7 +37,7 @@ func TestValueTypeValidation(t *testing.T) {
 
 	result, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "good"}, self, ctx)
 	if errs != nil {
-		t.Error("Should pass with valid ref")
+		t.Error("Should pass with valid ref", errs)
 	}
 	if result != reporting.ValidateAbort {
 		t.Error("Should always abort validation when something is a builtin but isn't valid - this prevents further validation on something which looks like a complex type")
