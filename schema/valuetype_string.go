@@ -4,9 +4,9 @@ package schema
 
 import "fmt"
 
-const _ValueType_name = "ValueUnknownValueStringValueBoolValueNumberValueMapTypeAvailabilityZoneNameTypeImageIdTypeInstanceIdTypeKeyNameTypeSecurityGroupNameTypeSecurityGroupIdTypeSubnetIdTypeVolumeIdTypeVPCIdTypeHostedZoneId"
+const _ValueType_name = "ValueUnknownValueStringValueBoolValueNumberValueMap"
 
-var _ValueType_index = [...]uint8{0, 12, 23, 32, 43, 51, 75, 86, 100, 111, 132, 151, 163, 175, 184, 200}
+var _ValueType_index = [...]uint8{0, 12, 23, 32, 43, 51}
 
 func (i ValueType) String() string {
 	if i < 0 || i >= ValueType(len(_ValueType_index)-1) {

@@ -10,7 +10,7 @@ type PropertyType interface {
 	Describe() string
 	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
 
-	// CanCoerceTo will return true for types which the value of this property can
+	// CoercibleTo will return true for types which the value of this property can
 	// be coerced into. e.g. A number can be coerced to a string
 	// CoercionAlways means a type is always coercible to another
 	// 	 e.g. all numbers are valid strings

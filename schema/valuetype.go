@@ -16,19 +16,6 @@ const (
 	ValueBool
 	ValueNumber
 	ValueMap
-
-	// TODO: all of these are vestigal from a failed refactor, they should be
-	// using rich types like vpcID
-	// TypeAvailabilityZoneName
-	TypeImageId
-	TypeInstanceId
-	// TypeKeyName
-	TypeSecurityGroupName
-	TypeSecurityGroupId
-	TypeSubnetId
-	TypeVolumeId
-	// TypeVPCId
-	TypeHostedZoneId
 )
 
 // TODO: This really feels like it can be simplified

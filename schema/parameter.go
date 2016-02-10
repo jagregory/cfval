@@ -31,11 +31,11 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::EC2::Image::Id": Schema{
-		Type: TypeImageId,
+		Type: ImageID,
 	},
 
 	"AWS::EC2::Instance::Id": Schema{
-		Type: TypeInstanceId,
+		Type: InstanceID,
 	},
 
 	"AWS::EC2::KeyPair::KeyName": Schema{
@@ -43,19 +43,19 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::EC2::SecurityGroup::GroupName": Schema{
-		Type: TypeSecurityGroupName,
+		Type: SecurityGroupName,
 	},
 
 	"AWS::EC2::SecurityGroup::Id": Schema{
-		Type: TypeSecurityGroupId,
+		Type: SecurityGroupID,
 	},
 
 	"AWS::EC2::Subnet::Id": Schema{
-		Type: TypeSubnetId,
+		Type: SubnetID,
 	},
 
 	"AWS::EC2::Volume::Id": Schema{
-		Type: TypeVolumeId,
+		Type: VolumeID,
 	},
 
 	"AWS::EC2::VPC::Id": Schema{
@@ -63,7 +63,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"AWS::Route53::HostedZone::Id": Schema{
-		Type: TypeHostedZoneId,
+		Type: HostedZoneID,
 	},
 
 	"List<AWS::EC2::AvailabilityZone::Name>": Schema{
@@ -72,32 +72,32 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<AWS::EC2::Image::Id>": Schema{
-		Type:  TypeImageId,
+		Type:  ImageID,
 		Array: true,
 	},
 
 	"List<AWS::EC2::Instance::Id>": Schema{
-		Type:  TypeInstanceId,
+		Type:  InstanceID,
 		Array: true,
 	},
 
 	"List<AWS::EC2::SecurityGroup::GroupName>": Schema{
-		Type:  TypeSecurityGroupName,
+		Type:  SecurityGroupName,
 		Array: true,
 	},
 
 	"List<AWS::EC2::SecurityGroup::Id>": Schema{
-		Type:  TypeSecurityGroupId,
+		Type:  SecurityGroupID,
 		Array: true,
 	},
 
 	"List<AWS::EC2::Subnet::Id>": Schema{
-		Type:  TypeSubnetId,
+		Type:  SubnetID,
 		Array: true,
 	},
 
 	"List<AWS::EC2::Volume::Id>": Schema{
-		Type:  TypeVolumeId,
+		Type:  VolumeID,
 		Array: true,
 	},
 
@@ -107,7 +107,7 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<AWS::Route53::HostedZone::Id>": Schema{
-		Type:  TypeHostedZoneId,
+		Type:  HostedZoneID,
 		Array: true,
 	},
 }
