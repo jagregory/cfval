@@ -30,18 +30,45 @@ type PropertyType interface {
 	CoercibleTo(PropertyType) Coercion
 }
 
-type ValidateFunc func(interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
+type ValidateFunc func(interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
 type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
 
 type Schema struct {
-	Array          bool
-	Conflicts      []string
-	Default        interface{}
-	Required       bool
-	RequiredIf     []string
+	// Array is true when the expected value is an array of Type
+	Array bool
+
+	// Conflicts is an array of property names which cannot also be specified when
+	// this property is too.
+	Conflicts []string
+
+	// Default is the AWS default value for this property; this is used for
+	// validations when the property isn't specified
+	//
+	// e.g. prop X must be set to false when prop Y is true, if prop Y unspecified
+	// but has a Default of true then this validation can safely fail.
+	Default interface{}
+
+	// Required is set to true if this property must have a value in the template
+	Required bool
+
+	// RequiredIf is an array of property names which if any of them are present
+	// in the resource then this property must also be present.
+	RequiredIf []string
+
+	// RequiredUnless is an array of property names which if none of them are
+	// present then this property must be present instead.
 	RequiredUnless []string
-	Type           PropertyType
-	// ValidateFunc      ValidateFunc
+
+	// Type is the type of the Value this property is expected to contain. For
+	// example "String", "Number", "JSON", or nested resources such as Tags.
+	Type PropertyType
+
+	// ValidateFunc can be used to supply a custom validation function for a
+	// property for applying further validation on top of basic type checks.
+	//
+	// e.g. prop X must be set to false when prop Y is true
+	ValidateFunc ValidateFunc
+
 	// ArrayValidateFunc ArrayValidateFunc
 }
 
@@ -55,13 +82,13 @@ func (s Schema) TargetType() ValueType {
 
 func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if result, errs := s.validateRequired(value, context); result == reporting.ValidateAbort {
-		return reporting.ValidateOK, errs
+		return reporting.ValidateOK, reporting.Safe(errs)
 	}
 
 	failures := make(reporting.Failures, 0, 20)
 
 	if s.Array {
-		// TODO: fixme
+		// TODO: fix array-as-a-whole validation
 		// if s.ArrayValidateFunc != nil {
 		// 	if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, context); !ok {
 		// 		failures = append(failures, errs...)
@@ -69,13 +96,13 @@ func (s Schema) Validate(value interface{}, self SelfRepresentation, context []s
 		// 	}
 		// } else {
 		for i, item := range value.([]interface{}) {
-			if _, errs := s.Type.Validate(s, item, self, append(context, strconv.Itoa(i))); errs != nil {
+			if _, errs := s.validateValue(item, self, append(context, strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
 		// }
 	} else {
-		if _, errs := s.Type.Validate(s, value, self, context); errs != nil {
+		if _, errs := s.validateValue(value, self, context); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -83,6 +110,40 @@ func (s Schema) Validate(value interface{}, self SelfRepresentation, context []s
 	return reporting.ValidateOK, reporting.Safe(failures)
 }
 
+// validateValue takes a value and validates it against the Type of the
+// current Schema and optionally runs any custom validation functions.
+//
+// This function is used for single value properties, and each item in array
+// properties.
+func (s Schema) validateValue(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	failures := make(reporting.Failures, 0, 50)
+
+	result, errs := s.Type.Validate(s, value, self, context)
+	if result == reporting.ValidateAbort {
+		// type validation instructed us to abort, so we bail with whatever failures
+		// have been reported so far
+		return reporting.ValidateOK, reporting.Safe(errs)
+	}
+
+	failures = append(failures, errs...)
+
+	// run the custom validation if there is any, optionally bailing if the
+	// validate tells us to, otherwise combining the results with any prior
+	// failures
+	if s.ValidateFunc != nil {
+		result, errs := s.ValidateFunc(value, self, context)
+		if result == reporting.ValidateAbort {
+			return reporting.ValidateOK, reporting.Safe(errs)
+		}
+
+		failures = append(failures, errs...)
+	}
+
+	return reporting.ValidateOK, reporting.Safe(failures)
+}
+
+// validateRequired checks the value for compliance with the Schema's Required
+// setting. A missing required value will fail.
 func (s Schema) validateRequired(value interface{}, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if !s.Required && value == nil {
 		return reporting.ValidateAbort, nil

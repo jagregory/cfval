@@ -1,6 +1,10 @@
 package schema
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/jagregory/cfval/reporting"
+)
 
 func TestSchemaTargetType(t *testing.T) {
 	if (Schema{Type: ValueNumber}).TargetType() != ValueNumber {
@@ -77,5 +81,32 @@ func TestSchemaArrayValidation(t *testing.T) {
 
 	if _, errs := schema.Validate([]interface{}{123}, self, ctx); errs == nil {
 		t.Error("Should fail when value is an incorrect array")
+	}
+}
+
+func TestSchemaCustomValidation(t *testing.T) {
+	template := &Template{}
+	self := TemplateResource{
+		template: template,
+	}
+	ctx := []string{}
+
+	schema := Schema{
+		Type: ValueString,
+		ValidateFunc: func(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("CustomValidation", context)}
+		},
+	}
+
+	if _, errs := schema.Validate("abc", self, ctx); errs == nil || errs[0].Message != "CustomValidation" {
+		t.Error("Should run custom validation when type is correct", errs)
+	}
+
+	if _, errs := schema.Validate(123, self, ctx); errs != nil && errs[0].Message == "CustomValidation" {
+		t.Error("Should not run validation when type is correct")
+	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "abc"}, self, ctx); errs != nil && errs[0].Message == "CustomValidation" {
+		t.Error("Should not run validation with Ref")
 	}
 }
