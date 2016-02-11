@@ -190,7 +190,7 @@ func ReplicationGroup() Resource {
 			"CacheSecurityGroupNames": Schema{
 				Type:      ValueString,
 				Array:     true,
-				Conflicts: Constraints{PropertyExists("SecurityGroupIds")},
+				Conflicts: PropertyExists("SecurityGroupIds"),
 			},
 
 			"CacheSubnetGroupName": Schema{
@@ -238,7 +238,7 @@ func ReplicationGroup() Resource {
 			"SecurityGroupIds": Schema{
 				Type:      ValueString,
 				Array:     true,
-				Conflicts: Constraints{PropertyExists("CacheSecurityGroupNames")},
+				Conflicts: PropertyExists("CacheSecurityGroupNames"),
 			},
 
 			// A single-element string list that specifies an ARN of a Redis .rdb snapshot file that is stored in Amazon Simple Storage Service (Amazon S3). The snapshot file populates the node group. The Amazon S3 object name in the ARN cannot contain commas. For example, you can specify arn:aws:s3:::my_bucket/snapshot1.rdb.

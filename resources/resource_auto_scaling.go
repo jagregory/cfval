@@ -86,7 +86,7 @@ func AutoScalingGroup() Resource {
 			"AvailabilityZones": Schema{
 				Array:          true,
 				Type:           AvailabilityZone,
-				RequiredUnless: Constraints{PropertyExists("VPCZoneIdentifier")},
+				RequiredUnless: PropertyExists("VPCZoneIdentifier"),
 			},
 
 			"Cooldown": Schema{
@@ -107,12 +107,12 @@ func AutoScalingGroup() Resource {
 
 			"InstanceId": Schema{
 				Type:           ValueString,
-				RequiredUnless: Constraints{PropertyExists("LaunchConfigurationName")},
+				RequiredUnless: PropertyExists("LaunchConfigurationName"),
 			},
 
 			"LaunchConfigurationName": Schema{
 				Type:           ValueString,
-				RequiredUnless: Constraints{PropertyExists("InstanceId")},
+				RequiredUnless: PropertyExists("InstanceId"),
 			},
 
 			"LoadBalancerNames": Schema{
@@ -155,7 +155,7 @@ func AutoScalingGroup() Resource {
 			"VPCZoneIdentifier": Schema{
 				Type:           ValueString,
 				Array:          true,
-				RequiredUnless: Constraints{PropertyExists("AvailabilityZones")},
+				RequiredUnless: PropertyExists("AvailabilityZones"),
 			},
 		},
 	}
@@ -211,7 +211,7 @@ var blockDeviceMapping = NestedResource{
 
 		"Ebs": Schema{
 			Type:           ebsBlockDevice,
-			RequiredUnless: Constraints{PropertyExists("VirtualName")},
+			RequiredUnless: PropertyExists("VirtualName"),
 		},
 
 		"NoDevice": Schema{
@@ -220,7 +220,7 @@ var blockDeviceMapping = NestedResource{
 
 		"VirtualName": Schema{
 			Type:           ValueString,
-			RequiredUnless: Constraints{PropertyExists("Ebs")},
+			RequiredUnless: PropertyExists("Ebs"),
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
@@ -262,7 +262,7 @@ func LaunchConfiguration() Resource {
 			"ClassicLinkVPCSecurityGroups": Schema{
 				Type:       ValueString,
 				Array:      true,
-				RequiredIf: Constraints{PropertyExists("ClassicLinkVPCId")},
+				RequiredIf: PropertyExists("ClassicLinkVPCId"),
 			},
 
 			"EbsOptimized": Schema{
@@ -428,18 +428,18 @@ func ScalingPolicy() Resource {
 
 			"Cooldown": Schema{
 				Type:      ValueString,
-				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+				Conflicts: PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			"EstimatedInstanceWarmup": Schema{
 				Type:      ValueNumber,
-				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+				Conflicts: PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			"MetricAggregationType": Schema{
 				Type:      metricAggregationType,
 				Default:   "Average",
-				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+				Conflicts: PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			// TODO: This property replaces the MinAdjustmentStep property
@@ -454,15 +454,15 @@ func ScalingPolicy() Resource {
 
 			"ScalingAdjustment": Schema{
 				Type:       ValueNumber,
-				RequiredIf: Constraints{PropertyIs("PolicyType", "SimpleScaling")},  // Required: Conditional. This property is required if the policy type is SimpleScaling.
-				Conflicts:  Constraints{PropertyNot("PolicyType", "SimpleScaling")}, // This property is not supported with any other policy type.
+				RequiredIf: PropertyIs("PolicyType", "SimpleScaling"),  // Required: Conditional. This property is required if the policy type is SimpleScaling.
+				Conflicts:  PropertyNot("PolicyType", "SimpleScaling"), // This property is not supported with any other policy type.
 			},
 
 			"StepAdjustments": Schema{
 				Type:       stepAdjustment,
 				Array:      true,
-				RequiredIf: Constraints{PropertyIs("PolicyType", "StepScaling")},  // Required: Conditional. This property is required if the policy type is StepScaling.
-				Conflicts:  Constraints{PropertyNot("PolicyType", "StepScaling")}, // This property is not supported with any other policy type.
+				RequiredIf: PropertyIs("PolicyType", "StepScaling"),  // Required: Conditional. This property is required if the policy type is StepScaling.
+				Conflicts:  PropertyNot("PolicyType", "StepScaling"), // This property is not supported with any other policy type.
 			},
 		},
 	}

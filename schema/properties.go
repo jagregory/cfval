@@ -27,35 +27,24 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 		}
 
 		// Validate conflicting properties
-		if value != nil && schema.Conflicts != nil {
-			for _, conflict := range schema.Conflicts {
-				if conflict.Pass(values) {
-					// TODO: describe this constraint nicely
-					failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflicting property '%s' also set", conflict), append(context, key)))
-				}
-			}
+		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(values) {
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(values)), append(context, key)))
 		}
 
+		// TODO: can we merge Required, RequiredIf and RequiredUnless now we have
+		// the richer Constraints
+
 		// Validate RequiredIf
-		if value == nil && schema.RequiredIf != nil {
-			for _, required := range schema.RequiredIf {
-				if required.Pass(values) {
-					// TODO: describe this constraint nicely
-					failures = append(failures, reporting.NewFailure(fmt.Sprintf("This property is required because '%s' is also set", required), append(context, key)))
-				}
-			}
+		if value == nil && schema.RequiredIf != nil && schema.RequiredIf.Pass(values) {
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Property is required: %s", schema.RequiredIf.Describe(values)), append(context, key)))
 		}
 
 		// Validate RequiredUnless
 		// If this property isn't set AND any RequiredUnless properties are also
 		// not set then we should fail because this property should be set
-		if value == nil && schema.RequiredUnless != nil {
-			for _, required := range schema.RequiredUnless {
-				if !required.Pass(values) {
-					// TODO: describe this constraint nicely
-					failures = append(failures, reporting.NewFailure(fmt.Sprintf("This property is required because '%s' is not set", required), append(context, key)))
-				}
-			}
+		if value == nil && schema.RequiredUnless != nil && !schema.RequiredUnless.Pass(values) {
+			// TODO: this description is nasty
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Property is required: not %s", schema.RequiredUnless.Describe(values)), append(context, key)))
 		}
 	}
 

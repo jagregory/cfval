@@ -12,12 +12,12 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:      ValueString,
-				Conflicts: Constraints{PropertyExists("Option2")},
+				Conflicts: PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{
 				Type:      ValueString,
-				Conflicts: Constraints{PropertyExists("Option1")},
+				Conflicts: PropertyExists("Option1"),
 			},
 		},
 	}
@@ -59,7 +59,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:       ValueString,
-				RequiredIf: Constraints{PropertyExists("Option2")},
+				RequiredIf: PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{
@@ -105,7 +105,7 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:           ValueString,
-				RequiredUnless: Constraints{PropertyExists("Option2")},
+				RequiredUnless: PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{

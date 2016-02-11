@@ -53,7 +53,7 @@ var geoLocation = NestedResource{
 	Properties: map[string]Schema{
 		"ContinentCode": Schema{
 			Type:           continentCode,
-			RequiredUnless: Constraints{PropertyExists("CountryCode")},
+			RequiredUnless: PropertyExists("CountryCode"),
 			Conflicts: Constraints{
 				PropertyExists("CountryCode"),
 				PropertyExists("SubdivisionCode"),
@@ -62,17 +62,13 @@ var geoLocation = NestedResource{
 
 		"CountryCode": Schema{
 			Type:           countryCode,
-			RequiredUnless: Constraints{PropertyExists("ContinentCode")},
-			Conflicts: Constraints{
-				PropertyExists("ContinentCode"),
-			},
+			RequiredUnless: PropertyExists("ContinentCode"),
+			Conflicts:      PropertyExists("ContinentCode"),
 		},
 
 		"SubdivisionCode": Schema{
-			Type: subdivisionCode,
-			Conflicts: Constraints{
-				PropertyExists("ContinentCode"),
-			},
+			Type:      subdivisionCode,
+			Conflicts: PropertyExists("ContinentCode"),
 			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
 					return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Can only be set when CountryCode is US", context)}
@@ -120,18 +116,14 @@ func RecordSet() Resource {
 
 			"HostedZoneId": Schema{
 				Type:           ValueString,
-				RequiredUnless: Constraints{PropertyExists("HostedZoneName")},
-				Conflicts: Constraints{
-					PropertyExists("HostedZoneName"),
-				},
+				RequiredUnless: PropertyExists("HostedZoneName"),
+				Conflicts:      PropertyExists("HostedZoneName"),
 			},
 
 			"HostedZoneName": Schema{
 				Type:           ValueString,
-				RequiredUnless: Constraints{PropertyExists("HostedZoneId")},
-				Conflicts: Constraints{
-					PropertyExists("HostedZoneId"),
-				},
+				RequiredUnless: PropertyExists("HostedZoneId"),
+				Conflicts:      PropertyExists("HostedZoneId"),
 			},
 
 			"Name": Schema{
@@ -142,12 +134,10 @@ func RecordSet() Resource {
 			// "Region":          Schema{Type: TypeString},
 
 			"ResourceRecords": Schema{
-				Array: true,
-				Type:  ValueString,
-				Conflicts: Constraints{
-					PropertyExists("AliasTarget"),
-				},
-				RequiredUnless: Constraints{PropertyExists("AliasTarget")},
+				Array:          true,
+				Type:           ValueString,
+				Conflicts:      PropertyExists("AliasTarget"),
+				RequiredUnless: PropertyExists("AliasTarget"),
 			},
 
 			"SetIdentifier": Schema{
@@ -161,10 +151,8 @@ func RecordSet() Resource {
 			},
 
 			"TTL": Schema{
-				Type: ValueString,
-				Conflicts: Constraints{
-					PropertyExists("AliasTarget"),
-				},
+				Type:      ValueString,
+				Conflicts: PropertyExists("AliasTarget"),
 			},
 
 			"Type": Schema{
