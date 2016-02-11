@@ -2,17 +2,20 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dimension.html
 var metricDimension = NestedResource{
 	Description: "CloudWatch Alarm MetricDimension",
 	Properties: Properties{
 		"Name": Schema{
-			Type:     ValueString,
-			Required: Always,
+			Type:         ValueString,
+			Required:     Always,
+			ValidateFunc: StringLengthValidate(1, 255),
 		},
 
 		"Value": Schema{
-			Type:     ValueString,
-			Required: Always,
+			Type:         ValueString,
+			Required:     Always,
+			ValidateFunc: StringLengthValidate(1, 255),
 		},
 	},
 }
@@ -63,6 +66,7 @@ var unit = EnumValue{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html
 func Alarm() Resource {
 	return Resource{
 		AwsType: "AWS::CloudWatch::Alarm",
