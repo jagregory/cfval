@@ -112,9 +112,3 @@ func FixedArrayValidate(options ...[]string) ValidateFunc {
 		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
 	}
 }
-
-// TODO: delete me
-func Required(schema Schema) Schema {
-	schema.Required = true
-	return schema
-}

@@ -39,7 +39,7 @@ type Schema struct {
 
 	// Conflicts is an array of property names which cannot also be specified when
 	// this property is too.
-	Conflicts []string
+	Conflicts Constraints
 
 	// Default is the AWS default value for this property; this is used for
 	// validations when the property isn't specified
@@ -53,11 +53,11 @@ type Schema struct {
 
 	// RequiredIf is an array of property names which if any of them are present
 	// in the resource then this property must also be present.
-	RequiredIf []string
+	RequiredIf Constraints
 
 	// RequiredUnless is an array of property names which if none of them are
 	// present then this property must be present instead.
-	RequiredUnless []string
+	RequiredUnless Constraints
 
 	// Type is the type of the Value this property is expected to contain. For
 	// example "String", "Number", "JSON", or nested resources such as Tags.

@@ -2,6 +2,7 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-metricscollection.html
 var metricsCollection = NestedResource{
 	Description: "Auto Scaling MetricsCollection",
 	Properties: Properties{
@@ -17,6 +18,7 @@ var metricsCollection = NestedResource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-notificationconfigurations.html
 var autoScalingNotificationType = EnumValue{
 	Description: "Auto Scaling Notification Type",
 
@@ -84,7 +86,7 @@ func AutoScalingGroup() Resource {
 			"AvailabilityZones": Schema{
 				Array:          true,
 				Type:           AvailabilityZone,
-				RequiredUnless: []string{"VPCZoneIdentifier"},
+				RequiredUnless: Constraints{PropertyExists("VPCZoneIdentifier")},
 			},
 
 			"Cooldown": Schema{
@@ -105,12 +107,12 @@ func AutoScalingGroup() Resource {
 
 			"InstanceId": Schema{
 				Type:           ValueString,
-				RequiredUnless: []string{"LaunchConfigurationName"},
+				RequiredUnless: Constraints{PropertyExists("LaunchConfigurationName")},
 			},
 
 			"LaunchConfigurationName": Schema{
 				Type:           ValueString,
-				RequiredUnless: []string{"InstanceId"},
+				RequiredUnless: Constraints{PropertyExists("InstanceId")},
 			},
 
 			"LoadBalancerNames": Schema{
@@ -153,7 +155,7 @@ func AutoScalingGroup() Resource {
 			"VPCZoneIdentifier": Schema{
 				Type:           ValueString,
 				Array:          true,
-				RequiredUnless: []string{"AvailabilityZones"},
+				RequiredUnless: Constraints{PropertyExists("AvailabilityZones")},
 			},
 		},
 	}
@@ -209,7 +211,7 @@ var blockDeviceMapping = NestedResource{
 
 		"Ebs": Schema{
 			Type:           ebsBlockDevice,
-			RequiredUnless: []string{"VirtualName"},
+			RequiredUnless: Constraints{PropertyExists("VirtualName")},
 		},
 
 		"NoDevice": Schema{
@@ -218,7 +220,7 @@ var blockDeviceMapping = NestedResource{
 
 		"VirtualName": Schema{
 			Type:           ValueString,
-			RequiredUnless: []string{"Ebs"},
+			RequiredUnless: Constraints{PropertyExists("Ebs")},
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
@@ -260,7 +262,7 @@ func LaunchConfiguration() Resource {
 			"ClassicLinkVPCSecurityGroups": Schema{
 				Type:       ValueString,
 				Array:      true,
-				RequiredIf: []string{"ClassicLinkVPCId"},
+				RequiredIf: Constraints{PropertyExists("ClassicLinkVPCId")},
 			},
 
 			"EbsOptimized": Schema{
@@ -299,6 +301,7 @@ func LaunchConfiguration() Resource {
 			},
 
 			// TODO: If you specify this property, you must specify at least one subnet in the VPCZoneIdentifier property of the AWS::AutoScaling::AutoScalingGroup resource.
+			// This will require some reverse lookups from this resource to any which use it: not supported yet.
 			"PlacementTenancy": Schema{
 				Type: placementTenancy,
 			},
@@ -318,6 +321,148 @@ func LaunchConfiguration() Resource {
 
 			"UserData": Schema{
 				Type: ValueString,
+			},
+		},
+	}
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-as-lifecyclehook.html
+func LifecycleHook() Resource {
+	return Resource{
+		AwsType: "AWS::AutoScaling::LifecycleHook",
+
+		// Name
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+
+		Properties: Properties{
+			"AutoScalingGroupName": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"DefaultResult": Schema{
+				Type: ValueString,
+			},
+
+			"HeartbeatTimeout": Schema{
+				Type: ValueNumber,
+			},
+
+			"LifecycleTransition": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"NotificationMetadata": Schema{
+				Type: ValueString,
+			},
+
+			// TODO: Do we need an ARN type?
+			"NotificationTargetARN": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"RoleARN": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+		},
+	}
+}
+
+var metricAggregationType = EnumValue{
+	Description: "ScalingPolicy MetricAggregationType",
+
+	Options: []string{"Minimum", "Maximum", "Average"},
+}
+
+var policyType = EnumValue{
+	Description: "ScalingPolicy PolicyType",
+
+	Options: []string{"SimpleScaling", "StepScaling"},
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-scalingpolicy-stepadjustments.html
+var stepAdjustment = NestedResource{
+	Description: "Auto Scaling ScalingPolicy StepAdjustments",
+
+	Properties: Properties{
+		"MetricIntervalLowerBound": Schema{
+			Type: ValueNumber,
+		},
+
+		"MetricIntervalUpperBound": Schema{
+			Type: ValueNumber,
+		},
+
+		"ScalingAdjustment": Schema{
+			Type:     ValueNumber,
+			Required: true,
+		},
+	},
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-policy.html
+func ScalingPolicy() Resource {
+	return Resource{
+		AwsType: "AWS::AutoScaling::ScalingPolicy",
+
+		// Name
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+
+		Properties: Properties{
+			"AdjustmentType": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"AutoScalingGroupName": Schema{
+				Type:     ValueString,
+				Required: true,
+			},
+
+			"Cooldown": Schema{
+				Type:      ValueString,
+				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+			},
+
+			"EstimatedInstanceWarmup": Schema{
+				Type:      ValueNumber,
+				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+			},
+
+			"MetricAggregationType": Schema{
+				Type:      metricAggregationType,
+				Default:   "Average",
+				Conflicts: Constraints{PropertyNot("PolicyType", "StepScaling")},
+			},
+
+			// TODO: This property replaces the MinAdjustmentStep property
+			"MinAdjustmentMagnitude": Schema{
+				Type: ValueNumber,
+			},
+
+			"PolicyType": Schema{
+				Type:    policyType,
+				Default: "SimpleScaling",
+			},
+
+			"ScalingAdjustment": Schema{
+				Type:       ValueNumber,
+				RequiredIf: Constraints{PropertyIs("PolicyType", "SimpleScaling")},  // Required: Conditional. This property is required if the policy type is SimpleScaling.
+				Conflicts:  Constraints{PropertyNot("PolicyType", "SimpleScaling")}, // This property is not supported with any other policy type.
+			},
+
+			"StepAdjustments": Schema{
+				Type:       stepAdjustment,
+				Array:      true,
+				RequiredIf: Constraints{PropertyIs("PolicyType", "StepScaling")},  // Required: Conditional. This property is required if the policy type is StepScaling.
+				Conflicts:  Constraints{PropertyNot("PolicyType", "StepScaling")}, // This property is not supported with any other policy type.
 			},
 		},
 	}

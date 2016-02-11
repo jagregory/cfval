@@ -29,7 +29,8 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 		// Validate conflicting properties
 		if value != nil && schema.Conflicts != nil {
 			for _, conflict := range schema.Conflicts {
-				if _, found := values[conflict]; found {
+				if conflict.Pass(values) {
+					// TODO: describe this constraint nicely
 					failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflicting property '%s' also set", conflict), append(context, key)))
 				}
 			}
@@ -38,7 +39,8 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 		// Validate RequiredIf
 		if value == nil && schema.RequiredIf != nil {
 			for _, required := range schema.RequiredIf {
-				if _, found := values[required]; found {
+				if required.Pass(values) {
+					// TODO: describe this constraint nicely
 					failures = append(failures, reporting.NewFailure(fmt.Sprintf("This property is required because '%s' is also set", required), append(context, key)))
 				}
 			}
@@ -49,7 +51,8 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 		// not set then we should fail because this property should be set
 		if value == nil && schema.RequiredUnless != nil {
 			for _, required := range schema.RequiredUnless {
-				if _, found := values[required]; !found {
+				if !required.Pass(values) {
+					// TODO: describe this constraint nicely
 					failures = append(failures, reporting.NewFailure(fmt.Sprintf("This property is required because '%s' is not set", required), append(context, key)))
 				}
 			}

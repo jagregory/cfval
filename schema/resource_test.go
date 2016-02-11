@@ -12,12 +12,12 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:      ValueString,
-				Conflicts: []string{"Option2"},
+				Conflicts: Constraints{PropertyExists("Option2")},
 			},
 
 			"Option2": Schema{
 				Type:      ValueString,
-				Conflicts: []string{"Option1"},
+				Conflicts: Constraints{PropertyExists("Option1")},
 			},
 		},
 	}
@@ -35,15 +35,15 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 	}}
 
 	if _, errs := nothingSet.Validate(context); errs != nil {
-		t.Error("Resource should pass if both neither Option1 or Option2 are set")
+		t.Error("Resource should pass if both neither Option1 or Option2 are set", errs)
 	}
 
 	if _, errs := option1Set.Validate(context); errs != nil {
-		t.Error("Resource should pass if only Option1 set")
+		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
 	if _, errs := option2Set.Validate(context); errs != nil {
-		t.Error("Resource should pass if only Option2 set")
+		t.Error("Resource should pass if only Option2 set", errs)
 	}
 
 	if _, errs := bothSet.Validate(context); errs == nil {
@@ -59,7 +59,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:       ValueString,
-				RequiredIf: []string{"Option2"},
+				RequiredIf: Constraints{PropertyExists("Option2")},
 			},
 
 			"Option2": Schema{
@@ -81,11 +81,11 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	}}
 
 	if _, errs := nothingSet.Validate(context); errs != nil {
-		t.Error("Resource should pass if neither Option1 or Option2 are set")
+		t.Error("Resource should pass if neither Option1 or Option2 are set", errs)
 	}
 
 	if _, errs := option1Set.Validate(context); errs != nil {
-		t.Error("Resource should pass if only Option1 set")
+		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
 	if _, errs := option2Set.Validate(context); errs == nil {
@@ -93,7 +93,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	}
 
 	if _, errs := bothSet.Validate(context); errs != nil {
-		t.Error("Resource should pass if both Option1 and Option2 are set")
+		t.Error("Resource should pass if both Option1 and Option2 are set", errs)
 	}
 }
 
@@ -105,7 +105,7 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:           ValueString,
-				RequiredUnless: []string{"Option2"},
+				RequiredUnless: Constraints{PropertyExists("Option2")},
 			},
 
 			"Option2": Schema{
@@ -131,14 +131,14 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	}
 
 	if _, errs := option1Set.Validate(context); errs != nil {
-		t.Error("Resource should pass if only Option1 set")
+		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
 	if _, errs := option2Set.Validate(context); errs != nil {
-		t.Error("Resource should pass if only Option2 set")
+		t.Error("Resource should pass if only Option2 set", errs)
 	}
 
 	if _, errs := bothSet.Validate(context); errs != nil {
-		t.Error("Resource should pass if both Option1 and Option2 are set")
+		t.Error("Resource should pass if both Option1 and Option2 are set", errs)
 	}
 }
