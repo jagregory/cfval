@@ -68,7 +68,7 @@ func Instance() Resource {
 
 			"NetworkInterfaces": Schema{
 				Array: true,
-				Type:  ec2NetworkInterface,
+				Type:  networkInterface,
 				Conflicts: Constraints{
 					PropertyExists("SecurityGroupIds"),
 					PropertyExists("SubnetId"),
@@ -129,7 +129,7 @@ func Instance() Resource {
 			},
 
 			"Volumes": Schema{
-				Type:  ec2MountPoint,
+				Type:  mountPoint,
 				Array: true,
 			},
 
