@@ -1,6 +1,9 @@
 package common
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 var ResourceTag = NestedResource{
 	Description: "Resource Tag",
@@ -8,12 +11,12 @@ var ResourceTag = NestedResource{
 	Properties: Properties{
 		"Key": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }

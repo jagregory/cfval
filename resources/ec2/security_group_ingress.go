@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 func SecurityGroupIngress() Resource {
 	return Resource{
@@ -13,7 +16,7 @@ func SecurityGroupIngress() Resource {
 
 			"FromPort": Schema{
 				Type:     ValueNumber,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"GroupId": Schema{
@@ -25,7 +28,7 @@ func SecurityGroupIngress() Resource {
 			},
 
 			"IpProtocol": Schema{
-				Required: Always,
+				Required: constraints.Always,
 				Type:     ipProtocol,
 			},
 
@@ -43,7 +46,7 @@ func SecurityGroupIngress() Resource {
 
 			"ToPort": Schema{
 				Type:     ValueNumber,
-				Required: Always,
+				Required: constraints.Always,
 			},
 		},
 	}

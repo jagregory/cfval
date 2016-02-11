@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -45,7 +46,7 @@ func DBInstance() Resource {
 
 			"DBInstanceClass": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"DBInstanceIdentifier": Schema{
@@ -156,12 +157,12 @@ func DBSubnetGroup() Resource {
 		Properties: map[string]Schema{
 			"DBSubnetGroupDescription": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"SubnetIds": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 				Array:    true,
 			},
 

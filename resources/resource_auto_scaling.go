@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-metricscollection.html
 var metricsCollection = NestedResource{
@@ -8,7 +11,7 @@ var metricsCollection = NestedResource{
 	Properties: Properties{
 		"Granularity": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Metrics": Schema{
@@ -36,13 +39,13 @@ var notificationConfiguration = NestedResource{
 	Properties: Properties{
 		"NotificationTypes": Schema{
 			Type:     autoScalingNotificationType,
-			Required: Always,
+			Required: constraints.Always,
 			Array:    true,
 		},
 
 		"TopicARN": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -52,12 +55,12 @@ var autoScalingTag = NestedResource{
 	Properties: Properties{
 		"Key": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"PropagateAtLaunch": Schema{
@@ -86,7 +89,7 @@ func AutoScalingGroup() Resource {
 			"AvailabilityZones": Schema{
 				Array:    true,
 				Type:     AvailabilityZone,
-				Required: PropertyNotExists("VPCZoneIdentifier"),
+				Required: constraints.PropertyNotExists("VPCZoneIdentifier"),
 			},
 
 			"Cooldown": Schema{
@@ -107,12 +110,12 @@ func AutoScalingGroup() Resource {
 
 			"InstanceId": Schema{
 				Type:     ValueString,
-				Required: PropertyNotExists("LaunchConfigurationName"),
+				Required: constraints.PropertyNotExists("LaunchConfigurationName"),
 			},
 
 			"LaunchConfigurationName": Schema{
 				Type:     ValueString,
-				Required: PropertyNotExists("InstanceId"),
+				Required: constraints.PropertyNotExists("InstanceId"),
 			},
 
 			"LoadBalancerNames": Schema{
@@ -155,7 +158,7 @@ func AutoScalingGroup() Resource {
 			"VPCZoneIdentifier": Schema{
 				Type:     ValueString,
 				Array:    true,
-				Required: PropertyNotExists("AvailabilityZones"),
+				Required: constraints.PropertyNotExists("AvailabilityZones"),
 			},
 		},
 	}
@@ -206,13 +209,13 @@ var autoScalingBlockDeviceMapping = NestedResource{
 	Properties: Properties{
 		"DeviceName": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Ebs": Schema{
 			Type:      autoScalingEbsBlockDevice,
-			Required:  PropertyNotExists("VirtualName"),
-			Conflicts: PropertyExists("VirtualName"),
+			Required:  constraints.PropertyNotExists("VirtualName"),
+			Conflicts: constraints.PropertyExists("VirtualName"),
 		},
 
 		"NoDevice": Schema{
@@ -221,8 +224,8 @@ var autoScalingBlockDeviceMapping = NestedResource{
 
 		"VirtualName": Schema{
 			Type:      ValueString,
-			Required:  PropertyNotExists("Ebs"),
-			Conflicts: PropertyExists("Ebs"),
+			Required:  constraints.PropertyNotExists("Ebs"),
+			Conflicts: constraints.PropertyExists("Ebs"),
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
@@ -264,7 +267,7 @@ func LaunchConfiguration() Resource {
 			"ClassicLinkVPCSecurityGroups": Schema{
 				Type:     ValueString,
 				Array:    true,
-				Required: PropertyExists("ClassicLinkVPCId"),
+				Required: constraints.PropertyExists("ClassicLinkVPCId"),
 			},
 
 			"EbsOptimized": Schema{
@@ -341,7 +344,7 @@ func LifecycleHook() Resource {
 		Properties: Properties{
 			"AutoScalingGroupName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"DefaultResult": Schema{
@@ -354,7 +357,7 @@ func LifecycleHook() Resource {
 
 			"LifecycleTransition": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"NotificationMetadata": Schema{
@@ -364,12 +367,12 @@ func LifecycleHook() Resource {
 			// TODO: Do we need an ARN type?
 			"NotificationTargetARN": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"RoleARN": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 		},
 	}
@@ -402,7 +405,7 @@ var stepAdjustment = NestedResource{
 
 		"ScalingAdjustment": Schema{
 			Type:     ValueNumber,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -420,28 +423,28 @@ func ScalingPolicy() Resource {
 		Properties: Properties{
 			"AdjustmentType": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"AutoScalingGroupName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Cooldown": Schema{
 				Type:      ValueString,
-				Conflicts: PropertyNot("PolicyType", "StepScaling"),
+				Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			"EstimatedInstanceWarmup": Schema{
 				Type:      ValueNumber,
-				Conflicts: PropertyNot("PolicyType", "StepScaling"),
+				Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			"MetricAggregationType": Schema{
 				Type:      metricAggregationType,
 				Default:   "Average",
-				Conflicts: PropertyNot("PolicyType", "StepScaling"),
+				Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
 			},
 
 			// TODO: This property replaces the MinAdjustmentStep property
@@ -456,15 +459,15 @@ func ScalingPolicy() Resource {
 
 			"ScalingAdjustment": Schema{
 				Type:      ValueNumber,
-				Required:  PropertyIs("PolicyType", "SimpleScaling"),
-				Conflicts: PropertyNot("PolicyType", "SimpleScaling"),
+				Required:  constraints.PropertyIs("PolicyType", "SimpleScaling"),
+				Conflicts: constraints.PropertyNot("PolicyType", "SimpleScaling"),
 			},
 
 			"StepAdjustments": Schema{
 				Type:      stepAdjustment,
 				Array:     true,
-				Required:  PropertyIs("PolicyType", "StepScaling"),
-				Conflicts: PropertyNot("PolicyType", "StepScaling"),
+				Required:  constraints.PropertyIs("PolicyType", "StepScaling"),
+				Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
 			},
 		},
 	}
@@ -483,7 +486,7 @@ func ScheduledAction() Resource {
 		Properties: Properties{
 			"AutoScalingGroupName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"DesiredCapacity": Schema{

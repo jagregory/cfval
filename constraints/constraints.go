@@ -1,4 +1,4 @@
-package schema
+package constraints
 
 import (
 	"fmt"
@@ -17,9 +17,9 @@ type Constraint interface {
 	Describe(map[string]interface{}) string
 }
 
-type Constraints []Constraint
+type Any []Constraint
 
-func (constraints Constraints) Pass(values map[string]interface{}) bool {
+func (constraints Any) Pass(values map[string]interface{}) bool {
 	for _, c := range constraints {
 		if c.Pass(values) {
 			return true
@@ -29,7 +29,7 @@ func (constraints Constraints) Pass(values map[string]interface{}) bool {
 	return false
 }
 
-func (constraints Constraints) Describe(values map[string]interface{}) string {
+func (constraints Any) Describe(values map[string]interface{}) string {
 	descriptions := make([]string, 0, len(constraints))
 
 	for _, c := range constraints {
@@ -39,6 +39,30 @@ func (constraints Constraints) Describe(values map[string]interface{}) string {
 	}
 
 	return strings.Join(descriptions, " or ")
+}
+
+type All []Constraint
+
+func (constraints All) Pass(values map[string]interface{}) bool {
+	for _, c := range constraints {
+		if !c.Pass(values) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (constraints All) Describe(values map[string]interface{}) string {
+	descriptions := make([]string, 0, len(constraints))
+
+	for _, c := range constraints {
+		if c.Pass(values) {
+			descriptions = append(descriptions, c.Describe(values))
+		}
+	}
+
+	return strings.Join(descriptions, " and ")
 }
 
 type PropertyExists string

@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 func VPCGatewayAttachment() Resource {
 	return Resource{
@@ -17,7 +20,7 @@ func VPCGatewayAttachment() Resource {
 			},
 
 			"VpcId": Schema{
-				Required: Always,
+				Required: constraints.Always,
 				Type:     ValueString,
 			},
 

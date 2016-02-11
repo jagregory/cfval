@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -23,7 +24,7 @@ var s3LifecycleRule = NestedResource{
 
 		"Status": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		// "Transition":                        S3LifecycleRuleTransition,
@@ -89,7 +90,7 @@ func Bucket() Resource {
 
 						"IndexDocument": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						// "RedirectAllRequestsTo": Schema{Type: ... }

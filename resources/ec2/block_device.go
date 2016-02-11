@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-template.html
 var ec2EbsBlockDevice = NestedResource{
@@ -17,8 +20,8 @@ var ec2EbsBlockDevice = NestedResource{
 
 		"Iops": Schema{
 			Type:         ValueNumber,
-			Required:     PropertyIs("VolumeType", "io1"),
-			Conflicts:    PropertyNot("VolumeType", "io1"),
+			Required:     constraints.PropertyIs("VolumeType", "io1"),
+			Conflicts:    constraints.PropertyNot("VolumeType", "io1"),
 			ValidateFunc: IntegerRangeValidate(100, 2000),
 		},
 

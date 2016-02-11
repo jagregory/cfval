@@ -2,4 +2,4 @@ build:
 	go build
 
 test:
-	go test ./resources ./schema
+	go test ./constraints ./resources ./resources/*/ ./schema

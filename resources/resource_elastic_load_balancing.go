@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -38,7 +39,7 @@ func LoadBalancer() Resource {
 					Properties: Properties{
 						"Enabled": Schema{
 							Type:     ValueBool,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"Timeout": Schema{
@@ -63,27 +64,27 @@ func LoadBalancer() Resource {
 					Properties: Properties{
 						"HealthyThreshold": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"Interval": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"Target": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						}, // TODO: Could be smarter about this restriction: "The protocol can be TCP, HTTP, HTTPS, or SSL. The range of valid ports is 1 through 65535."
 
 						"Timeout": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						}, // TODO: Could be smarter about this restriction: "This value must be less than the value for Interval."
 
 						"UnhealthyThreshold": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 					},
 				},
@@ -102,13 +103,13 @@ func LoadBalancer() Resource {
 
 			"Listeners": Schema{
 				Array:    true,
-				Required: Always,
+				Required: constraints.Always,
 				Type: NestedResource{
 					Description: "ElasticLoadBalancing Listener",
 					Properties: Properties{
 						"InstancePort": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"InstanceProtocol": Schema{
@@ -117,7 +118,7 @@ func LoadBalancer() Resource {
 
 						"LoadBalancerPort": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"PolicyNames": Schema{
@@ -126,7 +127,7 @@ func LoadBalancer() Resource {
 						},
 
 						"Protocol": Schema{
-							Required: Always,
+							Required: constraints.Always,
 							Type:     instanceProtocol,
 						},
 

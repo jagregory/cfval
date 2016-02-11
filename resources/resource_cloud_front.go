@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-forwardedvalues-cookies.html
 var cookies = NestedResource{
@@ -12,13 +15,13 @@ var cookies = NestedResource{
 				Description: "CloudFront ForwardedValues Cookies Forward",
 				Options:     []string{"none", "all", "whitelist"},
 			},
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"WhitelistedNames": Schema{
 			Type:     ValueString,
 			Array:    true,
-			Required: PropertyIs("Forward", "whitelist"),
+			Required: constraints.PropertyIs("Forward", "whitelist"),
 		},
 	},
 }
@@ -38,7 +41,7 @@ var forwardedValues = NestedResource{
 
 		"QueryString": Schema{
 			Type:     ValueBool,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -78,7 +81,7 @@ var defaultCacheBehaviour = NestedResource{
 		},
 
 		"ForwardedValues": Schema{
-			Required: Always,
+			Required: constraints.Always,
 			Type:     forwardedValues,
 		},
 
@@ -96,7 +99,7 @@ var defaultCacheBehaviour = NestedResource{
 
 		"TargetOriginId": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"TrustedSigners": Schema{
@@ -106,7 +109,7 @@ var defaultCacheBehaviour = NestedResource{
 
 		"ViewerProtocolPolicy": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -117,7 +120,7 @@ var logging = NestedResource{
 	Properties: Properties{
 		"Bucket": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"IncludeCookies": Schema{
@@ -144,7 +147,7 @@ var customOriginConfig = NestedResource{
 
 		"OriginProtocolPolicy": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -164,18 +167,18 @@ var origin = NestedResource{
 	Properties: Properties{
 		"CustomOriginConfig": Schema{
 			Type:      customOriginConfig,
-			Conflicts: PropertyExists("S3OriginConfig"),
-			Required:  PropertyNotExists("S3OriginConfig"),
+			Conflicts: constraints.PropertyExists("S3OriginConfig"),
+			Required:  constraints.PropertyNotExists("S3OriginConfig"),
 		},
 
 		"DomainName": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Id": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"OriginPath": Schema{
@@ -185,8 +188,8 @@ var origin = NestedResource{
 
 		"S3OriginConfig": Schema{
 			Type:      originConfig,
-			Conflicts: PropertyExists("CustomOriginConfig"),
-			Required:  PropertyNotExists("CustomOriginConfig"),
+			Conflicts: constraints.PropertyExists("CustomOriginConfig"),
+			Required:  constraints.PropertyNotExists("CustomOriginConfig"),
 		},
 	},
 }
@@ -197,14 +200,14 @@ var viewerCertificate = NestedResource{
 	Properties: Properties{
 		"CloudFrontDefaultCertificate": Schema{
 			Type:      ValueBool,
-			Conflicts: PropertyExists("IamCertificateId"),
-			Required:  PropertyNotExists("IamCertificateId"),
+			Conflicts: constraints.PropertyExists("IamCertificateId"),
+			Required:  constraints.PropertyNotExists("IamCertificateId"),
 		},
 
 		"IamCertificateId": Schema{
 			Type:      ValueString,
-			Conflicts: PropertyExists("CloudFrontDefaultCertificate"),
-			Required:  PropertyNotExists("CloudFrontDefaultCertificate"),
+			Conflicts: constraints.PropertyExists("CloudFrontDefaultCertificate"),
+			Required:  constraints.PropertyNotExists("CloudFrontDefaultCertificate"),
 		},
 
 		"MinimumProtocolVersion": Schema{
@@ -217,7 +220,7 @@ var viewerCertificate = NestedResource{
 
 		"SslSupportMethod": Schema{
 			Type:     ValueString,
-			Required: PropertyExists("IamCertificateId"),
+			Required: constraints.PropertyExists("IamCertificateId"),
 		},
 	},
 }
@@ -246,7 +249,7 @@ var cacheBehaviour = NestedResource{
 
 		"ForwardedValues": Schema{
 			Type:     forwardedValues,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"MaxTTL": Schema{
@@ -259,7 +262,7 @@ var cacheBehaviour = NestedResource{
 
 		"PathPattern": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"SmoothStreaming": Schema{
@@ -268,7 +271,7 @@ var cacheBehaviour = NestedResource{
 
 		"TargetOriginId": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"TrustedSigners": Schema{
@@ -278,7 +281,7 @@ var cacheBehaviour = NestedResource{
 
 		"ViewerProtocolPolicy": Schema{
 			Type:     viewerProtocolPolicy,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -293,19 +296,19 @@ var customErrorResponse = NestedResource{
 
 		"ErrorCode": Schema{
 			Type:         ValueNumber,
-			Required:     Always,
+			Required:     constraints.Always,
 			ValidateFunc: NumberOptions(400, 403, 404, 405, 414, 500, 501, 502, 503, 504),
 		},
 
 		"ResponseCode": Schema{
 			Type:         ValueNumber,
-			Required:     PropertyExists("ResponsePagePath"),
+			Required:     constraints.PropertyExists("ResponsePagePath"),
 			ValidateFunc: NumberOptions(200, 400, 403, 404, 405, 414, 500, 501, 502, 503, 504),
 		},
 
 		"ResponsePagePath": Schema{
 			Type:     ValueString,
-			Required: PropertyExists("ResponseCode"),
+			Required: constraints.PropertyExists("ResponseCode"),
 		},
 	},
 }
@@ -317,9 +320,9 @@ var geoRestriction = NestedResource{
 		"Locations": Schema{
 			Type:  countryCode,
 			Array: true,
-			Required: Constraints{
-				PropertyIs("RestrictionType", "blacklist"),
-				PropertyIs("RestrictionType", "whitelist"),
+			Required: constraints.Any{
+				constraints.PropertyIs("RestrictionType", "blacklist"),
+				constraints.PropertyIs("RestrictionType", "whitelist"),
 			},
 		},
 
@@ -328,7 +331,7 @@ var geoRestriction = NestedResource{
 				Description: "RestrictionType",
 				Options:     []string{"blacklist", "whitelist", "none"},
 			},
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -339,7 +342,7 @@ var restrictions = NestedResource{
 	Properties: Properties{
 		"GeoRestriction": Schema{
 			Type:     geoRestriction,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -374,7 +377,7 @@ var distributionConfig = NestedResource{
 		},
 
 		"DefaultCacheBehavior": Schema{
-			Required: Always,
+			Required: constraints.Always,
 			Type:     defaultCacheBehaviour,
 		},
 
@@ -384,7 +387,7 @@ var distributionConfig = NestedResource{
 
 		"Enabled": Schema{
 			Type:     ValueBool,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Logging": Schema{
@@ -393,7 +396,7 @@ var distributionConfig = NestedResource{
 
 		"Origins": Schema{
 			Array:    true,
-			Required: Always,
+			Required: constraints.Always,
 			Type:     origin,
 		},
 
@@ -427,7 +430,7 @@ func Distribution() Resource {
 
 		Properties: Properties{
 			"DistributionConfig": Schema{
-				Required: Always,
+				Required: constraints.Always,
 				Type:     distributionConfig,
 			},
 		},

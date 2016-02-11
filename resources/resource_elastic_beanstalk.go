@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -38,7 +39,7 @@ func ApplicationVersion() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Description": Schema{
@@ -46,18 +47,18 @@ func ApplicationVersion() Resource {
 			},
 
 			"SourceBundle": Schema{
-				Required: Always,
+				Required: constraints.Always,
 				Type: NestedResource{
 					Description: "Elastic Beanstalk SourceBundle",
 					Properties: Properties{
 						"S3Bucket": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"S3Key": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 					},
 				},
@@ -71,17 +72,17 @@ var optionsSettings = NestedResource{
 	Properties: Properties{
 		"Namespace": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"OptionName": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -98,7 +99,7 @@ func ConfigurationTemplate() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Description": Schema{
@@ -133,7 +134,7 @@ func Environment() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"CNAMEPrefix": Schema{

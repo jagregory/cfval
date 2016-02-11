@@ -2,6 +2,8 @@ package schema
 
 import (
 	"testing"
+
+	"github.com/jagregory/cfval/constraints"
 )
 
 func TestResourcePropertyConflictValidation(t *testing.T) {
@@ -12,12 +14,12 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:      ValueString,
-				Conflicts: PropertyExists("Option2"),
+				Conflicts: constraints.PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{
 				Type:      ValueString,
-				Conflicts: PropertyExists("Option1"),
+				Conflicts: constraints.PropertyExists("Option1"),
 			},
 		},
 	}
@@ -59,12 +61,12 @@ func TestSchemaRequiredValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Option2": Schema{
 				Type:     ValueString,
-				Required: Never,
+				Required: constraints.Never,
 			},
 
 			"Option3": Schema{
@@ -118,7 +120,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:     ValueString,
-				Required: PropertyExists("Option2"),
+				Required: constraints.PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{
@@ -164,7 +166,7 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		Properties: map[string]Schema{
 			"Option1": Schema{
 				Type:     ValueString,
-				Required: PropertyNotExists("Option2"),
+				Required: constraints.PropertyNotExists("Option2"),
 			},
 
 			"Option2": Schema{

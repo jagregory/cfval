@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
@@ -35,7 +36,7 @@ func CacheCluster() Resource {
 
 			"CacheNodeType": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"CacheParameterGroupName": Schema{
@@ -57,7 +58,7 @@ func CacheCluster() Resource {
 
 			"Engine": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"EngineVersion": Schema{
@@ -70,7 +71,7 @@ func CacheCluster() Resource {
 
 			"NumCacheNodes": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Port": Schema{
@@ -181,7 +182,7 @@ func ReplicationGroup() Resource {
 
 			"CacheNodeType": Schema{
 				Type:     cacheNodeType,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"CacheParameterGroupName": Schema{
@@ -191,7 +192,7 @@ func ReplicationGroup() Resource {
 			"CacheSecurityGroupNames": Schema{
 				Type:      ValueString,
 				Array:     true,
-				Conflicts: PropertyExists("SecurityGroupIds"),
+				Conflicts: constraints.PropertyExists("SecurityGroupIds"),
 			},
 
 			"CacheSubnetGroupName": Schema{
@@ -200,7 +201,7 @@ func ReplicationGroup() Resource {
 
 			"Engine": Schema{
 				Type:     engine,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"EngineVersion": Schema{
@@ -214,7 +215,7 @@ func ReplicationGroup() Resource {
 			// If automatic failover is enabled, you must specify a value greater than 1.
 			"NumCacheClusters": Schema{
 				Type:     ValueNumber,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Port": Schema{
@@ -233,13 +234,13 @@ func ReplicationGroup() Resource {
 
 			"ReplicationGroupDescription": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"SecurityGroupIds": Schema{
 				Type:      ValueString,
 				Array:     true,
-				Conflicts: PropertyExists("CacheSecurityGroupNames"),
+				Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
 			},
 
 			// A single-element string list that specifies an ARN of a Redis .rdb snapshot file that is stored in Amazon Simple Storage Service (Amazon S3). The snapshot file populates the node group. The Amazon S3 object name in the ARN cannot contain commas. For example, you can specify arn:aws:s3:::my_bucket/snapshot1.rdb.
@@ -266,12 +267,12 @@ func SubnetGroup() Resource {
 		Properties: map[string]Schema{
 			"Description": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"SubnetIds": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 				Array:    true,
 			},
 		},

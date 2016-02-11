@@ -1,6 +1,9 @@
 package schema
 
-import "github.com/jagregory/cfval/reporting"
+import (
+	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/reporting"
+)
 
 type Output struct {
 	Description, Value interface{}
@@ -8,7 +11,7 @@ type Output struct {
 
 var outputSchema = Schema{
 	Type:     ValueString,
-	Required: Always,
+	Required: constraints.Always,
 }
 
 func (o Output) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Failures) {

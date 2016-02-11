@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 func SubnetRouteTableAssociation() Resource {
 	return Resource{
@@ -14,12 +17,12 @@ func SubnetRouteTableAssociation() Resource {
 		Properties: Properties{
 			"RouteTableId": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"SubnetId": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 		},
 	}

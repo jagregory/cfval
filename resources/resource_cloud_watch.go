@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dimension.html
 var metricDimension = NestedResource{
@@ -8,13 +11,13 @@ var metricDimension = NestedResource{
 	Properties: Properties{
 		"Name": Schema{
 			Type:         ValueString,
-			Required:     Always,
+			Required:     constraints.Always,
 			ValidateFunc: StringLengthValidate(1, 255),
 		},
 
 		"Value": Schema{
 			Type:         ValueString,
-			Required:     Always,
+			Required:     constraints.Always,
 			ValidateFunc: StringLengthValidate(1, 255),
 		},
 	},
@@ -95,7 +98,7 @@ func Alarm() Resource {
 			},
 
 			"ComparisonOperator": Schema{
-				Required: Always,
+				Required: constraints.Always,
 				Type:     comparisonOperator,
 			},
 
@@ -106,7 +109,7 @@ func Alarm() Resource {
 
 			"EvaluationPeriods": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"InsufficientDataActions": Schema{
@@ -116,12 +119,12 @@ func Alarm() Resource {
 
 			"MetricName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Namespace": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"OKActions": Schema{
@@ -131,17 +134,17 @@ func Alarm() Resource {
 
 			"Period": Schema{
 				Type:     Period,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Statistic": Schema{
 				Type:     statistic,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Threshold": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Unit": Schema{

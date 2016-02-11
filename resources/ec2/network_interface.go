@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-network-iface-embedded.html
 var networkInterface = NestedResource{
@@ -20,7 +23,7 @@ var networkInterface = NestedResource{
 
 		"DeviceIndex": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"GroupSet": Schema{
@@ -47,7 +50,7 @@ var networkInterface = NestedResource{
 
 		"SubnetId": Schema{
 			Type:     SubnetID,
-			Required: PropertyNotExists("NetworkInterfaceId"),
+			Required: constraints.PropertyNotExists("NetworkInterfaceId"),
 		},
 	},
 }

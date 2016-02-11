@@ -1,6 +1,9 @@
 package ec2
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-mapping.html
 var ec2BlockDeviceMapping = NestedResource{
@@ -8,13 +11,13 @@ var ec2BlockDeviceMapping = NestedResource{
 	Properties: Properties{
 		"DeviceName": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"Ebs": Schema{
 			Type:      ec2EbsBlockDevice,
-			Required:  PropertyNotExists("VirtualName"),
-			Conflicts: PropertyExists("VirtualName"),
+			Required:  constraints.PropertyNotExists("VirtualName"),
+			Conflicts: constraints.PropertyExists("VirtualName"),
 		},
 
 		"NoDevice": Schema{
@@ -23,8 +26,8 @@ var ec2BlockDeviceMapping = NestedResource{
 
 		"VirtualName": Schema{
 			Type:      ValueString,
-			Required:  PropertyNotExists("Ebs"),
-			Conflicts: PropertyExists("Ebs"),
+			Required:  constraints.PropertyNotExists("Ebs"),
+			Conflicts: constraints.PropertyExists("Ebs"),
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",

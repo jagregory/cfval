@@ -1,6 +1,7 @@
 package ec2
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -15,7 +16,7 @@ func Subnet() Resource {
 
 			"CidrBlock": Schema{
 				Type:     CIDR,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"MapPublicIpOnLaunch": Schema{
@@ -29,7 +30,7 @@ func Subnet() Resource {
 
 			"VpcId": Schema{
 				Type:     VpcID,
-				Required: Always,
+				Required: constraints.Always,
 			},
 		},
 	}

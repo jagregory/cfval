@@ -1,6 +1,7 @@
 package ec2
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -40,7 +41,7 @@ func Instance() Resource {
 
 			"ImageId": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"InstanceInitiatedShutdownBehavior": Schema{
@@ -69,9 +70,9 @@ func Instance() Resource {
 			"NetworkInterfaces": Schema{
 				Array: true,
 				Type:  networkInterface,
-				Conflicts: Constraints{
-					PropertyExists("SecurityGroupIds"),
-					PropertyExists("SubnetId"),
+				Conflicts: constraints.Any{
+					constraints.PropertyExists("SecurityGroupIds"),
+					constraints.PropertyExists("SubnetId"),
 				},
 			},
 
@@ -90,7 +91,7 @@ func Instance() Resource {
 			"SecurityGroupIds": Schema{
 				Type:      ValueString,
 				Array:     true,
-				Conflicts: PropertyExists("NetworkInterfaces"),
+				Conflicts: constraints.PropertyExists("NetworkInterfaces"),
 			},
 
 			"SecurityGroups": Schema{
@@ -109,7 +110,7 @@ func Instance() Resource {
 
 			"SubnetId": Schema{
 				Type:      SubnetID,
-				Conflicts: PropertyExists("NetworkInterfaces"),
+				Conflicts: constraints.PropertyExists("NetworkInterfaces"),
 			},
 
 			"Tags": Schema{

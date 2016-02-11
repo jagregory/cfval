@@ -1,6 +1,7 @@
 package ec2
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -17,7 +18,7 @@ func RouteTable() Resource {
 		Properties: Properties{
 			"VpcId": Schema{
 				Type:     VpcID,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Tags": Schema{

@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -10,7 +11,7 @@ var aliasTarget = NestedResource{
 	Properties: map[string]Schema{
 		"DNSName": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 
 		"EvaluateTargetHealth": Schema{
@@ -19,7 +20,7 @@ var aliasTarget = NestedResource{
 
 		"HostedZoneId": Schema{
 			Type:     ValueString,
-			Required: Always,
+			Required: constraints.Always,
 		},
 	},
 }
@@ -53,22 +54,22 @@ var geoLocation = NestedResource{
 	Properties: map[string]Schema{
 		"ContinentCode": Schema{
 			Type:     continentCode,
-			Required: PropertyNotExists("CountryCode"),
-			Conflicts: Constraints{
-				PropertyExists("CountryCode"),
-				PropertyExists("SubdivisionCode"),
+			Required: constraints.PropertyNotExists("CountryCode"),
+			Conflicts: constraints.Any{
+				constraints.PropertyExists("CountryCode"),
+				constraints.PropertyExists("SubdivisionCode"),
 			},
 		},
 
 		"CountryCode": Schema{
 			Type:      countryCode,
-			Required:  PropertyNotExists("ContinentCode"),
-			Conflicts: PropertyExists("ContinentCode"),
+			Required:  constraints.PropertyNotExists("ContinentCode"),
+			Conflicts: constraints.PropertyExists("ContinentCode"),
 		},
 
 		"SubdivisionCode": Schema{
 			Type:      subdivisionCode,
-			Conflicts: PropertyExists("ContinentCode"),
+			Conflicts: constraints.PropertyExists("ContinentCode"),
 			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
 					return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Can only be set when CountryCode is US", context)}
@@ -98,9 +99,9 @@ func RecordSet() Resource {
 		Properties: map[string]Schema{
 			"AliasTarget": Schema{
 				Type: aliasTarget,
-				Conflicts: Constraints{
-					PropertyExists("ResourceRecords"),
-					PropertyExists("TTL"),
+				Conflicts: constraints.Any{
+					constraints.PropertyExists("ResourceRecords"),
+					constraints.PropertyExists("TTL"),
 				},
 			},
 
@@ -116,19 +117,19 @@ func RecordSet() Resource {
 
 			"HostedZoneId": Schema{
 				Type:      ValueString,
-				Required:  PropertyNotExists("HostedZoneName"),
-				Conflicts: PropertyExists("HostedZoneName"),
+				Required:  constraints.PropertyNotExists("HostedZoneName"),
+				Conflicts: constraints.PropertyExists("HostedZoneName"),
 			},
 
 			"HostedZoneName": Schema{
 				Type:      ValueString,
-				Required:  PropertyNotExists("HostedZoneId"),
-				Conflicts: PropertyExists("HostedZoneId"),
+				Required:  constraints.PropertyNotExists("HostedZoneId"),
+				Conflicts: constraints.PropertyExists("HostedZoneId"),
 			},
 
 			"Name": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			// "Region":          Schema{Type: TypeString},
@@ -136,28 +137,28 @@ func RecordSet() Resource {
 			"ResourceRecords": Schema{
 				Array:     true,
 				Type:      ValueString,
-				Conflicts: PropertyExists("AliasTarget"),
-				Required:  PropertyNotExists("AliasTarget"),
+				Conflicts: constraints.PropertyExists("AliasTarget"),
+				Required:  constraints.PropertyNotExists("AliasTarget"),
 			},
 
 			"SetIdentifier": Schema{
 				Type: ValueString,
-				Required: Constraints{
-					PropertyExists("Weight"),
-					PropertyExists("Latency"),
-					PropertyExists("Failover"),
-					PropertyExists("GeoLocation"),
+				Required: constraints.Any{
+					constraints.PropertyExists("Weight"),
+					constraints.PropertyExists("Latency"),
+					constraints.PropertyExists("Failover"),
+					constraints.PropertyExists("GeoLocation"),
 				},
 			},
 
 			"TTL": Schema{
 				Type:      ValueString,
-				Conflicts: PropertyExists("AliasTarget"),
+				Conflicts: constraints.PropertyExists("AliasTarget"),
 			},
 
 			"Type": Schema{
 				Type:     recordSetType,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Weight": Schema{

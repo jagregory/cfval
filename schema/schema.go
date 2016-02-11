@@ -3,6 +3,7 @@ package schema
 import (
 	"strconv"
 
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -39,7 +40,7 @@ type Schema struct {
 
 	// Conflicts is an array of property names which cannot also be specified when
 	// this property is too.
-	Conflicts Constraint
+	Conflicts constraints.Constraint
 
 	// Default is the AWS default value for this property; this is used for
 	// validations when the property isn't specified
@@ -49,7 +50,7 @@ type Schema struct {
 	Default interface{}
 
 	// Required is set to true if this property must have a value in the template
-	Required Constraint
+	Required constraints.Constraint
 
 	// Type is the type of the Value this property is expected to contain. For
 	// example "String", "Number", "JSON", or nested resources such as Tags.

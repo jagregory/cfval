@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/constraints"
+	. "github.com/jagregory/cfval/schema"
+)
 
 func Policy() Resource {
 	return Resource{
@@ -19,12 +22,12 @@ func Policy() Resource {
 
 			"PolicyDocument": Schema{
 				Type:     JSON,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"PolicyName": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Roles": Schema{
@@ -52,7 +55,7 @@ func Role() Resource {
 		Properties: map[string]Schema{
 			"AssumeRolePolicyDocument": Schema{
 				Type:     JSON,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"ManagedPolicyArns": Schema{
@@ -71,12 +74,12 @@ func Role() Resource {
 					Properties: map[string]Schema{
 						"PolicyDocument": Schema{
 							Type:     JSON,
-							Required: Always,
+							Required: constraints.Always,
 						},
 
 						"PolicyName": Schema{
 							Type:     ValueString,
-							Required: Always,
+							Required: constraints.Always,
 						},
 					},
 				},
@@ -97,13 +100,13 @@ func InstanceProfile() Resource {
 		Properties: map[string]Schema{
 			"Path": Schema{
 				Type:     ValueString,
-				Required: Always,
+				Required: constraints.Always,
 			},
 
 			"Roles": Schema{
 				Type:     ValueString,
 				Array:    true,
-				Required: Always,
+				Required: constraints.Always,
 			},
 		},
 	}
