@@ -3,6 +3,7 @@ package main
 import "encoding/json"
 import (
 	"github.com/jagregory/cfval/resources"
+	"github.com/jagregory/cfval/resources/ec2"
 	"github.com/jagregory/cfval/schema"
 )
 
@@ -38,30 +39,30 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::DynamoDB::Table":                         resources.Table,
 	"AWS::EC2::CustomerGateway":                    resources.CustomerGateway,
 	"AWS::EC2::DHCPOptions":                        resources.DHCPOptions,
-	"AWS::EC2::EIP":                                resources.Eip,
+	"AWS::EC2::EIP":                                ec2.Eip,
 	"AWS::EC2::EIPAssociation":                     resources.EIPAssociation,
-	"AWS::EC2::Instance":                           resources.Instance,
-	"AWS::EC2::InternetGateway":                    resources.InternetGateway,
+	"AWS::EC2::Instance":                           ec2.Instance,
+	"AWS::EC2::InternetGateway":                    ec2.InternetGateway,
 	"AWS::EC2::NetworkAcl":                         resources.NetworkAcl,
 	"AWS::EC2::NetworkAclEntry":                    resources.NetworkAclEntry,
 	"AWS::EC2::NetworkInterface":                   resources.NetworkInterface,
 	"AWS::EC2::NetworkInterfaceAttachment":         resources.NetworkInterfaceAttachment,
 	"AWS::EC2::PlacementGroup":                     resources.PlacementGroup,
-	"AWS::EC2::Route":                              resources.Route,
-	"AWS::EC2::RouteTable":                         resources.RouteTable,
-	"AWS::EC2::SecurityGroup":                      resources.SecurityGroup,
+	"AWS::EC2::Route":                              ec2.Route,
+	"AWS::EC2::RouteTable":                         ec2.RouteTable,
+	"AWS::EC2::SecurityGroup":                      ec2.SecurityGroup,
 	"AWS::EC2::SecurityGroupEgress":                resources.SecurityGroupEgress,
-	"AWS::EC2::SecurityGroupIngress":               resources.SecurityGroupIngress,
+	"AWS::EC2::SecurityGroupIngress":               ec2.SecurityGroupIngress,
 	"AWS::EC2::SpotFleet":                          resources.SpotFleet,
-	"AWS::EC2::Subnet":                             resources.Subnet,
+	"AWS::EC2::Subnet":                             ec2.Subnet,
 	"AWS::EC2::SubnetNetworkAclAssociation":        resources.SubnetNetworkAclAssociation,
-	"AWS::EC2::SubnetRouteTableAssociation":        resources.SubnetRouteTableAssociation,
+	"AWS::EC2::SubnetRouteTableAssociation":        ec2.SubnetRouteTableAssociation,
 	"AWS::EC2::Volume":                             resources.Volume,
 	"AWS::EC2::VolumeAttachment":                   resources.VolumeAttachment,
 	"AWS::EC2::VPC":                                resources.VPC,
 	"AWS::EC2::VPCDHCPOptionsAssociation":          resources.VPCDHCPOptionsAssociation,
 	"AWS::EC2::VPCEndpoint":                        resources.VPCEndpoint,
-	"AWS::EC2::VPCGatewayAttachment":               resources.VPCGatewayAttachment,
+	"AWS::EC2::VPCGatewayAttachment":               ec2.VPCGatewayAttachment,
 	"AWS::EC2::VPCPeeringConnection":               resources.VPCPeeringConnection,
 	"AWS::EC2::VPNConnection":                      resources.VPNConnection,
 	"AWS::EC2::VPNConnectionRoute":                 resources.VPNConnectionRoute,

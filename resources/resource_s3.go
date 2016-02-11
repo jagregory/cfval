@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/resources/common"
+	. "github.com/jagregory/cfval/schema"
+)
 
 var s3LifecycleRule = NestedResource{
 	Description: "AWS::S3::LifecycleRule",
@@ -70,7 +73,7 @@ func Bucket() Resource {
 			// "ReplicationConfiguration":  s3_replication_configuration,
 
 			"Tags": Schema{
-				Type:  resourceTag,
+				Type:  common.ResourceTag,
 				Array: true,
 			},
 

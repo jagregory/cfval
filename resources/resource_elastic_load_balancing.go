@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/resources/common"
+	. "github.com/jagregory/cfval/schema"
+)
 
 var instanceProtocol = EnumValue{
 	Description: "LoadBalancer InstanceProtocol",
@@ -152,7 +155,7 @@ func LoadBalancer() Resource {
 			},
 
 			"Tags": Schema{
-				Type:  resourceTag,
+				Type:  common.ResourceTag,
 				Array: true,
 			},
 		},

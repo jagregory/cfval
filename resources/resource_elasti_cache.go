@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jagregory/cfval/reporting"
+	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
 
@@ -107,7 +108,7 @@ func CacheCluster() Resource {
 			},
 
 			"Tags": Schema{
-				Type:  resourceTag,
+				Type:  common.ResourceTag,
 				Array: true,
 			},
 

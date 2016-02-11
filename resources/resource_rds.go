@@ -1,6 +1,9 @@
 package resources
 
-import . "github.com/jagregory/cfval/schema"
+import (
+	"github.com/jagregory/cfval/resources/common"
+	. "github.com/jagregory/cfval/schema"
+)
 
 func DBInstance() Resource {
 	return Resource{
@@ -135,7 +138,7 @@ func DBInstance() Resource {
 			},
 
 			"Tags": Schema{
-				Type:  resourceTag,
+				Type:  common.ResourceTag,
 				Array: true,
 			},
 
@@ -163,7 +166,7 @@ func DBSubnetGroup() Resource {
 			},
 
 			"Tags": Schema{
-				Type:  resourceTag,
+				Type:  common.ResourceTag,
 				Array: true,
 			},
 		},

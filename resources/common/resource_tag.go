@@ -1,8 +1,8 @@
-package resources
+package common
 
 import . "github.com/jagregory/cfval/schema"
 
-var resourceTag = NestedResource{
+var ResourceTag = NestedResource{
 	Description: "Resource Tag",
 
 	Properties: Properties{
