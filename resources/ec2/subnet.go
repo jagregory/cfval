@@ -6,9 +6,15 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
 func Subnet() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Subnet",
+
+		ReturnValue: Schema{
+			Type: SubnetID,
+		},
+
 		Properties: Properties{
 			"AvailabilityZone": Schema{
 				Type: AvailabilityZone,
@@ -20,7 +26,8 @@ func Subnet() Resource {
 			},
 
 			"MapPublicIpOnLaunch": Schema{
-				Type: ValueBool,
+				Type:    ValueBool,
+				Default: false,
 			},
 
 			"Tags": Schema{
