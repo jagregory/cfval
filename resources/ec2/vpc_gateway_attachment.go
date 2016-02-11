@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-gateway-attachment.html
 func VPCGatewayAttachment() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::VPCGatewayAttachment",
@@ -16,16 +17,20 @@ func VPCGatewayAttachment() Resource {
 
 		Properties: Properties{
 			"InternetGatewayId": Schema{
-				Type: ValueString,
+				Type:      InternetGatewayID,
+				Required:  constraints.PropertyNotExists("VpnGatewayId"),
+				Conflicts: constraints.PropertyExists("VpnGatewayId"),
 			},
 
 			"VpcId": Schema{
 				Required: constraints.Always,
-				Type:     ValueString,
+				Type:     VpcID,
 			},
 
 			"VpnGatewayId": Schema{
-				Type: ValueString,
+				Type:      ValueString,
+				Required:  constraints.PropertyNotExists("InternetGatewayId"),
+				Conflicts: constraints.PropertyExists("InternetGatewayId"),
 			},
 		},
 	}
