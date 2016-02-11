@@ -168,7 +168,7 @@ var volumeType = EnumValue{
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
-var ebsBlockDevice = NestedResource{
+var autoScalingEbsBlockDevice = NestedResource{
 	Description: "AutoScaling EBS Block Device",
 	Properties: Properties{
 		"DeleteOnTermination": Schema{
@@ -201,7 +201,7 @@ var ebsBlockDevice = NestedResource{
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-mapping.html
-var blockDeviceMapping = NestedResource{
+var autoScalingBlockDeviceMapping = NestedResource{
 	Description: "AutoScaling Block Device Mapping",
 	Properties: Properties{
 		"DeviceName": Schema{
@@ -210,8 +210,9 @@ var blockDeviceMapping = NestedResource{
 		},
 
 		"Ebs": Schema{
-			Type:     ebsBlockDevice,
-			Required: PropertyNotExists("VirtualName"),
+			Type:      autoScalingEbsBlockDevice,
+			Required:  PropertyNotExists("VirtualName"),
+			Conflicts: PropertyExists("VirtualName"),
 		},
 
 		"NoDevice": Schema{
@@ -219,8 +220,9 @@ var blockDeviceMapping = NestedResource{
 		},
 
 		"VirtualName": Schema{
-			Type:     ValueString,
-			Required: PropertyNotExists("Ebs"),
+			Type:      ValueString,
+			Required:  PropertyNotExists("Ebs"),
+			Conflicts: PropertyExists("Ebs"),
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
@@ -251,7 +253,7 @@ func LaunchConfiguration() Resource {
 			},
 
 			"BlockDeviceMappings": Schema{
-				Type:  blockDeviceMapping,
+				Type:  autoScalingBlockDeviceMapping,
 				Array: true,
 			},
 
