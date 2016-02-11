@@ -83,3 +83,19 @@ func TestStringLengthValidateHelper(t *testing.T) {
 		}
 	}
 }
+
+func TestNumberOptionsValidateHelper(t *testing.T) {
+	validator := NumberOptions(5, 10, 20)
+
+	for _, valid := range []float64{5, 10, 20} {
+		if _, errs := validator(Schema{}, valid, TemplateResource{}, []string{}); errs != nil {
+			t.Error("Should pass on valid value", valid, errs)
+		}
+	}
+
+	for _, invalid := range []float64{-10, 0, 6, 1000} {
+		if _, errs := validator(Schema{}, invalid, TemplateResource{}, []string{}); errs == nil {
+			t.Error("Should fail on invalid value", invalid)
+		}
+	}
+}

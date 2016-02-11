@@ -2,13 +2,6 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
-func ScheduledAction() Resource {
-	return Resource{
-		AwsType:    "AWS::AutoScaling::ScheduledAction",
-		Properties: Properties{},
-	}
-}
-
 func Authentication() Resource {
 	return Resource{
 		AwsType:    "AWS::CloudFormation::Authentication",

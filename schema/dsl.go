@@ -58,6 +58,17 @@ func StringLengthValidate(min, max int) ValidateFunc {
 	}
 }
 
+func NumberOptions(numbers ...float64) ValidateFunc {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+		for _, n := range numbers {
+			if n == value.(float64) {
+				return reporting.ValidateOK, nil
+			}
+		}
+		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), context)}
+	}
+}
+
 // TODO: this is really dumb, but it's late and I'm tired
 func match(left []string, right []interface{}) bool {
 	if len(left) != len(right) {

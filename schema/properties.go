@@ -29,7 +29,7 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 
 		// Validate Required
 		if value == nil && schema.Required != nil && schema.Required.Pass(values) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Property is required: %s", schema.Required.Describe(values)), append(context, key)))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(values)), append(context, key)))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and

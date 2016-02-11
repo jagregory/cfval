@@ -2,22 +2,28 @@ package resources
 
 import . "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-forwardedvalues-cookies.html
 var cookies = NestedResource{
 	Description: "CloudFront ForwardedValues Cookies",
 
 	Properties: Properties{
 		"Forward": Schema{
-			Type:     ValueString,
+			Type: EnumValue{
+				Description: "CloudFront ForwardedValues Cookies Forward",
+				Options:     []string{"none", "all", "whitelist"},
+			},
 			Required: Always,
 		},
 
 		"WhitelistedNames": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type:     ValueString,
+			Array:    true,
+			Required: PropertyIs("Forward", "whitelist"),
 		},
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-forwardedvalues.html
 var forwardedValues = NestedResource{
 	Description: "CloudFront ForwardedValues",
 	Properties: Properties{
@@ -105,6 +111,7 @@ var defaultCacheBehaviour = NestedResource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-logging.html
 var logging = NestedResource{
 	Description: "CloudFront Logging",
 	Properties: Properties{
@@ -123,6 +130,7 @@ var logging = NestedResource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-customorigin.html
 var customOriginConfig = NestedResource{
 	Description: "CloudFront DistributionConfig Origin CustomOrigin",
 	Properties: Properties{
@@ -150,11 +158,14 @@ var originConfig = NestedResource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-origin.html
 var origin = NestedResource{
 	Description: "CloudFront DistributionConfig Origin",
 	Properties: Properties{
 		"CustomOriginConfig": Schema{
-			Type: customOriginConfig,
+			Type:      customOriginConfig,
+			Conflicts: PropertyExists("S3OriginConfig"),
+			Required:  PropertyNotExists("S3OriginConfig"),
 		},
 
 		"DomainName": Schema{
@@ -168,32 +179,45 @@ var origin = NestedResource{
 		},
 
 		"OriginPath": Schema{
-			Type: ValueString,
+			Type:         ValueString,
+			ValidateFunc: RegexpValidate(`^\/.*?[^\/]$`, "The value must start with a slash mark (/) and cannot end with a slash mark."),
 		},
 
 		"S3OriginConfig": Schema{
-			Type: originConfig,
+			Type:      originConfig,
+			Conflicts: PropertyExists("CustomOriginConfig"),
+			Required:  PropertyNotExists("CustomOriginConfig"),
 		},
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-viewercertificate.html
 var viewerCertificate = NestedResource{
 	Description: "CloudFront DistributionConfiguration ViewerCertificate",
 	Properties: Properties{
 		"CloudFrontDefaultCertificate": Schema{
-			Type: ValueBool,
+			Type:      ValueBool,
+			Conflicts: PropertyExists("IamCertificateId"),
+			Required:  PropertyNotExists("IamCertificateId"),
 		},
 
 		"IamCertificateId": Schema{
-			Type: ValueString,
+			Type:      ValueString,
+			Conflicts: PropertyExists("CloudFrontDefaultCertificate"),
+			Required:  PropertyNotExists("CloudFrontDefaultCertificate"),
 		},
 
 		"MinimumProtocolVersion": Schema{
 			Type: ValueString,
+			// TODO: If you specify the IamCertificateId property and specify SNI only
+			//       for the SslSupportMethod property, you must use TLSv1 for the
+			//       minimum protocol version. If you don't specify a value, AWS
+			//       CloudFormation specifies SSLv3.
 		},
 
 		"SslSupportMethod": Schema{
-			Type: ValueString,
+			Type:     ValueString,
+			Required: PropertyExists("IamCertificateId"),
 		},
 	},
 }
@@ -204,6 +228,7 @@ var viewerProtocolPolicy = EnumValue{
 	Options: []string{"allow-all", "redirect-to-https", "https"},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-cachebehavior.html
 var cacheBehaviour = NestedResource{
 	Description: "CloudFront DistributionConfig CacheBehavior",
 	Properties: Properties{
@@ -258,14 +283,65 @@ var cacheBehaviour = NestedResource{
 	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-customerrorresponse.html
 var customErrorResponse = NestedResource{
 	Description: "CloudFront DistributionConfig CustomErrorResponse",
-	Properties:  Properties{},
+	Properties: Properties{
+		"ErrorCachingMinTTL": Schema{
+			Type: ValueNumber,
+		},
+
+		"ErrorCode": Schema{
+			Type:         ValueNumber,
+			Required:     Always,
+			ValidateFunc: NumberOptions(400, 403, 404, 405, 414, 500, 501, 502, 503, 504),
+		},
+
+		"ResponseCode": Schema{
+			Type:         ValueNumber,
+			Required:     PropertyExists("ResponsePagePath"),
+			ValidateFunc: NumberOptions(200, 400, 403, 404, 405, 414, 500, 501, 502, 503, 504),
+		},
+
+		"ResponsePagePath": Schema{
+			Type:     ValueString,
+			Required: PropertyExists("ResponseCode"),
+		},
+	},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-restrictions-georestriction.html
+var geoRestriction = NestedResource{
+	Description: "CloudFront DistributionConfig Restrictions GeoRestriction",
+	Properties: Properties{
+		"Locations": Schema{
+			Type:  countryCode,
+			Array: true,
+			Required: Constraints{
+				PropertyIs("RestrictionType", "blacklist"),
+				PropertyIs("RestrictionType", "whitelist"),
+			},
+		},
+
+		"RestrictionType": Schema{
+			Type: EnumValue{
+				Description: "RestrictionType",
+				Options:     []string{"blacklist", "whitelist", "none"},
+			},
+			Required: Always,
+		},
+	},
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-restrictions.html
 var restrictions = NestedResource{
 	Description: "CloudFront DistributionConfiguration Restrictions",
-	Properties:  Properties{},
+	Properties: Properties{
+		"GeoRestriction": Schema{
+			Type:     geoRestriction,
+			Required: Always,
+		},
+	},
 }
 
 var priceClass = EnumValue{
@@ -274,6 +350,7 @@ var priceClass = EnumValue{
 	Options: []string{"PriceClass_All", "PriceClass_200", "PriceClass_100"},
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig.html
 var distributionConfig = NestedResource{
 	Description: "CloudFront DistributionConfig",
 	Properties: Properties{

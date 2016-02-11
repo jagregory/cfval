@@ -49,7 +49,7 @@ func (pe PropertyExists) Pass(values map[string]interface{}) bool {
 }
 
 func (pe PropertyExists) Describe(values map[string]interface{}) string {
-	return fmt.Sprintf("Property '%s' exists", pe)
+	return fmt.Sprintf("%s exists", pe)
 }
 
 type PropertyNotExists string
@@ -60,7 +60,7 @@ func (pe PropertyNotExists) Pass(values map[string]interface{}) bool {
 }
 
 func (pe PropertyNotExists) Describe(values map[string]interface{}) string {
-	return fmt.Sprintf("Property '%s' doens't exist", pe)
+	return fmt.Sprintf("%s doesn't exist", pe)
 }
 
 type ConstraintFunc struct {
@@ -106,9 +106,9 @@ type BoolConstraint bool
 
 func (b BoolConstraint) Describe(map[string]interface{}) string {
 	if bool(b) {
-		return "Always"
+		return "it's mandatory"
 	} else {
-		return "Never"
+		return "never"
 	}
 }
 

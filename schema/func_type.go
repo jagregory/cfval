@@ -27,6 +27,10 @@ func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 }
 
 func (ft FuncType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	if ft.Fn == nil {
+		panic("FuncType without Fn")
+	}
+
 	return ft.Fn(property, value, self, context)
 }
 

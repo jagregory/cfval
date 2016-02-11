@@ -454,15 +454,58 @@ func ScalingPolicy() Resource {
 
 			"ScalingAdjustment": Schema{
 				Type:      ValueNumber,
-				Required:  PropertyIs("PolicyType", "SimpleScaling"),  // Required: Conditional. This property is required if the policy type is SimpleScaling.
-				Conflicts: PropertyNot("PolicyType", "SimpleScaling"), // This property is not supported with any other policy type.
+				Required:  PropertyIs("PolicyType", "SimpleScaling"),
+				Conflicts: PropertyNot("PolicyType", "SimpleScaling"),
 			},
 
 			"StepAdjustments": Schema{
 				Type:      stepAdjustment,
 				Array:     true,
-				Required:  PropertyIs("PolicyType", "StepScaling"),  // Required: Conditional. This property is required if the policy type is StepScaling.
-				Conflicts: PropertyNot("PolicyType", "StepScaling"), // This property is not supported with any other policy type.
+				Required:  PropertyIs("PolicyType", "StepScaling"),
+				Conflicts: PropertyNot("PolicyType", "StepScaling"),
+			},
+		},
+	}
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-as-scheduledaction.html
+func ScheduledAction() Resource {
+	return Resource{
+		AwsType: "AWS::AutoScaling::ScheduledAction",
+
+		// Name
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+
+		Properties: Properties{
+			"AutoScalingGroupName": Schema{
+				Type:     ValueString,
+				Required: Always,
+			},
+
+			"DesiredCapacity": Schema{
+				Type: ValueNumber,
+			},
+
+			"EndTime": Schema{
+				Type: Timestamp,
+			},
+
+			"MaxSize": Schema{
+				Type: ValueNumber,
+			},
+
+			"MinSize": Schema{
+				Type: ValueNumber,
+			},
+
+			"Recurrence": Schema{
+				Type: ValueString,
+			},
+
+			"StartTime": Schema{
+				Type: Timestamp,
 			},
 		},
 	}
