@@ -8,7 +8,7 @@ type Output struct {
 
 var outputSchema = Schema{
 	Type:     ValueString,
-	Required: true,
+	Required: Always,
 }
 
 func (o Output) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Failures) {

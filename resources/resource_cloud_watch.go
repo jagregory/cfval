@@ -7,12 +7,12 @@ var metricDimension = NestedResource{
 	Properties: Properties{
 		"Name": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -91,7 +91,7 @@ func Alarm() Resource {
 			},
 
 			"ComparisonOperator": Schema{
-				Required: true,
+				Required: Always,
 				Type:     comparisonOperator,
 			},
 
@@ -102,7 +102,7 @@ func Alarm() Resource {
 
 			"EvaluationPeriods": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"InsufficientDataActions": Schema{
@@ -112,12 +112,12 @@ func Alarm() Resource {
 
 			"MetricName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Namespace": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"OKActions": Schema{
@@ -127,17 +127,17 @@ func Alarm() Resource {
 
 			"Period": Schema{
 				Type:     Period,
-				Required: true,
+				Required: Always,
 			},
 
 			"Statistic": Schema{
 				Type:     statistic,
-				Required: true,
+				Required: Always,
 			},
 
 			"Threshold": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Unit": Schema{

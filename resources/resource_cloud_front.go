@@ -8,7 +8,7 @@ var cookies = NestedResource{
 	Properties: Properties{
 		"Forward": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"WhitelistedNames": Schema{
@@ -32,7 +32,7 @@ var forwardedValues = NestedResource{
 
 		"QueryString": Schema{
 			Type:     ValueBool,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -72,7 +72,7 @@ var defaultCacheBehaviour = NestedResource{
 		},
 
 		"ForwardedValues": Schema{
-			Required: true,
+			Required: Always,
 			Type:     forwardedValues,
 		},
 
@@ -90,7 +90,7 @@ var defaultCacheBehaviour = NestedResource{
 
 		"TargetOriginId": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"TrustedSigners": Schema{
@@ -100,7 +100,7 @@ var defaultCacheBehaviour = NestedResource{
 
 		"ViewerProtocolPolicy": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -110,7 +110,7 @@ var logging = NestedResource{
 	Properties: Properties{
 		"Bucket": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"IncludeCookies": Schema{
@@ -136,7 +136,7 @@ var customOriginConfig = NestedResource{
 
 		"OriginProtocolPolicy": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -159,12 +159,12 @@ var origin = NestedResource{
 
 		"DomainName": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Id": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"OriginPath": Schema{
@@ -221,7 +221,7 @@ var cacheBehaviour = NestedResource{
 
 		"ForwardedValues": Schema{
 			Type:     forwardedValues,
-			Required: true,
+			Required: Always,
 		},
 
 		"MaxTTL": Schema{
@@ -234,7 +234,7 @@ var cacheBehaviour = NestedResource{
 
 		"PathPattern": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"SmoothStreaming": Schema{
@@ -243,7 +243,7 @@ var cacheBehaviour = NestedResource{
 
 		"TargetOriginId": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"TrustedSigners": Schema{
@@ -253,7 +253,7 @@ var cacheBehaviour = NestedResource{
 
 		"ViewerProtocolPolicy": Schema{
 			Type:     viewerProtocolPolicy,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -297,7 +297,7 @@ var distributionConfig = NestedResource{
 		},
 
 		"DefaultCacheBehavior": Schema{
-			Required: true,
+			Required: Always,
 			Type:     defaultCacheBehaviour,
 		},
 
@@ -307,7 +307,7 @@ var distributionConfig = NestedResource{
 
 		"Enabled": Schema{
 			Type:     ValueBool,
-			Required: true,
+			Required: Always,
 		},
 
 		"Logging": Schema{
@@ -316,7 +316,7 @@ var distributionConfig = NestedResource{
 
 		"Origins": Schema{
 			Array:    true,
-			Required: true,
+			Required: Always,
 			Type:     origin,
 		},
 
@@ -350,7 +350,7 @@ func Distribution() Resource {
 
 		Properties: Properties{
 			"DistributionConfig": Schema{
-				Required: true,
+				Required: Always,
 				Type:     distributionConfig,
 			},
 		},

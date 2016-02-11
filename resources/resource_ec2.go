@@ -44,7 +44,7 @@ func Instance() Resource {
 
 			"ImageId": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			// "InstanceInitiatedShutdownBehavior": Schema{Type: TypeString},
@@ -115,7 +115,7 @@ func Route() Resource {
 		Properties: Properties{
 			"DestinationCidrBlock": Schema{
 				Type:     CIDR,
-				Required: true,
+				Required: Always,
 			},
 
 			"GatewayId": Schema{
@@ -132,7 +132,7 @@ func Route() Resource {
 
 			"RouteTableId": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"VpcPeeringConnectionId": Schema{
@@ -154,7 +154,7 @@ func RouteTable() Resource {
 		Properties: Properties{
 			"VpcId": Schema{
 				Type:     VpcID,
-				Required: true,
+				Required: Always,
 			},
 
 			"Tags": Schema{
@@ -190,12 +190,12 @@ func SecurityGroup() Resource {
 
 						"FromPort": Schema{
 							Type:     ValueNumber,
-							Required: true,
+							Required: Always,
 						},
 
 						"IpProtocol": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"SourceSecurityGroupId": Schema{
@@ -212,7 +212,7 @@ func SecurityGroup() Resource {
 
 						"ToPort": Schema{
 							Type:     ValueNumber,
-							Required: true,
+							Required: Always,
 						},
 					},
 				},
@@ -242,7 +242,7 @@ func SecurityGroupIngress() Resource {
 
 			"FromPort": Schema{
 				Type:     ValueNumber,
-				Required: true,
+				Required: Always,
 			},
 
 			"GroupId": Schema{
@@ -254,7 +254,7 @@ func SecurityGroupIngress() Resource {
 			},
 
 			"IpProtocol": Schema{
-				Required: true,
+				Required: Always,
 				Type:     ipProtocol,
 			},
 
@@ -272,7 +272,7 @@ func SecurityGroupIngress() Resource {
 
 			"ToPort": Schema{
 				Type:     ValueNumber,
-				Required: true,
+				Required: Always,
 			},
 		},
 	}
@@ -288,7 +288,7 @@ func Subnet() Resource {
 
 			"CidrBlock": Schema{
 				Type:     CIDR,
-				Required: true,
+				Required: Always,
 			},
 
 			"MapPublicIpOnLaunch": Schema{
@@ -302,7 +302,7 @@ func Subnet() Resource {
 
 			"VpcId": Schema{
 				Type:     VpcID,
-				Required: true,
+				Required: Always,
 			},
 		},
 	}
@@ -320,12 +320,12 @@ func SubnetRouteTableAssociation() Resource {
 		Properties: Properties{
 			"RouteTableId": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"SubnetId": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 		},
 	}
@@ -346,7 +346,7 @@ func VPCGatewayAttachment() Resource {
 			},
 
 			"VpcId": Schema{
-				Required: true,
+				Required: Always,
 				Type:     ValueString,
 			},
 

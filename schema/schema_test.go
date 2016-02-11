@@ -12,35 +12,6 @@ func TestSchemaTargetType(t *testing.T) {
 	}
 }
 
-func TestSchemaRequiredValidation(t *testing.T) {
-	self := TemplateResource{}
-	ctx := []string{}
-
-	notRequired := Schema{
-		Type: ValueString,
-	}
-	required := Schema{
-		Type:     ValueString,
-		Required: true,
-	}
-
-	if _, errs := notRequired.Validate(nil, self, ctx); errs != nil {
-		t.Error("Should pass when a not required field is nil")
-	}
-
-	if _, errs := notRequired.Validate("abc", self, ctx); errs != nil {
-		t.Error("Should pass when a not required field has a value")
-	}
-
-	if _, errs := required.Validate(nil, self, ctx); errs == nil {
-		t.Error("Should fail when a required field is nil")
-	}
-
-	if _, errs := required.Validate("abc", self, ctx); errs != nil {
-		t.Error("Should pass when a required field has a value")
-	}
-}
-
 func TestSchemaTypeValidation(t *testing.T) {
 	self := TemplateResource{}
 	ctx := []string{}

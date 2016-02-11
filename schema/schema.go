@@ -49,15 +49,7 @@ type Schema struct {
 	Default interface{}
 
 	// Required is set to true if this property must have a value in the template
-	Required bool
-
-	// RequiredIf is an array of property names which if any of them are present
-	// in the resource then this property must also be present.
-	RequiredIf Constraint
-
-	// RequiredUnless is an array of property names which if none of them are
-	// present then this property must be present instead.
-	RequiredUnless Constraint
+	Required Constraint
 
 	// Type is the type of the Value this property is expected to contain. For
 	// example "String", "Number", "JSON", or nested resources such as Tags.
@@ -81,10 +73,6 @@ func (s Schema) TargetType() ValueType {
 }
 
 func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-	if result, errs := s.validateRequired(value, context); result == reporting.ValidateAbort {
-		return reporting.ValidateOK, reporting.Safe(errs)
-	}
-
 	failures := make(reporting.Failures, 0, 20)
 
 	if s.Array {
@@ -140,16 +128,4 @@ func (s Schema) validateValue(value interface{}, self SelfRepresentation, contex
 	}
 
 	return reporting.ValidateOK, reporting.Safe(failures)
-}
-
-// validateRequired checks the value for compliance with the Schema's Required
-// setting. A missing required value will fail.
-func (s Schema) validateRequired(value interface{}, context []string) (reporting.ValidateResult, reporting.Failures) {
-	if !s.Required && value == nil {
-		return reporting.ValidateAbort, nil
-	} else if s.Required && value == nil {
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Required property is missing", context)}
-	}
-
-	return reporting.ValidateOK, nil
 }

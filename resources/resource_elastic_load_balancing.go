@@ -35,7 +35,7 @@ func LoadBalancer() Resource {
 					Properties: Properties{
 						"Enabled": Schema{
 							Type:     ValueBool,
-							Required: true,
+							Required: Always,
 						},
 
 						"Timeout": Schema{
@@ -60,27 +60,27 @@ func LoadBalancer() Resource {
 					Properties: Properties{
 						"HealthyThreshold": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"Interval": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"Target": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						}, // TODO: Could be smarter about this restriction: "The protocol can be TCP, HTTP, HTTPS, or SSL. The range of valid ports is 1 through 65535."
 
 						"Timeout": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						}, // TODO: Could be smarter about this restriction: "This value must be less than the value for Interval."
 
 						"UnhealthyThreshold": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 					},
 				},
@@ -99,13 +99,13 @@ func LoadBalancer() Resource {
 
 			"Listeners": Schema{
 				Array:    true,
-				Required: true,
+				Required: Always,
 				Type: NestedResource{
 					Description: "ElasticLoadBalancing Listener",
 					Properties: Properties{
 						"InstancePort": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"InstanceProtocol": Schema{
@@ -114,7 +114,7 @@ func LoadBalancer() Resource {
 
 						"LoadBalancerPort": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"PolicyNames": Schema{
@@ -123,7 +123,7 @@ func LoadBalancer() Resource {
 						},
 
 						"Protocol": Schema{
-							Required: true,
+							Required: Always,
 							Type:     instanceProtocol,
 						},
 

@@ -20,7 +20,7 @@ var s3LifecycleRule = NestedResource{
 
 		"Status": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		// "Transition":                        S3LifecycleRuleTransition,
@@ -86,7 +86,7 @@ func Bucket() Resource {
 
 						"IndexDocument": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						// "RedirectAllRequestsTo": Schema{Type: ... }

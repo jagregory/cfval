@@ -34,7 +34,7 @@ func CacheCluster() Resource {
 
 			"CacheNodeType": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"CacheParameterGroupName": Schema{
@@ -56,7 +56,7 @@ func CacheCluster() Resource {
 
 			"Engine": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"EngineVersion": Schema{
@@ -69,7 +69,7 @@ func CacheCluster() Resource {
 
 			"NumCacheNodes": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Port": Schema{
@@ -180,7 +180,7 @@ func ReplicationGroup() Resource {
 
 			"CacheNodeType": Schema{
 				Type:     cacheNodeType,
-				Required: true,
+				Required: Always,
 			},
 
 			"CacheParameterGroupName": Schema{
@@ -199,7 +199,7 @@ func ReplicationGroup() Resource {
 
 			"Engine": Schema{
 				Type:     engine,
-				Required: true,
+				Required: Always,
 			},
 
 			"EngineVersion": Schema{
@@ -213,7 +213,7 @@ func ReplicationGroup() Resource {
 			// If automatic failover is enabled, you must specify a value greater than 1.
 			"NumCacheClusters": Schema{
 				Type:     ValueNumber,
-				Required: true,
+				Required: Always,
 			},
 
 			"Port": Schema{
@@ -232,7 +232,7 @@ func ReplicationGroup() Resource {
 
 			"ReplicationGroupDescription": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"SecurityGroupIds": Schema{
@@ -265,12 +265,12 @@ func SubnetGroup() Resource {
 		Properties: map[string]Schema{
 			"Description": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"SubnetIds": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 				Array:    true,
 			},
 		},

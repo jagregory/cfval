@@ -42,7 +42,7 @@ func DBInstance() Resource {
 
 			"DBInstanceClass": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"DBInstanceIdentifier": Schema{
@@ -153,12 +153,12 @@ func DBSubnetGroup() Resource {
 		Properties: map[string]Schema{
 			"DBSubnetGroupDescription": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"SubnetIds": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 				Array:    true,
 			},
 

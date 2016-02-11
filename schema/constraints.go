@@ -52,6 +52,17 @@ func (pe PropertyExists) Describe(values map[string]interface{}) string {
 	return fmt.Sprintf("Property '%s' exists", pe)
 }
 
+type PropertyNotExists string
+
+func (pe PropertyNotExists) Pass(values map[string]interface{}) bool {
+	_, found := values[string(pe)]
+	return !found
+}
+
+func (pe PropertyNotExists) Describe(values map[string]interface{}) string {
+	return fmt.Sprintf("Property '%s' doens't exist", pe)
+}
+
 type ConstraintFunc struct {
 	description string
 	fn          func(map[string]interface{}) bool
@@ -90,3 +101,20 @@ func PropertyNot(prop, notExpected string) ConstraintFunc {
 		},
 	}
 }
+
+type BoolConstraint bool
+
+func (b BoolConstraint) Describe(map[string]interface{}) string {
+	if bool(b) {
+		return "Always"
+	} else {
+		return "Never"
+	}
+}
+
+func (b BoolConstraint) Pass(map[string]interface{}) bool {
+	return bool(b)
+}
+
+var Always Constraint = BoolConstraint(true)
+var Never Constraint = BoolConstraint(false)

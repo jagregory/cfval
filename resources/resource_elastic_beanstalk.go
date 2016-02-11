@@ -35,7 +35,7 @@ func ApplicationVersion() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Description": Schema{
@@ -43,18 +43,18 @@ func ApplicationVersion() Resource {
 			},
 
 			"SourceBundle": Schema{
-				Required: true,
+				Required: Always,
 				Type: NestedResource{
 					Description: "Elastic Beanstalk SourceBundle",
 					Properties: Properties{
 						"S3Bucket": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 
 						"S3Key": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 					},
 				},
@@ -68,17 +68,17 @@ var optionsSettings = NestedResource{
 	Properties: Properties{
 		"Namespace": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"OptionName": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -95,7 +95,7 @@ func ConfigurationTemplate() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Description": Schema{
@@ -130,7 +130,7 @@ func Environment() Resource {
 		Properties: Properties{
 			"ApplicationName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"CNAMEPrefix": Schema{

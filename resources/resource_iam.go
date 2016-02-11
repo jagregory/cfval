@@ -19,12 +19,12 @@ func Policy() Resource {
 
 			"PolicyDocument": Schema{
 				Type:     JSON,
-				Required: true,
+				Required: Always,
 			},
 
 			"PolicyName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Roles": Schema{
@@ -52,7 +52,7 @@ func Role() Resource {
 		Properties: map[string]Schema{
 			"AssumeRolePolicyDocument": Schema{
 				Type:     JSON,
-				Required: true,
+				Required: Always,
 			},
 
 			"ManagedPolicyArns": Schema{
@@ -71,12 +71,12 @@ func Role() Resource {
 					Properties: map[string]Schema{
 						"PolicyDocument": Schema{
 							Type:     JSON,
-							Required: true,
+							Required: Always,
 						},
 
 						"PolicyName": Schema{
 							Type:     ValueString,
-							Required: true,
+							Required: Always,
 						},
 					},
 				},
@@ -97,13 +97,13 @@ func InstanceProfile() Resource {
 		Properties: map[string]Schema{
 			"Path": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Roles": Schema{
 				Type:     ValueString,
 				Array:    true,
-				Required: true,
+				Required: Always,
 			},
 		},
 	}

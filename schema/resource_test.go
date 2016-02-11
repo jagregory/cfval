@@ -51,6 +51,65 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 	}
 }
 
+func TestSchemaRequiredValidation(t *testing.T) {
+	template := &Template{}
+	ctx := []string{}
+
+	resource := Resource{
+		Properties: map[string]Schema{
+			"Option1": Schema{
+				Type:     ValueString,
+				Required: Always,
+			},
+
+			"Option2": Schema{
+				Type:     ValueString,
+				Required: Never,
+			},
+
+			"Option3": Schema{
+				Type: ValueString,
+			},
+		},
+	}
+
+	nothingSet := TemplateResource{template: template, Definition: resource, Properties: map[string]interface{}{}}
+	option1Set := TemplateResource{template: template, Definition: resource, Properties: map[string]interface{}{
+		"Option1": "value",
+	}}
+	option2Set := TemplateResource{template: template, Definition: resource, Properties: map[string]interface{}{
+		"Option2": "value",
+	}}
+	option3Set := TemplateResource{template: template, Definition: resource, Properties: map[string]interface{}{
+		"Option3": "value",
+	}}
+	allSet := TemplateResource{template: template, Definition: resource, Properties: map[string]interface{}{
+		"Option1": "value",
+		"Option2": "value",
+		"Option3": "value",
+	}}
+
+	if _, errs := nothingSet.Validate(ctx); errs == nil {
+		t.Error("Resource should fail if Option1 isn't set", errs)
+	}
+
+	if _, errs := option1Set.Validate(ctx); errs != nil {
+		t.Error("Resource should pass if only Option1 set", errs)
+	}
+
+	if _, errs := option2Set.Validate(ctx); errs == nil {
+		t.Error("Resource should fail if only Option2 set")
+	}
+
+	if _, errs := option3Set.Validate(ctx); errs == nil {
+		t.Error("Resource should fail if only Option3 set")
+	}
+
+	if _, errs := allSet.Validate(ctx); errs != nil {
+		t.Error("Resource should pass if Option1 is set with others", errs)
+	}
+}
+
 func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	template := &Template{}
 	context := []string{}
@@ -58,8 +117,8 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	resource := Resource{
 		Properties: map[string]Schema{
 			"Option1": Schema{
-				Type:       ValueString,
-				RequiredIf: PropertyExists("Option2"),
+				Type:     ValueString,
+				Required: PropertyExists("Option2"),
 			},
 
 			"Option2": Schema{
@@ -104,8 +163,8 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	resource := Resource{
 		Properties: map[string]Schema{
 			"Option1": Schema{
-				Type:           ValueString,
-				RequiredUnless: PropertyExists("Option2"),
+				Type:     ValueString,
+				Required: PropertyNotExists("Option2"),
 			},
 
 			"Option2": Schema{

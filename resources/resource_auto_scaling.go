@@ -8,7 +8,7 @@ var metricsCollection = NestedResource{
 	Properties: Properties{
 		"Granularity": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Metrics": Schema{
@@ -36,13 +36,13 @@ var notificationConfiguration = NestedResource{
 	Properties: Properties{
 		"NotificationTypes": Schema{
 			Type:     autoScalingNotificationType,
-			Required: true,
+			Required: Always,
 			Array:    true,
 		},
 
 		"TopicARN": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -52,12 +52,12 @@ var autoScalingTag = NestedResource{
 	Properties: Properties{
 		"Key": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"PropagateAtLaunch": Schema{
@@ -84,9 +84,9 @@ func AutoScalingGroup() Resource {
 
 		Properties: Properties{
 			"AvailabilityZones": Schema{
-				Array:          true,
-				Type:           AvailabilityZone,
-				RequiredUnless: PropertyExists("VPCZoneIdentifier"),
+				Array:    true,
+				Type:     AvailabilityZone,
+				Required: PropertyNotExists("VPCZoneIdentifier"),
 			},
 
 			"Cooldown": Schema{
@@ -106,13 +106,13 @@ func AutoScalingGroup() Resource {
 			},
 
 			"InstanceId": Schema{
-				Type:           ValueString,
-				RequiredUnless: PropertyExists("LaunchConfigurationName"),
+				Type:     ValueString,
+				Required: PropertyNotExists("LaunchConfigurationName"),
 			},
 
 			"LaunchConfigurationName": Schema{
-				Type:           ValueString,
-				RequiredUnless: PropertyExists("InstanceId"),
+				Type:     ValueString,
+				Required: PropertyNotExists("InstanceId"),
 			},
 
 			"LoadBalancerNames": Schema{
@@ -153,9 +153,9 @@ func AutoScalingGroup() Resource {
 			},
 
 			"VPCZoneIdentifier": Schema{
-				Type:           ValueString,
-				Array:          true,
-				RequiredUnless: PropertyExists("AvailabilityZones"),
+				Type:     ValueString,
+				Array:    true,
+				Required: PropertyNotExists("AvailabilityZones"),
 			},
 		},
 	}
@@ -206,12 +206,12 @@ var blockDeviceMapping = NestedResource{
 	Properties: Properties{
 		"DeviceName": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Ebs": Schema{
-			Type:           ebsBlockDevice,
-			RequiredUnless: PropertyExists("VirtualName"),
+			Type:     ebsBlockDevice,
+			Required: PropertyNotExists("VirtualName"),
 		},
 
 		"NoDevice": Schema{
@@ -219,8 +219,8 @@ var blockDeviceMapping = NestedResource{
 		},
 
 		"VirtualName": Schema{
-			Type:           ValueString,
-			RequiredUnless: PropertyExists("Ebs"),
+			Type:     ValueString,
+			Required: PropertyNotExists("Ebs"),
 			ValidateFunc: RegexpValidate(
 				"^ephemeral\\d+$",
 				"The name must be in the form ephemeralX where X is a number starting from zero (0), for example, ephemeral0",
@@ -260,9 +260,9 @@ func LaunchConfiguration() Resource {
 			},
 
 			"ClassicLinkVPCSecurityGroups": Schema{
-				Type:       ValueString,
-				Array:      true,
-				RequiredIf: PropertyExists("ClassicLinkVPCId"),
+				Type:     ValueString,
+				Array:    true,
+				Required: PropertyExists("ClassicLinkVPCId"),
 			},
 
 			"EbsOptimized": Schema{
@@ -339,7 +339,7 @@ func LifecycleHook() Resource {
 		Properties: Properties{
 			"AutoScalingGroupName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"DefaultResult": Schema{
@@ -352,7 +352,7 @@ func LifecycleHook() Resource {
 
 			"LifecycleTransition": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"NotificationMetadata": Schema{
@@ -362,12 +362,12 @@ func LifecycleHook() Resource {
 			// TODO: Do we need an ARN type?
 			"NotificationTargetARN": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"RoleARN": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 		},
 	}
@@ -400,7 +400,7 @@ var stepAdjustment = NestedResource{
 
 		"ScalingAdjustment": Schema{
 			Type:     ValueNumber,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
@@ -418,12 +418,12 @@ func ScalingPolicy() Resource {
 		Properties: Properties{
 			"AdjustmentType": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"AutoScalingGroupName": Schema{
 				Type:     ValueString,
-				Required: true,
+				Required: Always,
 			},
 
 			"Cooldown": Schema{
@@ -453,16 +453,16 @@ func ScalingPolicy() Resource {
 			},
 
 			"ScalingAdjustment": Schema{
-				Type:       ValueNumber,
-				RequiredIf: PropertyIs("PolicyType", "SimpleScaling"),  // Required: Conditional. This property is required if the policy type is SimpleScaling.
-				Conflicts:  PropertyNot("PolicyType", "SimpleScaling"), // This property is not supported with any other policy type.
+				Type:      ValueNumber,
+				Required:  PropertyIs("PolicyType", "SimpleScaling"),  // Required: Conditional. This property is required if the policy type is SimpleScaling.
+				Conflicts: PropertyNot("PolicyType", "SimpleScaling"), // This property is not supported with any other policy type.
 			},
 
 			"StepAdjustments": Schema{
-				Type:       stepAdjustment,
-				Array:      true,
-				RequiredIf: PropertyIs("PolicyType", "StepScaling"),  // Required: Conditional. This property is required if the policy type is StepScaling.
-				Conflicts:  PropertyNot("PolicyType", "StepScaling"), // This property is not supported with any other policy type.
+				Type:      stepAdjustment,
+				Array:     true,
+				Required:  PropertyIs("PolicyType", "StepScaling"),  // Required: Conditional. This property is required if the policy type is StepScaling.
+				Conflicts: PropertyNot("PolicyType", "StepScaling"), // This property is not supported with any other policy type.
 			},
 		},
 	}

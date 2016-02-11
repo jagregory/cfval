@@ -8,12 +8,12 @@ var resourceTag = NestedResource{
 	Properties: Properties{
 		"Key": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 
 		"Value": Schema{
 			Type:     ValueString,
-			Required: true,
+			Required: Always,
 		},
 	},
 }
