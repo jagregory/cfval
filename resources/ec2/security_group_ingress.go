@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
 func SecurityGroupIngress() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroupIngress",
@@ -12,6 +13,10 @@ func SecurityGroupIngress() Resource {
 		Properties: Properties{
 			"CidrIp": Schema{
 				Type: CIDR,
+				Conflicts: constraints.Any{
+					constraints.PropertyExists("SourceSecurityGroupName"),
+					constraints.PropertyExists("SourceSecurityGroupId"),
+				},
 			},
 
 			"FromPort": Schema{
@@ -20,11 +25,13 @@ func SecurityGroupIngress() Resource {
 			},
 
 			"GroupId": Schema{
-				Type: ValueString,
+				Type:     SecurityGroupID,
+				Required: constraints.PropertyNotExists("GroupName"),
 			},
 
 			"GroupName": Schema{
-				Type: ValueString,
+				Type:     SecurityGroupName,
+				Required: constraints.PropertyNotExists("GroupId"),
 			},
 
 			"IpProtocol": Schema{
@@ -33,13 +40,16 @@ func SecurityGroupIngress() Resource {
 			},
 
 			"SourceSecurityGroupId": Schema{
-				Type: ValueString,
+				Type:      SecurityGroupID,
+				Conflicts: constraints.PropertyExists("CidrIp"),
 			},
 
 			"SourceSecurityGroupName": Schema{
-				Type: ValueString,
+				Type:      SecurityGroupName,
+				Conflicts: constraints.PropertyExists("CidrIp"),
 			},
 
+			// TODO: AWS account type
 			"SourceSecurityGroupOwnerId": Schema{
 				Type: ValueString,
 			},
