@@ -6,6 +6,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route-table.html
 func RouteTable() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::RouteTable",
