@@ -2,6 +2,39 @@ package schema
 
 import "testing"
 
+func TestSingleValueValidate(t *testing.T) {
+	type testcase struct{ expected, actual interface{} }
+	pass := []testcase{
+		testcase{expected: float64(10), actual: float64(10)},
+		testcase{expected: "hi", actual: "hi"},
+	}
+	fail := []testcase{
+		testcase{expected: float64(10), actual: float64(9)},
+		testcase{expected: float64(10), actual: float64(11)},
+		testcase{expected: float64(10), actual: "10"},
+		testcase{expected: "hi", actual: "10"},
+		testcase{expected: "hi", actual: float64(10)},
+	}
+
+	prop := Schema{}
+	tr := TemplateResource{
+		template: &Template{},
+	}
+	ctx := []string{}
+
+	for _, test := range pass {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, tr, ctx); errs != nil {
+			t.Errorf("Should pass with expected %s and actual %s", test.expected, test.actual)
+		}
+	}
+
+	for _, test := range fail {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, tr, ctx); errs == nil {
+			t.Errorf("Should fail with expected %s and actual %s", test.expected, test.actual)
+		}
+	}
+}
+
 func TestFixedArrayValidateHelper(t *testing.T) {
 	tr := TemplateResource{
 		template: &Template{},

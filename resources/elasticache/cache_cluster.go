@@ -2,10 +2,32 @@ package elasticache
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/reporting"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
 
+func azModeValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	if str, ok := value.(string); ok {
+		if availabilityZones, ok := self.Property("PreferredAvailabilityZones"); ok {
+			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
+				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", context)}
+			}
+		}
+	}
+
+	return reporting.ValidateOK, nil
+}
+
+func numCacheNodesValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	if engine, ok := self.Property("Engine"); !ok || engine.(string) == "memcached" {
+		return IntegerRangeValidate(1, 20)(prop, value, self, context)
+	}
+
+	return SingleValueValidate(float64(1))(prop, value, self, context)
+}
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
 func CacheCluster() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::CacheCluster",
@@ -21,11 +43,13 @@ func CacheCluster() Resource {
 			},
 
 			"AZMode": Schema{
-				Type: azMode,
+				Type:         azMode,
+				ValidateFunc: azModeValidate,
+				Default:      "single-az",
 			},
 
 			"CacheNodeType": Schema{
-				Type:     ValueString,
+				Type:     cacheNodeType,
 				Required: constraints.Always,
 			},
 
@@ -34,12 +58,20 @@ func CacheCluster() Resource {
 			},
 
 			"CacheSecurityGroupNames": Schema{
-				Type:  ValueString,
+				Type:  cacheSecurityGroupName,
 				Array: true,
+				Conflicts: constraints.Any{
+					constraints.PropertyExists("CacheSubnetGroupName"),
+					constraints.PropertyExists("VpcSecurityGroupIds"),
+				},
 			},
 
 			"CacheSubnetGroupName": Schema{
-				Type: ValueString,
+				Type: cacheSecurityGroupName,
+				Conflicts: constraints.Any{
+					constraints.PropertyExists("CacheSecurityGroupNames"),
+					constraints.PropertyExists("VpcSecurityGroupIds"),
+				},
 			},
 
 			"ClusterName": Schema{
@@ -47,7 +79,7 @@ func CacheCluster() Resource {
 			},
 
 			"Engine": Schema{
-				Type:     ValueString,
+				Type:     engine,
 				Required: constraints.Always,
 			},
 
@@ -60,8 +92,9 @@ func CacheCluster() Resource {
 			},
 
 			"NumCacheNodes": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
+				Type:         ValueNumber,
+				Required:     constraints.Always,
+				ValidateFunc: numCacheNodesValidate,
 			},
 
 			"Port": Schema{
@@ -69,12 +102,13 @@ func CacheCluster() Resource {
 			},
 
 			"PreferredAvailabilityZone": Schema{
-				Type: ValueString,
+				Type: AvailabilityZone,
 			},
 
 			"PreferredAvailabilityZones": Schema{
-				Type:  ValueString,
-				Array: true,
+				Type:     AvailabilityZone,
+				Array:    true,
+				Required: constraints.PropertyIs("AZMode", "cross-az"),
 			},
 
 			"PreferredMaintenanceWindow": Schema{
@@ -104,8 +138,9 @@ func CacheCluster() Resource {
 			},
 
 			"VpcSecurityGroupIds": Schema{
-				Type:  ValueString,
-				Array: true,
+				Type:      SecurityGroupID,
+				Array:     true,
+				Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
 			},
 		},
 	}

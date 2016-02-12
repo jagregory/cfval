@@ -73,6 +73,7 @@ func ReplicationGroup() Resource {
 			"Engine": Schema{
 				Type:     engine,
 				Required: constraints.Always,
+				// ValidateFunc: SingleValue("redis"),
 			},
 
 			"EngineVersion": Schema{

@@ -7,6 +7,16 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
+func SingleValueValidate(expected interface{}) ValidateFunc {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+		if value != expected {
+			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), context)}
+		}
+
+		return reporting.ValidateOK, nil
+	}
+}
+
 func RegexpValidate(pattern, message string) ValidateFunc {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
