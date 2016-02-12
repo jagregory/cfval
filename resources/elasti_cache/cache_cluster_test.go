@@ -1,4 +1,4 @@
-package elasticache
+package elasti_cache
 
 import (
 	"testing"

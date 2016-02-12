@@ -7,9 +7,9 @@ import (
 	"github.com/jagregory/cfval/resources/cloud_front"
 	"github.com/jagregory/cfval/resources/cloud_watch"
 	"github.com/jagregory/cfval/resources/ec2"
+	"github.com/jagregory/cfval/resources/elasti_cache"
 	"github.com/jagregory/cfval/resources/elastic_beanstalk"
 	"github.com/jagregory/cfval/resources/elastic_load_balancing"
-	"github.com/jagregory/cfval/resources/elasticache"
 	"github.com/jagregory/cfval/resources/iam"
 	"github.com/jagregory/cfval/resources/rds"
 	"github.com/jagregory/cfval/resources/route_53"
@@ -84,12 +84,12 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::ECS::TaskDefinition":                     resources.TaskDefinition,
 	"AWS::EFS::FileSystem":                         resources.FileSystem,
 	"AWS::EFS::MountTarget":                        resources.MountTarget,
-	"AWS::ElastiCache::CacheCluster":               elasticache.CacheCluster,
+	"AWS::ElastiCache::CacheCluster":               elasti_cache.CacheCluster,
 	"AWS::ElastiCache::ParameterGroup":             resources.ParameterGroup,
-	"AWS::ElastiCache::ReplicationGroup":           elasticache.ReplicationGroup,
+	"AWS::ElastiCache::ReplicationGroup":           elasti_cache.ReplicationGroup,
 	"AWS::ElastiCache::SecurityGroup":              resources.ElastiCacheSecurityGroup,
 	"AWS::ElastiCache::SecurityGroupIngress":       resources.ElastiCacheSecurityGroupIngress,
-	"AWS::ElastiCache::SubnetGroup":                elasticache.SubnetGroup,
+	"AWS::ElastiCache::SubnetGroup":                elasti_cache.SubnetGroup,
 	"AWS::ElasticBeanstalk::Application":           elastic_beanstalk.Application,
 	"AWS::ElasticBeanstalk::ApplicationVersion":    elastic_beanstalk.ApplicationVersion,
 	"AWS::ElasticBeanstalk::ConfigurationTemplate": elastic_beanstalk.ConfigurationTemplate,
