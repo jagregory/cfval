@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-subnetgroup.html
 func SubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::SubnetGroup",
@@ -15,7 +16,7 @@ func SubnetGroup() Resource {
 			},
 
 			"SubnetIds": Schema{
-				Type:     ValueString,
+				Type:     SubnetID,
 				Required: constraints.Always,
 				Array:    true,
 			},
