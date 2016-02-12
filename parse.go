@@ -3,18 +3,29 @@ package main
 import "encoding/json"
 import (
 	"github.com/jagregory/cfval/resources"
+	"github.com/jagregory/cfval/resources/auto_scaling"
+	"github.com/jagregory/cfval/resources/cloud_front"
+	"github.com/jagregory/cfval/resources/cloud_watch"
 	"github.com/jagregory/cfval/resources/ec2"
+	"github.com/jagregory/cfval/resources/elastic_beanstalk"
+	"github.com/jagregory/cfval/resources/elastic_load_balancing"
+	"github.com/jagregory/cfval/resources/elasticache"
+	"github.com/jagregory/cfval/resources/iam"
+	"github.com/jagregory/cfval/resources/rds"
+	"github.com/jagregory/cfval/resources/route_53"
+	"github.com/jagregory/cfval/resources/s3"
+	"github.com/jagregory/cfval/resources/sns"
 	"github.com/jagregory/cfval/schema"
 )
 
 type resourceCtor func() schema.Resource
 
 var typeCtors = map[string]resourceCtor{
-	"AWS::AutoScaling::AutoScalingGroup":           resources.AutoScalingGroup,
-	"AWS::AutoScaling::LaunchConfiguration":        resources.LaunchConfiguration,
-	"AWS::AutoScaling::LifecycleHook":              resources.LifecycleHook,
-	"AWS::AutoScaling::ScalingPolicy":              resources.ScalingPolicy,
-	"AWS::AutoScaling::ScheduledAction":            resources.ScheduledAction,
+	"AWS::AutoScaling::AutoScalingGroup":           auto_scaling.AutoScalingGroup,
+	"AWS::AutoScaling::LaunchConfiguration":        auto_scaling.LaunchConfiguration,
+	"AWS::AutoScaling::LifecycleHook":              auto_scaling.LifecycleHook,
+	"AWS::AutoScaling::ScalingPolicy":              auto_scaling.ScalingPolicy,
+	"AWS::AutoScaling::ScheduledAction":            auto_scaling.ScheduledAction,
 	"AWS::CloudFormation::Authentication":          resources.Authentication,
 	"AWS::CloudFormation::CustomResource":          resources.CustomResource,
 	"AWS::CloudFormation::Init":                    resources.Init,
@@ -22,9 +33,9 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::CloudFormation::Stack":                   resources.Stack,
 	"AWS::CloudFormation::WaitCondition":           resources.WaitCondition,
 	"AWS::CloudFormation::WaitConditionHandle":     resources.WaitConditionHandle,
-	"AWS::CloudFront::Distribution":                resources.Distribution,
+	"AWS::CloudFront::Distribution":                cloud_front.Distribution,
 	"AWS::CloudTrail::Trail":                       resources.Trail,
-	"AWS::CloudWatch::Alarm":                       resources.Alarm,
+	"AWS::CloudWatch::Alarm":                       cloud_watch.Alarm,
 	"AWS::CodeDeploy::Application":                 resources.CodeDeployApplication,
 	"AWS::CodeDeploy::DeploymentConfig":            resources.DeploymentConfig,
 	"AWS::CodeDeploy::DeploymentGroup":             resources.DeploymentGroup,
@@ -73,23 +84,23 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::ECS::TaskDefinition":                     resources.TaskDefinition,
 	"AWS::EFS::FileSystem":                         resources.FileSystem,
 	"AWS::EFS::MountTarget":                        resources.MountTarget,
-	"AWS::ElastiCache::CacheCluster":               resources.CacheCluster,
+	"AWS::ElastiCache::CacheCluster":               elasticache.CacheCluster,
 	"AWS::ElastiCache::ParameterGroup":             resources.ParameterGroup,
-	"AWS::ElastiCache::ReplicationGroup":           resources.ReplicationGroup,
+	"AWS::ElastiCache::ReplicationGroup":           elasticache.ReplicationGroup,
 	"AWS::ElastiCache::SecurityGroup":              resources.ElastiCacheSecurityGroup,
 	"AWS::ElastiCache::SecurityGroupIngress":       resources.ElastiCacheSecurityGroupIngress,
-	"AWS::ElastiCache::SubnetGroup":                resources.SubnetGroup,
-	"AWS::ElasticBeanstalk::Application":           resources.Application,
-	"AWS::ElasticBeanstalk::ApplicationVersion":    resources.ApplicationVersion,
-	"AWS::ElasticBeanstalk::ConfigurationTemplate": resources.ConfigurationTemplate,
-	"AWS::ElasticBeanstalk::Environment":           resources.Environment,
-	"AWS::ElasticLoadBalancing::LoadBalancer":      resources.LoadBalancer,
+	"AWS::ElastiCache::SubnetGroup":                elasticache.SubnetGroup,
+	"AWS::ElasticBeanstalk::Application":           elastic_beanstalk.Application,
+	"AWS::ElasticBeanstalk::ApplicationVersion":    elastic_beanstalk.ApplicationVersion,
+	"AWS::ElasticBeanstalk::ConfigurationTemplate": elastic_beanstalk.ConfigurationTemplate,
+	"AWS::ElasticBeanstalk::Environment":           elastic_beanstalk.Environment,
+	"AWS::ElasticLoadBalancing::LoadBalancer":      elastic_load_balancing.LoadBalancer,
 	"AWS::IAM::AccessKey":                          resources.AccessKey,
 	"AWS::IAM::Group":                              resources.Group,
-	"AWS::IAM::InstanceProfile":                    resources.InstanceProfile,
+	"AWS::IAM::InstanceProfile":                    iam.InstanceProfile,
 	"AWS::IAM::ManagedPolicy":                      resources.ManagedPolicy,
-	"AWS::IAM::Policy":                             resources.Policy,
-	"AWS::IAM::Role":                               resources.Role,
+	"AWS::IAM::Policy":                             iam.Policy,
+	"AWS::IAM::Role":                               iam.Role,
 	"AWS::IAM::User":                               resources.User,
 	"AWS::IAM::UserToGroupAddition":                resources.UserToGroupAddition,
 	"AWS::Kinesis::Stream":                         resources.Stream,
@@ -109,11 +120,11 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::OpsWorks::Stack":                         resources.OpsWorksStack,
 	"AWS::RDS::DBCluster":                          resources.DBCluster,
 	"AWS::RDS::DBClusterParameterGroup":            resources.DBClusterParameterGroup,
-	"AWS::RDS::DBInstance":                         resources.DBInstance,
+	"AWS::RDS::DBInstance":                         rds.DBInstance,
 	"AWS::RDS::DBParameterGroup":                   resources.DBParameterGroup,
 	"AWS::RDS::DBSecurityGroup":                    resources.DBSecurityGroup,
 	"AWS::RDS::DBSecurityGroupIngress":             resources.DBSecurityGroupIngress,
-	"AWS::RDS::DBSubnetGroup":                      resources.DBSubnetGroup,
+	"AWS::RDS::DBSubnetGroup":                      rds.DBSubnetGroup,
 	"AWS::RDS::EventSubscription":                  resources.EventSubscription,
 	"AWS::RDS::OptionGroup":                        resources.OptionGroup,
 	"AWS::Redshift::Cluster":                       resources.RedshiftCluster,
@@ -123,12 +134,12 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::Redshift::ClusterSubnetGroup":            resources.ClusterSubnetGroup,
 	"AWS::Route53::HealthCheck":                    resources.HealthCheck,
 	"AWS::Route53::HostedZone":                     resources.HostedZone,
-	"AWS::Route53::RecordSet":                      resources.RecordSet,
+	"AWS::Route53::RecordSet":                      route_53.RecordSet,
 	"AWS::Route53::RecordSetGroup":                 resources.RecordSetGroup,
-	"AWS::S3::Bucket":                              resources.Bucket,
+	"AWS::S3::Bucket":                              s3.Bucket,
 	"AWS::S3::BucketPolicy":                        resources.BucketPolicy,
 	"AWS::SDB::Domain":                             resources.Domain,
-	"AWS::SNS::Topic":                              resources.Topic,
+	"AWS::SNS::Topic":                              sns.Topic,
 	"AWS::SNS::TopicPolicy":                        resources.TopicPolicy,
 	"AWS::SQS::Queue":                              resources.Queue,
 	"AWS::SQS::QueuePolicy":                        resources.QueuePolicy,
