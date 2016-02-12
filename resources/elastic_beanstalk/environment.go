@@ -6,6 +6,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-environment.html
 func Environment() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Environment",
@@ -39,7 +40,8 @@ func Environment() Resource {
 			},
 
 			"SolutionStackName": Schema{
-				Type: ValueString,
+				Type:     ValueString,
+				Required: constraints.PropertyNotExists("TemplateName"),
 			},
 
 			"Tags": Schema{
@@ -48,10 +50,13 @@ func Environment() Resource {
 			},
 
 			"TemplateName": Schema{
-				Type: ValueString,
+				Type:     ValueString,
+				Required: constraints.PropertyNotExists("SolutionStackName"),
 			},
 
-			// "Tier": Schema{...}
+			"Tier": Schema{
+				Type: tier,
+			},
 
 			"VersionLabel": Schema{
 				Type: ValueString,

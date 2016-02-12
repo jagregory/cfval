@@ -2,6 +2,7 @@ package elastic_beanstalk
 
 import . "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk.html
 func Application() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Application",
