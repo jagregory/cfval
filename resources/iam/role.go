@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
 func Role() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Role",
@@ -31,20 +32,7 @@ func Role() Resource {
 
 			"Policies": Schema{
 				Array: true,
-				Type: NestedResource{
-					Description: "IAM Role Policy",
-					Properties: map[string]Schema{
-						"PolicyDocument": Schema{
-							Type:     JSON,
-							Required: constraints.Always,
-						},
-
-						"PolicyName": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-					},
-				},
+				Type:  rolePolicy,
 			},
 		},
 	}

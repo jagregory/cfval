@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-policy.html
 func Policy() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Policy",
@@ -18,6 +19,10 @@ func Policy() Resource {
 			"Groups": Schema{
 				Type:  ValueString,
 				Array: true,
+				Required: constraints.All{
+					constraints.PropertyNotExists("Roles"),
+					constraints.PropertyNotExists("Users"),
+				},
 			},
 
 			"PolicyDocument": Schema{
@@ -33,11 +38,19 @@ func Policy() Resource {
 			"Roles": Schema{
 				Type:  ValueString,
 				Array: true,
+				Required: constraints.All{
+					constraints.PropertyNotExists("Groups"),
+					constraints.PropertyNotExists("Users"),
+				},
 			},
 
 			"Users": Schema{
 				Type:  ValueString,
 				Array: true,
+				Required: constraints.All{
+					constraints.PropertyNotExists("Groups"),
+					constraints.PropertyNotExists("Roles"),
+				},
 			},
 		},
 	}
