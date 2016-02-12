@@ -19,7 +19,16 @@ func (tr TemplateResource) Template() *Template {
 
 func (tr TemplateResource) Property(name string) (interface{}, bool) {
 	val, ok := tr.Properties[name]
-	return val, ok
+
+	if ok {
+		return val, ok
+	}
+
+	if def := tr.Definition.Properties[name]; def.Default != nil {
+		return def.Default, true
+	}
+
+	return nil, false
 }
 
 func NewTemplateResource(template *Template) TemplateResource {

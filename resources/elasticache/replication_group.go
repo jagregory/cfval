@@ -28,6 +28,7 @@ func automaticFailoverEnabledValidation(property Schema, value interface{}, self
 	return reporting.ValidateOK, nil
 }
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticache-replicationgroup.html
 func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
@@ -61,7 +62,7 @@ func ReplicationGroup() Resource {
 			},
 
 			"CacheSecurityGroupNames": Schema{
-				Type:      ValueString,
+				Type:      cacheSecurityGroupName,
 				Array:     true,
 				Conflicts: constraints.PropertyExists("SecurityGroupIds"),
 			},
@@ -71,9 +72,9 @@ func ReplicationGroup() Resource {
 			},
 
 			"Engine": Schema{
-				Type:     engine,
-				Required: constraints.Always,
-				// ValidateFunc: SingleValue("redis"),
+				Type:         engine,
+				Required:     constraints.Always,
+				ValidateFunc: SingleValueValidate("redis"),
 			},
 
 			"EngineVersion": Schema{
@@ -88,6 +89,15 @@ func ReplicationGroup() Resource {
 			"NumCacheClusters": Schema{
 				Type:     ValueNumber,
 				Required: constraints.Always,
+				ValidateFunc: func(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+					if val, ok := self.Property("AutomaticFailoverEnabled"); ok && val.(bool) == true {
+						if value.(float64) <= 1 {
+							return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", context)}
+						}
+					}
+
+					return reporting.ValidateOK, nil
+				},
 			},
 
 			"Port": Schema{
@@ -110,7 +120,7 @@ func ReplicationGroup() Resource {
 			},
 
 			"SecurityGroupIds": Schema{
-				Type:      ValueString,
+				Type:      SecurityGroupID,
 				Array:     true,
 				Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
 			},
