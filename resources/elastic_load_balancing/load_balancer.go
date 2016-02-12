@@ -6,6 +6,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html
 func LoadBalancer() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
@@ -16,137 +17,79 @@ func LoadBalancer() Resource {
 		},
 
 		Properties: Properties{
-			// AccessLoggingPolicy
-			// Type: Elastic Load Balancing AccessLoggingPolicy
+			"AccessLoggingPolicy": Schema{
+				Type: accessLoggingPolicy,
+			},
 
-			// AppCookieStickinessPolicy
-			// Type: A list of AppCookieStickinessPolicy objects.
+			"AppCookieStickinessPolicy": Schema{
+				Type:  appCookieStickinessPolicy,
+				Array: true,
+			},
 
 			"AvailabilityZones": Schema{
-				Type:  ValueString,
-				Array: true,
+				Type:      AvailabilityZone,
+				Array:     true,
+				Conflicts: constraints.PropertyExists("Subnets"),
 			},
 
 			"ConnectionDrainingPolicy": Schema{
-				Type: NestedResource{
-					Description: "Elastic Load Balancing ConnectionDrainingPolicy",
-					Properties: Properties{
-						"Enabled": Schema{
-							Type:     ValueBool,
-							Required: constraints.Always,
-						},
-
-						"Timeout": Schema{
-							Type: ValueNumber,
-						},
-					},
-				},
+				Type: connectionDrainingPolicy,
 			},
 
-			// Type: Elastic Load Balancing ConnectionDrainingPolicy
-			//
-			// ConnectionSettings
-			// Type: Elastic Load Balancing ConnectionSettings
-			//
-			// CrossZone
-			// Type: Boolean
-			//
+			"ConnectionSettings": Schema{
+				Type: connectionSettings,
+			},
+
+			"CrossZone": Schema{
+				Type:    ValueBool,
+				Default: false,
+			},
+
 			"HealthCheck": Schema{
-				// See: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-health-check.html
-				Type: NestedResource{
-					Description: "ElasticLoadBalancing HealthCheck",
-					Properties: Properties{
-						"HealthyThreshold": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-
-						"Interval": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-
-						"Target": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						}, // TODO: Could be smarter about this restriction: "The protocol can be TCP, HTTP, HTTPS, or SSL. The range of valid ports is 1 through 65535."
-
-						"Timeout": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						}, // TODO: Could be smarter about this restriction: "This value must be less than the value for Interval."
-
-						"UnhealthyThreshold": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-					},
-				},
+				Type: healthCheck,
 			},
 
 			"Instances": Schema{
-				Type:  ValueString,
+				Type:  InstanceID,
 				Array: true,
 			},
 
-			// LBCookieStickinessPolicy
-			// Type: A list of LBCookieStickinessPolicy objects.
-			//
-			// LoadBalancerName
-			// Type: String
+			"LBCookieStickinessPolicy": Schema{
+				Type: lbCookieStickinessPolicy,
+			},
+
+			"LoadBalancerName": Schema{
+				Type: ValueString,
+			},
 
 			"Listeners": Schema{
 				Array:    true,
 				Required: constraints.Always,
-				Type: NestedResource{
-					Description: "ElasticLoadBalancing Listener",
-					Properties: Properties{
-						"InstancePort": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
+				Type:     listener,
+			},
 
-						"InstanceProtocol": Schema{
-							Type: instanceProtocol,
-						},
+			"Policies": Schema{
+				Array: true,
+				Type:  policy,
+			},
 
-						"LoadBalancerPort": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-
-						"PolicyNames": Schema{
-							Type:  ValueString,
-							Array: true,
-						},
-
-						"Protocol": Schema{
-							Required: constraints.Always,
-							Type:     instanceProtocol,
-						},
-
-						"SSLCertificateId": Schema{
-							Type: ValueString,
-						},
-					},
+			"Scheme": Schema{
+				Type: EnumValue{
+					Description: "Load Balancer Scheme",
+					Options:     []string{"internal", "internet-facing"},
+					// TODO: If you specify internal, you must specify subnets to associate with the load balancer, not Availability Zones.
 				},
 			},
 
-			// Policies
-			// Type: A list of ElasticLoadBalancing policy objects.
-			//
-			"Scheme": Schema{
-				Type: ValueString,
-			},
-
 			"SecurityGroups": Schema{
-				Type:  ValueString,
+				Type:  SecurityGroupID,
 				Array: true,
 			},
 
 			"Subnets": Schema{
-				Type:  ValueString,
-				Array: true,
+				Type:      SubnetID,
+				Array:     true,
+				Conflicts: constraints.PropertyExists("AvailabilityZones"),
 			},
 
 			"Tags": Schema{
