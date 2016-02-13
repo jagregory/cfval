@@ -6,6 +6,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnet-group.html
 func DBSubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::RDS::DBSubnetGroup",
@@ -16,7 +17,7 @@ func DBSubnetGroup() Resource {
 			},
 
 			"SubnetIds": Schema{
-				Type:     ValueString,
+				Type:     SubnetID,
 				Required: constraints.Always,
 				Array:    true,
 			},

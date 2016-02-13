@@ -100,7 +100,7 @@ func (cf ConstraintFunc) Pass(values map[string]interface{}) bool {
 	return cf.fn(values)
 }
 
-func PropertyIs(prop, expected string) ConstraintFunc {
+func PropertyIs(prop string, expected interface{}) ConstraintFunc {
 	return ConstraintFunc{
 		description: fmt.Sprintf("Property '%s' has value '%s'", prop, expected),
 		fn: func(values map[string]interface{}) bool {
