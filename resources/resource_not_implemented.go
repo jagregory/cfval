@@ -51,13 +51,6 @@ func WaitConditionHandle() Resource {
 	}
 }
 
-func Trail() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudTrail::Trail",
-		Properties: Properties{},
-	}
-}
-
 func CodeDeployApplication() Resource {
 	return Resource{
 		AwsType:    "AWS::CodeDeploy::Application",

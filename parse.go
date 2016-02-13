@@ -5,6 +5,7 @@ import (
 	"github.com/jagregory/cfval/resources"
 	"github.com/jagregory/cfval/resources/auto_scaling"
 	"github.com/jagregory/cfval/resources/cloud_front"
+	"github.com/jagregory/cfval/resources/cloud_trail"
 	"github.com/jagregory/cfval/resources/cloud_watch"
 	"github.com/jagregory/cfval/resources/ec2"
 	"github.com/jagregory/cfval/resources/elasti_cache"
@@ -34,7 +35,7 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::CloudFormation::WaitCondition":           resources.WaitCondition,
 	"AWS::CloudFormation::WaitConditionHandle":     resources.WaitConditionHandle,
 	"AWS::CloudFront::Distribution":                cloud_front.Distribution,
-	"AWS::CloudTrail::Trail":                       resources.Trail,
+	"AWS::CloudTrail::Trail":                       cloud_trail.Trail,
 	"AWS::CloudWatch::Alarm":                       cloud_watch.Alarm,
 	"AWS::CodeDeploy::Application":                 resources.CodeDeployApplication,
 	"AWS::CodeDeploy::DeploymentConfig":            resources.DeploymentConfig,
