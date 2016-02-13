@@ -65,7 +65,7 @@ func printReports(reports reporting.Reports) {
 }
 
 func printSummary(stats reporting.Stats) {
-	fmt.Printf("%d failures\n", stats.Failures)
+	fmt.Printf("%d failures, %d warnings\n", stats.Failures, stats.Warnings)
 }
 
 func getReadStream(args []string) (io.Reader, error) {
