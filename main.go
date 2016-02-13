@@ -64,8 +64,8 @@ func printReports(reports reporting.Reports) {
 	}
 }
 
-func printSummary(failures reporting.Reports) {
-	fmt.Printf("%d failures\n", len(failures))
+func printSummary(stats reporting.Stats) {
+	fmt.Printf("%d failures\n", stats.Failures)
 }
 
 func getReadStream(args []string) (io.Reader, error) {
@@ -89,6 +89,10 @@ Usage: cfval validate [filename]
   Given a CloudFormation JSON template, validate will parse and execute various
   tests against the template. Any problems will be printed and a non-zero exit
   code reported.
+
+Options:
+
+  -warnings-as-errors    Treat warnings as errors
 `
 }
 
@@ -96,7 +100,20 @@ func (ValidateCommand) Synopsis() string {
 	return "Validate a CloudFormation template"
 }
 
-func (ValidateCommand) Run(args []string) int {
+func (c ValidateCommand) Run(args []string) int {
+	var warningsAsErrors bool
+
+	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
+	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "warnings-as-errors")
+	if err := cmdFlags.Parse(args); err != nil {
+		return 1
+	}
+
+	args = cmdFlags.Args()
+	if len(args) == 0 {
+		return cli.RunResultHelp
+	}
+
 	stream, err := getReadStream(args)
 	if err != nil {
 		fmt.Println(err)
@@ -115,14 +132,20 @@ func (ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	if ok, errors := template.Validate(); !ok {
-		printReports(errors)
+	fmt.Println(warningsAsErrors)
+
+	if ok, reports := template.Validate(); !ok {
+		stats := reports.Stats()
+
+		printReports(reports)
 		fmt.Println()
-		printSummary(errors)
-		return 1
+		printSummary(stats)
+
+		if warningsAsErrors || stats.Failures > 0 {
+			return 1
+		}
 	}
 
-	fmt.Println("Pass, no errors found.")
 	return 0
 }
 

@@ -15,6 +15,29 @@ func (f Reports) String() string {
 	return strings.Join(failures, "\n")
 }
 
+func (reports Reports) Stats() Stats {
+	failures := 0
+	warnings := 0
+
+	for _, r := range reports {
+		if r.Level == Failure {
+			failures = failures + 1
+		} else if r.Level == Warning {
+			warnings = warnings + 1
+		}
+	}
+
+	return Stats{
+		Failures: failures,
+		Warnings: warnings,
+		Total:    failures + warnings,
+	}
+}
+
+type Stats struct {
+	Failures, Warnings, Total int
+}
+
 type Level int
 
 const (
