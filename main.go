@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"sort"
 
-	"github.com/codegangsta/cli"
 	"github.com/jagregory/cfval/reporting"
+	"github.com/mitchellh/cli"
 )
 
 var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
@@ -48,59 +49,79 @@ func printSummary(failures reporting.Failures) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 
-func getReadStream(c *cli.Context) (io.Reader, error) {
+func getReadStream(args []string) (io.Reader, error) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
 		return os.Stdin, nil
-	} else if len(c.Args()) > 0 {
-		return os.Open(c.Args()[0])
+	} else if len(args) > 0 {
+		return os.Open(args[0])
 	} else {
 		return nil, fmt.Errorf("Provide either a filename or pipe something")
 	}
 }
 
-func command(c *cli.Context) {
-	stream, err := getReadStream(c)
+type ValidateCommand struct{}
+
+func (ValidateCommand) Help() string {
+	return `
+Usage: cfval validate [filename]
+       cat filename | cfval validate
+
+  Given a CloudFormation JSON template, validate will parse and execute various
+  tests against the template. Any problems will be printed and a non-zero exit
+  code reported.
+`
+}
+
+func (ValidateCommand) Synopsis() string {
+	return "Validate a CloudFormation template"
+}
+
+func (ValidateCommand) Run(args []string) int {
+	stream, err := getReadStream(args)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
-		return
+		return 1
 	}
 
 	bytes, err := ioutil.ReadAll(stream)
 	if err != nil {
 		fmt.Println("Error reading JSON from Stdin")
-		return
+		return 1
 	}
 
 	template, err := parseTemplateJSON(bytes, *forgiving)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
-		return
+		return 1
 	}
 
-	if ok, errors := template.Validate(); ok {
-		fmt.Println("Pass, no errors found.")
-	} else {
+	if ok, errors := template.Validate(); !ok {
 		printFailures(errors)
 		fmt.Println()
 		printSummary(errors)
+		return 1
 	}
+
+	fmt.Println("Pass, no errors found.")
+	return 0
 }
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "cfval"
-	app.Usage = "CloudFormation template validator"
-	app.UsageText = "cfval <filename>\n   cat filename | cfval"
-	app.Authors = []cli.Author{
-		cli.Author{
-			Name:  "James Gregory",
-			Email: "james@jagregory.com",
+	app := cli.NewCLI("cfval", "0.1.0")
+	app.Args = os.Args[1:]
+	app.Commands = map[string]cli.CommandFactory{
+		"validate": func() (cli.Command, error) {
+			return ValidateCommand{}, nil
 		},
 	}
-	app.Version = "0.1.0"
-	app.Action = command
 
-	app.Run(os.Args)
+	exitStatus, err := app.Run()
+	if err != nil {
+		log.Println(err)
+	}
+
+	if exitStatus > 0 {
+		os.Exit(exitStatus)
+	}
 }
