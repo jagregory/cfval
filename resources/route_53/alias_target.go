@@ -5,6 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 var aliasTarget = NestedResource{
 	Description: "Route53 RecordSet AliasTarget",
 	Properties: map[string]Schema{
@@ -18,7 +19,7 @@ var aliasTarget = NestedResource{
 		},
 
 		"HostedZoneId": Schema{
-			Type:     ValueString,
+			Type:     HostedZoneID,
 			Required: constraints.Always,
 		},
 	},

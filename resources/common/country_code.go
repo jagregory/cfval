@@ -2,6 +2,7 @@ package common
 
 import "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets_Requests.html#change-rrsets-request-country-code
 var CountryCode = schema.EnumValue{
 	Description: "Country Code",
 

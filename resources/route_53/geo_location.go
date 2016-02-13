@@ -7,6 +7,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset-geolocation.html
 var geoLocation = NestedResource{
 	Description: "Route 53 Record Set GeoLocation",
 	Properties: map[string]Schema{

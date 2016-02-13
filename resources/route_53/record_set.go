@@ -24,24 +24,27 @@ func RecordSet() Resource {
 			},
 
 			"Failover": Schema{
-				Type: ValueString,
+				Type: EnumValue{
+					Description: "Failover",
+					Options:     []string{"PRIMARY", "SECONDARY"},
+				},
 			},
 
 			"GeoLocation": Schema{
 				Type: geoLocation,
 			},
 
-			// "HealthCheckId":   Schema{Type: TypeString},
+			"HealthCheckId": Schema{
+				Type: ValueString,
+			},
 
 			"HostedZoneId": Schema{
-				Type:      ValueString,
-				Required:  constraints.PropertyNotExists("HostedZoneName"),
+				Type:      HostedZoneID,
 				Conflicts: constraints.PropertyExists("HostedZoneName"),
 			},
 
 			"HostedZoneName": Schema{
 				Type:      ValueString,
-				Required:  constraints.PropertyNotExists("HostedZoneId"),
 				Conflicts: constraints.PropertyExists("HostedZoneId"),
 			},
 
@@ -50,7 +53,10 @@ func RecordSet() Resource {
 				Required: constraints.Always,
 			},
 
-			// "Region":          Schema{Type: TypeString},
+			// TODO: Region validation: http://docs.aws.amazon.com/general/latest/gr/rande.html
+			"Region": Schema{
+				Type: ValueString,
+			},
 
 			"ResourceRecords": Schema{
 				Array:     true,
