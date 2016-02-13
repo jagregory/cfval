@@ -11,7 +11,7 @@ var lifecycleRule = NestedResource{
 	Properties: Properties{
 		"ExpirationDate": Schema{
 			Type: ValueString,
-			Required: constraints.Any{
+			Required: constraints.All{
 				constraints.PropertyNotExists("ExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionTransition"),
@@ -21,7 +21,7 @@ var lifecycleRule = NestedResource{
 
 		"ExpirationInDays": Schema{
 			Type: ValueNumber,
-			Required: constraints.Any{
+			Required: constraints.All{
 				constraints.PropertyNotExists("ExpirationDate"),
 				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionTransition"),
@@ -36,7 +36,7 @@ var lifecycleRule = NestedResource{
 
 		"NoncurrentVersionExpirationInDays": Schema{
 			Type: ValueNumber,
-			Required: constraints.Any{
+			Required: constraints.All{
 				constraints.PropertyNotExists("ExpirationDate"),
 				constraints.PropertyNotExists("ExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionTransition"),
@@ -46,7 +46,7 @@ var lifecycleRule = NestedResource{
 
 		"NoncurrentVersionTransition": Schema{
 			Type: noncurrentVersionTransition,
-			Required: constraints.Any{
+			Required: constraints.All{
 				constraints.PropertyNotExists("ExpirationDate"),
 				constraints.PropertyNotExists("ExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
@@ -68,7 +68,7 @@ var lifecycleRule = NestedResource{
 
 		"Transition": Schema{
 			Type: lifecycleRuleTransition,
-			Required: constraints.Any{
+			Required: constraints.All{
 				constraints.PropertyNotExists("ExpirationDate"),
 				constraints.PropertyNotExists("ExpirationInDays"),
 				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
