@@ -5,27 +5,75 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var s3LifecycleRule = NestedResource{
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-lifecycleconfig-rule.html
+var lifecycleRule = NestedResource{
 	Description: "AWS::S3::LifecycleRule",
 	Properties: Properties{
-		// "ExpirationDate":   Schema{Type: TypeString},
+		"ExpirationDate": Schema{
+			Type: ValueString,
+			Required: constraints.Any{
+				constraints.PropertyNotExists("ExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionTransition"),
+				constraints.PropertyNotExists("Transition"),
+			},
+		},
+
 		"ExpirationInDays": Schema{
 			Type: ValueNumber,
+			Required: constraints.Any{
+				constraints.PropertyNotExists("ExpirationDate"),
+				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionTransition"),
+				constraints.PropertyNotExists("Transition"),
+			},
 		},
 
 		"Id": Schema{
+			Type:         ValueString,
+			ValidateFunc: StringLengthValidate(1, 255),
+		},
+
+		"NoncurrentVersionExpirationInDays": Schema{
+			Type: ValueNumber,
+			Required: constraints.Any{
+				constraints.PropertyNotExists("ExpirationDate"),
+				constraints.PropertyNotExists("ExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionTransition"),
+				constraints.PropertyNotExists("Transition"),
+			},
+		},
+
+		"NoncurrentVersionTransition": Schema{
+			Type: noncurrentVersionTransition,
+			Required: constraints.Any{
+				constraints.PropertyNotExists("ExpirationDate"),
+				constraints.PropertyNotExists("ExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
+				constraints.PropertyNotExists("Transition"),
+			},
+		},
+
+		"Prefix": Schema{
 			Type: ValueString,
 		},
 
-		// "NoncurrentVersionExpirationInDays": Schema{Type: TypeInteger},
-		// "NoncurrentVersionTransition":       S3LifecycleRuleNoncurrentVersionTransition,
-		// "Prefix":                            Schema{Type: TypeString},
-
 		"Status": Schema{
-			Type:     ValueString,
+			Type: EnumValue{
+				Description: "S3 Status",
+				Options:     []string{"Enabled", "Disabled"},
+			},
 			Required: constraints.Always,
 		},
 
-		// "Transition":                        S3LifecycleRuleTransition,
+		"Transition": Schema{
+			Type: lifecycleRuleTransition,
+			Required: constraints.Any{
+				constraints.PropertyNotExists("ExpirationDate"),
+				constraints.PropertyNotExists("ExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionExpirationInDays"),
+				constraints.PropertyNotExists("NoncurrentVersionTransition"),
+			},
+		},
 	},
 }

@@ -1,11 +1,11 @@
 package s3
 
 import (
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
 func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
@@ -22,50 +22,43 @@ func Bucket() Resource {
 
 			"BucketName": Schema{
 				Type: ValueString,
+				ValidateFunc: RegexpValidate(
+					`^[a-z0-9\.\-]+$`,
+					"The bucket name must contain only lowercase letters, numbers, periods (.), and dashes (-).",
+				),
 			},
 
-			// "CorsConfiguration":         s3_cors_configuration,
+			"CorsConfiguration": Schema{
+				Type: corsConfiguration,
+			},
 
 			"LifecycleConfiguration": Schema{
-				Type: NestedResource{
-					Description: "S3 Lifecycle Configuration",
-					Properties: Properties{
-						"Rules": Schema{
-							Type:  s3LifecycleRule,
-							Array: true,
-						},
-					},
-				},
+				Type: lifecycleConfiguration,
 			},
 
-			// "LoggingConfiguration":      s3_logging_configuration,
-			// "NotificationConfiguration": s3_notification_configuration,
-			// "ReplicationConfiguration":  s3_replication_configuration,
+			"LoggingConfiguration": Schema{
+				Type: loggingConfiguration,
+			},
+
+			"NotificationConfiguration": Schema{
+				Type: notificationConfiguration,
+			},
+
+			"ReplicationConfiguration": Schema{
+				Type: replicationConfiguration,
+			},
 
 			"Tags": Schema{
 				Type:  common.ResourceTag,
 				Array: true,
 			},
 
-			// "VersioningConfiguration": s3_versioning_configuration,
+			"VersioningConfiguration": Schema{
+				Type: versioningConfiguration,
+			},
 
 			"WebsiteConfiguration": Schema{
-				Type: NestedResource{
-					Description: "S3 Website Configuration",
-					Properties: Properties{
-						"ErrorDocument": Schema{
-							Type: ValueString,
-						},
-
-						"IndexDocument": Schema{
-							Type:     ValueString,
-							Required: constraints.Always,
-						},
-
-						// "RedirectAllRequestsTo": Schema{Type: ... }
-						// "RoutingRules": Schema{Type: ...}
-					},
-				},
+				Type: websiteConfiguration,
 			},
 		},
 	}
