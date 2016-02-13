@@ -8,6 +8,7 @@ import (
 
 type Resource struct {
 	AwsType      string
+	Attributes   map[string]Schema
 	Properties   Properties
 	ReturnValue  Schema
 	ValidateFunc func(TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)

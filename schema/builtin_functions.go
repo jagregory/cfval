@@ -22,7 +22,7 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfReprese
 
 	if getatt, ok := value["Fn::GetAtt"]; ok {
 		if arr, ok := getatt.([]interface{}); ok {
-			return NewGetAtt(arr).Validate(self.Template(), append(context, "GetAtt"))
+			return NewGetAtt(s, arr).Validate(self.Template(), append(context, "GetAtt"))
 		}
 
 		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("GetAtt must be an array", context)}

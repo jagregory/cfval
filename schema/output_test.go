@@ -9,6 +9,12 @@ func TestOutputValidation(t *testing.T) {
 		Resources: map[string]TemplateResource{
 			"MyResource": TemplateResource{
 				Definition: Resource{
+					Attributes: map[string]Schema{
+						"Id": Schema{
+							Type: ValueString,
+						},
+					},
+
 					ReturnValue: Schema{
 						Type: ValueString,
 					},
