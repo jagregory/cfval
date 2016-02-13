@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/codegangsta/cli"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -47,25 +48,37 @@ func printSummary(failures reporting.Failures) {
 }
 
 func main() {
-	flag.Parse()
+	app := cli.NewApp()
+	app.Name = "cfval"
+	app.Usage = "CloudFormation template validator"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "James Gregory",
+			Email: "james@jagregory.com",
+		},
+	}
+	app.Version = "0.1.0"
+	app.Action = func(c *cli.Context) {
+		bytes, err := ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			fmt.Println("Error reading JSON from Stdin")
+			return
+		}
 
-	bytes, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		fmt.Println("Error reading JSON from Stdin")
-		return
+		template, err := parseTemplateJSON(bytes, *forgiving)
+		if err != nil {
+			fmt.Println("Error parsing JSON:", err)
+			return
+		}
+
+		if ok, errors := template.Validate(); ok {
+			fmt.Println("Pass, no errors found.")
+		} else {
+			printFailures(errors)
+			fmt.Println()
+			printSummary(errors)
+		}
 	}
 
-	template, err := parseTemplateJSON(bytes, *forgiving)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return
-	}
-
-	if ok, errors := template.Validate(); ok {
-		fmt.Println("Pass, no errors found.")
-	} else {
-		printFailures(errors)
-		fmt.Println()
-		printSummary(errors)
-	}
+	app.Run(os.Args)
 }
