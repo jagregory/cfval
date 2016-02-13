@@ -7,7 +7,7 @@
 `cfval` is a small tool which validates a CloudFormation JSON template and notifies you of any issues it can find. Missing required properties, properties which conflict with others, `Ref`s to parameters which don't exist or properties of resources, and much more.
 
 ```
-$ cfval < my-template.json
+$ cfval validate my-template.json
 
 Resources.MyLaunchConfiguration.UserData.Ref ... Ref 'CloudInitScript' is not a resource or parameter
 

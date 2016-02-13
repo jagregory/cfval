@@ -121,7 +121,5 @@ func main() {
 		log.Println(err)
 	}
 
-	if exitStatus > 0 {
-		os.Exit(exitStatus)
-	}
+	os.Exit(exitStatus)
 }
