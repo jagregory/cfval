@@ -9,6 +9,12 @@ import (
 func SubnetGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::SubnetGroup",
+
+		// Name
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+
 		Properties: map[string]Schema{
 			"Description": Schema{
 				Type:     ValueString,
