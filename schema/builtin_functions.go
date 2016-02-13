@@ -9,7 +9,11 @@ import (
 
 func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
 	if ref, ok := value["Ref"]; ok {
-		return NewRef(s, ref.(string)).Validate(self.Template(), append(context, "Ref"))
+		if str, ok := ref.(string); ok {
+			return NewRef(s, str).Validate(self.Template(), append(context, "Ref"))
+		}
+
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Ref must be a string", context)}
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
@@ -17,7 +21,11 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfReprese
 	}
 
 	if getatt, ok := value["Fn::GetAtt"]; ok {
-		return validateGetAtt(getatt, self, append(context, "Fn::GetAtt"))
+		if arr, ok := getatt.([]interface{}); ok {
+			return NewGetAtt(arr).Validate(self.Template(), append(context, "GetAtt"))
+		}
+
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("GetAtt must be an array", context)}
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
@@ -110,30 +118,6 @@ func validateJoin(value interface{}, self SelfRepresentation, context []string) 
 		}
 
 		return reporting.ValidateAbort, failures
-	}
-
-	return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
-}
-
-func validateGetAtt(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-	if items, ok := value.([]interface{}); ok {
-		if len(items) != 2 {
-			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
-		}
-
-		if resourceID, ok := items[0].(string); ok {
-			if _, ok := self.Template().Resources[resourceID]; ok {
-				if _, ok := items[1].(string); ok {
-					// TODO: Check attr is actually a valid attribute for the resource type
-					return reporting.ValidateAbort, nil
-				}
-			}
-			// resource not found
-			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), context)}
-		}
-
-		// resource not a string
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", items[0]), context)}
 	}
 
 	return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
