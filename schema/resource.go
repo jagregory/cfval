@@ -34,3 +34,7 @@ func (rd Resource) Validate(tr TemplateResource, context []string) (reporting.Va
 
 	return reporting.ValidateOK, failures
 }
+
+func (rd Resource) TargetType() PropertyType {
+	return rd.ReturnValue.TargetType()
+}

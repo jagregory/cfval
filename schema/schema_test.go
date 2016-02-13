@@ -7,8 +7,8 @@ func TestSchemaTargetType(t *testing.T) {
 		t.Error("Schema TargetType should match Type")
 	}
 
-	if (Schema{}).TargetType() != ValueUnknown {
-		t.Error("Schema without Type should return TypeUnknown for TargetType")
+	if (Schema{}).TargetType() != nil {
+		t.Error("Schema without Type should return nil for TargetType")
 	}
 }
 

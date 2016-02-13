@@ -35,7 +35,7 @@ var pseudoParameters = map[string]Schema{
 }
 
 type RefTarget interface {
-	TargetType() ValueType
+	TargetType() PropertyType
 }
 
 type Ref struct {
@@ -57,8 +57,11 @@ func (ref Ref) Validate(template *Template, context []string) (reporting.Validat
 		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), context)}
 	}
 
-	// TODO: make this common, so GetAtt and others can use it
 	targetType := target.TargetType()
+	if targetType == nil {
+		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), context)}
+	}
+
 	switch targetType.CoercibleTo(ref.source.Type) {
 	case CoercionNever:
 		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ref.source.Type.Describe()), context)}
@@ -69,19 +72,11 @@ func (ref Ref) Validate(template *Template, context []string) (reporting.Validat
 	return reporting.ValidateAbort, nil
 }
 
-func (ref Ref) InferType(template *Template) ValueType {
-	if target := ref.resolveTarget(template); target != nil {
-		return target.TargetType()
-	}
-
-	return ValueUnknown
-}
-
 func (ref Ref) resolveTarget(template *Template) RefTarget {
 	if resource, ok := template.Resources[ref.target]; ok {
-		return resource.Definition.ReturnValue
+		return resource.Definition
 	} else if parameter, ok := template.Parameters[ref.target]; ok {
-		return parameter
+		return parameter.Schema
 	} else if pseudoParameters, ok := pseudoParameters[ref.target]; ok {
 		return pseudoParameters
 	}

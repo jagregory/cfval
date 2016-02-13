@@ -134,13 +134,6 @@ func (p *Parameter) UnmarshalJSON(b []byte) (err error) {
 }
 
 func (Parameter) Validate([]string) (bool, reporting.Failures) {
+	// TODO: parameter validation?
 	return true, nil
-}
-
-func (p Parameter) TargetType() ValueType {
-	if t, ok := p.Type.(ValueType); ok {
-		return t
-	}
-
-	return ValueUnknown
 }

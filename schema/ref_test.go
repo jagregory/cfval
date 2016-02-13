@@ -60,37 +60,3 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should fail on invalid ref")
 	}
 }
-
-func TestRefInferType(t *testing.T) {
-	template := &Template{
-		Resources: map[string]TemplateResource{
-			"MyResource": TemplateResource{
-				Definition: Resource{
-					ReturnValue: Schema{
-						Type: ValueNumber,
-					},
-				},
-			},
-		},
-
-		Parameters: map[string]Parameter{
-			"MyParameter": Parameter{
-				Schema: Schema{
-					Type: ValueBool,
-				},
-			},
-		},
-	}
-
-	if (Ref{target: "MyResource"}).InferType(template) != ValueNumber {
-		t.Error("Ref should infer type of resource")
-	}
-
-	if (Ref{target: "MyParameter"}).InferType(template) != ValueBool {
-		t.Error("Ref should infer type of parameter")
-	}
-
-	if (Ref{target: "invalid"}).InferType(template) != ValueUnknown {
-		t.Error("Ref should return unknown for bad ref")
-	}
-}

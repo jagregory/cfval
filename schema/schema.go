@@ -65,12 +65,12 @@ type Schema struct {
 	// ArrayValidateFunc ArrayValidateFunc
 }
 
-func (s Schema) TargetType() ValueType {
-	if t, ok := s.Type.(ValueType); ok {
-		return t
+func (s Schema) TargetType() PropertyType {
+	if s.Type == nil {
+		return nil
 	}
 
-	return ValueUnknown
+	return s.Type
 }
 
 func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
