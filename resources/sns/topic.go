@@ -2,6 +2,7 @@ package sns
 
 import . "github.com/jagregory/cfval/schema"
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sns-topic.html
 func Topic() Resource {
 	return Resource{
 		AwsType: "AWS::SNS::Topic",
@@ -16,9 +17,10 @@ func Topic() Resource {
 				Type: ValueString,
 			},
 
-			// "Subscription": ArrayOf(Schema{
-			// 	Type: Resource{...}
-			// }),
+			"Subscription": Schema{
+				Type:  snsSubscription,
+				Array: true,
+			},
 
 			"TopicName": Schema{
 				Type: ValueString,
