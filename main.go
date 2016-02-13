@@ -21,6 +21,16 @@ func (a ByContext) Len() int           { return len(a) }
 func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].ContextReadable }
 
+var ui = &cli.ColoredUi{
+	InfoColor:  cli.UiColorNone,
+	ErrorColor: cli.UiColorRed,
+	Ui: &cli.BasicUi{
+		Reader:      os.Stdin,
+		Writer:      os.Stdout,
+		ErrorWriter: os.Stderr,
+	},
+}
+
 func printFailures(failures reporting.Failures) {
 	sort.Sort(ByContext(failures))
 
@@ -35,13 +45,15 @@ func printFailures(failures reporting.Failures) {
 	for _, failure := range failures {
 		context := failure.ContextReadable
 
-		fmt.Print(context)
-		fmt.Print(" ")
+		str := context
+		str += " "
 		for i := 0; i < maxLength-len(context); i++ {
-			fmt.Print(".")
+			str += "."
 		}
-		fmt.Print("... ")
-		fmt.Printf("%s\n", failure.Message)
+		str += "... "
+		str += failure.Message
+
+		ui.Error(str)
 	}
 }
 
