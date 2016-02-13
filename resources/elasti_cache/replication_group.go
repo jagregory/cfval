@@ -33,6 +33,34 @@ func ReplicationGroup() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::ReplicationGroup",
 
+		Attributes: map[string]Schema{
+			"PrimaryEndPoint.Address": Schema{
+				Type: ValueString,
+			},
+
+			"PrimaryEndPoint.Port": Schema{
+				Type: ValueNumber,
+			},
+
+			"ReadEndPoint.Addresses": Schema{
+				Type: ValueString,
+			},
+
+			"ReadEndPoint.Ports": Schema{
+				Type: ValueString,
+			},
+
+			"ReadEndPoint.Addresses.List": Schema{
+				Type:  ValueString,
+				Array: true,
+			},
+
+			"ReadEndPoint.Ports.List": Schema{
+				Type:  ValueNumber,
+				Array: true,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

@@ -10,6 +10,12 @@ func Distribution() Resource {
 	return Resource{
 		AwsType: "AWS::CloudFront::Distribution",
 
+		Attributes: map[string]Schema{
+			"DomainName": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Distribution ID
 		ReturnValue: Schema{
 			Type: ValueString,

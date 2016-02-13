@@ -10,6 +10,16 @@ func Bucket() Resource {
 	return Resource{
 		AwsType: "AWS::S3::Bucket",
 
+		Attributes: map[string]Schema{
+			"DomainName": Schema{
+				Type: ValueString,
+			},
+
+			"WebsiteURL": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

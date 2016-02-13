@@ -32,6 +32,16 @@ func CacheCluster() Resource {
 	return Resource{
 		AwsType: "AWS::ElastiCache::CacheCluster",
 
+		Attributes: map[string]Schema{
+			"ConfigurationEndpoint.Address": Schema{
+				Type: ValueString,
+			},
+
+			"ConfigurationEndpoint.Port": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

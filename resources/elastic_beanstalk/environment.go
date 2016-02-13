@@ -11,6 +11,12 @@ func Environment() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticBeanstalk::Environment",
 
+		Attributes: map[string]Schema{
+			"EndpointURL": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

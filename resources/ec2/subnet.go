@@ -11,6 +11,12 @@ func Subnet() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Subnet",
 
+		Attributes: map[string]Schema{
+			"AvailabilityZone": Schema{
+				Type: AvailabilityZone,
+			},
+		},
+
 		ReturnValue: Schema{
 			Type: SubnetID,
 		},

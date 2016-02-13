@@ -11,6 +11,28 @@ func Instance() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::Instance",
 
+		Attributes: map[string]Schema{
+			"AvailabilityZone": Schema{
+				Type: AvailabilityZone,
+			},
+
+			"PrivateDnsName": Schema{
+				Type: ValueString,
+			},
+
+			"PublicDnsName": Schema{
+				Type: ValueString,
+			},
+
+			"PrivateIp": Schema{
+				Type: IPAddress,
+			},
+
+			"PublicIp": Schema{
+				Type: IPAddress,
+			},
+		},
+
 		// InstanceId
 		ReturnValue: Schema{
 			Type: InstanceID,

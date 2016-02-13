@@ -7,6 +7,12 @@ func Eip() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::EIP",
 
+		Attributes: map[string]Schema{
+			"AllocationId": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// PublicIp
 		ReturnValue: Schema{
 			Type: ValueString,

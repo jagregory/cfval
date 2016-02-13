@@ -11,6 +11,16 @@ func DBInstance() Resource {
 	return Resource{
 		AwsType: "AWS::RDS::DBInstance",
 
+		Attributes: map[string]Schema{
+			"Endpoint.Address": Schema{
+				Type: ValueString,
+			},
+
+			"Endpoint.Port": Schema{
+				Type: ValueNumber,
+			},
+		},
+
 		// ID
 		ReturnValue: Schema{
 			Type: ValueString,

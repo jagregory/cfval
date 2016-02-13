@@ -11,6 +11,12 @@ func SecurityGroup() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SecurityGroup",
 
+		Attributes: map[string]Schema{
+			"GroupId": Schema{
+				Type: SecurityGroupID,
+			},
+		},
+
 		// SecurityGroupName for non-VPC, SecurityGroupId for VPC
 		ReturnValue: Schema{
 			Type: ValueString,

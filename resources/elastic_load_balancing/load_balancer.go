@@ -11,6 +11,28 @@ func LoadBalancer() Resource {
 	return Resource{
 		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
 
+		Attributes: map[string]Schema{
+			"CanonicalHostedZoneName": Schema{
+				Type: ValueString,
+			},
+
+			"CanonicalHostedZoneNameID": Schema{
+				Type: HostedZoneID,
+			},
+
+			"DNSName": Schema{
+				Type: ValueString,
+			},
+
+			"SourceSecurityGroup.GroupName": Schema{
+				Type: SecurityGroupName,
+			},
+
+			"SourceSecurityGroup.OwnerAlias": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

@@ -10,6 +10,12 @@ func Role() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::Role",
 
+		Attributes: map[string]Schema{
+			"Arn": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,

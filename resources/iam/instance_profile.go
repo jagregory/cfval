@@ -10,6 +10,12 @@ func InstanceProfile() Resource {
 	return Resource{
 		AwsType: "AWS::IAM::InstanceProfile",
 
+		Attributes: map[string]Schema{
+			"Arn": Schema{
+				Type: ValueString,
+			},
+		},
+
 		// Name
 		ReturnValue: Schema{
 			Type: ValueString,
