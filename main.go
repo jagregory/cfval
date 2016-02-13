@@ -47,18 +47,9 @@ func printSummary(failures reporting.Failures) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "cfval"
-	app.Usage = "CloudFormation template validator"
-	app.Authors = []cli.Author{
-		cli.Author{
-			Name:  "James Gregory",
-			Email: "james@jagregory.com",
-		},
-	}
-	app.Version = "0.1.0"
-	app.Action = func(c *cli.Context) {
+func command(c *cli.Context) {
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) == 0 {
 		bytes, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			fmt.Println("Error reading JSON from Stdin")
@@ -78,7 +69,24 @@ func main() {
 			fmt.Println()
 			printSummary(errors)
 		}
+	} else {
+		fmt.Println("Please pipe something to cfval to validate")
+		os.Exit(1)
 	}
+}
+
+func main() {
+	app := cli.NewApp()
+	app.Name = "cfval"
+	app.Usage = "CloudFormation template validator"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "James Gregory",
+			Email: "james@jagregory.com",
+		},
+	}
+	app.Version = "0.1.0"
+	app.Action = command
 
 	app.Run(os.Args)
 }
