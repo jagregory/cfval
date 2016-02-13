@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"sort"
@@ -47,31 +48,43 @@ func printSummary(failures reporting.Failures) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 
-func command(c *cli.Context) {
+func getReadStream(c *cli.Context) (io.Reader, error) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
-		bytes, err := ioutil.ReadAll(os.Stdin)
-		if err != nil {
-			fmt.Println("Error reading JSON from Stdin")
-			return
-		}
-
-		template, err := parseTemplateJSON(bytes, *forgiving)
-		if err != nil {
-			fmt.Println("Error parsing JSON:", err)
-			return
-		}
-
-		if ok, errors := template.Validate(); ok {
-			fmt.Println("Pass, no errors found.")
-		} else {
-			printFailures(errors)
-			fmt.Println()
-			printSummary(errors)
-		}
+		return os.Stdin, nil
+	} else if len(c.Args()) > 0 {
+		return os.Open(c.Args()[0])
 	} else {
-		fmt.Println("Please pipe something to cfval to validate")
+		return nil, fmt.Errorf("Provide either a filename or pipe something")
+	}
+}
+
+func command(c *cli.Context) {
+	stream, err := getReadStream(c)
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
+		return
+	}
+
+	bytes, err := ioutil.ReadAll(stream)
+	if err != nil {
+		fmt.Println("Error reading JSON from Stdin")
+		return
+	}
+
+	template, err := parseTemplateJSON(bytes, *forgiving)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	if ok, errors := template.Validate(); ok {
+		fmt.Println("Pass, no errors found.")
+	} else {
+		printFailures(errors)
+		fmt.Println()
+		printSummary(errors)
 	}
 }
 
@@ -79,6 +92,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "cfval"
 	app.Usage = "CloudFormation template validator"
+	app.UsageText = "cfval <filename>\n   cat filename | cfval"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "James Gregory",
