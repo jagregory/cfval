@@ -10,9 +10,10 @@ func InternetGateway() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::InternetGateway",
 
-		// Name
+		// Name -- not sure about this. Docs say Name, but my testing we can Ref
+		//         this into an InternetGatewayId property successfully.
 		ReturnValue: Schema{
-			Type: ValueString,
+			Type: InternetGatewayID,
 		},
 
 		Properties: Properties{
