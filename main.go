@@ -13,8 +13,6 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
-
 type ByContext reporting.Reports
 
 func (a ByContext) Len() int           { return len(a) }
@@ -92,6 +90,7 @@ Usage: cfval validate [filename]
 
 Options:
 
+  -forgiving             Ignore unrecognised resource types
   -warnings-as-errors    Treat warnings as errors
 `
 }
@@ -102,9 +101,11 @@ func (ValidateCommand) Synopsis() string {
 
 func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
+	var forgiving bool
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "warnings-as-errors")
+	cmdFlags.BoolVar(&forgiving, "forgiving", false, "forgiving")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
@@ -126,7 +127,7 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	template, err := parseTemplateJSON(bytes, *forgiving)
+	template, err := parseTemplateJSON(bytes, forgiving)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return 1
