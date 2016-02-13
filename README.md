@@ -22,7 +22,7 @@ For now cfval is only installable via `go get`. This will change once developmen
 
 ## Known issues
 
-Heaps of resource types aren't supported at the moment. `cfval` currently only supports the resources I've specifically created for my current infrastructure. There are no resources which are currently completely defined.
+Heaps of resource types aren't supported at the moment. `cfval` currently only supports the resources I've specifically created for my current infrastructure.
 
 Watch this space. Contributors *very welcome*.
 
