@@ -46,7 +46,7 @@ func (vt ValueType) Describe() string {
 	return strings.TrimPrefix(vt.String(), "Value")
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
 			builtinResult, errs := ValidateBuiltinFns(property, complex, self, context)
@@ -58,10 +58,10 @@ func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepres
 				return reporting.ValidateAbort, nil
 			}
 
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Value is a map but isn't a builtin", context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", context)}
 		}
 
-		return reporting.ValidateOK, reporting.Failures{reporting.NewInvalidTypeFailure(vt, value, context)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, context)}
 	}
 
 	return reporting.ValidateOK, nil

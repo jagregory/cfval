@@ -35,8 +35,8 @@ func NewTemplateResource(template *Template) TemplateResource {
 	return TemplateResource{template: template}
 }
 
-func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, reporting.Failures) {
-	failures := make(reporting.Failures, 0, 50)
+func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, reporting.Reports) {
+	failures := make(reporting.Reports, 0, 50)
 
 	if _, errs := tr.Definition.Validate(tr, context); errs != nil {
 		failures = append(failures, errs...)
@@ -65,8 +65,8 @@ func NewUnrecognisedResource(template *Template, awsType string) TemplateResourc
 	return TemplateResource{
 		template: template,
 		Definition: Resource{
-			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
-				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
 			},
 		},
 	}
@@ -93,8 +93,8 @@ type Template struct {
 	Outputs    map[string]Output
 }
 
-func (t *Template) Validate() (bool, reporting.Failures) {
-	failures := make(reporting.Failures, 0, 100)
+func (t *Template) Validate() (bool, reporting.Reports) {
+	failures := make(reporting.Reports, 0, 100)
 
 	for logicalID, resource := range t.Resources {
 		if _, errs := resource.Validate([]string{"Resources", logicalID}); errs != nil {

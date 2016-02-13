@@ -7,13 +7,13 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if ref, ok := value["Ref"]; ok {
 		if str, ok := ref.(string); ok {
 			return NewRef(s, str).Validate(self.Template(), append(context, "Ref"))
 		}
 
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Ref must be a string", context)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", context)}
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
@@ -25,7 +25,7 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfReprese
 			return NewGetAtt(s, arr).Validate(self.Template(), append(context, "GetAtt"))
 		}
 
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("GetAtt must be an array", context)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", context)}
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
@@ -41,14 +41,14 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, self SelfReprese
 }
 
 // TODO: Supported functions within a function
-func validateFindInMap(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func validateFindInMap(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	find, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure("Options need to be an array", context)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", context)}
 	}
 
 	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), context)}
 	}
 
 	mapName := find[0]
@@ -85,28 +85,28 @@ func validateFindInMap(value interface{}, self SelfRepresentation, context []str
 	return reporting.ValidateAbort, nil
 }
 
-func validateBase64(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func validateBase64(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	_, errs := ValueString.Validate(Schema{Type: ValueString}, value, self, context)
 	return reporting.ValidateAbort, errs
 }
 
-func validateJoin(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func validateJoin(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), context)}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), context)}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), context)}
 		}
 
-		failures := make(reporting.Failures, 0, len(parts))
+		failures := make(reporting.Reports, 0, len(parts))
 		for i, part := range parts {
 			if _, errs := ValueString.Validate(Schema{Type: ValueString}, part, self, append(context, "1", strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
@@ -120,5 +120,5 @@ func validateJoin(value interface{}, self SelfRepresentation, context []string) 
 		return reporting.ValidateAbort, failures
 	}
 
-	return reporting.ValidateAbort, reporting.Failures{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), context)}
 }

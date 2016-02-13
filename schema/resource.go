@@ -11,10 +11,10 @@ type Resource struct {
 	Attributes   map[string]Schema
 	Properties   Properties
 	ReturnValue  Schema
-	ValidateFunc func(TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
+	ValidateFunc func(TemplateResource, []string) (reporting.ValidateResult, reporting.Reports)
 }
 
-func (rd Resource) Validate(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Failures) {
+func (rd Resource) Validate(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if rd.ValidateFunc != nil {
 		return rd.ValidateFunc(tr, context)
 	}

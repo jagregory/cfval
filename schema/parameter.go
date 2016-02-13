@@ -133,7 +133,7 @@ func (p *Parameter) UnmarshalJSON(b []byte) (err error) {
 	return fmt.Errorf("Unexpected type for Parameter %s", temp.Type)
 }
 
-func (Parameter) Validate([]string) (bool, reporting.Failures) {
+func (Parameter) Validate([]string) (bool, reporting.Reports) {
 	// TODO: parameter validation?
 	return true, nil
 }

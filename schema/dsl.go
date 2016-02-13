@@ -8,9 +8,9 @@ import (
 )
 
 func SingleValueValidate(expected interface{}) ValidateFunc {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		if value != expected {
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), context)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -23,7 +23,7 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 		panic(err)
 	}
 
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -32,12 +32,12 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 			return reporting.ValidateOK, nil
 		}
 
-		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(message, context)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(message, context)}
 	}
 }
 
 func IntegerRangeValidate(start, end float64) ValidateFunc {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		if result, errs := ValueNumber.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -45,7 +45,7 @@ func IntegerRangeValidate(start, end float64) ValidateFunc {
 		floatValue := value.(float64)
 
 		if floatValue < start || floatValue > end {
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), context)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -53,7 +53,7 @@ func IntegerRangeValidate(start, end float64) ValidateFunc {
 }
 
 func StringLengthValidate(min, max int) ValidateFunc {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
@@ -61,7 +61,7 @@ func StringLengthValidate(min, max int) ValidateFunc {
 		str := value.(string)
 
 		if len(str) < min || len(str) > max {
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), context)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -69,13 +69,13 @@ func StringLengthValidate(min, max int) ValidateFunc {
 }
 
 func NumberOptions(numbers ...float64) ValidateFunc {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		for _, n := range numbers {
 			if n == value.(float64) {
 				return reporting.ValidateOK, nil
 			}
 		}
-		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), context)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), context)}
 	}
 }
 
@@ -122,7 +122,7 @@ func contains(all []string, one string) bool {
 
 // TODO: fixme
 func FixedArrayValidate(options ...[]string) ValidateFunc {
-	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	return func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		for _, option := range options {
 			if match(option, value.([]interface{})) {
 				return reporting.ValidateOK, nil
@@ -130,6 +130,6 @@ func FixedArrayValidate(options ...[]string) ValidateFunc {
 		}
 
 		// TODO: this should be []TypeString but we can't specify that with this method
-		return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), context)}
 	}
 }

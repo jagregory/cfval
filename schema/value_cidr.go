@@ -13,13 +13,13 @@ const cidrPattern = `^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0
 var CIDR = FuncType{
 	Description: "CIDR",
 
-	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+	Fn: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 		if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
 		if ok, _ := regexp.MatchString(cidrPattern, value.(string)); !ok {
-			return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Cidr %s is invalid", value), context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Cidr %s is invalid", value), context)}
 		}
 
 		return reporting.ValidateOK, nil

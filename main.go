@@ -15,7 +15,7 @@ import (
 
 var forgiving = flag.Bool("forgiving", false, "Ignore unrecognised resources")
 
-type ByContext reporting.Failures
+type ByContext reporting.Reports
 
 func (a ByContext) Len() int           { return len(a) }
 func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
@@ -24,6 +24,7 @@ func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].Cont
 var ui = &cli.ColoredUi{
 	InfoColor:  cli.UiColorNone,
 	ErrorColor: cli.UiColorRed,
+	WarnColor:  cli.UiColorYellow,
 	Ui: &cli.BasicUi{
 		Reader:      os.Stdin,
 		Writer:      os.Stdout,
@@ -31,19 +32,19 @@ var ui = &cli.ColoredUi{
 	},
 }
 
-func printFailures(failures reporting.Failures) {
-	sort.Sort(ByContext(failures))
+func printReports(reports reporting.Reports) {
+	sort.Sort(ByContext(reports))
 
 	maxLength := 0
-	for _, failure := range failures {
-		context := failure.ContextReadable
+	for _, report := range reports {
+		context := report.ContextReadable
 		if len(context) > maxLength {
 			maxLength = len(context)
 		}
 	}
 
-	for _, failure := range failures {
-		context := failure.ContextReadable
+	for _, report := range reports {
+		context := report.ContextReadable
 
 		str := context
 		str += " "
@@ -51,13 +52,19 @@ func printFailures(failures reporting.Failures) {
 			str += "."
 		}
 		str += "... "
-		str += failure.Message
+		str += report.Message
 
-		ui.Error(str)
+		if report.Level == reporting.Failure {
+			ui.Error(str)
+		} else if report.Level == reporting.Warning {
+			ui.Warn(str)
+		} else {
+			ui.Info(str)
+		}
 	}
 }
 
-func printSummary(failures reporting.Failures) {
+func printSummary(failures reporting.Reports) {
 	fmt.Printf("%d failures\n", len(failures))
 }
 
@@ -109,7 +116,7 @@ func (ValidateCommand) Run(args []string) int {
 	}
 
 	if ok, errors := template.Validate(); !ok {
-		printFailures(errors)
+		printReports(errors)
 		fmt.Println()
 		printSummary(errors)
 		return 1

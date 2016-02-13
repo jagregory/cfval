@@ -7,11 +7,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-func azModeValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func azModeValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if str, ok := value.(string); ok {
 		if availabilityZones, ok := self.Property("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
-				return reporting.ValidateOK, reporting.Failures{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", context)}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", context)}
 			}
 		}
 	}
@@ -19,7 +19,7 @@ func azModeValidate(prop Schema, value interface{}, self SelfRepresentation, con
 	return reporting.ValidateOK, nil
 }
 
-func numCacheNodesValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func numCacheNodesValidate(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if engine, ok := self.Property("Engine"); !ok || engine.(string) == "memcached" {
 		return IntegerRangeValidate(1, 20)(prop, value, self, context)
 	}

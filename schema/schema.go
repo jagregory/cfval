@@ -14,7 +14,7 @@ type PropertyType interface {
 
 	// Validate checks that the property is valid, including any built-in function
 	// calls and stuff within the property.
-	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures)
+	Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports)
 
 	// CoercibleTo will return true for types which the value of this property can
 	// be coerced into. e.g. A number can be coerced to a string
@@ -31,8 +31,8 @@ type PropertyType interface {
 	CoercibleTo(PropertyType) Coercion
 }
 
-type ValidateFunc func(Schema, interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Failures)
-type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Failures)
+type ValidateFunc func(Schema, interface{}, SelfRepresentation, []string) (reporting.ValidateResult, reporting.Reports)
+type ArrayValidateFunc func([]interface{}, TemplateResource, []string) (reporting.ValidateResult, reporting.Reports)
 
 type Schema struct {
 	// Array is true when the expected value is an array of Type
@@ -73,8 +73,8 @@ func (s Schema) TargetType() PropertyType {
 	return s.Type
 }
 
-func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-	failures := make(reporting.Failures, 0, 20)
+func (s Schema) Validate(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+	failures := make(reporting.Reports, 0, 20)
 
 	if s.Array {
 		// TODO: fix array-as-a-whole validation
@@ -104,8 +104,8 @@ func (s Schema) Validate(value interface{}, self SelfRepresentation, context []s
 //
 // This function is used for single value properties, and each item in array
 // properties.
-func (s Schema) validateValue(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
-	failures := make(reporting.Failures, 0, 50)
+func (s Schema) validateValue(value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+	failures := make(reporting.Reports, 0, 50)
 
 	result, errs := s.Type.Validate(s, value, self, context)
 	if result == reporting.ValidateAbort {

@@ -28,7 +28,7 @@ func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Failures) {
+func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if result, errs := ValueString.Validate(property, value, self, context); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs
 	}
@@ -47,5 +47,5 @@ func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepr
 		}
 	}
 
-	return reporting.ValidateOK, reporting.Failures{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), context)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), context)}
 }
