@@ -324,27 +324,6 @@ func MountTarget() Resource {
 	}
 }
 
-func ParameterGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::ElastiCache::ParameterGroup",
-		Properties: Properties{},
-	}
-}
-
-func ElastiCacheSecurityGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::ElastiCache::SecurityGroup",
-		Properties: Properties{},
-	}
-}
-
-func ElastiCacheSecurityGroupIngress() Resource {
-	return Resource{
-		AwsType:    "AWS::ElastiCache::SecurityGroupIngress",
-		Properties: Properties{},
-	}
-}
-
 func AccessKey() Resource {
 	return Resource{
 		AwsType:    "AWS::IAM::AccessKey",
