@@ -5,11 +5,12 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet-route-table-assoc.html
 func SubnetRouteTableAssociation() Resource {
 	return Resource{
 		AwsType: "AWS::EC2::SubnetRouteTableAssociation",
 
-		// ID
+		// Name
 		ReturnValue: Schema{
 			Type: ValueString,
 		},
@@ -21,7 +22,7 @@ func SubnetRouteTableAssociation() Resource {
 			},
 
 			"SubnetId": Schema{
-				Type:     ValueString,
+				Type:     SubnetID,
 				Required: constraints.Always,
 			},
 		},

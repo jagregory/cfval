@@ -135,27 +135,6 @@ func Table() Resource {
 	}
 }
 
-func SubnetNetworkAclAssociation() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::SubnetNetworkAclAssociation",
-		Properties: Properties{},
-	}
-}
-
-func Volume() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::Volume",
-		Properties: Properties{},
-	}
-}
-
-func VolumeAttachment() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VolumeAttachment",
-		Properties: Properties{},
-	}
-}
-
 func VPC() Resource {
 	return Resource{
 		AwsType:    "AWS::EC2::VPC",
