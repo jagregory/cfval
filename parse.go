@@ -138,7 +138,7 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::Route53::RecordSet":                      route_53.RecordSet,
 	"AWS::Route53::RecordSetGroup":                 resources.RecordSetGroup,
 	"AWS::S3::Bucket":                              s3.Bucket,
-	"AWS::S3::BucketPolicy":                        resources.BucketPolicy,
+	"AWS::S3::BucketPolicy":                        s3.BucketPolicy,
 	"AWS::SDB::Domain":                             resources.Domain,
 	"AWS::SNS::Topic":                              sns.Topic,
 	"AWS::SNS::TopicPolicy":                        resources.TopicPolicy,

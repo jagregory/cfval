@@ -590,13 +590,6 @@ func RecordSetGroup() Resource {
 	}
 }
 
-func BucketPolicy() Resource {
-	return Resource{
-		AwsType:    "AWS::S3::BucketPolicy",
-		Properties: Properties{},
-	}
-}
-
 func Domain() Resource {
 	return Resource{
 		AwsType:    "AWS::SDB::Domain",
