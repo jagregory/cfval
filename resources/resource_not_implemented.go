@@ -366,13 +366,6 @@ func Domain() Resource {
 	}
 }
 
-func TopicPolicy() Resource {
-	return Resource{
-		AwsType:    "AWS::SNS::TopicPolicy",
-		Properties: Properties{},
-	}
-}
-
 func Queue() Resource {
 	return Resource{
 		AwsType:    "AWS::SQS::Queue",

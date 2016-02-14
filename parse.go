@@ -141,7 +141,7 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::S3::BucketPolicy":                        s3.BucketPolicy,
 	"AWS::SDB::Domain":                             resources.Domain,
 	"AWS::SNS::Topic":                              sns.Topic,
-	"AWS::SNS::TopicPolicy":                        resources.TopicPolicy,
+	"AWS::SNS::TopicPolicy":                        sns.TopicPolicy,
 	"AWS::SQS::Queue":                              resources.Queue,
 	"AWS::SQS::QueuePolicy":                        resources.QueuePolicy,
 	"AWS::SSM::Document":                           resources.Document,
