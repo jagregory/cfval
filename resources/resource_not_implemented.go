@@ -135,62 +135,6 @@ func Table() Resource {
 	}
 }
 
-func VPC() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPC",
-		Properties: Properties{},
-	}
-}
-
-func VPCDHCPOptionsAssociation() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPCDHCPOptionsAssociation",
-		Properties: Properties{},
-	}
-}
-
-func VPCEndpoint() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPCEndpoint",
-		Properties: Properties{},
-	}
-}
-
-func VPCPeeringConnection() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPCPeeringConnection",
-		Properties: Properties{},
-	}
-}
-
-func VPNConnection() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPNConnection",
-		Properties: Properties{},
-	}
-}
-
-func VPNConnectionRoute() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPNConnectionRoute",
-		Properties: Properties{},
-	}
-}
-
-func VPNGateway() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPNGateway",
-		Properties: Properties{},
-	}
-}
-
-func VPNGatewayRoutePropagation() Resource {
-	return Resource{
-		AwsType:    "AWS::EC2::VPNGatewayRoutePropagation",
-		Properties: Properties{},
-	}
-}
-
 func Cluster() Resource {
 	return Resource{
 		AwsType:    "AWS::ECS::Cluster",
