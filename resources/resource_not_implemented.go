@@ -569,27 +569,6 @@ func ClusterSubnetGroup() Resource {
 	}
 }
 
-func HealthCheck() Resource {
-	return Resource{
-		AwsType:    "AWS::Route53::HealthCheck",
-		Properties: Properties{},
-	}
-}
-
-func HostedZone() Resource {
-	return Resource{
-		AwsType:    "AWS::Route53::HostedZone",
-		Properties: Properties{},
-	}
-}
-
-func RecordSetGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::Route53::RecordSetGroup",
-		Properties: Properties{},
-	}
-}
-
 func Domain() Resource {
 	return Resource{
 		AwsType:    "AWS::SDB::Domain",
