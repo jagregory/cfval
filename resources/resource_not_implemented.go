@@ -170,41 +170,6 @@ func MountTarget() Resource {
 	}
 }
 
-func AccessKey() Resource {
-	return Resource{
-		AwsType:    "AWS::IAM::AccessKey",
-		Properties: Properties{},
-	}
-}
-
-func Group() Resource {
-	return Resource{
-		AwsType:    "AWS::IAM::Group",
-		Properties: Properties{},
-	}
-}
-
-func ManagedPolicy() Resource {
-	return Resource{
-		AwsType:    "AWS::IAM::ManagedPolicy",
-		Properties: Properties{},
-	}
-}
-
-func User() Resource {
-	return Resource{
-		AwsType:    "AWS::IAM::User",
-		Properties: Properties{},
-	}
-}
-
-func UserToGroupAddition() Resource {
-	return Resource{
-		AwsType:    "AWS::IAM::UserToGroupAddition",
-		Properties: Properties{},
-	}
-}
-
 func Stream() Resource {
 	return Resource{
 		AwsType:    "AWS::Kinesis::Stream",
