@@ -1,8 +1,8 @@
-package auto_scaling
+package common
 
 import . "github.com/jagregory/cfval/schema"
 
-var volumeType = EnumValue{
+var EbsVolumeType = EnumValue{
 	Description: "EBS Block Device Volume Type",
 
 	Options: []string{"standard", "io1", "gp2"},

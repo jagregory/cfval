@@ -15,7 +15,7 @@ func Eip() Resource {
 
 		// PublicIp
 		ReturnValue: Schema{
-			Type: ValueString,
+			Type: IPAddress,
 		},
 
 		Properties: Properties{

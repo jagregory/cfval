@@ -1,17 +1,17 @@
-package auto_scaling
+package ec2
 
 import (
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
 
-// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
-var autoScalingEbsBlockDevice = NestedResource{
-	Description: "AutoScaling EBS Block Device",
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-blockdevicemappings-ebs.html
+var spotFleetRequestConfigDataLaunchSpecificationBlockDeviceMappingEbs = NestedResource{
+	Description: "SpotFleet SpotFleetRequestConfigData LaunchSpecifications BlockDeviceMappings Ebs",
+
 	Properties: Properties{
 		"DeleteOnTermination": Schema{
-			Type:    ValueBool,
-			Default: true,
+			Type: ValueBool,
 		},
 
 		"Encrypted": Schema{
