@@ -317,20 +317,6 @@ func Domain() Resource {
 	}
 }
 
-func Queue() Resource {
-	return Resource{
-		AwsType:    "AWS::SQS::Queue",
-		Properties: Properties{},
-	}
-}
-
-func QueuePolicy() Resource {
-	return Resource{
-		AwsType:    "AWS::SQS::QueuePolicy",
-		Properties: Properties{},
-	}
-}
-
 func Document() Resource {
 	return Resource{
 		AwsType:    "AWS::SSM::Document",

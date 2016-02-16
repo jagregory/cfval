@@ -16,6 +16,7 @@ import (
 	"github.com/jagregory/cfval/resources/route_53"
 	"github.com/jagregory/cfval/resources/s3"
 	"github.com/jagregory/cfval/resources/sns"
+	"github.com/jagregory/cfval/resources/sqs"
 	"github.com/jagregory/cfval/schema"
 )
 
@@ -142,8 +143,8 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::SDB::Domain":                             resources.Domain,
 	"AWS::SNS::Topic":                              sns.Topic,
 	"AWS::SNS::TopicPolicy":                        sns.TopicPolicy,
-	"AWS::SQS::Queue":                              resources.Queue,
-	"AWS::SQS::QueuePolicy":                        resources.QueuePolicy,
+	"AWS::SQS::Queue":                              sqs.Queue,
+	"AWS::SQS::QueuePolicy":                        sqs.QueuePolicy,
 	"AWS::SSM::Document":                           resources.Document,
 	"AWS::WAF::ByteMatchSet":                       resources.ByteMatchSet,
 	"AWS::WAF::IPSet":                              resources.IPSet,
