@@ -7,6 +7,7 @@ import (
 	"github.com/jagregory/cfval/resources/cloud_front"
 	"github.com/jagregory/cfval/resources/cloud_trail"
 	"github.com/jagregory/cfval/resources/cloud_watch"
+	"github.com/jagregory/cfval/resources/dynamo_db"
 	"github.com/jagregory/cfval/resources/ec2"
 	"github.com/jagregory/cfval/resources/elasti_cache"
 	"github.com/jagregory/cfval/resources/elastic_beanstalk"
@@ -49,7 +50,7 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::DataPipeline::Pipeline":                  resources.DataPipelinePipeline,
 	"AWS::DirectoryService::MicrosoftAD":           resources.MicrosoftAD,
 	"AWS::DirectoryService::SimpleAD":              resources.SimpleAD,
-	"AWS::DynamoDB::Table":                         resources.Table,
+	"AWS::DynamoDB::Table":                         dynamo_db.Table,
 	"AWS::EC2::CustomerGateway":                    ec2.CustomerGateway,
 	"AWS::EC2::DHCPOptions":                        ec2.DHCPOptions,
 	"AWS::EC2::EIP":                                ec2.Eip,

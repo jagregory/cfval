@@ -128,13 +128,6 @@ func SimpleAD() Resource {
 	}
 }
 
-func Table() Resource {
-	return Resource{
-		AwsType:    "AWS::DynamoDB::Table",
-		Properties: Properties{},
-	}
-}
-
 func Cluster() Resource {
 	return Resource{
 		AwsType:    "AWS::ECS::Cluster",
