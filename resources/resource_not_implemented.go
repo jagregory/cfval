@@ -275,55 +275,6 @@ func OpsWorksStack() Resource {
 	}
 }
 
-func DBCluster() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::DBCluster",
-		Properties: Properties{},
-	}
-}
-
-func DBClusterParameterGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::DBClusterParameterGroup",
-		Properties: Properties{},
-	}
-}
-
-func DBParameterGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::DBParameterGroup",
-		Properties: Properties{},
-	}
-}
-
-func DBSecurityGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::DBSecurityGroup",
-		Properties: Properties{},
-	}
-}
-
-func DBSecurityGroupIngress() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::DBSecurityGroupIngress",
-		Properties: Properties{},
-	}
-}
-
-func EventSubscription() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::EventSubscription",
-		Properties: Properties{},
-	}
-}
-
-func OptionGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::RDS::OptionGroup",
-		Properties: Properties{},
-	}
-}
-
 func RedshiftCluster() Resource {
 	return Resource{
 		AwsType:    "AWS::Redshift::Cluster",

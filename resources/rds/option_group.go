@@ -1,0 +1,47 @@
+package rds
+
+import (
+	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/resources/common"
+	. "github.com/jagregory/cfval/schema"
+)
+
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-optiongroup.html
+func OptionGroup() Resource {
+	return Resource{
+		AwsType: "AWS::RDS::OptionGroup",
+
+		// Name
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+
+		Properties: Properties{
+			"EngineName": Schema{
+				Type:     ValueString,
+				Required: constraints.Always,
+			},
+
+			"MajorEngineVersion": Schema{
+				Type:     ValueString,
+				Required: constraints.Always,
+			},
+
+			"OptionGroupDescription": Schema{
+				Type:     ValueString,
+				Required: constraints.Always,
+			},
+
+			"OptionConfigurations": Schema{
+				Type:     optionConfiguration,
+				Array:    true,
+				Required: constraints.Always,
+			},
+
+			"Tags": Schema{
+				Type:  common.ResourceTag,
+				Array: true,
+			},
+		},
+	}
+}
