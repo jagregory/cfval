@@ -1,4 +1,4 @@
-package resources
+package not_supported
 
 import . "github.com/jagregory/cfval/schema"
 
@@ -124,76 +124,6 @@ func MicrosoftAD() Resource {
 func SimpleAD() Resource {
 	return Resource{
 		AwsType:    "AWS::DirectoryService::SimpleAD",
-		Properties: Properties{},
-	}
-}
-
-func Stream() Resource {
-	return Resource{
-		AwsType:    "AWS::Kinesis::Stream",
-		Properties: Properties{},
-	}
-}
-
-func Key() Resource {
-	return Resource{
-		AwsType:    "AWS::KMS::Key",
-		Properties: Properties{},
-	}
-}
-
-func EventSourceMapping() Resource {
-	return Resource{
-		AwsType:    "AWS::Lambda::EventSourceMapping",
-		Properties: Properties{},
-	}
-}
-
-func Function() Resource {
-	return Resource{
-		AwsType:    "AWS::Lambda::Function",
-		Properties: Properties{},
-	}
-}
-
-func Permission() Resource {
-	return Resource{
-		AwsType:    "AWS::Lambda::Permission",
-		Properties: Properties{},
-	}
-}
-
-func Destination() Resource {
-	return Resource{
-		AwsType:    "AWS::Logs::Destination",
-		Properties: Properties{},
-	}
-}
-
-func LogGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::Logs::LogGroup",
-		Properties: Properties{},
-	}
-}
-
-func LogStream() Resource {
-	return Resource{
-		AwsType:    "AWS::Logs::LogStream",
-		Properties: Properties{},
-	}
-}
-
-func MetricFilter() Resource {
-	return Resource{
-		AwsType:    "AWS::Logs::MetricFilter",
-		Properties: Properties{},
-	}
-}
-
-func SubscriptionFilter() Resource {
-	return Resource{
-		AwsType:    "AWS::Logs::SubscriptionFilter",
 		Properties: Properties{},
 	}
 }
