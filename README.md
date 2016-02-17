@@ -6,7 +6,7 @@
 >
 > After getting very tired of this process, and with a large infrastructure refactor looming, I decided some time could be better spent catching issues sooner in the process. Hence, cfval.
 
-`cfval` is a small tool which validates a CloudFormation JSON template and notifies you of any issues it can find. Missing required properties, properties which conflict with others, `Ref`s to parameters which don't exist or properties of resources, and much more.
+`cfval` is a small tool which validates a CloudFormation JSON template and notifies you of any issues it can find. Missing required properties, properties which conflict with others, `Ref`s to parameters which don't exist or incompatible properties of resources, and much more.
 
 ```
 $ cfval validate my-template.json
@@ -24,7 +24,7 @@ For now cfval is only installable via `go get`. This will change once developmen
 
 ## Known issues
 
-Heaps of resource types aren't supported at the moment. `cfval` currently only supports the resources I've specifically created for my current infrastructure.
+Most of the major/common AWS resources are now supported by `cfval`; however, there are still quite a few outstanding.
 
 Watch this space. Contributors *very welcome*.
 
