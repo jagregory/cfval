@@ -27,14 +27,15 @@ func TestNestedResourceConstraints(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
+
+	template := &parse.Template{}
 
 	data := func(properties map[string]interface{}) parse.TemplateResource {
 		return parse.TemplateResource{
+			Tmpl:       template,
 			Type:       "TestResource",
 			Properties: properties,
 		}

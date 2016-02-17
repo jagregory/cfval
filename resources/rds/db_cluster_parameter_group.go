@@ -7,35 +7,33 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbclusterparametergroup.html
-func DBClusterParameterGroup() Resource {
-	return Resource{
-		AwsType: "AWS::RDS::DBClusterParameterGroup",
+var DBClusterParameterGroup = Resource{
+	AwsType: "AWS::RDS::DBClusterParameterGroup",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"Description": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"Description": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"Family": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"Parameters": Schema{
-				Type:     JSON,
-				Required: constraints.Always,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
+		"Family": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"Parameters": Schema{
+			Type:     JSON,
+			Required: constraints.Always,
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+	},
 }

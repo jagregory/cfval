@@ -11,12 +11,10 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 	template := &parse.Template{}
 	context := []string{}
 
-	res := ReplicationGroup()
+	res := ReplicationGroup
 
-	definitions := schema.NewResourceDefinitions(map[string]func() schema.Resource{
-		"TestResource": func() schema.Resource {
-			return res
-		},
+	definitions := schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
 	})
 
 	badVersion := parse.NewTemplateResource(template)

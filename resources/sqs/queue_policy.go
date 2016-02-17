@@ -6,21 +6,19 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-policy.html
-func QueuePolicy() Resource {
-	return Resource{
-		AwsType: "AWS::SQS::QueuePolicy",
+var QueuePolicy = Resource{
+	AwsType: "AWS::SQS::QueuePolicy",
 
-		Properties: Properties{
-			"PolicyDocument": Schema{
-				Type:     JSON,
-				Required: constraints.Always,
-			},
-
-			"Queues": Schema{
-				Type:     ValueString,
-				Array:    true,
-				Required: constraints.Always,
-			},
+	Properties: Properties{
+		"PolicyDocument": Schema{
+			Type:     JSON,
+			Required: constraints.Always,
 		},
-	}
+
+		"Queues": Schema{
+			Type:     ValueString,
+			Array:    true,
+			Required: constraints.Always,
+		},
+	},
 }

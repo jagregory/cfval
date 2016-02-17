@@ -7,20 +7,18 @@ import (
 )
 
 func TestRefValidate(t *testing.T) {
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return Resource{
-				ReturnValue: Schema{
-					Type: ValueString,
-				},
-			}
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": Resource{
+			ReturnValue: Schema{
+				Type: ValueString,
+			},
 		},
 	})
 
 	template := &parse.Template{
-		Resources: map[string]parse.TemplateResource{
-			"Resource1": parse.TemplateResource{},
-			"Resource2": parse.TemplateResource{
+		Resources: map[string]*parse.TemplateResource{
+			"Resource1": &parse.TemplateResource{},
+			"Resource2": &parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},

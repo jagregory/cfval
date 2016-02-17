@@ -6,20 +6,18 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-policy.html
-func BucketPolicy() Resource {
-	return Resource{
-		AwsType: "AWS::S3::BucketPolicy",
+var BucketPolicy = Resource{
+	AwsType: "AWS::S3::BucketPolicy",
 
-		Properties: Properties{
-			"Bucket": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"PolicyDocument": Schema{
-				Type:     JSON,
-				Required: constraints.Always,
-			},
+	Properties: Properties{
+		"Bucket": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"PolicyDocument": Schema{
+			Type:     JSON,
+			Required: constraints.Always,
+		},
+	},
 }

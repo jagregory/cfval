@@ -7,44 +7,42 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
-func Subnet() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::Subnet",
+var Subnet = Resource{
+	AwsType: "AWS::EC2::Subnet",
 
-		Attributes: map[string]Schema{
-			"AvailabilityZone": Schema{
-				Type: AvailabilityZone,
-			},
+	Attributes: map[string]Schema{
+		"AvailabilityZone": Schema{
+			Type: AvailabilityZone,
+		},
+	},
+
+	ReturnValue: Schema{
+		Type: SubnetID,
+	},
+
+	Properties: Properties{
+		"AvailabilityZone": Schema{
+			Type: AvailabilityZone,
 		},
 
-		ReturnValue: Schema{
-			Type: SubnetID,
+		"CidrBlock": Schema{
+			Type:     CIDR,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"AvailabilityZone": Schema{
-				Type: AvailabilityZone,
-			},
-
-			"CidrBlock": Schema{
-				Type:     CIDR,
-				Required: constraints.Always,
-			},
-
-			"MapPublicIpOnLaunch": Schema{
-				Type:    ValueBool,
-				Default: false,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
-
-			"VpcId": Schema{
-				Type:     VpcID,
-				Required: constraints.Always,
-			},
+		"MapPublicIpOnLaunch": Schema{
+			Type:    ValueBool,
+			Default: false,
 		},
-	}
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+
+		"VpcId": Schema{
+			Type:     VpcID,
+			Required: constraints.Always,
+		},
+	},
 }

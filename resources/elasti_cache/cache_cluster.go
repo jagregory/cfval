@@ -28,130 +28,128 @@ func numCacheNodesValidate(prop Schema, value interface{}, self SelfRepresentati
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
-func CacheCluster() Resource {
-	return Resource{
-		AwsType: "AWS::ElastiCache::CacheCluster",
+var CacheCluster = Resource{
+	AwsType: "AWS::ElastiCache::CacheCluster",
 
-		Attributes: map[string]Schema{
-			"ConfigurationEndpoint.Address": Schema{
-				Type: ValueString,
-			},
-
-			"ConfigurationEndpoint.Port": Schema{
-				Type: ValueString,
-			},
-		},
-
-		// Name
-		ReturnValue: Schema{
+	Attributes: map[string]Schema{
+		"ConfigurationEndpoint.Address": Schema{
 			Type: ValueString,
 		},
 
-		Properties: map[string]Schema{
-			"AutoMinorVersionUpgrade": Schema{
-				Type: ValueBool,
-			},
+		"ConfigurationEndpoint.Port": Schema{
+			Type: ValueString,
+		},
+	},
 
-			"AZMode": Schema{
-				Type:         azMode,
-				ValidateFunc: azModeValidate,
-				Default:      "single-az",
-			},
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
 
-			"CacheNodeType": Schema{
-				Type:     cacheNodeType,
-				Required: constraints.Always,
-			},
+	Properties: map[string]Schema{
+		"AutoMinorVersionUpgrade": Schema{
+			Type: ValueBool,
+		},
 
-			"CacheParameterGroupName": Schema{
-				Type: ValueString,
-			},
+		"AZMode": Schema{
+			Type:         azMode,
+			ValidateFunc: azModeValidate,
+			Default:      "single-az",
+		},
 
-			"CacheSecurityGroupNames": Schema{
-				Type:  cacheSecurityGroupName,
-				Array: true,
-				Conflicts: constraints.Any{
-					constraints.PropertyExists("CacheSubnetGroupName"),
-					constraints.PropertyExists("VpcSecurityGroupIds"),
-				},
-			},
+		"CacheNodeType": Schema{
+			Type:     cacheNodeType,
+			Required: constraints.Always,
+		},
 
-			"CacheSubnetGroupName": Schema{
-				Type: cacheSecurityGroupName,
-				Conflicts: constraints.Any{
-					constraints.PropertyExists("CacheSecurityGroupNames"),
-					constraints.PropertyExists("VpcSecurityGroupIds"),
-				},
-			},
+		"CacheParameterGroupName": Schema{
+			Type: ValueString,
+		},
 
-			"ClusterName": Schema{
-				Type: ValueString,
-			},
-
-			"Engine": Schema{
-				Type:     engine,
-				Required: constraints.Always,
-			},
-
-			"EngineVersion": Schema{
-				Type: ValueString,
-			},
-
-			"NotificationTopicArn": Schema{
-				Type: ValueString,
-			},
-
-			"NumCacheNodes": Schema{
-				Type:         ValueNumber,
-				Required:     constraints.Always,
-				ValidateFunc: numCacheNodesValidate,
-			},
-
-			"Port": Schema{
-				Type: ValueNumber,
-			},
-
-			"PreferredAvailabilityZone": Schema{
-				Type: AvailabilityZone,
-			},
-
-			"PreferredAvailabilityZones": Schema{
-				Type:     AvailabilityZone,
-				Array:    true,
-				Required: constraints.PropertyIs("AZMode", "cross-az"),
-			},
-
-			"PreferredMaintenanceWindow": Schema{
-				Type: ValueString,
-			},
-
-			"SnapshotArns": Schema{
-				Type:  ValueString,
-				Array: true,
-			},
-
-			"SnapshotName": Schema{
-				Type: ValueString,
-			},
-
-			"SnapshotRetentionLimit": Schema{
-				Type: ValueNumber,
-			},
-
-			"SnapshotWindow": Schema{
-				Type: ValueString,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
-
-			"VpcSecurityGroupIds": Schema{
-				Type:      SecurityGroupID,
-				Array:     true,
-				Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
+		"CacheSecurityGroupNames": Schema{
+			Type:  cacheSecurityGroupName,
+			Array: true,
+			Conflicts: constraints.Any{
+				constraints.PropertyExists("CacheSubnetGroupName"),
+				constraints.PropertyExists("VpcSecurityGroupIds"),
 			},
 		},
-	}
+
+		"CacheSubnetGroupName": Schema{
+			Type: cacheSecurityGroupName,
+			Conflicts: constraints.Any{
+				constraints.PropertyExists("CacheSecurityGroupNames"),
+				constraints.PropertyExists("VpcSecurityGroupIds"),
+			},
+		},
+
+		"ClusterName": Schema{
+			Type: ValueString,
+		},
+
+		"Engine": Schema{
+			Type:     engine,
+			Required: constraints.Always,
+		},
+
+		"EngineVersion": Schema{
+			Type: ValueString,
+		},
+
+		"NotificationTopicArn": Schema{
+			Type: ValueString,
+		},
+
+		"NumCacheNodes": Schema{
+			Type:         ValueNumber,
+			Required:     constraints.Always,
+			ValidateFunc: numCacheNodesValidate,
+		},
+
+		"Port": Schema{
+			Type: ValueNumber,
+		},
+
+		"PreferredAvailabilityZone": Schema{
+			Type: AvailabilityZone,
+		},
+
+		"PreferredAvailabilityZones": Schema{
+			Type:     AvailabilityZone,
+			Array:    true,
+			Required: constraints.PropertyIs("AZMode", "cross-az"),
+		},
+
+		"PreferredMaintenanceWindow": Schema{
+			Type: ValueString,
+		},
+
+		"SnapshotArns": Schema{
+			Type:  ValueString,
+			Array: true,
+		},
+
+		"SnapshotName": Schema{
+			Type: ValueString,
+		},
+
+		"SnapshotRetentionLimit": Schema{
+			Type: ValueNumber,
+		},
+
+		"SnapshotWindow": Schema{
+			Type: ValueString,
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+
+		"VpcSecurityGroupIds": Schema{
+			Type:      SecurityGroupID,
+			Array:     true,
+			Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
+		},
+	},
 }

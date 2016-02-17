@@ -39,3 +39,11 @@ func (rd Resource) Validate(tr parse.TemplateResource, definitions ResourceDefin
 func (rd Resource) TargetType() PropertyType {
 	return rd.ReturnValue.TargetType()
 }
+
+func NewUnrecognisedResource(awsType string) Resource {
+	return Resource{
+		ValidateFunc: func(tr parse.TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+		},
+	}
+}

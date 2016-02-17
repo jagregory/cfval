@@ -6,25 +6,23 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-connection-route.html
-func VPNConnectionRoute() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VPNConnectionRoute",
+var VPNConnectionRoute = Resource{
+	AwsType: "AWS::EC2::VPNConnectionRoute",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"DestinationCidrBlock": Schema{
+			Type:     CIDR,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"DestinationCidrBlock": Schema{
-				Type:     CIDR,
-				Required: constraints.Always,
-			},
-
-			"VpnConnectionId": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
+		"VpnConnectionId": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+	},
 }

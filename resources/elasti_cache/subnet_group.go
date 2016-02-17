@@ -6,26 +6,24 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-subnetgroup.html
-func SubnetGroup() Resource {
-	return Resource{
-		AwsType: "AWS::ElastiCache::SubnetGroup",
+var SubnetGroup = Resource{
+	AwsType: "AWS::ElastiCache::SubnetGroup",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: map[string]Schema{
+		"Description": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
 
-		Properties: map[string]Schema{
-			"Description": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"SubnetIds": Schema{
-				Type:     SubnetID,
-				Required: constraints.Always,
-				Array:    true,
-			},
+		"SubnetIds": Schema{
+			Type:     SubnetID,
+			Required: constraints.Always,
+			Array:    true,
 		},
-	}
+	},
 }

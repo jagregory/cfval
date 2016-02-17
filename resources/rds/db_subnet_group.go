@@ -7,25 +7,23 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnet-group.html
-func DBSubnetGroup() Resource {
-	return Resource{
-		AwsType: "AWS::RDS::DBSubnetGroup",
-		Properties: map[string]Schema{
-			"DBSubnetGroupDescription": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"SubnetIds": Schema{
-				Type:     SubnetID,
-				Required: constraints.Always,
-				Array:    true,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
+var DBSubnetGroup = Resource{
+	AwsType: "AWS::RDS::DBSubnetGroup",
+	Properties: map[string]Schema{
+		"DBSubnetGroupDescription": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"SubnetIds": Schema{
+			Type:     SubnetID,
+			Required: constraints.Always,
+			Array:    true,
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+	},
 }

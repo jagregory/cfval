@@ -6,34 +6,32 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-route53-hostedzone.html
-func HostedZone() Resource {
-	return Resource{
-		AwsType: "AWS::Route53::HostedZone",
+var HostedZone = Resource{
+	AwsType: "AWS::Route53::HostedZone",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"HostedZoneConfig": Schema{
+			Type: hostedZoneConfig,
 		},
 
-		Properties: Properties{
-			"HostedZoneConfig": Schema{
-				Type: hostedZoneConfig,
-			},
-
-			"HostedZoneTags": Schema{
-				Type:  hostedZoneTag,
-				Array: true,
-			},
-
-			"Name": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"VPCs": Schema{
-				Type:  hostedZoneVPC,
-				Array: true,
-			},
+		"HostedZoneTags": Schema{
+			Type:  hostedZoneTag,
+			Array: true,
 		},
-	}
+
+		"Name": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"VPCs": Schema{
+			Type:  hostedZoneVPC,
+			Array: true,
+		},
+	},
 }

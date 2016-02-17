@@ -11,30 +11,26 @@ func TestJSONValidation(t *testing.T) {
 		Type: JSON,
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"ResourceA": func() Resource {
-			return Resource{
-				ReturnValue: Schema{
-					Type: ValueString,
-				},
-			}
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"ResourceA": Resource{
+			ReturnValue: Schema{
+				Type: ValueString,
+			},
 		},
 
-		"ResourceB": func() Resource {
-			return Resource{
-				ReturnValue: Schema{
-					Type: ValueNumber,
-				},
-			}
+		"ResourceB": Resource{
+			ReturnValue: Schema{
+				Type: ValueNumber,
+			},
 		},
 	})
 
 	template := &parse.Template{
-		Resources: map[string]parse.TemplateResource{
-			"Resource1": parse.TemplateResource{
+		Resources: map[string]*parse.TemplateResource{
+			"Resource1": &parse.TemplateResource{
 				Type: "ResourceA",
 			},
-			"Resource2": parse.TemplateResource{
+			"Resource2": &parse.TemplateResource{
 				Type: "ResourceB",
 			},
 		},

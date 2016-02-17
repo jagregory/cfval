@@ -86,15 +86,13 @@ var recordSet = NestedResource{
 	Properties:  recordSetProperties,
 }
 
-func RecordSet() Resource {
-	return Resource{
-		AwsType: "AWS::Route53::RecordSet",
+var RecordSet = Resource{
+	AwsType: "AWS::Route53::RecordSet",
 
-		// Domain Name
-		ReturnValue: Schema{
-			Type: ValueString,
-		},
+	// Domain Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
 
-		Properties: recordSetProperties,
-	}
+	Properties: recordSetProperties,
 }

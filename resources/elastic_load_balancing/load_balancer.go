@@ -7,117 +7,115 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html
-func LoadBalancer() Resource {
-	return Resource{
-		AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
+var LoadBalancer = Resource{
+	AwsType: "AWS::ElasticLoadBalancing::LoadBalancer",
 
-		Attributes: map[string]Schema{
-			"CanonicalHostedZoneName": Schema{
-				Type: ValueString,
-			},
-
-			"CanonicalHostedZoneNameID": Schema{
-				Type: HostedZoneID,
-			},
-
-			"DNSName": Schema{
-				Type: ValueString,
-			},
-
-			"SourceSecurityGroup.GroupName": Schema{
-				Type: SecurityGroupName,
-			},
-
-			"SourceSecurityGroup.OwnerAlias": Schema{
-				Type: ValueString,
-			},
-		},
-
-		// Name
-		ReturnValue: Schema{
+	Attributes: map[string]Schema{
+		"CanonicalHostedZoneName": Schema{
 			Type: ValueString,
 		},
 
-		Properties: Properties{
-			"AccessLoggingPolicy": Schema{
-				Type: accessLoggingPolicy,
-			},
+		"CanonicalHostedZoneNameID": Schema{
+			Type: HostedZoneID,
+		},
 
-			"AppCookieStickinessPolicy": Schema{
-				Type:  appCookieStickinessPolicy,
-				Array: true,
-			},
+		"DNSName": Schema{
+			Type: ValueString,
+		},
 
-			"AvailabilityZones": Schema{
-				Type:      AvailabilityZone,
-				Array:     true,
-				Conflicts: constraints.PropertyExists("Subnets"),
-			},
+		"SourceSecurityGroup.GroupName": Schema{
+			Type: SecurityGroupName,
+		},
 
-			"ConnectionDrainingPolicy": Schema{
-				Type: connectionDrainingPolicy,
-			},
+		"SourceSecurityGroup.OwnerAlias": Schema{
+			Type: ValueString,
+		},
+	},
 
-			"ConnectionSettings": Schema{
-				Type: connectionSettings,
-			},
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
 
-			"CrossZone": Schema{
-				Type:    ValueBool,
-				Default: false,
-			},
+	Properties: Properties{
+		"AccessLoggingPolicy": Schema{
+			Type: accessLoggingPolicy,
+		},
 
-			"HealthCheck": Schema{
-				Type: healthCheck,
-			},
+		"AppCookieStickinessPolicy": Schema{
+			Type:  appCookieStickinessPolicy,
+			Array: true,
+		},
 
-			"Instances": Schema{
-				Type:  InstanceID,
-				Array: true,
-			},
+		"AvailabilityZones": Schema{
+			Type:      AvailabilityZone,
+			Array:     true,
+			Conflicts: constraints.PropertyExists("Subnets"),
+		},
 
-			"LBCookieStickinessPolicy": Schema{
-				Type: lbCookieStickinessPolicy,
-			},
+		"ConnectionDrainingPolicy": Schema{
+			Type: connectionDrainingPolicy,
+		},
 
-			"LoadBalancerName": Schema{
-				Type: ValueString,
-			},
+		"ConnectionSettings": Schema{
+			Type: connectionSettings,
+		},
 
-			"Listeners": Schema{
-				Array:    true,
-				Required: constraints.Always,
-				Type:     listener,
-			},
+		"CrossZone": Schema{
+			Type:    ValueBool,
+			Default: false,
+		},
 
-			"Policies": Schema{
-				Array: true,
-				Type:  policy,
-			},
+		"HealthCheck": Schema{
+			Type: healthCheck,
+		},
 
-			"Scheme": Schema{
-				Type: EnumValue{
-					Description: "Load Balancer Scheme",
-					Options:     []string{"internal", "internet-facing"},
-					// TODO: If you specify internal, you must specify subnets to associate with the load balancer, not Availability Zones.
-				},
-			},
+		"Instances": Schema{
+			Type:  InstanceID,
+			Array: true,
+		},
 
-			"SecurityGroups": Schema{
-				Type:  SecurityGroupID,
-				Array: true,
-			},
+		"LBCookieStickinessPolicy": Schema{
+			Type: lbCookieStickinessPolicy,
+		},
 
-			"Subnets": Schema{
-				Type:      SubnetID,
-				Array:     true,
-				Conflicts: constraints.PropertyExists("AvailabilityZones"),
-			},
+		"LoadBalancerName": Schema{
+			Type: ValueString,
+		},
 
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
+		"Listeners": Schema{
+			Array:    true,
+			Required: constraints.Always,
+			Type:     listener,
+		},
+
+		"Policies": Schema{
+			Array: true,
+			Type:  policy,
+		},
+
+		"Scheme": Schema{
+			Type: EnumValue{
+				Description: "Load Balancer Scheme",
+				Options:     []string{"internal", "internet-facing"},
+				// TODO: If you specify internal, you must specify subnets to associate with the load balancer, not Availability Zones.
 			},
 		},
-	}
+
+		"SecurityGroups": Schema{
+			Type:  SecurityGroupID,
+			Array: true,
+		},
+
+		"Subnets": Schema{
+			Type:      SubnetID,
+			Array:     true,
+			Conflicts: constraints.PropertyExists("AvailabilityZones"),
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+	},
 }

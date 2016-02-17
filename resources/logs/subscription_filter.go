@@ -6,34 +6,32 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-subscriptionfilter.html
-func SubscriptionFilter() Resource {
-	return Resource{
-		AwsType: "AWS::Logs::SubscriptionFilter",
+var SubscriptionFilter = Resource{
+	AwsType: "AWS::Logs::SubscriptionFilter",
 
-		// Name
-		ReturnValue: Schema{
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"DestinationArn": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"FilterPattern": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"LogGroupName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"RoleArn": Schema{
 			Type: ValueString,
 		},
-
-		Properties: Properties{
-			"DestinationArn": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"FilterPattern": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"LogGroupName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"RoleArn": Schema{
-				Type: ValueString,
-			},
-		},
-	}
+	},
 }

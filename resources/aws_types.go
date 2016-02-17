@@ -26,7 +26,7 @@ import (
 	"github.com/jagregory/cfval/schema"
 )
 
-var AwsTypes = map[string]func() schema.Resource{
+var AwsTypes = map[string]schema.Resource{
 	"AWS::AutoScaling::AutoScalingGroup":           auto_scaling.AutoScalingGroup,
 	"AWS::AutoScaling::LaunchConfiguration":        auto_scaling.LaunchConfiguration,
 	"AWS::AutoScaling::LifecycleHook":              auto_scaling.LifecycleHook,

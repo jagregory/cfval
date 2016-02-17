@@ -1,20 +1,13 @@
 package schema
 
-import (
-	"fmt"
-
-	"github.com/jagregory/cfval/parse"
-	"github.com/jagregory/cfval/reporting"
-)
-
 type ResourceDefinitions interface {
 	Lookup(awsType string) Resource
 	LookupParameter(awsType string) Schema
 }
 
-func NewResourceDefinitions(definitions map[string]func() Resource) ResourceDefinitions {
+func NewResourceDefinitions(definitions map[string]Resource) ResourceDefinitions {
 	if definitions == nil {
-		definitions = make(map[string]func() Resource)
+		definitions = make(map[string]Resource)
 	}
 
 	return externalResourceDefinitions{
@@ -23,21 +16,15 @@ func NewResourceDefinitions(definitions map[string]func() Resource) ResourceDefi
 }
 
 type externalResourceDefinitions struct {
-	definitions map[string]func() Resource
+	definitions map[string]Resource
 }
 
 func (e externalResourceDefinitions) Lookup(awsType string) Resource {
-	ctor := e.definitions[awsType]
-
-	if ctor == nil {
-		return Resource{
-			ValidateFunc: func(tr parse.TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
-			},
-		}
+	if res, ok := e.definitions[awsType]; ok {
+		return res
 	}
 
-	return ctor()
+	return NewUnrecognisedResource(awsType)
 }
 
 func (externalResourceDefinitions) LookupParameter(awsType string) Schema {

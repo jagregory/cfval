@@ -7,25 +7,23 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-acl.html
-func NetworkACL() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::NetworkAcl",
+var NetworkACL = Resource{
+	AwsType: "AWS::EC2::NetworkAcl",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
 		},
 
-		Properties: Properties{
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
-
-			"VpcId": Schema{
-				Type:     VpcID,
-				Required: constraints.Always,
-			},
+		"VpcId": Schema{
+			Type:     VpcID,
+			Required: constraints.Always,
 		},
-	}
+	},
 }

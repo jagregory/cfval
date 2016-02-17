@@ -19,10 +19,8 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		},
 	}
 
-	definitions := schema.NewResourceDefinitions(map[string]func() schema.Resource{
-		"TestResource": func() schema.Resource {
-			return res
-		},
+	definitions := schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
 	})
 
 	badCountry := parse.NewTemplateResource(template)

@@ -6,33 +6,31 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html
-func Permission() Resource {
-	return Resource{
-		AwsType: "AWS::Lambda::Permission",
+var Permission = Resource{
+	AwsType: "AWS::Lambda::Permission",
 
-		Properties: Properties{
-			"Action": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"FunctionName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"Principal": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"SourceAccount": Schema{
-				Type: ValueString,
-			},
-
-			"SourceArn": Schema{
-				Type: ValueString,
-			},
+	Properties: Properties{
+		"Action": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"FunctionName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"Principal": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"SourceAccount": Schema{
+			Type: ValueString,
+		},
+
+		"SourceArn": Schema{
+			Type: ValueString,
+		},
+	},
 }

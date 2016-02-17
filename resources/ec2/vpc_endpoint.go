@@ -6,34 +6,32 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpoint.html
-func VPCEndpoint() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VPCEndpoint",
+var VPCEndpoint = Resource{
+	AwsType: "AWS::EC2::VPCEndpoint",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"PolicyDocument": Schema{
+			Type: JSON,
 		},
 
-		Properties: Properties{
-			"PolicyDocument": Schema{
-				Type: JSON,
-			},
-
-			"RouteTableIds": Schema{
-				Type:  ValueString,
-				Array: true,
-			},
-
-			"ServiceName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"VpcId": Schema{
-				Type:     VpcID,
-				Required: constraints.Always,
-			},
+		"RouteTableIds": Schema{
+			Type:  ValueString,
+			Array: true,
 		},
-	}
+
+		"ServiceName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"VpcId": Schema{
+			Type:     VpcID,
+			Required: constraints.Always,
+		},
+	},
 }

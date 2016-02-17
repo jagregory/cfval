@@ -6,35 +6,33 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-interface-attachment.html
-func NetworkInterfaceAttachment() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::NetworkInterfaceAttachment",
+var NetworkInterfaceAttachment = Resource{
+	AwsType: "AWS::EC2::NetworkInterfaceAttachment",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"DeleteOnTermination": Schema{
+			Type:    ValueBool,
+			Default: true,
 		},
 
-		Properties: Properties{
-			"DeleteOnTermination": Schema{
-				Type:    ValueBool,
-				Default: true,
-			},
-
-			"DeviceIndex": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"InstanceId": Schema{
-				Type:     InstanceID,
-				Required: constraints.Always,
-			},
-
-			"NetworkInterfaceId": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
+		"DeviceIndex": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"InstanceId": Schema{
+			Type:     InstanceID,
+			Required: constraints.Always,
+		},
+
+		"NetworkInterfaceId": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+	},
 }

@@ -6,26 +6,24 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-gatewayrouteprop.html
-func VPNGatewayRoutePropagation() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VPNGatewayRoutePropagation",
+var VPNGatewayRoutePropagation = Resource{
+	AwsType: "AWS::EC2::VPNGatewayRoutePropagation",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"RouteTableIds": Schema{
+			Type:     ValueString,
+			Array:    true,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"RouteTableIds": Schema{
-				Type:     ValueString,
-				Array:    true,
-				Required: constraints.Always,
-			},
-
-			"VpnGatewayId": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
+		"VpnGatewayId": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+	},
 }

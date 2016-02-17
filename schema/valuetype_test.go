@@ -14,17 +14,15 @@ func TestValueTypeValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	property := Schema{Type: ValueString}
 	self := parse.TemplateResource{
 		Tmpl: &parse.Template{
-			Resources: map[string]parse.TemplateResource{
-				"good": parse.TemplateResource{
+			Resources: map[string]*parse.TemplateResource{
+				"good": &parse.TemplateResource{
 					Type: "TestResource",
 				},
 			},

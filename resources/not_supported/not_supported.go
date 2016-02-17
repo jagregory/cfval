@@ -2,254 +2,182 @@ package not_supported
 
 import . "github.com/jagregory/cfval/schema"
 
-func Authentication() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::Authentication",
-		Properties: Properties{},
-	}
+var Authentication = Resource{
+	AwsType:    "AWS::CloudFormation::Authentication",
+	Properties: Properties{},
 }
 
-func CustomResource() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::CustomResource",
-		Properties: Properties{},
-	}
+var CustomResource = Resource{
+	AwsType:    "AWS::CloudFormation::CustomResource",
+	Properties: Properties{},
 }
 
-func Init() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::Init",
-		Properties: Properties{},
-	}
+var Init = Resource{
+	AwsType:    "AWS::CloudFormation::Init",
+	Properties: Properties{},
 }
 
-func Interface() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::Interface",
-		Properties: Properties{},
-	}
+var Interface = Resource{
+	AwsType:    "AWS::CloudFormation::Interface",
+	Properties: Properties{},
 }
 
-func Stack() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::Stack",
-		Properties: Properties{},
-	}
+var Stack = Resource{
+	AwsType:    "AWS::CloudFormation::Stack",
+	Properties: Properties{},
 }
 
-func WaitCondition() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::WaitCondition",
-		Properties: Properties{},
-	}
+var WaitCondition = Resource{
+	AwsType:    "AWS::CloudFormation::WaitCondition",
+	Properties: Properties{},
 }
 
-func WaitConditionHandle() Resource {
-	return Resource{
-		AwsType:    "AWS::CloudFormation::WaitConditionHandle",
-		Properties: Properties{},
-	}
+var WaitConditionHandle = Resource{
+	AwsType:    "AWS::CloudFormation::WaitConditionHandle",
+	Properties: Properties{},
 }
 
-func CodeDeployApplication() Resource {
-	return Resource{
-		AwsType:    "AWS::CodeDeploy::Application",
-		Properties: Properties{},
-	}
+var CodeDeployApplication = Resource{
+	AwsType:    "AWS::CodeDeploy::Application",
+	Properties: Properties{},
 }
 
-func DeploymentConfig() Resource {
-	return Resource{
-		AwsType:    "AWS::CodeDeploy::DeploymentConfig",
-		Properties: Properties{},
-	}
+var DeploymentConfig = Resource{
+	AwsType:    "AWS::CodeDeploy::DeploymentConfig",
+	Properties: Properties{},
 }
 
-func DeploymentGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::CodeDeploy::DeploymentGroup",
-		Properties: Properties{},
-	}
+var DeploymentGroup = Resource{
+	AwsType:    "AWS::CodeDeploy::DeploymentGroup",
+	Properties: Properties{},
 }
 
-func CustomActionType() Resource {
-	return Resource{
-		AwsType:    "AWS::CodePipeline::CustomActionType",
-		Properties: Properties{},
-	}
+var CustomActionType = Resource{
+	AwsType:    "AWS::CodePipeline::CustomActionType",
+	Properties: Properties{},
 }
 
-func Pipeline() Resource {
-	return Resource{
-		AwsType:    "AWS::CodePipeline::Pipeline",
-		Properties: Properties{},
-	}
+var Pipeline = Resource{
+	AwsType:    "AWS::CodePipeline::Pipeline",
+	Properties: Properties{},
 }
 
-func ConfigRule() Resource {
-	return Resource{
-		AwsType:    "AWS::Config::ConfigRule",
-		Properties: Properties{},
-	}
+var ConfigRule = Resource{
+	AwsType:    "AWS::Config::ConfigRule",
+	Properties: Properties{},
 }
 
-func ConfigurationRecorder() Resource {
-	return Resource{
-		AwsType:    "AWS::Config::ConfigurationRecorder",
-		Properties: Properties{},
-	}
+var ConfigurationRecorder = Resource{
+	AwsType:    "AWS::Config::ConfigurationRecorder",
+	Properties: Properties{},
 }
 
-func DeliveryChannel() Resource {
-	return Resource{
-		AwsType:    "AWS::Config::DeliveryChannel",
-		Properties: Properties{},
-	}
+var DeliveryChannel = Resource{
+	AwsType:    "AWS::Config::DeliveryChannel",
+	Properties: Properties{},
 }
 
-func DataPipelinePipeline() Resource {
-	return Resource{
-		AwsType:    "AWS::DataPipeline::Pipeline",
-		Properties: Properties{},
-	}
+var DataPipelinePipeline = Resource{
+	AwsType:    "AWS::DataPipeline::Pipeline",
+	Properties: Properties{},
 }
 
-func MicrosoftAD() Resource {
-	return Resource{
-		AwsType:    "AWS::DirectoryService::MicrosoftAD",
-		Properties: Properties{},
-	}
+var MicrosoftAD = Resource{
+	AwsType:    "AWS::DirectoryService::MicrosoftAD",
+	Properties: Properties{},
 }
 
-func SimpleAD() Resource {
-	return Resource{
-		AwsType:    "AWS::DirectoryService::SimpleAD",
-		Properties: Properties{},
-	}
+var SimpleAD = Resource{
+	AwsType:    "AWS::DirectoryService::SimpleAD",
+	Properties: Properties{},
 }
 
-func App() Resource {
-	return Resource{
-		AwsType:    "AWS::OpsWorks::App",
-		Properties: Properties{},
-	}
+var App = Resource{
+	AwsType:    "AWS::OpsWorks::App",
+	Properties: Properties{},
 }
 
-func ElasticLoadBalancerAttachment() Resource {
-	return Resource{
-		AwsType:    "AWS::OpsWorks::ElasticLoadBalancerAttachment",
-		Properties: Properties{},
-	}
+var ElasticLoadBalancerAttachment = Resource{
+	AwsType:    "AWS::OpsWorks::ElasticLoadBalancerAttachment",
+	Properties: Properties{},
 }
 
-func OpsWorksInstance() Resource {
-	return Resource{
-		AwsType:    "AWS::OpsWorks::Instance",
-		Properties: Properties{},
-	}
+var OpsWorksInstance = Resource{
+	AwsType:    "AWS::OpsWorks::Instance",
+	Properties: Properties{},
 }
 
-func Layer() Resource {
-	return Resource{
-		AwsType:    "AWS::OpsWorks::Layer",
-		Properties: Properties{},
-	}
+var Layer = Resource{
+	AwsType:    "AWS::OpsWorks::Layer",
+	Properties: Properties{},
 }
 
-func OpsWorksStack() Resource {
-	return Resource{
-		AwsType:    "AWS::OpsWorks::Stack",
-		Properties: Properties{},
-	}
+var OpsWorksStack = Resource{
+	AwsType:    "AWS::OpsWorks::Stack",
+	Properties: Properties{},
 }
 
-func RedshiftCluster() Resource {
-	return Resource{
-		AwsType:    "AWS::Redshift::Cluster",
-		Properties: Properties{},
-	}
+var RedshiftCluster = Resource{
+	AwsType:    "AWS::Redshift::Cluster",
+	Properties: Properties{},
 }
 
-func ClusterParameterGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::Redshift::ClusterParameterGroup",
-		Properties: Properties{},
-	}
+var ClusterParameterGroup = Resource{
+	AwsType:    "AWS::Redshift::ClusterParameterGroup",
+	Properties: Properties{},
 }
 
-func ClusterSecurityGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::Redshift::ClusterSecurityGroup",
-		Properties: Properties{},
-	}
+var ClusterSecurityGroup = Resource{
+	AwsType:    "AWS::Redshift::ClusterSecurityGroup",
+	Properties: Properties{},
 }
 
-func ClusterSecurityGroupIngress() Resource {
-	return Resource{
-		AwsType:    "AWS::Redshift::ClusterSecurityGroupIngress",
-		Properties: Properties{},
-	}
+var ClusterSecurityGroupIngress = Resource{
+	AwsType:    "AWS::Redshift::ClusterSecurityGroupIngress",
+	Properties: Properties{},
 }
 
-func ClusterSubnetGroup() Resource {
-	return Resource{
-		AwsType:    "AWS::Redshift::ClusterSubnetGroup",
-		Properties: Properties{},
-	}
+var ClusterSubnetGroup = Resource{
+	AwsType:    "AWS::Redshift::ClusterSubnetGroup",
+	Properties: Properties{},
 }
 
-func Domain() Resource {
-	return Resource{
-		AwsType:    "AWS::SDB::Domain",
-		Properties: Properties{},
-	}
+var Domain = Resource{
+	AwsType:    "AWS::SDB::Domain",
+	Properties: Properties{},
 }
 
-func Document() Resource {
-	return Resource{
-		AwsType:    "AWS::SSM::Document",
-		Properties: Properties{},
-	}
+var Document = Resource{
+	AwsType:    "AWS::SSM::Document",
+	Properties: Properties{},
 }
 
-func ByteMatchSet() Resource {
-	return Resource{
-		AwsType:    "AWS::WAF::ByteMatchSet",
-		Properties: Properties{},
-	}
+var ByteMatchSet = Resource{
+	AwsType:    "AWS::WAF::ByteMatchSet",
+	Properties: Properties{},
 }
 
-func IPSet() Resource {
-	return Resource{
-		AwsType:    "AWS::WAF::IPSet",
-		Properties: Properties{},
-	}
+var IPSet = Resource{
+	AwsType:    "AWS::WAF::IPSet",
+	Properties: Properties{},
 }
 
-func Rule() Resource {
-	return Resource{
-		AwsType:    "AWS::WAF::Rule",
-		Properties: Properties{},
-	}
+var Rule = Resource{
+	AwsType:    "AWS::WAF::Rule",
+	Properties: Properties{},
 }
 
-func SqlInjectionMatchSet() Resource {
-	return Resource{
-		AwsType:    "AWS::WAF::SqlInjectionMatchSet",
-		Properties: Properties{},
-	}
+var SqlInjectionMatchSet = Resource{
+	AwsType:    "AWS::WAF::SqlInjectionMatchSet",
+	Properties: Properties{},
 }
 
-func WebACL() Resource {
-	return Resource{
-		AwsType:    "AWS::WAF::WebACL",
-		Properties: Properties{},
-	}
+var WebACL = Resource{
+	AwsType:    "AWS::WAF::WebACL",
+	Properties: Properties{},
 }
 
-func Workspace() Resource {
-	return Resource{
-		AwsType:    "AWS::WorkSpaces::Workspace",
-		Properties: Properties{},
-	}
+var Workspace = Resource{
+	AwsType:    "AWS::WorkSpaces::Workspace",
+	Properties: Properties{},
 }

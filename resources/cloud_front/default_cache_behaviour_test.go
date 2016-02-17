@@ -8,16 +8,17 @@ import (
 )
 
 func TestAllowedMethodsFixedArrays(t *testing.T) {
-	res := Distribution()
+	res := Distribution
 
-	definitions := schema.NewResourceDefinitions(map[string]func() schema.Resource{
-		"TestResource": func() schema.Resource {
-			return res
-		},
+	definitions := schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
 	})
+
+	template := &parse.Template{}
 
 	testCFDistribution := func(allowedMethods []interface{}) parse.TemplateResource {
 		return parse.TemplateResource{
+			Tmpl: template,
 			Type: "TestResource",
 			Properties: map[string]interface{}{
 				"DistributionConfig": map[string]interface{}{

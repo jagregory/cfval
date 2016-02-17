@@ -7,35 +7,33 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-security-group.html
-func DBSecurityGroup() Resource {
-	return Resource{
-		AwsType: "AWS::RDS::DBSecurityGroup",
+var DBSecurityGroup = Resource{
+	AwsType: "AWS::RDS::DBSecurityGroup",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"EC2VpcId": Schema{
+			Type: VpcID,
 		},
 
-		Properties: Properties{
-			"EC2VpcId": Schema{
-				Type: VpcID,
-			},
-
-			"DBSecurityGroupIngress": Schema{
-				Type:     securityGroupRule,
-				Array:    true,
-				Required: constraints.Always,
-			},
-
-			"GroupDescription": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
+		"DBSecurityGroupIngress": Schema{
+			Type:     securityGroupRule,
+			Array:    true,
+			Required: constraints.Always,
 		},
-	}
+
+		"GroupDescription": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+	},
 }

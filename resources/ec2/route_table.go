@@ -7,25 +7,23 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route-table.html
-func RouteTable() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::RouteTable",
+var RouteTable = Resource{
+	AwsType: "AWS::EC2::RouteTable",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"VpcId": Schema{
+			Type:     VpcID,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"VpcId": Schema{
-				Type:     VpcID,
-				Required: constraints.Always,
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
 		},
-	}
+	},
 }

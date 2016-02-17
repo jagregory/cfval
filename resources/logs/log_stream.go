@@ -6,24 +6,22 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-logstream.html
-func LogStream() Resource {
-	return Resource{
-		AwsType: "AWS::Logs::LogStream",
+var LogStream = Resource{
+	AwsType: "AWS::Logs::LogStream",
 
-		// Name
-		ReturnValue: Schema{
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"LogGroupName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"LogStreamName": Schema{
 			Type: ValueString,
 		},
-
-		Properties: Properties{
-			"LogGroupName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"LogStreamName": Schema{
-				Type: ValueString,
-			},
-		},
-	}
+	},
 }

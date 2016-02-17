@@ -25,10 +25,8 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	nothingSet := parse.TemplateResource{Tmpl: template, Type: "TestResource", Properties: map[string]interface{}{}}
@@ -82,10 +80,8 @@ func TestSchemaRequiredValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	nothingSet := parse.TemplateResource{Tmpl: template, Type: "TestResource", Properties: map[string]interface{}{}}
@@ -142,10 +138,8 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	nothingSet := parse.TemplateResource{Tmpl: template, Type: "TestResource", Properties: map[string]interface{}{}}
@@ -194,10 +188,8 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	nothingSet := parse.TemplateResource{Tmpl: template, Type: "TestResource", Properties: map[string]interface{}{}}

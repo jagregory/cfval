@@ -7,66 +7,64 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-environment.html
-func Environment() Resource {
-	return Resource{
-		AwsType: "AWS::ElasticBeanstalk::Environment",
+var Environment = Resource{
+	AwsType: "AWS::ElasticBeanstalk::Environment",
 
-		Attributes: map[string]Schema{
-			"EndpointURL": Schema{
-				Type: ValueString,
-			},
+	Attributes: map[string]Schema{
+		"EndpointURL": Schema{
+			Type: ValueString,
+		},
+	},
+
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"ApplicationName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
 
-		// Name
-		ReturnValue: Schema{
+		"CNAMEPrefix": Schema{
 			Type: ValueString,
 		},
 
-		Properties: Properties{
-			"ApplicationName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"CNAMEPrefix": Schema{
-				Type: ValueString,
-			},
-
-			"Description": Schema{
-				Type: ValueString,
-			},
-
-			"EnvironmentName": Schema{
-				Type: ValueString,
-			},
-
-			"OptionSettings": Schema{
-				Type:  optionsSettings,
-				Array: true,
-			},
-
-			"SolutionStackName": Schema{
-				Type:     ValueString,
-				Required: constraints.PropertyNotExists("TemplateName"),
-			},
-
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
-
-			"TemplateName": Schema{
-				Type:     ValueString,
-				Required: constraints.PropertyNotExists("SolutionStackName"),
-			},
-
-			"Tier": Schema{
-				Type: tier,
-			},
-
-			"VersionLabel": Schema{
-				Type: ValueString,
-			},
+		"Description": Schema{
+			Type: ValueString,
 		},
-	}
+
+		"EnvironmentName": Schema{
+			Type: ValueString,
+		},
+
+		"OptionSettings": Schema{
+			Type:  optionsSettings,
+			Array: true,
+		},
+
+		"SolutionStackName": Schema{
+			Type:     ValueString,
+			Required: constraints.PropertyNotExists("TemplateName"),
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+
+		"TemplateName": Schema{
+			Type:     ValueString,
+			Required: constraints.PropertyNotExists("SolutionStackName"),
+		},
+
+		"Tier": Schema{
+			Type: tier,
+		},
+
+		"VersionLabel": Schema{
+			Type: ValueString,
+		},
+	},
 }

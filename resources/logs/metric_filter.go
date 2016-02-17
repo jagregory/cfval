@@ -6,27 +6,25 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-metricfilter.html
-func MetricFilter() Resource {
-	return Resource{
-		AwsType: "AWS::Logs::MetricFilter",
+var MetricFilter = Resource{
+	AwsType: "AWS::Logs::MetricFilter",
 
-		Properties: Properties{
-			"FilterPattern": Schema{
-				Type:     ValueString,
-				Array:    true,
-				Required: constraints.Always,
-			},
-
-			"LogGroupName": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"MetricTransformations": Schema{
-				Type:     metricTransformation,
-				Array:    true,
-				Required: constraints.Always,
-			},
+	Properties: Properties{
+		"FilterPattern": Schema{
+			Type:     ValueString,
+			Array:    true,
+			Required: constraints.Always,
 		},
-	}
+
+		"LogGroupName": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		"MetricTransformations": Schema{
+			Type:     metricTransformation,
+			Array:    true,
+			Required: constraints.Always,
+		},
+	},
 }

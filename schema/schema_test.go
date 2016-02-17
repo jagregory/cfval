@@ -62,15 +62,13 @@ func TestSchemaCustomValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return res
-		},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
 	})
 
 	template := &parse.Template{
-		Resources: map[string]parse.TemplateResource{
-			"abc": parse.TemplateResource{
+		Resources: map[string]*parse.TemplateResource{
+			"abc": &parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},

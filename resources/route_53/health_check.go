@@ -6,20 +6,18 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-route53-healthcheck.html
-func HealthCheck() Resource {
-	return Resource{
-		AwsType: "AWS::Route53::HealthCheck",
+var HealthCheck = Resource{
+	AwsType: "AWS::Route53::HealthCheck",
 
-		Properties: Properties{
-			"HealthCheckConfig": Schema{
-				Type:     healthCheckConfig,
-				Required: constraints.Always,
-			},
-
-			"HealthCheckTags": Schema{
-				Type:  healthCheckTag,
-				Array: true,
-			},
+	Properties: Properties{
+		"HealthCheckConfig": Schema{
+			Type:     healthCheckConfig,
+			Required: constraints.Always,
 		},
-	}
+
+		"HealthCheckTags": Schema{
+			Type:  healthCheckTag,
+			Array: true,
+		},
+	},
 }

@@ -6,35 +6,33 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-efs-mounttarget.html
-func MountTarget() Resource {
-	return Resource{
-		AwsType: "AWS::EFS::MountTarget",
+var MountTarget = Resource{
+	AwsType: "AWS::EFS::MountTarget",
 
-		// ID
-		ReturnValue: Schema{
-			Type: ValueString,
+	// ID
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"FileSystemId": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
 
-		Properties: Properties{
-			"FileSystemId": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"IpAddress": Schema{
-				Type: IPAddress,
-			},
-
-			"SecurityGroups": Schema{
-				Type:     SecurityGroupID,
-				Array:    true,
-				Required: constraints.Always,
-			},
-
-			"SubnetId": Schema{
-				Type:     SubnetID,
-				Required: constraints.Always,
-			},
+		"IpAddress": Schema{
+			Type: IPAddress,
 		},
-	}
+
+		"SecurityGroups": Schema{
+			Type:     SecurityGroupID,
+			Array:    true,
+			Required: constraints.Always,
+		},
+
+		"SubnetId": Schema{
+			Type:     SubnetID,
+			Required: constraints.Always,
+		},
+	},
 }

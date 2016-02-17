@@ -6,32 +6,30 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-gateway-attachment.html
-func VPCGatewayAttachment() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VPCGatewayAttachment",
+var VPCGatewayAttachment = Resource{
+	AwsType: "AWS::EC2::VPCGatewayAttachment",
 
-		// Name
-		ReturnValue: Schema{
-			Type: ValueString,
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"InternetGatewayId": Schema{
+			Type:      InternetGatewayID,
+			Required:  constraints.PropertyNotExists("VpnGatewayId"),
+			Conflicts: constraints.PropertyExists("VpnGatewayId"),
 		},
 
-		Properties: Properties{
-			"InternetGatewayId": Schema{
-				Type:      InternetGatewayID,
-				Required:  constraints.PropertyNotExists("VpnGatewayId"),
-				Conflicts: constraints.PropertyExists("VpnGatewayId"),
-			},
-
-			"VpcId": Schema{
-				Required: constraints.Always,
-				Type:     VpcID,
-			},
-
-			"VpnGatewayId": Schema{
-				Type:      ValueString,
-				Required:  constraints.PropertyNotExists("InternetGatewayId"),
-				Conflicts: constraints.PropertyExists("InternetGatewayId"),
-			},
+		"VpcId": Schema{
+			Required: constraints.Always,
+			Type:     VpcID,
 		},
-	}
+
+		"VpnGatewayId": Schema{
+			Type:      ValueString,
+			Required:  constraints.PropertyNotExists("InternetGatewayId"),
+			Conflicts: constraints.PropertyExists("InternetGatewayId"),
+		},
+	},
 }

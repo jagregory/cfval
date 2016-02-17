@@ -23,35 +23,33 @@ var policy = NestedResource{
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-group.html
-func Group() Resource {
-	return Resource{
-		AwsType: "AWS::IAM::Group",
+var Group = Resource{
+	AwsType: "AWS::IAM::Group",
 
-		Attributes: map[string]Schema{
-			"Arn": Schema{
-				Type: ValueString,
-			},
+	Attributes: map[string]Schema{
+		"Arn": Schema{
+			Type: ValueString,
+		},
+	},
+
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
+	Properties: Properties{
+		"ManagedPolicyArns": Schema{
+			Type:  ValueString,
+			Array: true,
 		},
 
-		// Name
-		ReturnValue: Schema{
+		"Path": Schema{
 			Type: ValueString,
 		},
 
-		Properties: Properties{
-			"ManagedPolicyArns": Schema{
-				Type:  ValueString,
-				Array: true,
-			},
-
-			"Path": Schema{
-				Type: ValueString,
-			},
-
-			"Policies": Schema{
-				Type:  policy,
-				Array: true,
-			},
+		"Policies": Schema{
+			Type:  policy,
+			Array: true,
 		},
-	}
+	},
 }

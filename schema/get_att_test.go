@@ -7,25 +7,23 @@ import (
 )
 
 func TestGetAtt(t *testing.T) {
-	definitions := NewResourceDefinitions(map[string]func() Resource{
-		"TestResource": func() Resource {
-			return Resource{
-				Attributes: Properties{
-					"InstanceId": Schema{
-						Type: InstanceID,
-					},
-
-					"Name": Schema{
-						Type: ValueString,
-					},
+	definitions := NewResourceDefinitions(map[string]Resource{
+		"TestResource": Resource{
+			Attributes: Properties{
+				"InstanceId": Schema{
+					Type: InstanceID,
 				},
-			}
+
+				"Name": Schema{
+					Type: ValueString,
+				},
+			},
 		},
 	})
 
 	template := &parse.Template{
-		Resources: map[string]parse.TemplateResource{
-			"MyResource": parse.TemplateResource{
+		Resources: map[string]*parse.TemplateResource{
+			"MyResource": &parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},

@@ -6,21 +6,19 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internet-gateway.html
-func InternetGateway() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::InternetGateway",
+var InternetGateway = Resource{
+	AwsType: "AWS::EC2::InternetGateway",
 
-		// Name -- not sure about this. Docs say Name, but my testing we can Ref
-		//         this into an InternetGatewayId property successfully.
-		ReturnValue: Schema{
-			Type: InternetGatewayID,
-		},
+	// Name -- not sure about this. Docs say Name, but my testing we can Ref
+	//         this into an InternetGatewayId property successfully.
+	ReturnValue: Schema{
+		Type: InternetGatewayID,
+	},
 
-		Properties: Properties{
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
-			},
+	Properties: Properties{
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
 		},
-	}
+	},
 }

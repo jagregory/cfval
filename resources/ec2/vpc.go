@@ -8,63 +8,61 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
-func VPC() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VPC",
+var VPC = Resource{
+	AwsType: "AWS::EC2::VPC",
 
-		Attributes: map[string]Schema{
-			"CidrBlock": Schema{
-				Type: CIDR,
-			},
-
-			"DefaultNetworkAcl": Schema{
-				Type: ValueString,
-			},
-
-			"DefaultSecurityGroup": Schema{
-				Type: SecurityGroupID,
-			},
+	Attributes: map[string]Schema{
+		"CidrBlock": Schema{
+			Type: CIDR,
 		},
 
-		// ID
-		ReturnValue: Schema{
+		"DefaultNetworkAcl": Schema{
 			Type: ValueString,
 		},
 
-		Properties: Properties{
-			"CidrBlock": Schema{
-				Type:     CIDR,
-				Required: constraints.Always,
-			},
+		"DefaultSecurityGroup": Schema{
+			Type: SecurityGroupID,
+		},
+	},
 
-			"EnableDnsSupport": Schema{
-				Type:    ValueBool,
-				Default: true,
-			},
+	// ID
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
 
-			"EnableDnsHostnames": Schema{
-				Type:    ValueBool,
-				Default: false,
-				ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
-					if enableDnsSupport, _ := self.Property("EnableDnsSupport"); value == true && enableDnsSupport == false {
-						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.", context)}
-					}
+	Properties: Properties{
+		"CidrBlock": Schema{
+			Type:     CIDR,
+			Required: constraints.Always,
+		},
 
-					return reporting.ValidateOK, nil
-				},
-			},
+		"EnableDnsSupport": Schema{
+			Type:    ValueBool,
+			Default: true,
+		},
 
-			"InstanceTenancy": Schema{
-				Type: EnumValue{
-					Description: "InstanceTenancy",
-					Options:     []string{"default", "dedicated"},
-				},
-			},
+		"EnableDnsHostnames": Schema{
+			Type:    ValueBool,
+			Default: false,
+			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+				if enableDnsSupport, _ := self.Property("EnableDnsSupport"); value == true && enableDnsSupport == false {
+					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.", context)}
+				}
 
-			"Tags": Schema{
-				Type:  common.ResourceTag,
-				Array: true,
+				return reporting.ValidateOK, nil
 			},
 		},
-	}
+
+		"InstanceTenancy": Schema{
+			Type: EnumValue{
+				Description: "InstanceTenancy",
+				Options:     []string{"default", "dedicated"},
+			},
+		},
+
+		"Tags": Schema{
+			Type:  common.ResourceTag,
+			Array: true,
+		},
+	},
 }

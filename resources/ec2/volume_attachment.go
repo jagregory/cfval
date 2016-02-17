@@ -6,25 +6,23 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-ebs-volumeattachment.html
-func VolumeAttachment() Resource {
-	return Resource{
-		AwsType: "AWS::EC2::VolumeAttachment",
+var VolumeAttachment = Resource{
+	AwsType: "AWS::EC2::VolumeAttachment",
 
-		Properties: Properties{
-			"Device": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
-
-			"InstanceId": Schema{
-				Type:     InstanceID,
-				Required: constraints.Always,
-			},
-
-			"VolumeId": Schema{
-				Type:     ValueString,
-				Required: constraints.Always,
-			},
+	Properties: Properties{
+		"Device": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
 		},
-	}
+
+		"InstanceId": Schema{
+			Type:     InstanceID,
+			Required: constraints.Always,
+		},
+
+		"VolumeId": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+	},
 }
