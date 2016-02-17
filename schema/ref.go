@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -47,12 +48,12 @@ func NewRef(source Schema, target string) Ref {
 	return Ref{source, target}
 }
 
-func (ref Ref) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (ref Ref) Validate(template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if template == nil {
 		panic("Template is nil")
 	}
 
-	target := ref.resolveTarget(template)
+	target := ref.resolveTarget(definitions, template)
 	if target == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), context)}
 	}
@@ -72,11 +73,11 @@ func (ref Ref) Validate(template *Template, context []string) (reporting.Validat
 	return reporting.ValidateAbort, nil
 }
 
-func (ref Ref) resolveTarget(template *Template) RefTarget {
+func (ref Ref) resolveTarget(definitions ResourceDefinitions, template *parse.Template) RefTarget {
 	if resource, ok := template.Resources[ref.target]; ok {
-		return resource.Definition
+		return definitions.Lookup(resource.Type)
 	} else if parameter, ok := template.Parameters[ref.target]; ok {
-		return parameter.Schema
+		return definitions.LookupParameter(parameter.Type)
 	} else if pseudoParameters, ok := pseudoParameters[ref.target]; ok {
 		return pseudoParameters
 	}

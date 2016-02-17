@@ -9,7 +9,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-func automaticFailoverEnabledValidation(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+func automaticFailoverEnabledValidation(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if version, found := self.Property("EngineVersion"); found {
 		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
 			if versionNumber < 2.8 {
@@ -117,7 +117,7 @@ func ReplicationGroup() Resource {
 			"NumCacheClusters": Schema{
 				Type:     ValueNumber,
 				Required: constraints.Always,
-				ValidateFunc: func(prop Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+				ValidateFunc: func(prop Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 					if val, ok := self.Property("AutomaticFailoverEnabled"); ok && val.(bool) == true {
 						if value.(float64) <= 1 {
 							return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", context)}

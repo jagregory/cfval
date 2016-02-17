@@ -45,7 +45,7 @@ func VPC() Resource {
 			"EnableDnsHostnames": Schema{
 				Type:    ValueBool,
 				Default: false,
-				ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+				ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 					if enableDnsSupport, _ := self.Property("EnableDnsSupport"); value == true && enableDnsSupport == false {
 						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.", context)}
 					}

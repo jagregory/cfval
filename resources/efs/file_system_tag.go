@@ -9,10 +9,12 @@ var fileSystemTag = NestedResource{
 	Properties: Properties{
 		"Key": Schema{
 			Type: ValueString,
-			ValidateFunc: RegexpValidate(
-				`^(?!aws:).{1,128}$`,
-				"You can specify a value that is from 1 to 128 Unicode characters in length, but you cannot use the prefix aws:.",
-			),
+			// TODO: Implement this regex without negative lookaheads :(
+			// 			 Suggestion, add a Negate nested validate...
+			// ValidateFunc: RegexpValidate(
+			// 	`^(:?[]).{1,128}$`,
+			// 	"You can specify a value that is from 1 to 128 Unicode characters in length, but you cannot use the prefix aws:.",
+			// ),
 		},
 
 		"Value": Schema{

@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -15,7 +16,7 @@ func NewGetAtt(source Schema, definition []interface{}) GetAtt {
 	return GetAtt{source, definition}
 }
 
-func (ga GetAtt) Validate(template *Template, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (ga GetAtt) Validate(template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if len(ga.definition) != 2 {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(ga.definition)), context)}
 	}
@@ -23,7 +24,9 @@ func (ga GetAtt) Validate(template *Template, context []string) (reporting.Valid
 	if resourceID, ok := ga.definition[0].(string); ok {
 		if resource, ok := template.Resources[resourceID]; ok {
 			if attributeName, ok := ga.definition[1].(string); ok {
-				if resource, ok := resource.Definition.Attributes[attributeName]; ok {
+				definition := definitions.Lookup(resource.Type)
+				// TODO: BUG this line below should be attribute, ok
+				if resource, ok := definition.Attributes[attributeName]; ok {
 					// TODO: make this common, so GetAtt and others can use it
 					targetType := resource.Type
 					switch targetType.CoercibleTo(ga.source.Type) {

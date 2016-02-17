@@ -1,48 +1,53 @@
 package schema
 
 import (
-	"fmt"
-
+	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
-type TemplateResource struct {
-	template   *Template
-	Definition Resource
-	Properties map[string]interface{}
-	Metadata   map[string]interface{}
-}
+func TemplateValidate(t *parse.Template, definitions ResourceDefinitions) (bool, reporting.Reports) {
+	failures := make(reporting.Reports, 0, 100)
 
-func (tr TemplateResource) Template() *Template {
-	return tr.template
-}
-
-func (tr TemplateResource) Property(name string) (interface{}, bool) {
-	val, ok := tr.Properties[name]
-
-	if ok {
-		return val, ok
+	for logicalID, resource := range t.Resources {
+		if _, errs := resourceValidate(*resource, definitions, []string{"Resources", logicalID}); errs != nil {
+			failures = append(failures, errs...)
+		}
 	}
 
-	if def := tr.Definition.Properties[name]; def.Default != nil {
-		return def.Default, true
+	for parameterID, parameter := range t.Parameters {
+		if _, errs := parameterValidate(parameter, []string{"Parameters", parameterID}); errs != nil {
+			failures = append(failures, errs...)
+		}
 	}
 
-	return nil, false
+	for outputID, output := range t.Outputs {
+		if _, errs := outputValidate(output, t, definitions, []string{"Outputs", outputID}); errs != nil {
+			failures = append(failures, errs...)
+		}
+	}
+
+	if len(failures) == 0 {
+		return true, nil
+	}
+
+	return false, failures
 }
 
-func NewTemplateResource(template *Template) TemplateResource {
-	return TemplateResource{template: template}
+func parameterValidate(p parse.Parameter, context []string) (bool, reporting.Reports) {
+	// TODO: parameter validation?
+	return true, nil
 }
 
-func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult, reporting.Reports) {
+func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
-	if _, errs := tr.Definition.Validate(tr, context); errs != nil {
+	definition := definitions.Lookup(tr.Type)
+	if _, errs := definition.Validate(tr, definitions, context); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, tr, append(context, "Metadata")); errs != nil {
+	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, tr, definitions, append(context, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
@@ -53,70 +58,33 @@ func (tr TemplateResource) Validate(context []string) (reporting.ValidateResult,
 	return reporting.ValidateOK, failures
 }
 
-func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
-	if value, found := tr.Properties[name]; found {
-		return value == expected
-	}
-
-	return false
+var outputSchema = Schema{
+	Type:     ValueString,
+	Required: constraints.Always,
 }
 
-func NewUnrecognisedResource(template *Template, awsType string) TemplateResource {
-	return TemplateResource{
-		template: template,
-		Definition: Resource{
-			ValidateFunc: func(tr TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
-			},
-		},
-	}
+type justATemplate struct {
+	template *parse.Template
 }
 
-type TemplateNestedResource struct {
-	template *Template
-	NestedResource
-	Properties map[string]interface{}
+func (t justATemplate) Template() *parse.Template {
+	return t.template
 }
 
-func (tr TemplateNestedResource) Property(name string) (interface{}, bool) {
-	val, ok := tr.Properties[name]
-	return val, ok
+func (justATemplate) Property(name string) (interface{}, bool) {
+	return nil, false
 }
 
-func (r TemplateNestedResource) Template() *Template {
-	return r.template
-}
-
-type Template struct {
-	Resources  map[string]TemplateResource
-	Parameters map[string]Parameter
-	Outputs    map[string]Output
-}
-
-func (t *Template) Validate() (bool, reporting.Reports) {
-	failures := make(reporting.Reports, 0, 100)
-
-	for logicalID, resource := range t.Resources {
-		if _, errs := resource.Validate([]string{"Resources", logicalID}); errs != nil {
-			failures = append(failures, errs...)
+func outputValidate(o parse.Output, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+	if o.Description != nil {
+		if _, ok := o.Description.(string); !ok {
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", append(context, "Description"))}
 		}
 	}
 
-	for parameterID, parameter := range t.Parameters {
-		if _, errs := parameter.Validate([]string{"Parameters", parameterID}); errs != nil {
-			failures = append(failures, errs...)
-		}
+	if _, errs := outputSchema.Validate(o.Value, justATemplate{template: template}, definitions, append(context, "Value")); errs != nil {
+		return reporting.ValidateOK, errs
 	}
 
-	for outputID, output := range t.Outputs {
-		if _, errs := output.Validate(t, []string{"Outputs", outputID}); errs != nil {
-			failures = append(failures, errs...)
-		}
-	}
-
-	if len(failures) == 0 {
-		return true, nil
-	}
-
-	return false, failures
+	return reporting.ValidateOK, nil
 }

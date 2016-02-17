@@ -1,8 +1,6 @@
-package schema
+package parse
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestOutputValidation(t *testing.T) {
 	template := &Template{

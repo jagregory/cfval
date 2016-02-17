@@ -4,7 +4,7 @@ import "github.com/jagregory/cfval/reporting"
 
 type FuncType struct {
 	Description string
-	Fn          func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports)
+	Fn          func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports)
 	CoercibleFn func(PropertyType) Coercion
 }
 
@@ -26,12 +26,12 @@ func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (ft FuncType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (ft FuncType) Validate(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if ft.Fn == nil {
 		panic("FuncType without Fn")
 	}
 
-	return ft.Fn(property, value, self, context)
+	return ft.Fn(property, value, self, definitions, context)
 }
 
 func (ft FuncType) String() string {

@@ -1,11 +1,48 @@
 package schema
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
+
+type ResourceDefinitions interface {
+	Lookup(awsType string) Resource
+	LookupParameter(awsType string) Schema
+}
+
+func NewResourceDefinitions(definitions map[string]func() Resource) ResourceDefinitions {
+	if definitions == nil {
+		definitions = make(map[string]func() Resource)
+	}
+
+	return externalResourceDefinitions{
+		definitions: definitions,
+	}
+}
+
+type externalResourceDefinitions struct {
+	definitions map[string]func() Resource
+}
+
+func (e externalResourceDefinitions) Lookup(awsType string) Resource {
+	ctor := e.definitions[awsType]
+
+	if ctor == nil {
+		return Resource{
+			ValidateFunc: func(tr parse.TemplateResource, context []string) (reporting.ValidateResult, reporting.Reports) {
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), context)}
+			},
+		}
+	}
+
+	return ctor()
+}
+
+func (externalResourceDefinitions) LookupParameter(awsType string) Schema {
+	return parameterTypeSchemas[awsType]
+}
 
 var parameterTypeSchemas = map[string]Schema{
 	"String": Schema{
@@ -110,30 +147,4 @@ var parameterTypeSchemas = map[string]Schema{
 		Type:  HostedZoneID,
 		Array: true,
 	},
-}
-
-type Parameter struct {
-	Schema
-}
-
-func (p *Parameter) UnmarshalJSON(b []byte) (err error) {
-	temp := struct {
-		Type string
-	}{}
-
-	if err = json.Unmarshal(b, &temp); err != nil {
-		panic("Unexpected type unmarshalling parameter")
-	}
-
-	if s, found := parameterTypeSchemas[temp.Type]; found {
-		p.Schema = s
-		return nil
-	}
-
-	return fmt.Errorf("Unexpected type for Parameter %s", temp.Type)
-}
-
-func (Parameter) Validate([]string) (bool, reporting.Reports) {
-	// TODO: parameter validation?
-	return true, nil
 }

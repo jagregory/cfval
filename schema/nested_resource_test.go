@@ -4,30 +4,38 @@ import (
 	"testing"
 
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 )
 
 func TestNestedResourceConstraints(t *testing.T) {
-	data := func(properties map[string]interface{}) TemplateResource {
-		return TemplateResource{
-			Definition: Resource{
-				Properties: Properties{
-					"Nested": Schema{
-						Type: NestedResource{
-							Properties: Properties{
-								"One": Schema{
-									Type: ValueString,
-								},
+	res := Resource{
+		Properties: Properties{
+			"Nested": Schema{
+				Type: NestedResource{
+					Properties: Properties{
+						"One": Schema{
+							Type: ValueString,
+						},
 
-								"Two": Schema{
-									Type:     ValueString,
-									Required: constraints.PropertyExists("One"),
-								},
-							},
+						"Two": Schema{
+							Type:     ValueString,
+							Required: constraints.PropertyExists("One"),
 						},
 					},
 				},
 			},
+		},
+	}
 
+	definitions := NewResourceDefinitions(map[string]func() Resource{
+		"TestResource": func() Resource {
+			return res
+		},
+	})
+
+	data := func(properties map[string]interface{}) parse.TemplateResource {
+		return parse.TemplateResource{
+			Type:       "TestResource",
 			Properties: properties,
 		}
 	}
@@ -37,7 +45,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 			"One": "abc",
 		},
 	}
-	if _, errs := data(twoMissing).Validate([]string{}); errs == nil {
+	if _, errs := res.Validate(data(twoMissing), definitions, []string{}); errs == nil {
 		t.Error("Should fail with missing Two parameter")
 	}
 
@@ -45,7 +53,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 		"One":    "abc",
 		"Nested": map[string]interface{}{},
 	}
-	if _, errs := data(oneInWrongPace).Validate([]string{}); errs == nil {
+	if _, errs := res.Validate(data(oneInWrongPace), definitions, []string{}); errs == nil {
 		t.Error("Should fail with missing Two parameter")
 	}
 
@@ -55,7 +63,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 			"Two": "abc",
 		},
 	}
-	if _, errs := data(allFine).Validate([]string{}); errs != nil {
+	if _, errs := res.Validate(data(allFine), definitions, []string{}); errs != nil {
 		t.Error("Should pass with One and Two", errs)
 	}
 }

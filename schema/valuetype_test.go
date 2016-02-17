@@ -3,39 +3,48 @@ package schema
 import (
 	"testing"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
 func TestValueTypeValidation(t *testing.T) {
+	res := Resource{
+		ReturnValue: Schema{
+			Type: ValueString,
+		},
+	}
+
+	definitions := NewResourceDefinitions(map[string]func() Resource{
+		"TestResource": func() Resource {
+			return res
+		},
+	})
+
 	property := Schema{Type: ValueString}
-	self := TemplateResource{
-		template: &Template{
-			Resources: map[string]TemplateResource{
-				"good": TemplateResource{
-					Definition: Resource{
-						ReturnValue: Schema{
-							Type: ValueString,
-						},
-					},
+	self := parse.TemplateResource{
+		Tmpl: &parse.Template{
+			Resources: map[string]parse.TemplateResource{
+				"good": parse.TemplateResource{
+					Type: "TestResource",
 				},
 			},
 		},
 	}
 	ctx := []string{}
 
-	if _, errs := ValueString.Validate(property, "abc", self, ctx); errs != nil {
+	if _, errs := ValueString.Validate(property, "abc", self, definitions, ctx); errs != nil {
 		t.Error("Should pass with valid String")
 	}
 
-	if _, errs := ValueString.Validate(property, 100, self, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, 100, self, definitions, ctx); errs == nil {
 		t.Error("Should fail with non-String")
 	}
 
-	if _, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "bad"}, self, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "bad"}, self, definitions, ctx); errs == nil {
 		t.Error("Should fail with invalid ref")
 	}
 
-	result, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "good"}, self, ctx)
+	result, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "good"}, self, definitions, ctx)
 	if errs != nil {
 		t.Error("Should pass with valid ref", errs)
 	}
@@ -45,7 +54,7 @@ func TestValueTypeValidation(t *testing.T) {
 
 	// TODO: test other builtins are correctly handled by valuetype
 
-	if _, errs := ValueString.Validate(property, map[string]interface{}{"something": "else"}, self, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, map[string]interface{}{"something": "else"}, self, definitions, ctx); errs == nil {
 		t.Error("Should fail with non-builtin map")
 	}
 }

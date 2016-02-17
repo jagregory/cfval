@@ -3,23 +3,30 @@ package route_53
 import (
 	"testing"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/schema"
 )
 
-// SubdivisionCode is the first to use HasProperty for looking up if a specific
-// value is set, so we should test it actually works.
 func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
-	template := &schema.Template{}
+	template := &parse.Template{}
 	context := []string{}
 
-	badCountry := schema.NewTemplateResource(template)
-	badCountry.Definition = schema.Resource{
+	res := schema.Resource{
 		Properties: schema.Properties{
 			"GeoLocation": schema.Schema{
 				Type: geoLocation,
 			},
 		},
 	}
+
+	definitions := schema.NewResourceDefinitions(map[string]func() schema.Resource{
+		"TestResource": func() schema.Resource {
+			return res
+		},
+	})
+
+	badCountry := parse.NewTemplateResource(template)
+	badCountry.Type = "TestResource"
 	badCountry.Properties = map[string]interface{}{
 		"GeoLocation": map[string]interface{}{
 			"SubdivisionCode": "AK",
@@ -27,14 +34,8 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		},
 	}
 
-	badSubdivision := schema.NewTemplateResource(template)
-	badSubdivision.Definition = schema.Resource{
-		Properties: schema.Properties{
-			"GeoLocation": schema.Schema{
-				Type: geoLocation,
-			},
-		},
-	}
+	badSubdivision := parse.NewTemplateResource(template)
+	badSubdivision.Type = "TestResource"
 	badSubdivision.Properties = map[string]interface{}{
 		"GeoLocation": map[string]interface{}{
 			"SubdivisionCode": "NSW",
@@ -42,14 +43,8 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		},
 	}
 
-	goodCombination := schema.NewTemplateResource(template)
-	goodCombination.Definition = schema.Resource{
-		Properties: schema.Properties{
-			"GeoLocation": schema.Schema{
-				Type: geoLocation,
-			},
-		},
-	}
+	goodCombination := parse.NewTemplateResource(template)
+	goodCombination.Type = "TestResource"
 	goodCombination.Properties = map[string]interface{}{
 		"GeoLocation": map[string]interface{}{
 			"SubdivisionCode": "AK",
@@ -57,15 +52,15 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		},
 	}
 
-	if _, errs := goodCombination.Validate(context); errs != nil {
+	if _, errs := res.Validate(goodCombination, definitions, context); errs != nil {
 		t.Error("Period should pass on a valid state with US as the country", errs)
 	}
 
-	if _, errs := badSubdivision.Validate(context); errs == nil {
+	if _, errs := res.Validate(badSubdivision, definitions, context); errs == nil {
 		t.Error("Period should fail on an invalid subdivision with US as the country")
 	}
 
-	if _, errs := badCountry.Validate(context); errs == nil {
+	if _, errs := res.Validate(badCountry, definitions, context); errs == nil {
 		t.Error("Period should fail when subdivision set without US as the country")
 	}
 }

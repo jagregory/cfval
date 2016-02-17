@@ -9,7 +9,10 @@ import (
 	"os"
 	"sort"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
+	"github.com/jagregory/cfval/resources"
+	"github.com/jagregory/cfval/schema"
 	"github.com/mitchellh/cli"
 )
 
@@ -127,7 +130,7 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	template, err := parseTemplateJSON(bytes, forgiving)
+	template, err := parse.ParseTemplateJSON(bytes, forgiving)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return 1
@@ -135,7 +138,7 @@ func (c ValidateCommand) Run(args []string) int {
 
 	fmt.Println(warningsAsErrors)
 
-	if ok, reports := template.Validate(); !ok {
+	if ok, reports := schema.TemplateValidate(template, schema.NewResourceDefinitions(resources.AwsTypes)); !ok {
 		stats := reports.Stats()
 
 		printReports(reports)

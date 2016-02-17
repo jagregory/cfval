@@ -1,6 +1,8 @@
 package route_53
 
 import (
+	"fmt"
+
 	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 	"github.com/jagregory/cfval/resources/common"
@@ -29,7 +31,8 @@ var geoLocation = NestedResource{
 		"SubdivisionCode": Schema{
 			Type:      subdivisionCode,
 			Conflicts: constraints.PropertyExists("ContinentCode"),
-			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+				fmt.Printf("%T\n", self)
 				if countryCode, found := self.Property("CountryCode"); found && countryCode != "US" {
 					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Can only be set when CountryCode is US", context)}
 				}

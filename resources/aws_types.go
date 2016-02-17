@@ -1,6 +1,5 @@
-package main
+package resources
 
-import "encoding/json"
 import (
 	"github.com/jagregory/cfval/resources/auto_scaling"
 	"github.com/jagregory/cfval/resources/cloud_front"
@@ -27,9 +26,7 @@ import (
 	"github.com/jagregory/cfval/schema"
 )
 
-type resourceCtor func() schema.Resource
-
-var typeCtors = map[string]resourceCtor{
+var AwsTypes = map[string]func() schema.Resource{
 	"AWS::AutoScaling::AutoScalingGroup":           auto_scaling.AutoScalingGroup,
 	"AWS::AutoScaling::LaunchConfiguration":        auto_scaling.LaunchConfiguration,
 	"AWS::AutoScaling::LifecycleHook":              auto_scaling.LifecycleHook,
@@ -159,42 +156,4 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::WAF::SqlInjectionMatchSet":               not_supported.SqlInjectionMatchSet,
 	"AWS::WAF::WebACL":                             not_supported.WebACL,
 	"AWS::WorkSpaces::Workspace":                   not_supported.Workspace,
-}
-
-func parseTemplateJSON(data []byte, forgiving bool) (*schema.Template, error) {
-	var temp struct {
-		Parameters map[string]schema.Parameter
-		Outputs    map[string]schema.Output
-		Resources  map[string]struct {
-			Type       string
-			Properties map[string]interface{}
-			Metadata   map[string]interface{}
-		}
-	}
-
-	err := json.Unmarshal(data, &temp)
-
-	if err != nil {
-		return nil, err
-	}
-
-	template := &schema.Template{
-		Resources: make(map[string]schema.TemplateResource),
-	}
-	template.Parameters = temp.Parameters
-	template.Outputs = temp.Outputs
-
-	for key, rawResource := range temp.Resources {
-		if ctor, ok := typeCtors[rawResource.Type]; ok {
-			tr := schema.NewTemplateResource(template)
-			tr.Definition = ctor()
-			tr.Properties = rawResource.Properties
-			tr.Metadata = rawResource.Metadata
-			template.Resources[key] = tr
-		} else if !forgiving {
-			template.Resources[key] = schema.NewUnrecognisedResource(template, rawResource.Type)
-		}
-	}
-
-	return template, nil
 }

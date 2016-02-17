@@ -3,18 +3,19 @@ package schema
 import (
 	"fmt"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
 // TODO: better name for this. It's either a TemplateResource or a "NestedTemplateResource"
 type SelfRepresentation interface {
-	Template() *Template
+	Template() *parse.Template
 	Property(name string) (interface{}, bool)
 }
 
 type Properties map[string]Schema
 
-func (p Properties) Validate(self SelfRepresentation, values map[string]interface{}, context []string) (reporting.Reports, map[string]bool) {
+func (p Properties) Validate(self SelfRepresentation, definitions ResourceDefinitions, values map[string]interface{}, context []string) (reporting.Reports, map[string]bool) {
 	failures := make(reporting.Reports, 0, len(p)*2)
 	visited := make(map[string]bool)
 
@@ -38,7 +39,7 @@ func (p Properties) Validate(self SelfRepresentation, values map[string]interfac
 			continue
 		}
 
-		if _, errs := schema.Validate(value, self, append(context, key)); errs != nil {
+		if _, errs := schema.Validate(value, self, definitions, append(context, key)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

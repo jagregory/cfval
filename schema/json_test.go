@@ -1,31 +1,46 @@
 package schema
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/jagregory/cfval/parse"
+)
 
 func TestJSONValidation(t *testing.T) {
 	p := Schema{
 		Type: JSON,
 	}
-	template := &Template{
-		Resources: map[string]TemplateResource{
-			"Resource1": TemplateResource{
-				Definition: Resource{
-					ReturnValue: Schema{
-						Type: ValueString,
-					},
+
+	definitions := NewResourceDefinitions(map[string]func() Resource{
+		"ResourceA": func() Resource {
+			return Resource{
+				ReturnValue: Schema{
+					Type: ValueString,
 				},
+			}
+		},
+
+		"ResourceB": func() Resource {
+			return Resource{
+				ReturnValue: Schema{
+					Type: ValueNumber,
+				},
+			}
+		},
+	})
+
+	template := &parse.Template{
+		Resources: map[string]parse.TemplateResource{
+			"Resource1": parse.TemplateResource{
+				Type: "ResourceA",
 			},
-			"Resource2": TemplateResource{
-				Definition: Resource{
-					ReturnValue: Schema{
-						Type: ValueNumber,
-					},
-				},
+			"Resource2": parse.TemplateResource{
+				Type: "ResourceB",
 			},
 		},
 	}
-	tr := TemplateResource{
-		template: template,
+	tr := parse.TemplateResource{
+		Tmpl: template,
 	}
 	ctx := []string{}
 
@@ -51,11 +66,11 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}
 
-	if _, errs := JSON.Validate(p, validRefs, tr, ctx); errs != nil {
+	if _, errs := JSON.Validate(p, validRefs, tr, definitions, ctx); errs != nil {
 		t.Error("Should pass with valid refs", errs)
 	}
 
-	if _, errs := JSON.Validate(p, invalidRefs, tr, ctx); errs == nil {
+	if _, errs := JSON.Validate(p, invalidRefs, tr, definitions, ctx); errs == nil {
 		t.Error("Should fail with invalid refs")
 	}
 }

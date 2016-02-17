@@ -46,10 +46,10 @@ func (vt ValueType) Describe() string {
 	return strings.TrimPrefix(vt.String(), "Value")
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(property, complex, self, context)
+			builtinResult, errs := ValidateBuiltinFns(property, complex, self, definitions, context)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}
