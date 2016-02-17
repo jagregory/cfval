@@ -19,6 +19,9 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 	return CoercionNever
 }
 
+// TODO: This is all a bit hairy. We shouldn't need to be creating the
+// 			 TemplateNestedResource here, ideally `self` should already refer to
+//			 one and value should already be a map[string]inteface{}
 func (res NestedResource) Validate(property Schema, value interface{}, self SelfRepresentation, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
 		tnr := TemplateNestedResource{
