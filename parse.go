@@ -9,6 +9,8 @@ import (
 	"github.com/jagregory/cfval/resources/cloud_watch"
 	"github.com/jagregory/cfval/resources/dynamo_db"
 	"github.com/jagregory/cfval/resources/ec2"
+	"github.com/jagregory/cfval/resources/ecs"
+	"github.com/jagregory/cfval/resources/efs"
 	"github.com/jagregory/cfval/resources/elasti_cache"
 	"github.com/jagregory/cfval/resources/elastic_beanstalk"
 	"github.com/jagregory/cfval/resources/elastic_load_balancing"
@@ -82,11 +84,11 @@ var typeCtors = map[string]resourceCtor{
 	"AWS::EC2::VPNConnectionRoute":                 ec2.VPNConnectionRoute,
 	"AWS::EC2::VPNGateway":                         ec2.VPNGateway,
 	"AWS::EC2::VPNGatewayRoutePropagation":         ec2.VPNGatewayRoutePropagation,
-	"AWS::ECS::Cluster":                            resources.Cluster,
-	"AWS::ECS::Service":                            resources.Service,
-	"AWS::ECS::TaskDefinition":                     resources.TaskDefinition,
-	"AWS::EFS::FileSystem":                         resources.FileSystem,
-	"AWS::EFS::MountTarget":                        resources.MountTarget,
+	"AWS::ECS::Cluster":                            ecs.Cluster,
+	"AWS::ECS::Service":                            ecs.Service,
+	"AWS::ECS::TaskDefinition":                     ecs.TaskDefinition,
+	"AWS::EFS::FileSystem":                         efs.FileSystem,
+	"AWS::EFS::MountTarget":                        efs.MountTarget,
 	"AWS::ElastiCache::CacheCluster":               elasti_cache.CacheCluster,
 	"AWS::ElastiCache::ParameterGroup":             elasti_cache.ParameterGroup,
 	"AWS::ElastiCache::ReplicationGroup":           elasti_cache.ReplicationGroup,

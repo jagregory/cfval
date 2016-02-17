@@ -128,41 +128,6 @@ func SimpleAD() Resource {
 	}
 }
 
-func Cluster() Resource {
-	return Resource{
-		AwsType:    "AWS::ECS::Cluster",
-		Properties: Properties{},
-	}
-}
-
-func Service() Resource {
-	return Resource{
-		AwsType:    "AWS::ECS::Service",
-		Properties: Properties{},
-	}
-}
-
-func TaskDefinition() Resource {
-	return Resource{
-		AwsType:    "AWS::ECS::TaskDefinition",
-		Properties: Properties{},
-	}
-}
-
-func FileSystem() Resource {
-	return Resource{
-		AwsType:    "AWS::EFS::FileSystem",
-		Properties: Properties{},
-	}
-}
-
-func MountTarget() Resource {
-	return Resource{
-		AwsType:    "AWS::EFS::MountTarget",
-		Properties: Properties{},
-	}
-}
-
 func Stream() Resource {
 	return Resource{
 		AwsType:    "AWS::Kinesis::Stream",
