@@ -9,11 +9,6 @@ import (
 
 func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	template := &parse.Template{}
-	ctx := schema.Context{
-		Template: template,
-		Path:     []string{},
-	}
-
 	res := schema.Resource{
 		Properties: schema.Properties{
 			"GeoLocation": schema.Schema{
@@ -21,10 +16,13 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 			},
 		},
 	}
-
-	definitions := schema.NewResourceDefinitions(map[string]schema.Resource{
-		"TestResource": res,
-	})
+	ctx := schema.Context{
+		Definitions: schema.NewResourceDefinitions(map[string]schema.Resource{
+			"TestResource": res,
+		}),
+		Path:     []string{},
+		Template: template,
+	}
 
 	badCountry := schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
@@ -56,15 +54,15 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(goodCombination, definitions, ctx); errs != nil {
+	if _, errs := res.Validate(goodCombination, ctx); errs != nil {
 		t.Error("Period should pass on a valid state with US as the country", errs)
 	}
 
-	if _, errs := res.Validate(badSubdivision, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(badSubdivision, ctx); errs == nil {
 		t.Error("Period should fail on an invalid subdivision with US as the country")
 	}
 
-	if _, errs := res.Validate(badCountry, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(badCountry, ctx); errs == nil {
 		t.Error("Period should fail when subdivision set without US as the country")
 	}
 }

@@ -13,23 +13,24 @@ func TestEnumValidation(t *testing.T) {
 		Resource{},
 	}
 	ctx := Context{
-		Template: template,
-		Path:     []string{},
+		Definitions: NewResourceDefinitions(nil),
+		Path:        []string{},
+		Template:    template,
 	}
 
 	enum := EnumValue{
 		Options: []string{"a", "b", "c"},
 	}
 
-	if _, errs := enum.Validate(Schema{}, "", self, nil, ctx); errs == nil {
+	if _, errs := enum.Validate(Schema{}, "", self, ctx); errs == nil {
 		t.Error("Enum should fail on empty string")
 	}
 
-	if _, errs := enum.Validate(Schema{}, "d", self, nil, ctx); errs == nil {
+	if _, errs := enum.Validate(Schema{}, "d", self, ctx); errs == nil {
 		t.Error("Enum should fail on anything which isn't a valid option")
 	}
 
-	if _, errs := enum.Validate(Schema{}, "b", self, nil, ctx); errs != nil {
+	if _, errs := enum.Validate(Schema{}, "b", self, ctx); errs != nil {
 		t.Error("Enum should pass on a valid option")
 	}
 }

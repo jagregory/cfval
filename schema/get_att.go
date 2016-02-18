@@ -15,7 +15,7 @@ func NewGetAtt(source Schema, definition []interface{}) GetAtt {
 	return GetAtt{source, definition}
 }
 
-func (ga GetAtt) Validate(definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (ga GetAtt) Validate(ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if len(ga.definition) != 2 {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(ga.definition)), ctx.Path)}
 	}
@@ -24,7 +24,7 @@ func (ga GetAtt) Validate(definitions ResourceDefinitions, ctx Context) (reporti
 	if resourceID, ok := ga.definition[0].(string); ok {
 		if resource, ok := template.Resources[resourceID]; ok {
 			if attributeName, ok := ga.definition[1].(string); ok {
-				definition := definitions.Lookup(resource.Type)
+				definition := ctx.Definitions.Lookup(resource.Type)
 				// TODO: BUG this line below should be attribute, ok
 				if resource, ok := definition.Attributes[attributeName]; ok {
 					// TODO: make this common, so GetAtt and others can use it

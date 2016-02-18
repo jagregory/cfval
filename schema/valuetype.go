@@ -51,10 +51,10 @@ func (ValueType) PropertyDefault(string) interface{} {
 	return nil
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(property, complex, self, definitions, ctx)
+			builtinResult, errs := ValidateBuiltinFns(property, complex, self, ctx)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}

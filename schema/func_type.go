@@ -7,7 +7,7 @@ import (
 
 type FuncType struct {
 	Description string
-	Fn          func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports)
+	Fn          func(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports)
 	CoercibleFn func(PropertyType) Coercion
 }
 
@@ -33,12 +33,12 @@ func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (ft FuncType) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (ft FuncType) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if ft.Fn == nil {
 		panic("FuncType without Fn")
 	}
 
-	return ft.Fn(property, value, self, definitions, ctx)
+	return ft.Fn(property, value, self, ctx)
 }
 
 func (ft FuncType) String() string {

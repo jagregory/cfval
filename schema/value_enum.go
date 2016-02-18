@@ -33,8 +33,8 @@ func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
-	if result, errs := ValueString.Validate(property, value, self, definitions, ctx); result == reporting.ValidateAbort || errs != nil {
+func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+	if result, errs := ValueString.Validate(property, value, self, ctx); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs
 	}
 

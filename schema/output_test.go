@@ -19,10 +19,6 @@ func TestOutputValidation(t *testing.T) {
 		},
 	}
 
-	definitions := NewResourceDefinitions(map[string]Resource{
-		"TestResource": res,
-	})
-
 	template := &parse.Template{
 		Resources: map[string]*parse.TemplateResource{
 			"MyResource": &parse.TemplateResource{
@@ -31,8 +27,11 @@ func TestOutputValidation(t *testing.T) {
 		},
 	}
 	ctx := Context{
-		Template: template,
+		Definitions: NewResourceDefinitions(map[string]Resource{
+			"TestResource": res,
+		}),
 		Path:     []string{},
+		Template: template,
 	}
 
 	goodResourceOutput := parse.Output{
@@ -52,19 +51,19 @@ func TestOutputValidation(t *testing.T) {
 		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}},
 	}
 
-	if _, errs := outputValidate(goodResourceOutput, definitions, ctx); errs != nil {
+	if _, errs := outputValidate(goodResourceOutput, ctx); errs != nil {
 		t.Error("Resource output should pass if resource exists", errs)
 	}
 
-	if _, errs := outputValidate(badResourceOutput, definitions, ctx); errs == nil {
+	if _, errs := outputValidate(badResourceOutput, ctx); errs == nil {
 		t.Error("Resource output should fail if resource doesn't exist", errs)
 	}
 
-	if _, errs := outputValidate(goodAttrOutput, definitions, ctx); errs != nil {
+	if _, errs := outputValidate(goodAttrOutput, ctx); errs != nil {
 		t.Error("GetAtt output should pass if resource exists", errs)
 	}
 
-	if _, errs := outputValidate(badAttrOutput, definitions, ctx); errs == nil {
+	if _, errs := outputValidate(badAttrOutput, ctx); errs == nil {
 		t.Error("GetAtt output should fail if resource doesn't exist", errs)
 	}
 }

@@ -24,10 +24,10 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 // TODO: This is all a bit hairy. We shouldn't need to be creating the
 // 			 TemplateNestedResource here, ideally `self` should already refer to
 //			 one and value should already be a map[string]inteface{}
-func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
 		tnr := parse.NewTemplateResource(ctx.Template, property.Type.Describe(), values)
-		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, definitions, ctx)
+		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, ctx)
 
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {

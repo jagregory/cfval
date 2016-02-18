@@ -20,7 +20,7 @@ func (p Properties) PropertyDefault(name string) interface{} {
 	return p[name].Default
 }
 
-func (p Properties) Validate(self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.Reports, map[string]bool) {
+func (p Properties) Validate(self constraints.CurrentResource, ctx Context) (reporting.Reports, map[string]bool) {
 	failures := make(reporting.Reports, 0, len(p)*2)
 	visited := make(map[string]bool)
 
@@ -44,7 +44,7 @@ func (p Properties) Validate(self constraints.CurrentResource, definitions Resou
 			continue
 		}
 
-		if _, errs := schema.Validate(value, self, definitions, ctx.Push(key)); errs != nil {
+		if _, errs := schema.Validate(value, self, ctx.Push(key)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

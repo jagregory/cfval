@@ -7,20 +7,6 @@ import (
 )
 
 func TestGetAtt(t *testing.T) {
-	definitions := NewResourceDefinitions(map[string]Resource{
-		"TestResource": Resource{
-			Attributes: Properties{
-				"InstanceId": Schema{
-					Type: InstanceID,
-				},
-
-				"Name": Schema{
-					Type: ValueString,
-				},
-			},
-		},
-	})
-
 	template := &parse.Template{
 		Resources: map[string]*parse.TemplateResource{
 			"MyResource": &parse.TemplateResource{
@@ -29,38 +15,51 @@ func TestGetAtt(t *testing.T) {
 		},
 	}
 	ctx := Context{
-		Template: template,
+		Definitions: NewResourceDefinitions(map[string]Resource{
+			"TestResource": Resource{
+				Attributes: Properties{
+					"InstanceId": Schema{
+						Type: InstanceID,
+					},
+
+					"Name": Schema{
+						Type: ValueString,
+					},
+				},
+			},
+		}),
 		Path:     []string{},
+		Template: template,
 	}
 	prop := Schema{
 		Type: InstanceID,
 	}
 
-	if _, errs := NewGetAtt(prop, nil).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, nil).Validate(ctx); errs == nil {
 		t.Error("Should fail when no arguments supplied", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"a", "b", "c"}).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"a", "b", "c"}).Validate(ctx); errs == nil {
 		t.Error("Should fail when too many arguments supplied", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"a"}).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"a"}).Validate(ctx); errs == nil {
 		t.Error("Should fail when too few arguments supplied", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"UnknownResource", "prop"}).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"UnknownResource", "prop"}).Validate(ctx); errs == nil {
 		t.Error("Should fail when invalid resource used", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "BadProp"}).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "BadProp"}).Validate(ctx); errs == nil {
 		t.Error("Should fail when invalid property used for type of resource", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "Name"}).Validate(definitions, ctx); errs == nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "Name"}).Validate(ctx); errs == nil {
 		t.Error("Should fail when valid property of wrong type", errs)
 	}
 
-	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "InstanceId"}).Validate(definitions, ctx); errs != nil {
+	if _, errs := NewGetAtt(prop, []interface{}{"MyResource", "InstanceId"}).Validate(ctx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
 	}
 }

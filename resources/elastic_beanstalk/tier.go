@@ -22,7 +22,7 @@ var tier = NestedResource{
 				Description: "Tier Type",
 				Options:     []string{"Standard", "SQS", "HTTP"},
 			},
-			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 				name, _ := self.PropertyValue("Name")
 
 				if name == "WebServer" && value != "Standard" {

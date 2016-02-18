@@ -11,20 +11,6 @@ func TestJSONValidation(t *testing.T) {
 		Type: JSON,
 	}
 
-	definitions := NewResourceDefinitions(map[string]Resource{
-		"ResourceA": Resource{
-			ReturnValue: Schema{
-				Type: ValueString,
-			},
-		},
-
-		"ResourceB": Resource{
-			ReturnValue: Schema{
-				Type: ValueNumber,
-			},
-		},
-	})
-
 	template := &parse.Template{
 		Resources: map[string]*parse.TemplateResource{
 			"Resource1": &parse.TemplateResource{
@@ -41,8 +27,21 @@ func TestJSONValidation(t *testing.T) {
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	ctx := Context{
-		Template: template,
+		Definitions: NewResourceDefinitions(map[string]Resource{
+			"ResourceA": Resource{
+				ReturnValue: Schema{
+					Type: ValueString,
+				},
+			},
+
+			"ResourceB": Resource{
+				ReturnValue: Schema{
+					Type: ValueNumber,
+				},
+			},
+		}),
 		Path:     []string{},
+		Template: template,
 	}
 
 	validRefs := map[string]interface{}{
@@ -67,11 +66,11 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}
 
-	if _, errs := JSON.Validate(p, validRefs, currentResource, definitions, ctx); errs != nil {
+	if _, errs := JSON.Validate(p, validRefs, currentResource, ctx); errs != nil {
 		t.Error("Should pass with valid refs", errs)
 	}
 
-	if _, errs := JSON.Validate(p, invalidRefs, currentResource, definitions, ctx); errs == nil {
+	if _, errs := JSON.Validate(p, invalidRefs, currentResource, ctx); errs == nil {
 		t.Error("Should fail with invalid refs")
 	}
 }

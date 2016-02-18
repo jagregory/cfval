@@ -15,12 +15,12 @@ type Resource struct {
 	ValidateFunc func(constraints.CurrentResource, Context) (reporting.ValidateResult, reporting.Reports)
 }
 
-func (rd Resource) Validate(tr constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (rd Resource) Validate(tr constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if rd.ValidateFunc != nil {
 		return rd.ValidateFunc(tr, ctx)
 	}
 
-	failures, visited := rd.Properties.Validate(tr, definitions, ctx)
+	failures, visited := rd.Properties.Validate(tr, ctx)
 
 	// Reject any properties we weren't expecting
 	for _, key := range tr.Properties() {

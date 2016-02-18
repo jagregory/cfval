@@ -12,7 +12,7 @@ type PropertyType interface {
 
 	// Validate checks that the property is valid, including any built-in function
 	// calls and stuff within the property.
-	Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports)
+	Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports)
 
 	// CoercibleTo will return true for types which the value of this property can
 	// be coerced into. e.g. A number can be coerced to a string

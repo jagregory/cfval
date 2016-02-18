@@ -48,12 +48,12 @@ func NewRef(source Schema, target string) Ref {
 	return Ref{source, target}
 }
 
-func (ref Ref) Validate(definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (ref Ref) Validate(ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if ctx.Template == nil {
 		panic("Template is nil")
 	}
 
-	target := ref.resolveTarget(definitions, ctx.Template)
+	target := ref.resolveTarget(ctx.Definitions, ctx.Template)
 	if target == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx.Path)}
 	}

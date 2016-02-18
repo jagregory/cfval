@@ -7,7 +7,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-func azModeValidate(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func azModeValidate(prop Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if str, ok := value.(string); ok {
 		if availabilityZones, ok := self.PropertyValue("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
@@ -19,12 +19,12 @@ func azModeValidate(prop Schema, value interface{}, self constraints.CurrentReso
 	return reporting.ValidateOK, nil
 }
 
-func numCacheNodesValidate(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func numCacheNodesValidate(prop Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if engine, ok := self.PropertyValue("Engine"); !ok || engine.(string) == "memcached" {
-		return IntegerRangeValidate(1, 20)(prop, value, self, definitions, ctx)
+		return IntegerRangeValidate(1, 20)(prop, value, self, ctx)
 	}
 
-	return SingleValueValidate(float64(1))(prop, value, self, definitions, ctx)
+	return SingleValueValidate(float64(1))(prop, value, self, ctx)
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
