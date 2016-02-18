@@ -5,37 +5,36 @@ import (
 	"strconv"
 
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
 var JSON FuncType
 
-func validateJSON(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func validateJSON(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	switch t := value.(type) {
 	case map[string]interface{}:
-		return validateJSONMap(property, t, self, template, definitions, path)
+		return validateJSONMap(property, t, self, definitions, ctx)
 	case []interface{}:
-		return validateJSONArray(property, t, self, template, definitions, path)
+		return validateJSONArray(property, t, self, definitions, ctx)
 	case string:
-		return ValueString.Validate(Schema{Type: ValueString}, t, self, template, definitions, path)
+		return ValueString.Validate(Schema{Type: ValueString}, t, self, definitions, ctx)
 	case float64:
-		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, self, template, definitions, path)
+		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, self, definitions, ctx)
 	case bool:
-		return ValueNumber.Validate(Schema{Type: ValueBool}, t, self, template, definitions, path)
+		return ValueNumber.Validate(Schema{Type: ValueBool}, t, self, definitions, ctx)
 	default:
 		panic(fmt.Sprintf("Unexpected JSON type %T", t))
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is not a JSON map", path)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is not a JSON map", ctx.Path)}
 }
 
-func validateJSONMap(property Schema, value map[string]interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func validateJSONMap(property Schema, value map[string]interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
 	// We pass a ValueString here as the property type so Refs etc... treat the
 	// JSON as an assignable string value rather than a complex type. Bit hacky.
-	builtinResult, errs := ValidateBuiltinFns(Schema{Type: ValueString}, value, template, self, definitions, path)
+	builtinResult, errs := ValidateBuiltinFns(Schema{Type: ValueString}, value, self, definitions, ctx)
 
 	if errs != nil {
 		failures = append(failures, errs...)
@@ -43,7 +42,7 @@ func validateJSONMap(property Schema, value map[string]interface{}, self constra
 		return reporting.ValidateAbort, nil
 	} else {
 		for k, v := range value {
-			if _, errs := validateJSON(property, v, self, template, definitions, append(path, k)); errs != nil {
+			if _, errs := validateJSON(property, v, self, definitions, ctx.Push(k)); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
@@ -56,11 +55,11 @@ func validateJSONMap(property Schema, value map[string]interface{}, self constra
 	return reporting.ValidateOK, failures
 }
 
-func validateJSONArray(property Schema, value []interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func validateJSONArray(property Schema, value []interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
 	for i, item := range value {
-		if _, errs := validateJSON(property, item, self, template, definitions, append(path, strconv.Itoa(i))); errs != nil {
+		if _, errs := validateJSON(property, item, self, definitions, ctx.Push(strconv.Itoa(i))); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

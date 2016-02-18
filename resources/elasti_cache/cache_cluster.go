@@ -2,17 +2,16 @@ package elasti_cache
 
 import (
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
 )
 
-func azModeValidate(prop Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func azModeValidate(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if str, ok := value.(string); ok {
 		if availabilityZones, ok := self.PropertyValue("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", path)}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", ctx.Path)}
 			}
 		}
 	}
@@ -20,12 +19,12 @@ func azModeValidate(prop Schema, value interface{}, self constraints.CurrentReso
 	return reporting.ValidateOK, nil
 }
 
-func numCacheNodesValidate(prop Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func numCacheNodesValidate(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if engine, ok := self.PropertyValue("Engine"); !ok || engine.(string) == "memcached" {
-		return IntegerRangeValidate(1, 20)(prop, value, self, template, definitions, path)
+		return IntegerRangeValidate(1, 20)(prop, value, self, definitions, ctx)
 	}
 
-	return SingleValueValidate(float64(1))(prop, value, self, template, definitions, path)
+	return SingleValueValidate(float64(1))(prop, value, self, definitions, ctx)
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html

@@ -4,11 +4,10 @@ import (
 	"strconv"
 
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
-type ValidateFunc func(Schema, interface{}, constraints.CurrentResource, *parse.Template, ResourceDefinitions, []string) (reporting.ValidateResult, reporting.Reports)
+type ValidateFunc func(Schema, interface{}, constraints.CurrentResource, ResourceDefinitions, Context) (reporting.ValidateResult, reporting.Reports)
 
 type Schema struct {
 	// Array is true when the expected value is an array of Type
@@ -49,7 +48,7 @@ func (s Schema) TargetType() PropertyType {
 	return s.Type
 }
 
-func (s Schema) Validate(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func (s Schema) Validate(value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 20)
 
 	if s.Array {
@@ -61,13 +60,13 @@ func (s Schema) Validate(value interface{}, self constraints.CurrentResource, te
 		// 	}
 		// } else {
 		for i, item := range value.([]interface{}) {
-			if _, errs := s.validateValue(item, self, template, definitions, append(path, strconv.Itoa(i))); errs != nil {
+			if _, errs := s.validateValue(item, self, definitions, ctx.Push(strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
 		// }
 	} else {
-		if _, errs := s.validateValue(value, self, template, definitions, path); errs != nil {
+		if _, errs := s.validateValue(value, self, definitions, ctx); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -80,10 +79,10 @@ func (s Schema) Validate(value interface{}, self constraints.CurrentResource, te
 //
 // This function is used for single value properties, and each item in array
 // properties.
-func (s Schema) validateValue(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func (s Schema) validateValue(value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
-	result, errs := s.Type.Validate(s, value, self, template, definitions, path)
+	result, errs := s.Type.Validate(s, value, self, definitions, ctx)
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever failures
 		// have been reported so far
@@ -96,7 +95,7 @@ func (s Schema) validateValue(value interface{}, self constraints.CurrentResourc
 	// validate tells us to, otherwise combining the results with any prior
 	// failures
 	if s.ValidateFunc != nil {
-		result, errs := s.ValidateFunc(s, value, self, template, definitions, path)
+		result, errs := s.ValidateFunc(s, value, self, definitions, ctx)
 		if result == reporting.ValidateAbort {
 			return reporting.ValidateOK, reporting.Safe(errs)
 		}

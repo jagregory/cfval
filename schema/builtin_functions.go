@@ -5,37 +5,36 @@ import (
 	"strconv"
 
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
-func ValidateBuiltinFns(s Schema, value map[string]interface{}, template *parse.Template, self constraints.CurrentResource, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func ValidateBuiltinFns(s Schema, value map[string]interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if ref, ok := value["Ref"]; ok {
 		if str, ok := ref.(string); ok {
-			return NewRef(s, str).Validate(template, definitions, append(path, "Ref"))
+			return NewRef(s, str).Validate(definitions, ctx.Push("Ref"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", ctx.Path)}
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
-		return validateJoin(join, self, template, definitions, append(path, "Fn::Join"))
+		return validateJoin(join, self, definitions, ctx.Push("Fn::Join"))
 	}
 
 	if getatt, ok := value["Fn::GetAtt"]; ok {
 		if arr, ok := getatt.([]interface{}); ok {
-			return NewGetAtt(s, arr).Validate(template, definitions, append(path, "GetAtt"))
+			return NewGetAtt(s, arr).Validate(definitions, ctx.Push("GetAtt"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", ctx.Path)}
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
-		return validateFindInMap(find, self, template, definitions, append(path, "Fn::FindInMap"))
+		return validateFindInMap(find, self, definitions, ctx.Push("Fn::FindInMap"))
 	}
 
 	if base64, ok := value["Fn::Base64"]; ok {
-		return validateBase64(base64, self, template, definitions, append(path, "Fn::Base64"))
+		return validateBase64(base64, self, definitions, ctx.Push("Fn::Base64"))
 	}
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here
@@ -43,19 +42,19 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, template *parse.
 }
 
 // TODO: Supported functions within a function
-func validateFindInMap(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func validateFindInMap(value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	find, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", ctx.Path)}
 	}
 
 	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), ctx.Path)}
 	}
 
 	mapName := find[0]
 	_, mapNameIsString := mapName.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, mapName, self, template, definitions, append(path, "0")); errs != nil {
+	if _, errs := ValueString.Validate(Schema{Type: ValueString}, mapName, self, definitions, ctx.Push("0")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -66,7 +65,7 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, temp
 
 	topLevelKey := find[1]
 	_, topLevelKeyIsString := topLevelKey.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, topLevelKey, self, template, definitions, append(path, "1")); errs != nil {
+	if _, errs := ValueString.Validate(Schema{Type: ValueString}, topLevelKey, self, definitions, ctx.Push("1")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -76,7 +75,7 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, temp
 
 	secondLevelKey := find[2]
 	_, secondLevelKeyIsString := secondLevelKey.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, secondLevelKey, self, template, definitions, append(path, "2")); errs != nil {
+	if _, errs := ValueString.Validate(Schema{Type: ValueString}, secondLevelKey, self, definitions, ctx.Push("2")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -87,30 +86,30 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, temp
 	return reporting.ValidateAbort, nil
 }
 
-func validateBase64(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
-	_, errs := ValueString.Validate(Schema{Type: ValueString}, value, self, template, definitions, path)
+func validateBase64(value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+	_, errs := ValueString.Validate(Schema{Type: ValueString}, value, self, definitions, ctx)
 	return reporting.ValidateAbort, errs
 }
 
-func validateJoin(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func validateJoin(value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), ctx.Path)}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), ctx.Path)}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), ctx.Path)}
 		}
 
 		failures := make(reporting.Reports, 0, len(parts))
 		for i, part := range parts {
-			if _, errs := ValueString.Validate(Schema{Type: ValueString}, part, self, template, definitions, append(path, "1", strconv.Itoa(i))); errs != nil {
+			if _, errs := ValueString.Validate(Schema{Type: ValueString}, part, self, definitions, ctx.Push("1", strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
@@ -122,5 +121,5 @@ func validateJoin(value interface{}, self constraints.CurrentResource, template 
 		return reporting.ValidateAbort, failures
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), path)}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), ctx.Path)}
 }

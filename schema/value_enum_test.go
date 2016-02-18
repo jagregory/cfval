@@ -12,21 +12,24 @@ func TestEnumValidation(t *testing.T) {
 		parse.NewTemplateResource(template, "", make(map[string]interface{})),
 		Resource{},
 	}
-	path := []string{}
+	ctx := Context{
+		Template: template,
+		Path:     []string{},
+	}
 
 	enum := EnumValue{
 		Options: []string{"a", "b", "c"},
 	}
 
-	if _, errs := enum.Validate(Schema{}, "", self, template, nil, path); errs == nil {
+	if _, errs := enum.Validate(Schema{}, "", self, nil, ctx); errs == nil {
 		t.Error("Enum should fail on empty string")
 	}
 
-	if _, errs := enum.Validate(Schema{}, "d", self, template, nil, path); errs == nil {
+	if _, errs := enum.Validate(Schema{}, "d", self, nil, ctx); errs == nil {
 		t.Error("Enum should fail on anything which isn't a valid option")
 	}
 
-	if _, errs := enum.Validate(Schema{}, "b", self, template, nil, path); errs != nil {
+	if _, errs := enum.Validate(Schema{}, "b", self, nil, ctx); errs != nil {
 		t.Error("Enum should pass on a valid option")
 	}
 }

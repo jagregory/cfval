@@ -5,14 +5,13 @@ import (
 	"regexp"
 
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
 func SingleValueValidate(expected interface{}) ValidateFunc {
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 		if value != expected {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), ctx.Path)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -25,8 +24,8 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 		panic(err)
 	}
 
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(property, value, self, template, definitions, path); result == reporting.ValidateAbort || errs != nil {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+		if result, errs := ValueString.Validate(property, value, self, definitions, ctx); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
@@ -34,20 +33,20 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 			return reporting.ValidateOK, nil
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(message, path)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(message, ctx.Path)}
 	}
 }
 
 func IntegerRangeValidate(start, end float64) ValidateFunc {
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueNumber.Validate(property, value, self, template, definitions, path); result == reporting.ValidateAbort || errs != nil {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+		if result, errs := ValueNumber.Validate(property, value, self, definitions, ctx); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
 		floatValue := value.(float64)
 
 		if floatValue < start || floatValue > end {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), ctx.Path)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -55,15 +54,15 @@ func IntegerRangeValidate(start, end float64) ValidateFunc {
 }
 
 func StringLengthValidate(min, max int) ValidateFunc {
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(property, value, self, template, definitions, path); result == reporting.ValidateAbort || errs != nil {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+		if result, errs := ValueString.Validate(property, value, self, definitions, ctx); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
 		str := value.(string)
 
 		if len(str) < min || len(str) > max {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), ctx.Path)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -71,13 +70,13 @@ func StringLengthValidate(min, max int) ValidateFunc {
 }
 
 func NumberOptions(numbers ...float64) ValidateFunc {
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 		for _, n := range numbers {
 			if n == value.(float64) {
 				return reporting.ValidateOK, nil
 			}
 		}
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), path)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), ctx.Path)}
 	}
 }
 
@@ -124,7 +123,7 @@ func contains(all []string, one string) bool {
 
 // TODO: fixme
 func FixedArrayValidate(options ...[]string) ValidateFunc {
-	return func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+	return func(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 		for _, option := range options {
 			if match(option, value.([]interface{})) {
 				return reporting.ValidateOK, nil
@@ -132,6 +131,6 @@ func FixedArrayValidate(options ...[]string) ValidateFunc {
 		}
 
 		// TODO: this should be []TypeString but we can't specify that with this method
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), path)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), ctx.Path)}
 	}
 }

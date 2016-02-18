@@ -6,23 +6,40 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func TemplateValidate(t *parse.Template, definitions ResourceDefinitions) (bool, reporting.Reports) {
+type Context struct {
+	Template *parse.Template
+	Path     []string
+}
+
+func (c Context) Push(path ...string) Context {
+	return Context{
+		Template: c.Template,
+		Path:     append(c.Path, path...),
+	}
+}
+
+func TemplateValidate(template *parse.Template, definitions ResourceDefinitions) (bool, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
-	for logicalID, resource := range t.Resources {
-		if _, errs := resourceValidate(*resource, definitions, []string{"Resources", logicalID}); errs != nil {
+	ctx := Context{
+		Template: template,
+		Path:     make([]string, 0, 25),
+	}
+
+	for logicalID, resource := range template.Resources {
+		if _, errs := resourceValidate(*resource, definitions, ctx.Push("Resources", logicalID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
 
-	for parameterID, parameter := range t.Parameters {
-		if _, errs := parameterValidate(parameter, []string{"Parameters", parameterID}); errs != nil {
+	for parameterID, parameter := range template.Parameters {
+		if _, errs := parameterValidate(parameter, ctx.Push("Parameters", parameterID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
 
-	for outputID, output := range t.Outputs {
-		if _, errs := outputValidate(output, t, definitions, []string{"Outputs", outputID}); errs != nil {
+	for outputID, output := range template.Outputs {
+		if _, errs := outputValidate(output, definitions, ctx.Push("Outputs", outputID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -34,20 +51,20 @@ func TemplateValidate(t *parse.Template, definitions ResourceDefinitions) (bool,
 	return false, failures
 }
 
-func parameterValidate(p parse.Parameter, path []string) (bool, reporting.Reports) {
+func parameterValidate(p parse.Parameter, ctx Context) (bool, reporting.Reports) {
 	// TODO: parameter validation?
 	return true, nil
 }
 
-func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
 	definition := definitions.Lookup(tr.Type)
-	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, tr.Template(), definitions, path); errs != nil {
+	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, definitions, ctx); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, tr.Tmpl, definitions, append(path, "Metadata")); errs != nil {
+	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, definitions, ctx.Push("Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
@@ -78,14 +95,14 @@ func (emptyCurrentResource) Properties() []string {
 	return []string{}
 }
 
-func outputValidate(o parse.Output, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func outputValidate(o parse.Output, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", append(path, "Description"))}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", ctx.Push("Description").Path)}
 		}
 	}
 
-	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, template, definitions, append(path, "Value")); errs != nil {
+	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, definitions, ctx.Push("Value")); errs != nil {
 		return reporting.ValidateOK, errs
 	}
 

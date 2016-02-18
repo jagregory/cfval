@@ -24,15 +24,15 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 // TODO: This is all a bit hairy. We shouldn't need to be creating the
 // 			 TemplateNestedResource here, ideally `self` should already refer to
 //			 one and value should already be a map[string]inteface{}
-func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
-		tnr := parse.NewTemplateResource(template, property.Type.Describe(), values)
-		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, template, definitions, path)
+		tnr := parse.NewTemplateResource(ctx.Template, property.Type.Describe(), values)
+		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, definitions, ctx)
 
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {
 			if !visited[key] {
-				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), append(path, key)))
+				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), ctx.Push(key).Path))
 			}
 		}
 
@@ -43,5 +43,5 @@ func (res NestedResource) Validate(property Schema, value interface{}, self cons
 		return reporting.ValidateOK, failures
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), path)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx.Path)}
 }

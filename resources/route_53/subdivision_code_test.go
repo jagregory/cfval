@@ -9,7 +9,10 @@ import (
 
 func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	template := &parse.Template{}
-	path := []string{}
+	ctx := schema.Context{
+		Template: template,
+		Path:     []string{},
+	}
 
 	res := schema.Resource{
 		Properties: schema.Properties{
@@ -53,15 +56,15 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(goodCombination, template, definitions, path); errs != nil {
+	if _, errs := res.Validate(goodCombination, definitions, ctx); errs != nil {
 		t.Error("Period should pass on a valid state with US as the country", errs)
 	}
 
-	if _, errs := res.Validate(badSubdivision, template, definitions, path); errs == nil {
+	if _, errs := res.Validate(badSubdivision, definitions, ctx); errs == nil {
 		t.Error("Period should fail on an invalid subdivision with US as the country")
 	}
 
-	if _, errs := res.Validate(badCountry, template, definitions, path); errs == nil {
+	if _, errs := res.Validate(badCountry, definitions, ctx); errs == nil {
 		t.Error("Period should fail when subdivision set without US as the country")
 	}
 }

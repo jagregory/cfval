@@ -9,7 +9,10 @@ import (
 
 func TestAutomaticFailoverEnabled(t *testing.T) {
 	template := &parse.Template{}
-	path := []string{}
+	ctx := schema.Context{
+		Template: template,
+		Path:     []string{},
+	}
 
 	res := ReplicationGroup
 
@@ -49,19 +52,19 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 		res,
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, template, definitions, path); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, definitions, ctx); errs == nil {
 		t.Error("Should fail if has engine less than 2.8")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, template, definitions, path); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, definitions, ctx); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, template, definitions, path); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, definitions, ctx); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, template, definitions, path); errs != nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, definitions, ctx); errs != nil {
 		t.Error("Should pass if engine is 2.8 or above and node type isn't t1 or t2")
 	}
 }

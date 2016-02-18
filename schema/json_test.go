@@ -40,7 +40,10 @@ func TestJSONValidation(t *testing.T) {
 	}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
-	path := []string{}
+	ctx := Context{
+		Template: template,
+		Path:     []string{},
+	}
 
 	validRefs := map[string]interface{}{
 		"One": map[string]interface{}{
@@ -64,11 +67,11 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}
 
-	if _, errs := JSON.Validate(p, validRefs, currentResource, template, definitions, path); errs != nil {
+	if _, errs := JSON.Validate(p, validRefs, currentResource, definitions, ctx); errs != nil {
 		t.Error("Should pass with valid refs", errs)
 	}
 
-	if _, errs := JSON.Validate(p, invalidRefs, currentResource, template, definitions, path); errs == nil {
+	if _, errs := JSON.Validate(p, invalidRefs, currentResource, definitions, ctx); errs == nil {
 		t.Error("Should fail with invalid refs")
 	}
 }

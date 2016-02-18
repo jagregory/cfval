@@ -12,24 +12,27 @@ func TestPeriodValidation(t *testing.T) {
 		parse.NewTemplateResource(template, "", make(map[string]interface{})),
 		Resource{},
 	}
-	path := []string{}
+	ctx := Context{
+		Template: template,
+		Path:     []string{},
+	}
 
-	if _, errs := Period.Validate(Schema{}, "", self, template, nil, path); errs == nil {
+	if _, errs := Period.Validate(Schema{}, "", self, nil, ctx); errs == nil {
 		t.Error("Period should fail on empty string")
 	}
 
-	if _, errs := Period.Validate(Schema{}, "abc", self, template, nil, path); errs == nil {
+	if _, errs := Period.Validate(Schema{}, "abc", self, nil, ctx); errs == nil {
 		t.Error("Period should fail on anything which isn't a period")
 	}
 
 	for _, ex := range []string{"0", "10", "119", "260"} {
-		if _, errs := Period.Validate(Schema{}, ex, self, template, nil, path); errs == nil {
+		if _, errs := Period.Validate(Schema{}, ex, self, nil, ctx); errs == nil {
 			t.Errorf("Period should fail on number which isn't a multiple of 60 (ex: %s)", ex)
 		}
 	}
 
 	for _, ex := range []string{"60", "120", "240"} {
-		if _, errs := Period.Validate(Schema{}, ex, self, template, nil, path); errs != nil {
+		if _, errs := Period.Validate(Schema{}, ex, self, nil, ctx); errs != nil {
 			t.Errorf("Cidr should pass with numbers which are multiples of 60 (ex: %s)", ex)
 		}
 	}

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -34,8 +33,8 @@ func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
-	if result, errs := ValueString.Validate(property, value, self, template, definitions, path); result == reporting.ValidateAbort || errs != nil {
+func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+	if result, errs := ValueString.Validate(property, value, self, definitions, ctx); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs
 	}
 
@@ -53,5 +52,5 @@ func (enum EnumValue) Validate(property Schema, value interface{}, self constrai
 		}
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), path)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), ctx.Path)}
 }

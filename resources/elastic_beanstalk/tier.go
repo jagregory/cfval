@@ -2,7 +2,6 @@ package elastic_beanstalk
 
 import (
 	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 	. "github.com/jagregory/cfval/schema"
 )
@@ -23,11 +22,11 @@ var tier = NestedResource{
 				Description: "Tier Type",
 				Options:     []string{"Standard", "SQS", "HTTP"},
 			},
-			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
+			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, definitions ResourceDefinitions, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 				name, _ := self.PropertyValue("Name")
 
 				if name == "WebServer" && value != "Standard" {
-					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be Standard for WebServer tier", path)}
+					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be Standard for WebServer tier", ctx.Path)}
 				}
 
 				return reporting.ValidateOK, nil
