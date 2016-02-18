@@ -9,26 +9,22 @@ import (
 func TemplateValidate(template *parse.Template, definitions ResourceDefinitions) (bool, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
-	ctx := Context{
-		Path:        make([]string, 0, 25),
-		Template:    template,
-		Definitions: definitions,
-	}
+	ctx := NewInitialContext(template, definitions)
 
 	for logicalID, resource := range template.Resources {
-		if _, errs := resourceValidate(*resource, ctx.Push("Resources", logicalID)); errs != nil {
+		if _, errs := resourceValidate(*resource, ContextAdd(ctx, "Resources", logicalID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
 
 	for parameterID, parameter := range template.Parameters {
-		if _, errs := parameterValidate(parameter, ctx.Push("Parameters", parameterID)); errs != nil {
+		if _, errs := parameterValidate(parameter, ContextAdd(ctx, "Parameters", parameterID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
 
 	for outputID, output := range template.Outputs {
-		if _, errs := outputValidate(output, ctx.Push("Outputs", outputID)); errs != nil {
+		if _, errs := outputValidate(output, ContextAdd(ctx, "Outputs", outputID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -47,13 +43,15 @@ func parameterValidate(p parse.Parameter, ctx Context) (bool, reporting.Reports)
 
 func resourceValidate(tr parse.TemplateResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
+	definition := ctx.Definitions().Lookup(tr.Type)
 
-	definition := ctx.Definitions.Lookup(tr.Type)
-	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, ctx); errs != nil {
+	resourceContext := NewResourceContext(ctx, ResourceWithDefinition{tr, definition})
+	if _, errs := definition.Validate(resourceContext); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, ctx.Push("Metadata")); errs != nil {
+	metadataContext := NewPropertyContext(resourceContext, Schema{Type: JSON})
+	if _, errs := JSON.Validate(tr.Metadata, PropertyContextAdd(metadataContext, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
@@ -87,11 +85,12 @@ func (emptyCurrentResource) Properties() []string {
 func outputValidate(o parse.Output, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", ctx.Push("Description").Path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", ContextAdd(ctx, "Description").Path())}
 		}
 	}
 
-	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, ctx.Push("Value")); errs != nil {
+	outputContext := NewResourceContext(ctx, emptyCurrentResource{})
+	if _, errs := outputSchema.Validate(o.Value, ResourceContextAdd(outputContext, "Value")); errs != nil {
 		return reporting.ValidateOK, errs
 	}
 

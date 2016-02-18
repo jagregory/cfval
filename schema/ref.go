@@ -40,34 +40,33 @@ type RefTarget interface {
 }
 
 type Ref struct {
-	source Schema
 	target string
 }
 
-func NewRef(source Schema, target string) Ref {
-	return Ref{source, target}
+func NewRef(target string) Ref {
+	return Ref{target}
 }
 
-func (ref Ref) Validate(ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ctx.Template == nil {
 		panic("Template is nil")
 	}
 
-	target := ref.resolveTarget(ctx.Definitions, ctx.Template)
+	target := ref.resolveTarget(ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx.Path())}
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), ctx.Path())}
 	}
 
-	switch targetType.CoercibleTo(ref.source.Type) {
+	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ref.source.Type.Describe()), ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx.Path())}
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ref.source.Type.Describe()), ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx.Path())}
 	}
 
 	return reporting.ValidateAbort, nil

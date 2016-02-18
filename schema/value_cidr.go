@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -14,13 +13,13 @@ const cidrPattern = `^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0
 var CIDR = FuncType{
 	Description: "CIDR",
 
-	Fn: func(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(property, value, self, ctx); result == reporting.ValidateAbort || errs != nil {
+	Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+		if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
 		if ok, _ := regexp.MatchString(cidrPattern, value.(string)); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Cidr %s is invalid", value), ctx.Path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Cidr %s is invalid", value), ctx.Path())}
 		}
 
 		return reporting.ValidateOK, nil

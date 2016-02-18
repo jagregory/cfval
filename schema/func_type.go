@@ -1,13 +1,10 @@
 package schema
 
-import (
-	"github.com/jagregory/cfval/constraints"
-	"github.com/jagregory/cfval/reporting"
-)
+import "github.com/jagregory/cfval/reporting"
 
 type FuncType struct {
 	Description string
-	Fn          func(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports)
+	Fn          func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports)
 	CoercibleFn func(PropertyType) Coercion
 }
 
@@ -33,12 +30,12 @@ func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (ft FuncType) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (ft FuncType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ft.Fn == nil {
 		panic("FuncType without Fn")
 	}
 
-	return ft.Fn(property, value, self, ctx)
+	return ft.Fn(value, ctx)
 }
 
 func (ft FuncType) String() string {

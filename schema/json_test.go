@@ -26,23 +26,19 @@ func TestJSONValidation(t *testing.T) {
 	}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
-	ctx := Context{
-		Definitions: NewResourceDefinitions(map[string]Resource{
-			"ResourceA": Resource{
-				ReturnValue: Schema{
-					Type: ValueString,
-				},
+	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
+		"ResourceA": Resource{
+			ReturnValue: Schema{
+				Type: ValueString,
 			},
+		},
 
-			"ResourceB": Resource{
-				ReturnValue: Schema{
-					Type: ValueNumber,
-				},
+		"ResourceB": Resource{
+			ReturnValue: Schema{
+				Type: ValueNumber,
 			},
-		}),
-		Path:     []string{},
-		Template: template,
-	}
+		},
+	}), currentResource, p)
 
 	validRefs := map[string]interface{}{
 		"One": map[string]interface{}{
@@ -66,11 +62,11 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}
 
-	if _, errs := JSON.Validate(p, validRefs, currentResource, ctx); errs != nil {
+	if _, errs := JSON.Validate(validRefs, ctx); errs != nil {
 		t.Error("Should pass with valid refs", errs)
 	}
 
-	if _, errs := JSON.Validate(p, invalidRefs, currentResource, ctx); errs == nil {
+	if _, errs := JSON.Validate(invalidRefs, ctx); errs == nil {
 		t.Error("Should fail with invalid refs")
 	}
 }

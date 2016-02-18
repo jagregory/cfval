@@ -7,7 +7,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-type ValidateFunc func(Schema, interface{}, constraints.CurrentResource, Context) (reporting.ValidateResult, reporting.Reports)
+type ValidateFunc func(interface{}, PropertyContext) (reporting.ValidateResult, reporting.Reports)
 
 type Schema struct {
 	// Array is true when the expected value is an array of Type
@@ -48,8 +48,9 @@ func (s Schema) TargetType() PropertyType {
 	return s.Type
 }
 
-func (s Schema) Validate(value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 20)
+	propertyContext := NewPropertyContext(ctx, s)
 
 	if s.Array {
 		// TODO: fix array-as-a-whole validation
@@ -60,13 +61,13 @@ func (s Schema) Validate(value interface{}, self constraints.CurrentResource, ct
 		// 	}
 		// } else {
 		for i, item := range value.([]interface{}) {
-			if _, errs := s.validateValue(item, self, ctx.Push(strconv.Itoa(i))); errs != nil {
+			if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
 		// }
 	} else {
-		if _, errs := s.validateValue(value, self, ctx); errs != nil {
+		if _, errs := validateValue(value, propertyContext); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -79,10 +80,10 @@ func (s Schema) Validate(value interface{}, self constraints.CurrentResource, ct
 //
 // This function is used for single value properties, and each item in array
 // properties.
-func (s Schema) validateValue(value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
-	result, errs := s.Type.Validate(s, value, self, ctx)
+	result, errs := ctx.Property().Type.Validate(value, ctx)
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever failures
 		// have been reported so far
@@ -94,8 +95,8 @@ func (s Schema) validateValue(value interface{}, self constraints.CurrentResourc
 	// run the custom validation if there is any, optionally bailing if the
 	// validate tells us to, otherwise combining the results with any prior
 	// failures
-	if s.ValidateFunc != nil {
-		result, errs := s.ValidateFunc(s, value, self, ctx)
+	if fn := ctx.Property().ValidateFunc; fn != nil {
+		result, errs := fn(value, ctx)
 		if result == reporting.ValidateAbort {
 			return reporting.ValidateOK, reporting.Safe(errs)
 		}

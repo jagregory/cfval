@@ -10,31 +10,31 @@ import (
 func TestAZModeValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := schema.Context{
-		Definitions: schema.NewResourceDefinitions(nil),
-		Path:        []string{},
-		Template:    template,
-	}
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil))
 
-	singleAZ := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "", map[string]interface{}{
-			"PreferredAvailabilityZones": []interface{}{"one"},
+	singleAZCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "", map[string]interface{}{
+				"PreferredAvailabilityZones": []interface{}{"one"},
+			}),
+			schema.Resource{},
 		}),
-		schema.Resource{},
-	}
+		prop)
 
-	multiAZ := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "", map[string]interface{}{
-			"PreferredAvailabilityZones": []interface{}{"one", "two"},
+	multiAZCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "", map[string]interface{}{
+				"PreferredAvailabilityZones": []interface{}{"one", "two"},
+			}),
+			schema.Resource{},
 		}),
-		schema.Resource{},
-	}
+		prop)
 
-	if _, errs := azModeValidate(prop, "cross-az", singleAZ, ctx); errs == nil {
+	if _, errs := azModeValidate("cross-az", singleAZCtx); errs == nil {
 		t.Error("Should fail if cross-az with single availability zone", errs)
 	}
 
-	if _, errs := azModeValidate(prop, "cross-az", multiAZ, ctx); errs != nil {
+	if _, errs := azModeValidate("cross-az", multiAZCtx); errs != nil {
 		t.Error("Should pass if cross-az with multiple availability zones", errs)
 	}
 }
@@ -42,43 +42,43 @@ func TestAZModeValidate(t *testing.T) {
 func TestNumCacheNodesValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := schema.Context{
-		Definitions: schema.NewResourceDefinitions(nil),
-		Path:        []string{},
-		Template:    template,
-	}
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil))
 
-	redis := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "", map[string]interface{}{
-			"Engine": "redis",
+	redisCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "", map[string]interface{}{
+				"Engine": "redis",
+			}),
+			schema.Resource{},
 		}),
-		schema.Resource{},
-	}
+		prop)
 
-	memcached := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "", map[string]interface{}{
-			"Engine": "memcached",
+	memcachedCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "", map[string]interface{}{
+				"Engine": "memcached",
+			}),
+			schema.Resource{},
 		}),
-		schema.Resource{},
-	}
+		prop)
 
-	if _, errs := numCacheNodesValidate(prop, float64(1), redis, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(float64(1), redisCtx); errs != nil {
 		t.Error("Should pass with 1 redis node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(2), redis, ctx); errs == nil {
+	if _, errs := numCacheNodesValidate(float64(2), redisCtx); errs == nil {
 		t.Error("Should fail with more than 1 redis node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(1), memcached, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(float64(1), memcachedCtx); errs != nil {
 		t.Error("Should pass with 1 memcached node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(20), memcached, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(float64(20), memcachedCtx); errs != nil {
 		t.Error("Should pass with 20 memcached nodes", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(21), memcached, ctx); errs == nil {
+	if _, errs := numCacheNodesValidate(float64(21), memcachedCtx); errs == nil {
 		t.Error("Should fail with 21 memcached nodes", errs)
 	}
 }

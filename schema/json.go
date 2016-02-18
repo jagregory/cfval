@@ -4,37 +4,38 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
 var JSON FuncType
 
-func validateJSON(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	switch t := value.(type) {
 	case map[string]interface{}:
-		return validateJSONMap(property, t, self, ctx)
+		return validateJSONMap(t, ctx)
 	case []interface{}:
-		return validateJSONArray(property, t, self, ctx)
+		return validateJSONArray(t, ctx)
 	case string:
-		return ValueString.Validate(Schema{Type: ValueString}, t, self, ctx)
+		stringItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
+		return ValueString.Validate(t, stringItemContext)
 	case float64:
-		return ValueNumber.Validate(Schema{Type: ValueNumber}, t, self, ctx)
+		numberItemContext := NewPropertyContext(ctx, Schema{Type: ValueNumber})
+		return ValueNumber.Validate(t, numberItemContext)
 	case bool:
-		return ValueNumber.Validate(Schema{Type: ValueBool}, t, self, ctx)
+		boolItemContext := NewPropertyContext(ctx, Schema{Type: ValueBool})
+		return ValueNumber.Validate(t, boolItemContext)
 	default:
 		panic(fmt.Sprintf("Unexpected JSON type %T", t))
 	}
-
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is not a JSON map", ctx.Path)}
 }
 
-func validateJSONMap(property Schema, value map[string]interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateJSONMap(value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
+	stringItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
 
 	// We pass a ValueString here as the property type so Refs etc... treat the
 	// JSON as an assignable string value rather than a complex type. Bit hacky.
-	builtinResult, errs := ValidateBuiltinFns(Schema{Type: ValueString}, value, self, ctx)
+	builtinResult, errs := ValidateBuiltinFns(value, stringItemContext)
 
 	if errs != nil {
 		failures = append(failures, errs...)
@@ -42,7 +43,7 @@ func validateJSONMap(property Schema, value map[string]interface{}, self constra
 		return reporting.ValidateAbort, nil
 	} else {
 		for k, v := range value {
-			if _, errs := validateJSON(property, v, self, ctx.Push(k)); errs != nil {
+			if _, errs := validateJSON(v, PropertyContextAdd(stringItemContext, k)); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
@@ -55,11 +56,11 @@ func validateJSONMap(property Schema, value map[string]interface{}, self constra
 	return reporting.ValidateOK, failures
 }
 
-func validateJSONArray(property Schema, value []interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateJSONArray(value []interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
 	for i, item := range value {
-		if _, errs := validateJSON(property, item, self, ctx.Push(strconv.Itoa(i))); errs != nil {
+		if _, errs := validateJSON(item, PropertyContextAdd(ctx, strconv.Itoa(i))); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

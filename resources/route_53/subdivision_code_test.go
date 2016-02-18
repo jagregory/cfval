@@ -16,15 +16,11 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 			},
 		},
 	}
-	ctx := schema.Context{
-		Definitions: schema.NewResourceDefinitions(map[string]schema.Resource{
-			"TestResource": res,
-		}),
-		Path:     []string{},
-		Template: template,
-	}
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
+	}))
 
-	badCountry := schema.ResourceWithDefinition{
+	badCountryCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "AK",
@@ -32,9 +28,9 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 			},
 		}),
 		res,
-	}
+	})
 
-	badSubdivision := schema.ResourceWithDefinition{
+	badSubdivisionCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "NSW",
@@ -42,9 +38,9 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 			},
 		}),
 		res,
-	}
+	})
 
-	goodCombination := schema.ResourceWithDefinition{
+	goodCombinationCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "AK",
@@ -52,17 +48,17 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 			},
 		}),
 		res,
-	}
+	})
 
-	if _, errs := res.Validate(goodCombination, ctx); errs != nil {
+	if _, errs := res.Validate(goodCombinationCtx); errs != nil {
 		t.Error("Period should pass on a valid state with US as the country", errs)
 	}
 
-	if _, errs := res.Validate(badSubdivision, ctx); errs == nil {
+	if _, errs := res.Validate(badSubdivisionCtx); errs == nil {
 		t.Error("Period should fail on an invalid subdivision with US as the country")
 	}
 
-	if _, errs := res.Validate(badCountry, ctx); errs == nil {
+	if _, errs := res.Validate(badCountryCtx); errs == nil {
 		t.Error("Period should fail when subdivision set without US as the country")
 	}
 }

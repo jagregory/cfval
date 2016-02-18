@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -33,8 +32,8 @@ func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
-	if result, errs := ValueString.Validate(property, value, self, ctx); result == reporting.ValidateAbort || errs != nil {
+func (enum EnumValue) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs
 	}
 
@@ -52,5 +51,5 @@ func (enum EnumValue) Validate(property Schema, value interface{}, self constrai
 		}
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), ctx.Path)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), ctx.Path())}
 }

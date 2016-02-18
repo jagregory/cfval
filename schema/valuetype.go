@@ -3,7 +3,6 @@ package schema
 import (
 	"strings"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -51,10 +50,10 @@ func (ValueType) PropertyDefault(string) interface{} {
 	return nil
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(property, complex, self, ctx)
+			builtinResult, errs := ValidateBuiltinFns(complex, ctx)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}
@@ -63,10 +62,10 @@ func (vt ValueType) Validate(property Schema, value interface{}, self constraint
 				return reporting.ValidateAbort, nil
 			}
 
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", ctx.Path)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", ctx.Path())}
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, ctx.Path)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, ctx.Path())}
 	}
 
 	return reporting.ValidateOK, nil

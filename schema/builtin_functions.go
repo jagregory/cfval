@@ -4,37 +4,36 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/reporting"
 )
 
-func ValidateBuiltinFns(s Schema, value map[string]interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ref, ok := value["Ref"]; ok {
 		if str, ok := ref.(string); ok {
-			return NewRef(s, str).Validate(ctx.Push("Ref"))
+			return NewRef(str).Validate(PropertyContextAdd(ctx, "Ref"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", ctx.Path())}
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
-		return validateJoin(join, self, ctx.Push("Fn::Join"))
+		return validateJoin(join, PropertyContextAdd(ctx, "Fn::Join"))
 	}
 
 	if getatt, ok := value["Fn::GetAtt"]; ok {
 		if arr, ok := getatt.([]interface{}); ok {
-			return NewGetAtt(s, arr).Validate(ctx.Push("GetAtt"))
+			return NewGetAtt(arr).Validate(PropertyContextAdd(ctx, "GetAtt"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", ctx.Path())}
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
-		return validateFindInMap(find, self, ctx.Push("Fn::FindInMap"))
+		return validateFindInMap(find, PropertyContextAdd(ctx, "Fn::FindInMap"))
 	}
 
 	if base64, ok := value["Fn::Base64"]; ok {
-		return validateBase64(base64, self, ctx.Push("Fn::Base64"))
+		return validateBase64(base64, PropertyContextAdd(ctx, "Fn::Base64"))
 	}
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here
@@ -42,19 +41,21 @@ func ValidateBuiltinFns(s Schema, value map[string]interface{}, self constraints
 }
 
 // TODO: Supported functions within a function
-func validateFindInMap(value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateFindInMap(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	find, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", ctx.Path())}
 	}
 
 	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), ctx.Path)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), ctx.Path())}
 	}
+
+	findInMapItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
 
 	mapName := find[0]
 	_, mapNameIsString := mapName.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, mapName, self, ctx.Push("0")); errs != nil {
+	if _, errs := ValueString.Validate(mapName, PropertyContextAdd(findInMapItemContext, "0")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -65,7 +66,7 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, ctx 
 
 	topLevelKey := find[1]
 	_, topLevelKeyIsString := topLevelKey.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, topLevelKey, self, ctx.Push("1")); errs != nil {
+	if _, errs := ValueString.Validate(topLevelKey, PropertyContextAdd(findInMapItemContext, "1")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -75,7 +76,7 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, ctx 
 
 	secondLevelKey := find[2]
 	_, secondLevelKeyIsString := secondLevelKey.(string)
-	if _, errs := ValueString.Validate(Schema{Type: ValueString}, secondLevelKey, self, ctx.Push("2")); errs != nil {
+	if _, errs := ValueString.Validate(secondLevelKey, PropertyContextAdd(findInMapItemContext, "2")); errs != nil {
 		return reporting.ValidateAbort, errs
 	}
 
@@ -86,30 +87,32 @@ func validateFindInMap(value interface{}, self constraints.CurrentResource, ctx 
 	return reporting.ValidateAbort, nil
 }
 
-func validateBase64(value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
-	_, errs := ValueString.Validate(Schema{Type: ValueString}, value, self, ctx)
+func validateBase64(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	base64ItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
+	_, errs := ValueString.Validate(value, base64ItemContext)
 	return reporting.ValidateAbort, errs
 }
 
-func validateJoin(value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func validateJoin(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), ctx.Path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), ctx.Path())}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), ctx.Path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), ctx.Path())}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), ctx.Path)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), ctx.Path())}
 		}
 
+		joinItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
 		failures := make(reporting.Reports, 0, len(parts))
 		for i, part := range parts {
-			if _, errs := ValueString.Validate(Schema{Type: ValueString}, part, self, ctx.Push("1", strconv.Itoa(i))); errs != nil {
+			if _, errs := ValueString.Validate(part, PropertyContextAdd(joinItemContext, "1", strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
@@ -121,5 +124,5 @@ func validateJoin(value interface{}, self constraints.CurrentResource, ctx Conte
 		return reporting.ValidateAbort, failures
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), ctx.Path)}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), ctx.Path())}
 }

@@ -10,59 +10,63 @@ import (
 func TestAutomaticFailoverEnabled(t *testing.T) {
 	template := &parse.Template{}
 	res := ReplicationGroup
-	ctx := schema.Context{
-		Definitions: schema.NewResourceDefinitions(map[string]schema.Resource{
-			"TestResource": res,
-		}),
-		Path:     []string{},
-		Template: template,
-	}
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
+	}))
 
-	badVersion := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
-			"EngineVersion": "2.7",
-			"CacheNodeType": "cache.m3.medium",
+	badVersionCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+				"EngineVersion": "2.7",
+				"CacheNodeType": "cache.m3.medium",
+			}),
+			res,
 		}),
-		res,
-	}
+		schema.Schema{})
 
-	badNodeTypeT1 := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
-			"EngineVersion": "2.8",
-			"CacheNodeType": "cache.t1.micro",
+	badNodeTypeT1Ctx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+				"EngineVersion": "2.8",
+				"CacheNodeType": "cache.t1.micro",
+			}),
+			res,
 		}),
-		res,
-	}
+		schema.Schema{})
 
-	badNodeTypeT2 := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
-			"EngineVersion": "2.8",
-			"CacheNodeType": "cache.t2.micro",
+	badNodeTypeT2Ctx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+				"EngineVersion": "2.8",
+				"CacheNodeType": "cache.t2.micro",
+			}),
+			res,
 		}),
-		res,
-	}
+		schema.Schema{})
 
-	good := schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
-			"EngineVersion": "2.8",
-			"CacheNodeType": "cache.m3.medium",
+	goodCtx := schema.NewPropertyContext(
+		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
+			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+				"EngineVersion": "2.8",
+				"CacheNodeType": "cache.m3.medium",
+			}),
+			res,
 		}),
-		res,
-	}
+		schema.Schema{})
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, ctx); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(true, badVersionCtx); errs == nil {
 		t.Error("Should fail if has engine less than 2.8")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, ctx); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(true, badNodeTypeT1Ctx); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, ctx); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(true, badNodeTypeT2Ctx); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, ctx); errs != nil {
+	if _, errs := automaticFailoverEnabledValidation(true, goodCtx); errs != nil {
 		t.Error("Should pass if engine is 2.8 or above and node type isn't t1 or t2")
 	}
 }

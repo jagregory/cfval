@@ -7,11 +7,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-func azModeValidate(prop Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func azModeValidate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if str, ok := value.(string); ok {
-		if availabilityZones, ok := self.PropertyValue("PreferredAvailabilityZones"); ok {
+		if availabilityZones, ok := ctx.CurrentResource().PropertyValue("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", ctx.Path)}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", ctx.Path())}
 			}
 		}
 	}
@@ -19,12 +19,12 @@ func azModeValidate(prop Schema, value interface{}, self constraints.CurrentReso
 	return reporting.ValidateOK, nil
 }
 
-func numCacheNodesValidate(prop Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
-	if engine, ok := self.PropertyValue("Engine"); !ok || engine.(string) == "memcached" {
-		return IntegerRangeValidate(1, 20)(prop, value, self, ctx)
+func numCacheNodesValidate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	if engine, ok := ctx.CurrentResource().PropertyValue("Engine"); !ok || engine.(string) == "memcached" {
+		return IntegerRangeValidate(1, 20)(value, ctx)
 	}
 
-	return SingleValueValidate(float64(1))(prop, value, self, ctx)
+	return SingleValueValidate(float64(1))(value, ctx)
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html

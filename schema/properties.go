@@ -3,7 +3,6 @@ package schema
 import (
 	"fmt"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -20,9 +19,11 @@ func (p Properties) PropertyDefault(name string) interface{} {
 	return p[name].Default
 }
 
-func (p Properties) Validate(self constraints.CurrentResource, ctx Context) (reporting.Reports, map[string]bool) {
+func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string]bool) {
 	failures := make(reporting.Reports, 0, len(p)*2)
 	visited := make(map[string]bool)
+
+	self := ctx.CurrentResource()
 
 	for key, schema := range p {
 		visited[key] = true
@@ -30,12 +31,12 @@ func (p Properties) Validate(self constraints.CurrentResource, ctx Context) (rep
 
 		// Validate conflicting properties
 		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), ctx.Push(key).Path))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), ResourceContextAdd(ctx, key).Path()))
 		}
 
 		// Validate Required
 		if value == nil && schema.Required != nil && schema.Required.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), ctx.Push(key).Path))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), ResourceContextAdd(ctx, key).Path()))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and
@@ -44,7 +45,7 @@ func (p Properties) Validate(self constraints.CurrentResource, ctx Context) (rep
 			continue
 		}
 
-		if _, errs := schema.Validate(value, self, ctx.Push(key)); errs != nil {
+		if _, errs := schema.Validate(value, ResourceContextAdd(ctx, key)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

@@ -3,7 +3,6 @@ package schema
 import (
 	"fmt"
 
-	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -24,15 +23,18 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 // TODO: This is all a bit hairy. We shouldn't need to be creating the
 // 			 TemplateNestedResource here, ideally `self` should already refer to
 //			 one and value should already be a map[string]inteface{}
-func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, ctx Context) (reporting.ValidateResult, reporting.Reports) {
+func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
-		tnr := parse.NewTemplateResource(ctx.Template, property.Type.Describe(), values)
-		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, ctx)
+		property := ctx.Property()
+		tnr := parse.NewTemplateResource(ctx.Template(), property.Type.Describe(), values)
+
+		nestedResourceContext := NewResourceContext(ctx, ResourceWithDefinition{tnr, property.Type})
+		failures, visited := res.Properties.Validate(nestedResourceContext)
 
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {
 			if !visited[key] {
-				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), ctx.Push(key).Path))
+				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), PropertyContextAdd(ctx, key).Path()))
 			}
 		}
 
@@ -43,5 +45,5 @@ func (res NestedResource) Validate(property Schema, value interface{}, self cons
 		return reporting.ValidateOK, failures
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx.Path)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx.Path())}
 }

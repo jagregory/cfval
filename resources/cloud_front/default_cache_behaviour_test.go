@@ -11,8 +11,12 @@ func TestAllowedMethodsFixedArrays(t *testing.T) {
 	res := Distribution
 	template := &parse.Template{}
 
-	testCFDistribution := func(allowedMethods []interface{}) schema.ResourceWithDefinition {
-		return schema.ResourceWithDefinition{
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
+		"TestResource": res,
+	}))
+
+	testCFDistribution := func(allowedMethods []interface{}) schema.ResourceContext {
+		return schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
 			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
 				"DistributionConfig": map[string]interface{}{
 					"Enabled": true,
@@ -36,30 +40,22 @@ func TestAllowedMethodsFixedArrays(t *testing.T) {
 				},
 			}),
 			res,
-		}
+		})
 	}
 
-	ctx := schema.Context{
-		Definitions: schema.NewResourceDefinitions(map[string]schema.Resource{
-			"TestResource": res,
-		}),
-		Path:     []string{},
-		Template: template,
-	}
-
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"HEAD", "GET"}), ctx); errs != nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"HEAD", "GET"})); errs != nil {
 		t.Error("Should pass with expected array", errs)
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD"}), ctx); errs != nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD"})); errs != nil {
 		t.Error("Should pass with expected array in different order", errs)
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"DELETE", "GET", "HEAD"}), ctx); errs == nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"DELETE", "GET", "HEAD"})); errs == nil {
 		t.Error("Should fail with random subset")
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD", "somethingElse"}), ctx); errs == nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD", "somethingElse"})); errs == nil {
 		t.Error("Should fail with unexpected item")
 	}
 }
