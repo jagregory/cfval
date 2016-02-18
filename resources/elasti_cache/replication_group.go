@@ -10,11 +10,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-func automaticFailoverEnabledValidation(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func automaticFailoverEnabledValidation(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	if version, found := self.PropertyValue("EngineVersion"); found {
 		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
 			if versionNumber < 2.8 {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", context)}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", path)}
 			}
 		}
 	}
@@ -22,7 +22,7 @@ func automaticFailoverEnabledValidation(property Schema, value interface{}, self
 	if nodeType, found := self.PropertyValue("CacheNodeType"); found {
 		split := strings.Split(nodeType.(string), ".")
 		if split[1] == "t1" || split[1] == "t2" {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", path)}
 		}
 	}
 
@@ -117,10 +117,10 @@ var ReplicationGroup = Resource{
 		"NumCacheClusters": Schema{
 			Type:     ValueNumber,
 			Required: constraints.Always,
-			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+			ValidateFunc: func(prop Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 				if val, ok := self.PropertyValue("AutomaticFailoverEnabled"); ok && val.(bool) == true {
 					if value.(float64) <= 1 {
-						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", context)}
+						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", path)}
 					}
 				}
 

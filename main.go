@@ -16,11 +16,11 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-type ByContext reporting.Reports
+type ByPath reporting.Reports
 
-func (a ByContext) Len() int           { return len(a) }
-func (a ByContext) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByContext) Less(i, j int) bool { return a[i].ContextReadable < a[j].ContextReadable }
+func (a ByPath) Len() int           { return len(a) }
+func (a ByPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByPath) Less(i, j int) bool { return a[i].PathReadable < a[j].PathReadable }
 
 var ui = &cli.ColoredUi{
 	InfoColor:  cli.UiColorNone,
@@ -34,22 +34,22 @@ var ui = &cli.ColoredUi{
 }
 
 func printReports(reports reporting.Reports) {
-	sort.Sort(ByContext(reports))
+	sort.Sort(ByPath(reports))
 
 	maxLength := 0
 	for _, report := range reports {
-		context := report.ContextReadable
-		if len(context) > maxLength {
-			maxLength = len(context)
+		path := report.PathReadable
+		if len(path) > maxLength {
+			maxLength = len(path)
 		}
 	}
 
 	for _, report := range reports {
-		context := report.ContextReadable
+		path := report.PathReadable
 
-		str := context
+		str := path
 		str += " "
-		for i := 0; i < maxLength-len(context); i++ {
+		for i := 0; i < maxLength-len(path); i++ {
 			str += "."
 		}
 		str += "... "

@@ -49,25 +49,25 @@ func (s Schema) TargetType() PropertyType {
 	return s.Type
 }
 
-func (s Schema) Validate(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (s Schema) Validate(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 20)
 
 	if s.Array {
 		// TODO: fix array-as-a-whole validation
 		// if s.ArrayValidateFunc != nil {
-		// 	if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, context); !ok {
+		// 	if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, path); !ok {
 		// 		failures = append(failures, errs...)
 		// 		pass = false
 		// 	}
 		// } else {
 		for i, item := range value.([]interface{}) {
-			if _, errs := s.validateValue(item, self, template, definitions, append(context, strconv.Itoa(i))); errs != nil {
+			if _, errs := s.validateValue(item, self, template, definitions, append(path, strconv.Itoa(i))); errs != nil {
 				failures = append(failures, errs...)
 			}
 		}
 		// }
 	} else {
-		if _, errs := s.validateValue(value, self, template, definitions, context); errs != nil {
+		if _, errs := s.validateValue(value, self, template, definitions, path); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}
@@ -80,10 +80,10 @@ func (s Schema) Validate(value interface{}, self constraints.CurrentResource, te
 //
 // This function is used for single value properties, and each item in array
 // properties.
-func (s Schema) validateValue(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (s Schema) validateValue(value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
-	result, errs := s.Type.Validate(s, value, self, template, definitions, context)
+	result, errs := s.Type.Validate(s, value, self, template, definitions, path)
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever failures
 		// have been reported so far
@@ -96,7 +96,7 @@ func (s Schema) validateValue(value interface{}, self constraints.CurrentResourc
 	// validate tells us to, otherwise combining the results with any prior
 	// failures
 	if s.ValidateFunc != nil {
-		result, errs := s.ValidateFunc(s, value, self, template, definitions, context)
+		result, errs := s.ValidateFunc(s, value, self, template, definitions, path)
 		if result == reporting.ValidateAbort {
 			return reporting.ValidateOK, reporting.Safe(errs)
 		}

@@ -26,17 +26,17 @@ func TestSingleValueValidate(t *testing.T) {
 	tr := parse.TemplateResource{
 		Tmpl: template,
 	}
-	ctx := []string{}
+	path := []string{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	for _, test := range pass {
-		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, ctx); errs != nil {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, path); errs != nil {
 			t.Errorf("Should pass with expected %s and actual %s", test.expected, test.actual)
 		}
 	}
 
 	for _, test := range fail {
-		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, ctx); errs == nil {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, path); errs == nil {
 			t.Errorf("Should fail with expected %s and actual %s", test.expected, test.actual)
 		}
 	}
@@ -47,29 +47,29 @@ func TestFixedArrayValidateHelper(t *testing.T) {
 	tr := parse.TemplateResource{
 		Tmpl: template,
 	}
-	context := []string{}
+	path := []string{}
 	definitions := NewResourceDefinitions(nil)
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	validate := FixedArrayValidate([]string{"a", "b", "c"}, []string{"d", "e"})
 
-	if _, errs := validate(Schema{}, []interface{}{}, currentResource, template, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{}, currentResource, template, definitions, path); errs == nil {
 		t.Error("Should fail on empty list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"c", "d"}, currentResource, template, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{"c", "d"}, currentResource, template, definitions, path); errs == nil {
 		t.Error("Should fail on unexpected list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "b"}, currentResource, template, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "b"}, currentResource, template, definitions, path); errs == nil {
 		t.Error("Should fail on subset list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "b", "c"}, currentResource, template, definitions, context); errs != nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "b", "c"}, currentResource, template, definitions, path); errs != nil {
 		t.Error("Should pass on expected list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "c", "b"}, currentResource, template, definitions, context); errs != nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "c", "b"}, currentResource, template, definitions, path); errs != nil {
 		t.Error("Should pass on unordered expected list")
 	}
 }

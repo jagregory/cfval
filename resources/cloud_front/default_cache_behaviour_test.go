@@ -44,21 +44,21 @@ func TestAllowedMethodsFixedArrays(t *testing.T) {
 		}
 	}
 
-	ctx := []string{}
+	path := []string{}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"HEAD", "GET"}), template, definitions, ctx); errs != nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"HEAD", "GET"}), template, definitions, path); errs != nil {
 		t.Error("Should pass with expected array", errs)
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD"}), template, definitions, ctx); errs != nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD"}), template, definitions, path); errs != nil {
 		t.Error("Should pass with expected array in different order", errs)
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"DELETE", "GET", "HEAD"}), template, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"DELETE", "GET", "HEAD"}), template, definitions, path); errs == nil {
 		t.Error("Should fail with random subset")
 	}
 
-	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD", "somethingElse"}), template, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(testCFDistribution([]interface{}{"GET", "HEAD", "somethingElse"}), template, definitions, path); errs == nil {
 		t.Error("Should fail with unexpected item")
 	}
 }

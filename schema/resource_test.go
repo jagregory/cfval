@@ -9,7 +9,7 @@ import (
 
 func TestResourcePropertyConflictValidation(t *testing.T) {
 	template := &parse.Template{}
-	context := []string{}
+	path := []string{}
 
 	res := Resource{
 		Properties: map[string]Schema{
@@ -53,26 +53,26 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(nothingSet, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(nothingSet, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if both neither Option1 or Option2 are set", errs)
 	}
 
-	if _, errs := res.Validate(option1Set, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(option1Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
-	if _, errs := res.Validate(option2Set, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(option2Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option2 set", errs)
 	}
 
-	if _, errs := res.Validate(bothSet, template, definitions, context); errs == nil {
+	if _, errs := res.Validate(bothSet, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if both Option1 or Option2 are set")
 	}
 }
 
 func TestSchemaRequiredValidation(t *testing.T) {
 	template := &parse.Template{}
-	ctx := []string{}
+	path := []string{}
 
 	res := Resource{
 		Properties: map[string]Schema{
@@ -127,30 +127,30 @@ func TestSchemaRequiredValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(nothingSet, template, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(nothingSet, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if Option1 isn't set", errs)
 	}
 
-	if _, errs := res.Validate(option1Set, template, definitions, ctx); errs != nil {
+	if _, errs := res.Validate(option1Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
-	if _, errs := res.Validate(option2Set, template, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(option2Set, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if only Option2 set")
 	}
 
-	if _, errs := res.Validate(option3Set, template, definitions, ctx); errs == nil {
+	if _, errs := res.Validate(option3Set, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if only Option3 set")
 	}
 
-	if _, errs := res.Validate(allSet, template, definitions, ctx); errs != nil {
+	if _, errs := res.Validate(allSet, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if Option1 is set with others", errs)
 	}
 }
 
 func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	template := &parse.Template{}
-	context := []string{}
+	path := []string{}
 
 	res := Resource{
 		Properties: map[string]Schema{
@@ -193,26 +193,26 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(nothingSet, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(nothingSet, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if neither Option1 or Option2 are set", errs)
 	}
 
-	if _, errs := res.Validate(option1Set, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(option1Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
-	if _, errs := res.Validate(option2Set, template, definitions, context); errs == nil {
+	if _, errs := res.Validate(option2Set, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if only Option2 set")
 	}
 
-	if _, errs := res.Validate(bothSet, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(bothSet, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if both Option1 and Option2 are set", errs)
 	}
 }
 
 func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	template := &parse.Template{}
-	context := []string{}
+	path := []string{}
 
 	res := Resource{
 		Properties: map[string]Schema{
@@ -255,19 +255,19 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(nothingSet, template, definitions, context); errs == nil {
+	if _, errs := res.Validate(nothingSet, template, definitions, path); errs == nil {
 		t.Error("Resource should fail if neither Option1 or Option2 are set")
 	}
 
-	if _, errs := res.Validate(option1Set, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(option1Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option1 set", errs)
 	}
 
-	if _, errs := res.Validate(option2Set, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(option2Set, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if only Option2 set", errs)
 	}
 
-	if _, errs := res.Validate(bothSet, template, definitions, context); errs != nil {
+	if _, errs := res.Validate(bothSet, template, definitions, path); errs != nil {
 		t.Error("Resource should pass if both Option1 and Option2 are set", errs)
 	}
 }

@@ -32,21 +32,21 @@ func TestValueTypeValidation(t *testing.T) {
 		},
 		res,
 	}
-	ctx := []string{}
+	path := []string{}
 
-	if _, errs := ValueString.Validate(property, "abc", self, template, definitions, ctx); errs != nil {
+	if _, errs := ValueString.Validate(property, "abc", self, template, definitions, path); errs != nil {
 		t.Error("Should pass with valid String")
 	}
 
-	if _, errs := ValueString.Validate(property, 100, self, template, definitions, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, 100, self, template, definitions, path); errs == nil {
 		t.Error("Should fail with non-String")
 	}
 
-	if _, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "bad"}, self, template, definitions, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "bad"}, self, template, definitions, path); errs == nil {
 		t.Error("Should fail with invalid ref")
 	}
 
-	result, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "good"}, self, template, definitions, ctx)
+	result, errs := ValueString.Validate(property, map[string]interface{}{"Ref": "good"}, self, template, definitions, path)
 	if errs != nil {
 		t.Error("Should pass with valid ref", errs)
 	}
@@ -56,7 +56,7 @@ func TestValueTypeValidation(t *testing.T) {
 
 	// TODO: test other builtins are correctly handled by valuetype
 
-	if _, errs := ValueString.Validate(property, map[string]interface{}{"something": "else"}, self, template, definitions, ctx); errs == nil {
+	if _, errs := ValueString.Validate(property, map[string]interface{}{"something": "else"}, self, template, definitions, path); errs == nil {
 		t.Error("Should fail with non-builtin map")
 	}
 }

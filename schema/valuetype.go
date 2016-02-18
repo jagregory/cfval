@@ -52,10 +52,10 @@ func (ValueType) PropertyDefault(string) interface{} {
 	return nil
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(property, complex, template, self, definitions, context)
+			builtinResult, errs := ValidateBuiltinFns(property, complex, template, self, definitions, path)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}
@@ -64,10 +64,10 @@ func (vt ValueType) Validate(property Schema, value interface{}, self constraint
 				return reporting.ValidateAbort, nil
 			}
 
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", context)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", path)}
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, context)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, path)}
 	}
 
 	return reporting.ValidateOK, nil

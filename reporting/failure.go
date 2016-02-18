@@ -47,26 +47,26 @@ const (
 )
 
 type Report struct {
-	Level           Level
-	Message         string
-	Context         []string
-	ContextReadable string
+	Level        Level
+	Message      string
+	Path         []string
+	PathReadable string
 }
 
 func (f Report) String() string {
-	return fmt.Sprintf("%s (%s)", f.Message, f.ContextReadable)
+	return fmt.Sprintf("%s (%s)", f.Message, f.PathReadable)
 }
 
-func NewFailure(message string, context []string) *Report {
-	return &Report{Failure, message, context, strings.Join(context, ".")}
+func NewFailure(message string, path []string) *Report {
+	return &Report{Failure, message, path, strings.Join(path, ".")}
 }
 
-func NewWarning(message string, context []string) *Report {
-	return &Report{Warning, message, context, strings.Join(context, ".")}
+func NewWarning(message string, path []string) *Report {
+	return &Report{Warning, message, path, strings.Join(path, ".")}
 }
 
-func NewInvalidTypeFailure(valueType interface{}, value interface{}, context []string) *Report {
-	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), context)
+func NewInvalidTypeFailure(valueType interface{}, value interface{}, path []string) *Report {
+	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), path)
 }
 
 // Safe returns either the given list of failures, or nil if there are no

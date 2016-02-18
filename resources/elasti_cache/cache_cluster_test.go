@@ -10,7 +10,7 @@ import (
 func TestAZModeValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := []string{}
+	path := []string{}
 
 	singleAZ := schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "", map[string]interface{}{
@@ -26,11 +26,11 @@ func TestAZModeValidate(t *testing.T) {
 		schema.Resource{},
 	}
 
-	if _, errs := azModeValidate(prop, "cross-az", singleAZ, template, nil, ctx); errs == nil {
+	if _, errs := azModeValidate(prop, "cross-az", singleAZ, template, nil, path); errs == nil {
 		t.Error("Should fail if cross-az with single availability zone", errs)
 	}
 
-	if _, errs := azModeValidate(prop, "cross-az", multiAZ, template, nil, ctx); errs != nil {
+	if _, errs := azModeValidate(prop, "cross-az", multiAZ, template, nil, path); errs != nil {
 		t.Error("Should pass if cross-az with multiple availability zones", errs)
 	}
 }
@@ -38,7 +38,7 @@ func TestAZModeValidate(t *testing.T) {
 func TestNumCacheNodesValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := []string{}
+	path := []string{}
 
 	redis := schema.ResourceWithDefinition{
 		parse.NewTemplateResource(template, "", map[string]interface{}{
@@ -54,23 +54,23 @@ func TestNumCacheNodesValidate(t *testing.T) {
 		schema.Resource{},
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(1), redis, template, nil, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(prop, float64(1), redis, template, nil, path); errs != nil {
 		t.Error("Should pass with 1 redis node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(2), redis, template, nil, ctx); errs == nil {
+	if _, errs := numCacheNodesValidate(prop, float64(2), redis, template, nil, path); errs == nil {
 		t.Error("Should fail with more than 1 redis node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(1), memcached, template, nil, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(prop, float64(1), memcached, template, nil, path); errs != nil {
 		t.Error("Should pass with 1 memcached node", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(20), memcached, template, nil, ctx); errs != nil {
+	if _, errs := numCacheNodesValidate(prop, float64(20), memcached, template, nil, path); errs != nil {
 		t.Error("Should pass with 20 memcached nodes", errs)
 	}
 
-	if _, errs := numCacheNodesValidate(prop, float64(21), memcached, template, nil, ctx); errs == nil {
+	if _, errs := numCacheNodesValidate(prop, float64(21), memcached, template, nil, path); errs == nil {
 		t.Error("Should fail with 21 memcached nodes", errs)
 	}
 }

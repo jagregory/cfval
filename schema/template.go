@@ -34,20 +34,20 @@ func TemplateValidate(t *parse.Template, definitions ResourceDefinitions) (bool,
 	return false, failures
 }
 
-func parameterValidate(p parse.Parameter, context []string) (bool, reporting.Reports) {
+func parameterValidate(p parse.Parameter, path []string) (bool, reporting.Reports) {
 	// TODO: parameter validation?
 	return true, nil
 }
 
-func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 50)
 
 	definition := definitions.Lookup(tr.Type)
-	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, tr.Template(), definitions, context); errs != nil {
+	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, tr.Template(), definitions, path); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, tr.Tmpl, definitions, append(context, "Metadata")); errs != nil {
+	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, tr.Tmpl, definitions, append(path, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
@@ -78,14 +78,14 @@ func (emptyCurrentResource) Properties() []string {
 	return []string{}
 }
 
-func outputValidate(o parse.Output, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func outputValidate(o parse.Output, template *parse.Template, definitions ResourceDefinitions, path []string) (reporting.ValidateResult, reporting.Reports) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", append(context, "Description"))}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", append(path, "Description"))}
 		}
 	}
 
-	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, template, definitions, append(context, "Value")); errs != nil {
+	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, template, definitions, append(path, "Value")); errs != nil {
 		return reporting.ValidateOK, errs
 	}
 
