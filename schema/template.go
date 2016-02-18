@@ -85,7 +85,7 @@ func (emptyCurrentResource) Properties() []string {
 func outputValidate(o parse.Output, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", ContextAdd(ctx, "Description").Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Expected a string", ContextAdd(ctx, "Description"))}
 		}
 	}
 

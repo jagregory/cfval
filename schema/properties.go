@@ -31,12 +31,12 @@ func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string
 
 		// Validate conflicting properties
 		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), ResourceContextAdd(ctx, key).Path()))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), ResourceContextAdd(ctx, key)))
 		}
 
 		// Validate Required
 		if value == nil && schema.Required != nil && schema.Required.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), ResourceContextAdd(ctx, key).Path()))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), ResourceContextAdd(ctx, key)))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and

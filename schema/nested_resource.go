@@ -34,7 +34,7 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {
 			if !visited[key] {
-				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), PropertyContextAdd(ctx, key).Path()))
+				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), PropertyContextAdd(ctx, key)))
 			}
 		}
 
@@ -45,5 +45,5 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		return reporting.ValidateOK, failures
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx.Path())}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx)}
 }

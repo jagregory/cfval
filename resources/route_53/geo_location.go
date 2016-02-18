@@ -31,7 +31,7 @@ var geoLocation = NestedResource{
 			Conflicts: constraints.PropertyExists("ContinentCode"),
 			ValidateFunc: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 				if countryCode, found := ctx.CurrentResource().PropertyValue("CountryCode"); found && countryCode != "US" {
-					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Can only be set when CountryCode is US", ctx.Path())}
+					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Can only be set when CountryCode is US", ctx)}
 				}
 
 				return reporting.ValidateOK, nil

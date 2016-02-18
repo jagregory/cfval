@@ -62,10 +62,10 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 				return reporting.ValidateAbort, nil
 			}
 
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", ctx.Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Value is a map but isn't a builtin", ctx)}
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, ctx.Path())}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(vt, value, ctx)}
 	}
 
 	return reporting.ValidateOK, nil

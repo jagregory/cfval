@@ -24,7 +24,7 @@ func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, repo
 	// Reject any properties we weren't expecting
 	for _, key := range ctx.CurrentResource().Properties() {
 		if !visited[key] {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for %s", key, rd.AwsType), ResourceContextAdd(ctx, key).Path()))
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for %s", key, rd.AwsType), ResourceContextAdd(ctx, key)))
 		}
 	}
 
@@ -46,7 +46,7 @@ func (r Resource) PropertyDefault(name string) interface{} {
 func NewUnrecognisedResource(awsType string) Resource {
 	return Resource{
 		ValidateFunc: func(ctx ResourceContext) (reporting.ValidateResult, reporting.Reports) {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), ctx.Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), ctx)}
 		},
 	}
 }

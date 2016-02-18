@@ -13,7 +13,7 @@ func automaticFailoverEnabledValidation(value interface{}, ctx PropertyContext) 
 	if version, found := ctx.CurrentResource().PropertyValue("EngineVersion"); found {
 		if versionNumber, err := strconv.ParseFloat(version.(string), 64); err == nil {
 			if versionNumber < 2.8 {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", ctx.Path())}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("EngineVersion must be 2.8 or higher for Automatic Failover", ctx)}
 			}
 		}
 	}
@@ -21,7 +21,7 @@ func automaticFailoverEnabledValidation(value interface{}, ctx PropertyContext) 
 	if nodeType, found := ctx.CurrentResource().PropertyValue("CacheNodeType"); found {
 		split := strings.Split(nodeType.(string), ".")
 		if split[1] == "t1" || split[1] == "t2" {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", ctx.Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("CacheNodeType must not be T1 or T2 Automatic Failover", ctx)}
 		}
 	}
 
@@ -119,7 +119,7 @@ var ReplicationGroup = Resource{
 			ValidateFunc: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 				if val, ok := ctx.CurrentResource().PropertyValue("AutomaticFailoverEnabled"); ok && val.(bool) == true {
 					if value.(float64) <= 1 {
-						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", ctx.Path())}
+						return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be greater than 1 if automatic failover is enabled", ctx)}
 					}
 				}
 

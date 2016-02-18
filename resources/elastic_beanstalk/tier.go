@@ -25,7 +25,7 @@ var tier = NestedResource{
 				name, _ := ctx.CurrentResource().PropertyValue("Name")
 
 				if name == "WebServer" && value != "Standard" {
-					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be Standard for WebServer tier", ctx.Path())}
+					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Must be Standard for WebServer tier", ctx)}
 				}
 
 				return reporting.ValidateOK, nil

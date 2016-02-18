@@ -54,19 +54,19 @@ func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reportin
 
 	target := ref.resolveTarget(ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx.Path())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx)}
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), ctx.Path())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), ctx)}
 	}
 
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx.Path())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx.Path())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
 	}
 
 	return reporting.ValidateAbort, nil

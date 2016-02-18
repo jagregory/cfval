@@ -57,15 +57,19 @@ func (f Report) String() string {
 	return fmt.Sprintf("%s (%s)", f.Message, f.PathReadable)
 }
 
-func NewFailure(message string, path []string) *Report {
-	return &Report{Failure, message, path, strings.Join(path, ".")}
+type Path interface {
+	Path() []string
 }
 
-func NewWarning(message string, path []string) *Report {
-	return &Report{Warning, message, path, strings.Join(path, ".")}
+func NewFailure(message string, path Path) *Report {
+	return &Report{Failure, message, path.Path(), strings.Join(path.Path(), ".")}
 }
 
-func NewInvalidTypeFailure(valueType interface{}, value interface{}, path []string) *Report {
+func NewWarning(message string, path Path) *Report {
+	return &Report{Warning, message, path.Path(), strings.Join(path.Path(), ".")}
+}
+
+func NewInvalidTypeFailure(valueType interface{}, value interface{}, path Path) *Report {
 	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), path)
 }
 

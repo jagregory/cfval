@@ -17,11 +17,11 @@ var Period = FuncType{
 
 		num, err := strconv.Atoi(value.(string))
 		if err != nil {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Period is not a number: %s", value), ctx.Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Period is not a number: %s", value), ctx)}
 		}
 
 		if num == 0 || num%60 != 0 {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Period is not a multiple of 60: %s", value), ctx.Path())}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Period is not a multiple of 60: %s", value), ctx)}
 		}
 
 		return reporting.ValidateOK, nil
