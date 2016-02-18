@@ -22,59 +22,65 @@ func TestSingleValueValidate(t *testing.T) {
 
 	definitions := NewResourceDefinitions(nil)
 	prop := Schema{}
+	template := &parse.Template{}
 	tr := parse.TemplateResource{
-		Tmpl: &parse.Template{},
+		Tmpl: template,
 	}
 	ctx := []string{}
+	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	for _, test := range pass {
-		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, tr, definitions, ctx); errs != nil {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, ctx); errs != nil {
 			t.Errorf("Should pass with expected %s and actual %s", test.expected, test.actual)
 		}
 	}
 
 	for _, test := range fail {
-		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, tr, definitions, ctx); errs == nil {
+		if _, errs := SingleValueValidate(test.expected)(prop, test.actual, currentResource, template, definitions, ctx); errs == nil {
 			t.Errorf("Should fail with expected %s and actual %s", test.expected, test.actual)
 		}
 	}
 }
 
 func TestFixedArrayValidateHelper(t *testing.T) {
+	template := &parse.Template{}
 	tr := parse.TemplateResource{
-		Tmpl: &parse.Template{},
+		Tmpl: template,
 	}
 	context := []string{}
 	definitions := NewResourceDefinitions(nil)
+	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	validate := FixedArrayValidate([]string{"a", "b", "c"}, []string{"d", "e"})
 
-	if _, errs := validate(Schema{}, []interface{}{}, tr, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{}, currentResource, template, definitions, context); errs == nil {
 		t.Error("Should fail on empty list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"c", "d"}, tr, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{"c", "d"}, currentResource, template, definitions, context); errs == nil {
 		t.Error("Should fail on unexpected list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "b"}, tr, definitions, context); errs == nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "b"}, currentResource, template, definitions, context); errs == nil {
 		t.Error("Should fail on subset list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "b", "c"}, tr, definitions, context); errs != nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "b", "c"}, currentResource, template, definitions, context); errs != nil {
 		t.Error("Should pass on expected list")
 	}
 
-	if _, errs := validate(Schema{}, []interface{}{"a", "c", "b"}, tr, definitions, context); errs != nil {
+	if _, errs := validate(Schema{}, []interface{}{"a", "c", "b"}, currentResource, template, definitions, context); errs != nil {
 		t.Error("Should pass on unordered expected list")
 	}
 }
 
 func TestRegexpValidateHelper(t *testing.T) {
+	template := &parse.Template{}
 	validator := RegexpValidate("^a string$", "Match failed")
 	definitions := NewResourceDefinitions(nil)
+	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 
-	_, errs := validator(Schema{}, "a string", parse.TemplateResource{}, definitions, []string{})
+	_, errs := validator(Schema{}, "a string", currentResource, template, definitions, []string{})
 	if errs != nil {
 		t.Error("Should pass on a valid string")
 	}
@@ -82,7 +88,7 @@ func TestRegexpValidateHelper(t *testing.T) {
 		t.Error("Should pass on a valid string", errs)
 	}
 
-	_, errs = validator(Schema{}, "no match", parse.TemplateResource{}, definitions, []string{})
+	_, errs = validator(Schema{}, "no match", currentResource, template, definitions, []string{})
 	if errs == nil {
 		t.Error("Should fail on a non-matching string")
 	}
@@ -93,51 +99,57 @@ func TestRegexpValidateHelper(t *testing.T) {
 }
 
 func TestIntegerRangeValidateHelper(t *testing.T) {
+	template := &parse.Template{}
 	validator := IntegerRangeValidate(5, 10)
 	definitions := NewResourceDefinitions(nil)
+	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 
 	for _, valid := range []float64{5, 6, 7, 8, 9, 10} {
-		if _, errs := validator(Schema{}, valid, parse.TemplateResource{}, definitions, []string{}); errs != nil {
+		if _, errs := validator(Schema{}, valid, currentResource, template, definitions, []string{}); errs != nil {
 			t.Error("Should pass on valid value", valid)
 		}
 	}
 
 	for _, invalid := range []float64{-10, 0, 1, 2, 11, 100} {
-		if _, errs := validator(Schema{}, invalid, parse.TemplateResource{}, definitions, []string{}); errs == nil {
+		if _, errs := validator(Schema{}, invalid, currentResource, template, definitions, []string{}); errs == nil {
 			t.Error("Should fail on invalid value", invalid)
 		}
 	}
 }
 
 func TestStringLengthValidateHelper(t *testing.T) {
+	template := &parse.Template{}
 	validator := StringLengthValidate(5, 10)
 	definitions := NewResourceDefinitions(nil)
+	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 
 	for _, valid := range []string{"abcde", "abcdefghij"} {
-		if _, errs := validator(Schema{}, valid, parse.TemplateResource{}, definitions, []string{}); errs != nil {
+		if _, errs := validator(Schema{}, valid, currentResource, template, definitions, []string{}); errs != nil {
 			t.Error("Should pass on valid value", valid)
 		}
 	}
 
 	for _, invalid := range []string{"", "abcd", "abcdefghijk"} {
-		if _, errs := validator(Schema{}, invalid, parse.TemplateResource{}, definitions, []string{}); errs == nil {
+		if _, errs := validator(Schema{}, invalid, currentResource, template, definitions, []string{}); errs == nil {
 			t.Error("Should fail on invalid value", invalid)
 		}
 	}
 }
 
 func TestNumberOptionsValidateHelper(t *testing.T) {
+	template := &parse.Template{}
 	validator := NumberOptions(5, 10, 20)
 	definitions := NewResourceDefinitions(nil)
+	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 
 	for _, valid := range []float64{5, 10, 20} {
-		if _, errs := validator(Schema{}, valid, parse.TemplateResource{}, definitions, []string{}); errs != nil {
+		if _, errs := validator(Schema{}, valid, currentResource, template, definitions, []string{}); errs != nil {
 			t.Error("Should pass on valid value", valid, errs)
 		}
 	}
 
 	for _, invalid := range []float64{-10, 0, 6, 1000} {
-		if _, errs := validator(Schema{}, invalid, parse.TemplateResource{}, definitions, []string{}); errs == nil {
+		if _, errs := validator(Schema{}, invalid, currentResource, template, definitions, []string{}); errs == nil {
 			t.Error("Should fail on invalid value", invalid)
 		}
 	}

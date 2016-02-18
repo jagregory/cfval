@@ -2,6 +2,7 @@ package ec2
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 	"github.com/jagregory/cfval/resources/common"
 	. "github.com/jagregory/cfval/schema"
@@ -44,8 +45,8 @@ var VPC = Resource{
 		"EnableDnsHostnames": Schema{
 			Type:    ValueBool,
 			Default: false,
-			ValidateFunc: func(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
-				if enableDnsSupport, _ := self.Property("EnableDnsSupport"); value == true && enableDnsSupport == false {
+			ValidateFunc: func(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+				if enableDnsSupport, _ := self.PropertyValue("EnableDnsSupport"); value == true && enableDnsSupport == false {
 					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.", context)}
 				}
 

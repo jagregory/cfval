@@ -3,6 +3,8 @@ package schema
 import (
 	"strings"
 
+	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -46,10 +48,14 @@ func (vt ValueType) Describe() string {
 	return strings.TrimPrefix(vt.String(), "Value")
 }
 
-func (vt ValueType) Validate(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (ValueType) PropertyDefault(string) interface{} {
+	return nil
+}
+
+func (vt ValueType) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(property, complex, self, definitions, context)
+			builtinResult, errs := ValidateBuiltinFns(property, complex, template, self, definitions, context)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}

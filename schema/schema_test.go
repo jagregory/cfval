@@ -17,24 +17,24 @@ func TestSchemaTargetType(t *testing.T) {
 }
 
 func TestSchemaTypeValidation(t *testing.T) {
-	self := parse.TemplateResource{}
+	self := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 	ctx := []string{}
 
 	schema := Schema{
 		Type: ValueString,
 	}
 
-	if _, errs := schema.Validate("abc", self, nil, ctx); errs != nil {
+	if _, errs := schema.Validate("abc", self, nil, nil, ctx); errs != nil {
 		t.Error("Should pass when value is correct type")
 	}
 
-	if _, errs := schema.Validate(123, self, nil, ctx); errs == nil {
+	if _, errs := schema.Validate(123, self, nil, nil, ctx); errs == nil {
 		t.Error("Should fail when value is incorrect type")
 	}
 }
 
 func TestSchemaArrayValidation(t *testing.T) {
-	self := parse.TemplateResource{}
+	self := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
 	ctx := []string{}
 
 	schema := Schema{
@@ -42,15 +42,15 @@ func TestSchemaArrayValidation(t *testing.T) {
 		Array: true,
 	}
 
-	if _, errs := schema.Validate([]interface{}{"abc"}, self, nil, ctx); errs != nil {
+	if _, errs := schema.Validate([]interface{}{"abc"}, self, nil, nil, ctx); errs != nil {
 		t.Error("Should pass when value is an array of the correct type")
 	}
 
-	if _, errs := schema.Validate([]interface{}{"abc", 123}, self, nil, ctx); errs == nil {
+	if _, errs := schema.Validate([]interface{}{"abc", 123}, self, nil, nil, ctx); errs == nil {
 		t.Error("Should fail when value is a mixed array")
 	}
 
-	if _, errs := schema.Validate([]interface{}{123}, self, nil, ctx); errs == nil {
+	if _, errs := schema.Validate([]interface{}{123}, self, nil, nil, ctx); errs == nil {
 		t.Error("Should fail when value is an incorrect array")
 	}
 }
@@ -73,8 +73,11 @@ func TestSchemaCustomValidation(t *testing.T) {
 			},
 		},
 	}
-	self := parse.TemplateResource{
-		Tmpl: template,
+	self := ResourceWithDefinition{
+		parse.TemplateResource{
+			Tmpl: template,
+		},
+		res,
 	}
 	ctx := []string{}
 
@@ -83,19 +86,19 @@ func TestSchemaCustomValidation(t *testing.T) {
 		ValidateFunc: IntegerRangeValidate(10, 15),
 	}
 
-	if _, errs := schema.Validate(float64(12), self, definitions, ctx); errs != nil {
+	if _, errs := schema.Validate(float64(12), self, template, definitions, ctx); errs != nil {
 		t.Error("Should run custom validation when type is correct", errs)
 	}
 
-	if _, errs := schema.Validate(float64(20), self, definitions, ctx); errs == nil {
+	if _, errs := schema.Validate(float64(20), self, template, definitions, ctx); errs == nil {
 		t.Error("Should run custom validation when type is correct")
 	}
 
-	if _, errs := schema.Validate("abc", self, definitions, ctx); errs != nil && errs[0].Message != "Property has invalid type string, expected: ValueNumber" {
+	if _, errs := schema.Validate("abc", self, template, definitions, ctx); errs != nil && errs[0].Message != "Property has invalid type string, expected: ValueNumber" {
 		t.Error("Should not run validation when type is correct", errs)
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "abc"}, self, definitions, ctx); errs != nil {
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "abc"}, self, template, definitions, ctx); errs != nil {
 		t.Error("Should not run validation with Ref", errs)
 	}
 }

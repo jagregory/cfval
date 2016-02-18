@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -14,6 +16,10 @@ type EnumValue struct {
 
 func (enum EnumValue) Describe() string {
 	return enum.Description
+}
+
+func (EnumValue) PropertyDefault(string) interface{} {
+	return nil
 }
 
 func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
@@ -28,8 +34,8 @@ func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	return CoercionNever
 }
 
-func (enum EnumValue) Validate(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
-	if result, errs := ValueString.Validate(property, value, self, definitions, context); result == reporting.ValidateAbort || errs != nil {
+func (enum EnumValue) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+	if result, errs := ValueString.Validate(property, value, self, template, definitions, context); result == reporting.ValidateAbort || errs != nil {
 		return reporting.ValidateOK, errs
 	}
 

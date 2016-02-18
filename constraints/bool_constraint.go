@@ -2,7 +2,7 @@ package constraints
 
 type BoolConstraint bool
 
-func (b BoolConstraint) Describe(map[string]interface{}) string {
+func (b BoolConstraint) Describe(CurrentResource) string {
 	if bool(b) {
 		return "it's mandatory"
 	} else {
@@ -10,7 +10,7 @@ func (b BoolConstraint) Describe(map[string]interface{}) string {
 	}
 }
 
-func (b BoolConstraint) Pass(map[string]interface{}) bool {
+func (b BoolConstraint) Pass(CurrentResource) bool {
 	return bool(b)
 }
 

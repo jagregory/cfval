@@ -33,11 +33,10 @@ func TestNestedResourceConstraints(t *testing.T) {
 
 	template := &parse.Template{}
 
-	data := func(properties map[string]interface{}) parse.TemplateResource {
-		return parse.TemplateResource{
-			Tmpl:       template,
-			Type:       "TestResource",
-			Properties: properties,
+	data := func(properties map[string]interface{}) ResourceWithDefinition {
+		return ResourceWithDefinition{
+			parse.NewTemplateResource(template, "TestResource", properties),
+			res,
 		}
 	}
 
@@ -46,7 +45,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 			"One": "abc",
 		},
 	}
-	if _, errs := res.Validate(data(twoMissing), definitions, []string{}); errs == nil {
+	if _, errs := res.Validate(data(twoMissing), template, definitions, []string{}); errs == nil {
 		t.Error("Should fail with missing Two parameter")
 	}
 
@@ -54,7 +53,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 		"One":    "abc",
 		"Nested": map[string]interface{}{},
 	}
-	if _, errs := res.Validate(data(oneInWrongPace), definitions, []string{}); errs == nil {
+	if _, errs := res.Validate(data(oneInWrongPace), template, definitions, []string{}); errs == nil {
 		t.Error("Should fail with missing Two parameter")
 	}
 
@@ -64,7 +63,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 			"Two": "abc",
 		},
 	}
-	if _, errs := res.Validate(data(allFine), definitions, []string{}); errs != nil {
+	if _, errs := res.Validate(data(allFine), template, definitions, []string{}); errs != nil {
 		t.Error("Should pass with One and Two", errs)
 	}
 }

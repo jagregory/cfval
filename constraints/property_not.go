@@ -7,8 +7,8 @@ import "fmt"
 func PropertyNot(prop, notExpected string) ConstraintFunc {
 	return ConstraintFunc{
 		description: fmt.Sprintf("Property '%s' shouldn't have value '%s'", prop, notExpected),
-		fn: func(values map[string]interface{}) bool {
-			if val, found := values[prop]; found {
+		fn: func(cr CurrentResource) bool {
+			if val, found := cr.PropertyValue(prop); found {
 				return val != notExpected
 			}
 

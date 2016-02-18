@@ -7,12 +7,12 @@ import "fmt"
 type PropertyExists string
 
 // Pass returns true if the property is found.
-func (pe PropertyExists) Pass(values map[string]interface{}) bool {
-	_, found := values[string(pe)]
+func (pe PropertyExists) Pass(cr CurrentResource) bool {
+	_, found := cr.PropertyValue(string(pe))
 	return found
 }
 
 // Describe returns a human-readable explanation of the constraint.
-func (pe PropertyExists) Describe(values map[string]interface{}) string {
+func (pe PropertyExists) Describe(CurrentResource) string {
 	return fmt.Sprintf("%s exists", pe)
 }

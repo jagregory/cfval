@@ -7,12 +7,12 @@ import "fmt"
 type PropertyNotExists string
 
 // Pass will return true when the property doesn't exist on the resource.
-func (pe PropertyNotExists) Pass(values map[string]interface{}) bool {
-	_, found := values[string(pe)]
+func (pe PropertyNotExists) Pass(cr CurrentResource) bool {
+	_, found := cr.PropertyValue(string(pe))
 	return !found
 }
 
 // Describe returns a human-readable explanation of the constraint.
-func (pe PropertyNotExists) Describe(values map[string]interface{}) string {
+func (pe PropertyNotExists) Describe(CurrentResource) string {
 	return fmt.Sprintf("%s doesn't exist", pe)
 }

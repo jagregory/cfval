@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -15,22 +16,26 @@ type SelfRepresentation interface {
 
 type Properties map[string]Schema
 
-func (p Properties) Validate(self SelfRepresentation, definitions ResourceDefinitions, values map[string]interface{}, context []string) (reporting.Reports, map[string]bool) {
+func (p Properties) PropertyDefault(name string) interface{} {
+	return p[name].Default
+}
+
+func (p Properties) Validate(self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.Reports, map[string]bool) {
 	failures := make(reporting.Reports, 0, len(p)*2)
 	visited := make(map[string]bool)
 
 	for key, schema := range p {
 		visited[key] = true
-		value, _ := values[key]
+		value, _ := self.PropertyValue(key)
 
 		// Validate conflicting properties
-		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(values) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(values)), append(context, key)))
+		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(self) {
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), append(context, key)))
 		}
 
 		// Validate Required
-		if value == nil && schema.Required != nil && schema.Required.Pass(values) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(values)), append(context, key)))
+		if value == nil && schema.Required != nil && schema.Required.Pass(self) {
+			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), append(context, key)))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and
@@ -39,7 +44,7 @@ func (p Properties) Validate(self SelfRepresentation, definitions ResourceDefini
 			continue
 		}
 
-		if _, errs := schema.Validate(value, self, definitions, append(context, key)); errs != nil {
+		if _, errs := schema.Validate(value, self, template, definitions, append(context, key)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

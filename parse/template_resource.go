@@ -1,9 +1,9 @@
 package parse
 
 type TemplateResource struct {
-	Tmpl       *Template // haha, get rid of this
+	Tmpl       *Template // TODO: haha, get rid of this
 	Type       string
-	Properties map[string]interface{}
+	properties map[string]interface{}
 	Metadata   map[string]interface{}
 }
 
@@ -15,8 +15,16 @@ func (tr TemplateResource) Template() *Template {
 	return tr.Tmpl
 }
 
-func (tr TemplateResource) Property(name string) (interface{}, bool) {
-	val, ok := tr.Properties[name]
+func (tr TemplateResource) Properties() []string {
+	props := make([]string, 0, len(tr.properties))
+	for key, _ := range tr.properties {
+		props = append(props, key)
+	}
+	return props
+}
+
+func (tr TemplateResource) PropertyValue(name string) (interface{}, bool) {
+	val, ok := tr.properties[name]
 
 	if ok {
 		return val, ok
@@ -32,17 +40,21 @@ func (tr TemplateResource) Property(name string) (interface{}, bool) {
 }
 
 func (tr TemplateResource) HasProperty(name string, expected interface{}) bool {
-	if value, found := tr.Properties[name]; found {
+	if value, found := tr.properties[name]; found {
 		return value == expected
 	}
 
 	return false
 }
 
-func NewTemplateResource(template *Template) TemplateResource {
+func NewTemplateResource(template *Template, awsType string, properties map[string]interface{}) TemplateResource {
 	if template == nil {
 		panic("Template is nil")
 	}
 
-	return TemplateResource{Tmpl: template}
+	return TemplateResource{
+		Tmpl:       template,
+		Type:       awsType,
+		properties: properties,
+	}
 }

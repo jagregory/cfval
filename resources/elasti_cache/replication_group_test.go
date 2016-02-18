@@ -17,47 +17,51 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 		"TestResource": res,
 	})
 
-	badVersion := parse.NewTemplateResource(template)
-	badVersion.Type = "TestResource"
-	badVersion.Properties = map[string]interface{}{
-		"EngineVersion": "2.7",
-		"CacheNodeType": "cache.m3.medium",
+	badVersion := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"EngineVersion": "2.7",
+			"CacheNodeType": "cache.m3.medium",
+		}),
+		res,
 	}
 
-	badNodeTypeT1 := parse.NewTemplateResource(template)
-	badNodeTypeT1.Type = "TestResource"
-	badNodeTypeT1.Properties = map[string]interface{}{
-		"EngineVersion": "2.8",
-		"CacheNodeType": "cache.t1.micro",
+	badNodeTypeT1 := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"EngineVersion": "2.8",
+			"CacheNodeType": "cache.t1.micro",
+		}),
+		res,
 	}
 
-	badNodeTypeT2 := parse.NewTemplateResource(template)
-	badNodeTypeT2.Type = "TestResource"
-	badNodeTypeT2.Properties = map[string]interface{}{
-		"EngineVersion": "2.8",
-		"CacheNodeType": "cache.t2.micro",
+	badNodeTypeT2 := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"EngineVersion": "2.8",
+			"CacheNodeType": "cache.t2.micro",
+		}),
+		res,
 	}
 
-	good := parse.NewTemplateResource(template)
-	good.Type = "TestResource"
-	good.Properties = map[string]interface{}{
-		"EngineVersion": "2.8",
-		"CacheNodeType": "cache.m3.medium",
+	good := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"EngineVersion": "2.8",
+			"CacheNodeType": "cache.m3.medium",
+		}),
+		res,
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, definitions, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badVersion, template, definitions, context); errs == nil {
 		t.Error("Should fail if has engine less than 2.8")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, definitions, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT1, template, definitions, context); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, definitions, context); errs == nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, badNodeTypeT2, template, definitions, context); errs == nil {
 		t.Error("Should fail if has node type of t1 or t2")
 	}
 
-	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, definitions, context); errs != nil {
+	if _, errs := automaticFailoverEnabledValidation(schema.Schema{}, true, good, template, definitions, context); errs != nil {
 		t.Error("Should pass if engine is 2.8 or above and node type isn't t1 or t2")
 	}
 }

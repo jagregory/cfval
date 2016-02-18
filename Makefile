@@ -7,4 +7,4 @@ build:
 	go build
 
 test:
-	go test . ./constraints ./resources/*/ ./schema
+	go test . ./constraints ./parse ./resources/*/ ./schema

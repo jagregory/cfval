@@ -43,11 +43,11 @@ func resourceValidate(tr parse.TemplateResource, definitions ResourceDefinitions
 	failures := make(reporting.Reports, 0, 50)
 
 	definition := definitions.Lookup(tr.Type)
-	if _, errs := definition.Validate(tr, definitions, context); errs != nil {
+	if _, errs := definition.Validate(ResourceWithDefinition{tr, definition}, tr.Template(), definitions, context); errs != nil {
 		failures = append(failures, errs...)
 	}
 
-	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, tr, definitions, append(context, "Metadata")); errs != nil {
+	if _, errs := JSON.Validate(Schema{Type: JSON}, tr.Metadata, ResourceWithDefinition{tr, definition}, tr.Tmpl, definitions, append(context, "Metadata")); errs != nil {
 		failures = append(failures, errs...)
 	}
 
@@ -63,16 +63,19 @@ var outputSchema = Schema{
 	Required: constraints.Always,
 }
 
-type justATemplate struct {
-	template *parse.Template
+type emptyCurrentResource struct {
 }
 
-func (t justATemplate) Template() *parse.Template {
-	return t.template
-}
-
-func (justATemplate) Property(name string) (interface{}, bool) {
+func (emptyCurrentResource) PropertyValue(string) (interface{}, bool) {
 	return nil, false
+}
+
+func (emptyCurrentResource) PropertyDefault(string) interface{} {
+	return nil
+}
+
+func (emptyCurrentResource) Properties() []string {
+	return []string{}
 }
 
 func outputValidate(o parse.Output, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
@@ -82,7 +85,7 @@ func outputValidate(o parse.Output, template *parse.Template, definitions Resour
 		}
 	}
 
-	if _, errs := outputSchema.Validate(o.Value, justATemplate{template: template}, definitions, append(context, "Value")); errs != nil {
+	if _, errs := outputSchema.Validate(o.Value, emptyCurrentResource{}, template, definitions, append(context, "Value")); errs != nil {
 		return reporting.ValidateOK, errs
 	}
 

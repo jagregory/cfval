@@ -3,13 +3,14 @@ package schema
 import (
 	"fmt"
 
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
 type NestedResource struct {
 	Description string
-	Properties  Properties
+	Properties
 }
 
 func (res NestedResource) Describe() string {
@@ -23,11 +24,10 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 // TODO: This is all a bit hairy. We shouldn't need to be creating the
 // 			 TemplateNestedResource here, ideally `self` should already refer to
 //			 one and value should already be a map[string]inteface{}
-func (res NestedResource) Validate(property Schema, value interface{}, self SelfRepresentation, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
+func (res NestedResource) Validate(property Schema, value interface{}, self constraints.CurrentResource, template *parse.Template, definitions ResourceDefinitions, context []string) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
-		tnr := parse.NewTemplateResource(self.Template())
-		tnr.Properties = values
-		failures, visited := res.Properties.Validate(tnr, definitions, values, context)
+		tnr := parse.NewTemplateResource(template, property.Type.Describe(), values)
+		failures, visited := res.Properties.Validate(ResourceWithDefinition{tnr, property.Type}, template, definitions, context)
 
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {

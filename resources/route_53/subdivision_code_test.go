@@ -23,42 +23,45 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 		"TestResource": res,
 	})
 
-	badCountry := parse.NewTemplateResource(template)
-	badCountry.Type = "TestResource"
-	badCountry.Properties = map[string]interface{}{
-		"GeoLocation": map[string]interface{}{
-			"SubdivisionCode": "AK",
-			"CountryCode":     "AU",
-		},
+	badCountry := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"GeoLocation": map[string]interface{}{
+				"SubdivisionCode": "AK",
+				"CountryCode":     "AU",
+			},
+		}),
+		res,
 	}
 
-	badSubdivision := parse.NewTemplateResource(template)
-	badSubdivision.Type = "TestResource"
-	badSubdivision.Properties = map[string]interface{}{
-		"GeoLocation": map[string]interface{}{
-			"SubdivisionCode": "NSW",
-			"CountryCode":     "US",
-		},
+	badSubdivision := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"GeoLocation": map[string]interface{}{
+				"SubdivisionCode": "NSW",
+				"CountryCode":     "US",
+			},
+		}),
+		res,
 	}
 
-	goodCombination := parse.NewTemplateResource(template)
-	goodCombination.Type = "TestResource"
-	goodCombination.Properties = map[string]interface{}{
-		"GeoLocation": map[string]interface{}{
-			"SubdivisionCode": "AK",
-			"CountryCode":     "US",
-		},
+	goodCombination := schema.ResourceWithDefinition{
+		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			"GeoLocation": map[string]interface{}{
+				"SubdivisionCode": "AK",
+				"CountryCode":     "US",
+			},
+		}),
+		res,
 	}
 
-	if _, errs := res.Validate(goodCombination, definitions, context); errs != nil {
+	if _, errs := res.Validate(goodCombination, template, definitions, context); errs != nil {
 		t.Error("Period should pass on a valid state with US as the country", errs)
 	}
 
-	if _, errs := res.Validate(badSubdivision, definitions, context); errs == nil {
+	if _, errs := res.Validate(badSubdivision, template, definitions, context); errs == nil {
 		t.Error("Period should fail on an invalid subdivision with US as the country")
 	}
 
-	if _, errs := res.Validate(badCountry, definitions, context); errs == nil {
+	if _, errs := res.Validate(badCountry, template, definitions, context); errs == nil {
 		t.Error("Period should fail when subdivision set without US as the country")
 	}
 }
