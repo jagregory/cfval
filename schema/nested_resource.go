@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -34,7 +32,7 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		// Reject any properties we weren't expecting
 		for key := range res.Properties {
 			if !visited[key] {
-				failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for nested %s", key, res.Description), PropertyContextAdd(ctx, key)))
+				failures = append(failures, reporting.NewFailure(PropertyContextAdd(ctx, key), "Unknown property '%s' for nested %s", key, res.Description))
 			}
 		}
 
@@ -45,5 +43,5 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		return reporting.ValidateOK, failures
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid type %T for nested resource %s", value, res.Description), ctx)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid type %T for nested resource %s", value, res.Description)}
 }

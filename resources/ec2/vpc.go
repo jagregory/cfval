@@ -46,7 +46,7 @@ var VPC = Resource{
 			Default: false,
 			ValidateFunc: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 				if enableDnsSupport, _ := ctx.CurrentResource().PropertyValue("EnableDnsSupport"); value == true && enableDnsSupport == false {
-					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.", ctx)}
+					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "You can only set EnableDnsHostnames to true if you also set the EnableDnsSupport attribute to true.")}
 				}
 
 				return reporting.ValidateOK, nil

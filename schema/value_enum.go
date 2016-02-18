@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/jagregory/cfval/reporting"
@@ -51,5 +50,5 @@ func (enum EnumValue) Validate(value interface{}, ctx PropertyContext) (reportin
 		}
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", ")), ctx)}
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid enum option %s, expected one of [%s]", value, strings.Join(enum.Options, ", "))}
 }

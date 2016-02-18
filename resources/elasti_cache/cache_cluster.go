@@ -11,7 +11,7 @@ func azModeValidate(value interface{}, ctx PropertyContext) (reporting.ValidateR
 	if str, ok := value.(string); ok {
 		if availabilityZones, ok := ctx.CurrentResource().PropertyValue("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
-				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure("Cross-AZ clusters must have multiple preferred availability zones", ctx)}
+				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Cross-AZ clusters must have multiple preferred availability zones")}
 			}
 		}
 	}

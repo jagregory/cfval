@@ -1,10 +1,6 @@
 package schema
 
-import (
-	"fmt"
-
-	"github.com/jagregory/cfval/reporting"
-)
+import "github.com/jagregory/cfval/reporting"
 
 type Resource struct {
 	AwsType      string
@@ -24,7 +20,7 @@ func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, repo
 	// Reject any properties we weren't expecting
 	for _, key := range ctx.CurrentResource().Properties() {
 		if !visited[key] {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Unknown property '%s' for %s", key, rd.AwsType), ResourceContextAdd(ctx, key)))
+			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "Unknown property '%s' for %s", key, rd.AwsType))
 		}
 	}
 
@@ -46,7 +42,7 @@ func (r Resource) PropertyDefault(name string) interface{} {
 func NewUnrecognisedResource(awsType string) Resource {
 	return Resource{
 		ValidateFunc: func(ctx ResourceContext) (reporting.ValidateResult, reporting.Reports) {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Unrecognised resource %s", awsType), ctx)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Unrecognised resource %s", awsType)}
 		},
 	}
 }

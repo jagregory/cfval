@@ -1,10 +1,6 @@
 package schema
 
-import (
-	"fmt"
-
-	"github.com/jagregory/cfval/reporting"
-)
+import "github.com/jagregory/cfval/reporting"
 
 type GetAtt struct {
 	definition []interface{}
@@ -16,7 +12,7 @@ func NewGetAtt(definition []interface{}) GetAtt {
 
 func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if len(ga.definition) != 2 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(ga.definition)), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(ga.definition))}
 	}
 
 	template := ctx.Template()
@@ -30,9 +26,9 @@ func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, report
 					targetType := resource.Type
 					switch targetType.CoercibleTo(ctx.Property().Type) {
 					case CoercionNever:
-						return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
+						return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe())}
 					case CoercionBegrudgingly:
-						return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("GetAtt value of %s.%s is %s but is being dangerously coerced to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
+						return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "GetAtt value of %s.%s is %s but is being dangerously coerced to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe())}
 					}
 
 					return reporting.ValidateAbort, nil
@@ -40,13 +36,13 @@ func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, report
 			}
 
 			// attribute not found on resource
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt %s.%s is not an attribute", resourceID, ga.definition[1]), ctx)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, ga.definition[1])}
 		}
 
 		// resource not found
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a resource", resourceID), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a resource", resourceID)}
 	}
 
 	// resource not a string
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt '%s' is not a valid resource name", ga.definition[0]), ctx)}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a valid resource name", ga.definition[0])}
 }

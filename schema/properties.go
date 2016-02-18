@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -31,12 +29,12 @@ func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string
 
 		// Validate conflicting properties
 		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("Conflict: %s", schema.Conflicts.Describe(self)), ResourceContextAdd(ctx, key)))
+			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "Conflict: %s", schema.Conflicts.Describe(self)))
 		}
 
 		// Validate Required
 		if value == nil && schema.Required != nil && schema.Required.Pass(self) {
-			failures = append(failures, reporting.NewFailure(fmt.Sprintf("%s is required because %s", key, schema.Required.Describe(self)), ResourceContextAdd(ctx, key)))
+			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "%s is required because %s", key, schema.Required.Describe(self)))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and

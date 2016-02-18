@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/jagregory/cfval/reporting"
@@ -19,7 +18,7 @@ var CIDR = FuncType{
 		}
 
 		if ok, _ := regexp.MatchString(cidrPattern, value.(string)); !ok {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Cidr %s is invalid", value), ctx)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Cidr %s is invalid", value)}
 		}
 
 		return reporting.ValidateOK, nil

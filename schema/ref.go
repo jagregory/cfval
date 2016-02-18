@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -54,19 +52,19 @@ func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reportin
 
 	target := ref.resolveTarget(ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target)}
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("%s cannot be used in a Ref", ref.target), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", ref.target)}
 	}
 
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(fmt.Sprintf("Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe()), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
 	}
 
 	return reporting.ValidateAbort, nil

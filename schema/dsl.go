@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/jagregory/cfval/reporting"
@@ -10,7 +9,7 @@ import (
 func SingleValueValidate(expected interface{}) ValidateFunc {
 	return func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 		if value != expected {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be %d but is %d", expected, value), ctx)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Value must be %d but is %d", expected, value)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -32,7 +31,7 @@ func RegexpValidate(pattern, message string) ValidateFunc {
 			return reporting.ValidateOK, nil
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(message, ctx)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, message)}
 	}
 }
 
@@ -45,7 +44,7 @@ func IntegerRangeValidate(start, end float64) ValidateFunc {
 		floatValue := value.(float64)
 
 		if floatValue < start || floatValue > end {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Value must be between %f and %f", start, end), ctx)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Value must be between %f and %f", start, end)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -61,7 +60,7 @@ func StringLengthValidate(min, max int) ValidateFunc {
 		str := value.(string)
 
 		if len(str) < min || len(str) > max {
-			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("String length must be between %d and %d", min, max), ctx)}
+			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "String length must be between %d and %d", min, max)}
 		}
 
 		return reporting.ValidateOK, nil
@@ -75,7 +74,7 @@ func NumberOptions(numbers ...float64) ValidateFunc {
 				return reporting.ValidateOK, nil
 			}
 		}
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Number must be one of %v", numbers), ctx)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Number must be one of %v", numbers)}
 	}
 }
 
@@ -130,6 +129,6 @@ func FixedArrayValidate(options ...[]string) ValidateFunc {
 		}
 
 		// TODO: this should be []TypeString but we can't specify that with this method
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Invalid list value: %s, expected one of [%s]", value, options), ctx)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid list value: %s, expected one of [%s]", value, options)}
 	}
 }

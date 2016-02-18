@@ -61,16 +61,16 @@ type Path interface {
 	Path() []string
 }
 
-func NewFailure(message string, path Path) *Report {
-	return &Report{Failure, message, path.Path(), strings.Join(path.Path(), ".")}
+func NewFailure(path Path, format string, args ...interface{}) *Report {
+	return &Report{Failure, fmt.Sprintf(format, args...), path.Path(), strings.Join(path.Path(), ".")}
 }
 
-func NewWarning(message string, path Path) *Report {
-	return &Report{Warning, message, path.Path(), strings.Join(path.Path(), ".")}
+func NewWarning(path Path, format string, args ...interface{}) *Report {
+	return &Report{Warning, fmt.Sprintf(format, args...), path.Path(), strings.Join(path.Path(), ".")}
 }
 
-func NewInvalidTypeFailure(valueType interface{}, value interface{}, path Path) *Report {
-	return NewFailure(fmt.Sprintf("Property has invalid type %T, expected: %s", value, valueType), path)
+func NewInvalidTypeFailure(path Path, valueType interface{}, value interface{}) *Report {
+	return NewFailure(path, "Property has invalid type %T, expected: %s", value, valueType)
 }
 
 // Safe returns either the given list of failures, or nil if there are no

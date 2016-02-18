@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/jagregory/cfval/reporting"
@@ -13,7 +12,7 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 			return NewRef(str).Validate(PropertyContextAdd(ctx, "Ref"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Ref must be a string", ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref must be a string")}
 	}
 
 	if join, ok := value["Fn::Join"]; ok {
@@ -25,7 +24,7 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 			return NewGetAtt(arr).Validate(PropertyContextAdd(ctx, "GetAtt"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("GetAtt must be an array", ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt must be an array")}
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
@@ -44,11 +43,11 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 func validateFindInMap(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	find, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure("Options need to be an array", ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options need to be an array")}
 	}
 
 	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Options has wrong number of items, expected: 3, actual: %d", len(find)), ctx)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options has wrong number of items, expected: 3, actual: %d", len(find))}
 	}
 
 	findInMapItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
@@ -96,17 +95,17 @@ func validateBase64(value interface{}, ctx PropertyContext) (reporting.ValidateR
 func validateJoin(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if items, ok := value.([]interface{}); ok {
 		if len(items) != 2 {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join has incorrect number of arguments (expected: 2, actual: %d)", len(items)), ctx)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join has incorrect number of arguments (expected: 2, actual: %d)", len(items))}
 		}
 
 		_, ok := items[0].(string)
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join '%s' is not a valid delimiter", items[0]), ctx)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join '%s' is not a valid delimiter", items[0])}
 		}
 
 		parts, ok := items[1].([]interface{})
 		if !ok {
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("Join items are not valid: %s", items[1]), ctx)}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join items are not valid: %s", items[1])}
 		}
 
 		joinItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
@@ -124,5 +123,5 @@ func validateJoin(value interface{}, ctx PropertyContext) (reporting.ValidateRes
 		return reporting.ValidateAbort, failures
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(fmt.Sprintf("GetAtt has invalid value '%s'", value), ctx)}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt has invalid value '%s'", value)}
 }
