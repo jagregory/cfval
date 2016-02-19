@@ -65,7 +65,7 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Value is a map but isn't a builtin")}
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(ctx, vt, value)}
+		return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(ctx, vt, convert(value))}
 	}
 
 	return reporting.ValidateOK, nil
@@ -88,4 +88,17 @@ func (vt ValueType) validateValue(value interface{}) bool {
 	}
 
 	return false
+}
+
+func convert(v interface{}) ValueType {
+	switch v.(type) {
+	case bool:
+		return ValueBool
+	case float64:
+		return ValueNumber
+	case string:
+		return ValueString
+	default:
+		return ValueUnknown
+	}
 }

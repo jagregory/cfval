@@ -61,6 +61,10 @@ type Path interface {
 	Path() []string
 }
 
+type Type interface {
+	Describe() string
+}
+
 func NewFailure(path Path, format string, args ...interface{}) *Report {
 	return &Report{Failure, fmt.Sprintf(format, args...), path.Path(), strings.Join(path.Path(), ".")}
 }
@@ -69,8 +73,8 @@ func NewWarning(path Path, format string, args ...interface{}) *Report {
 	return &Report{Warning, fmt.Sprintf(format, args...), path.Path(), strings.Join(path.Path(), ".")}
 }
 
-func NewInvalidTypeFailure(path Path, valueType interface{}, value interface{}) *Report {
-	return NewFailure(path, "Property has invalid type %T, expected: %s", value, valueType)
+func NewInvalidTypeFailure(path Path, valueType Type, value Type) *Report {
+	return NewFailure(path, "%s used in %s property", valueType.Describe(), value.Describe())
 }
 
 // Safe returns either the given list of failures, or nil if there are no
