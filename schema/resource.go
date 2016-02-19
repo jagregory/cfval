@@ -3,9 +3,9 @@ package schema
 import "github.com/jagregory/cfval/reporting"
 
 type Resource struct {
-	AwsType      string
-	Attributes   map[string]Schema
-	Properties   Properties
+	AwsType    string
+	Attributes map[string]Schema
+	Properties
 	ReturnValue  Schema
 	ValidateFunc func(ResourceContext) (reporting.ValidateResult, reporting.Reports)
 }
@@ -33,10 +33,6 @@ func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, repo
 
 func (rd Resource) TargetType() PropertyType {
 	return rd.ReturnValue.TargetType()
-}
-
-func (r Resource) PropertyDefault(name string) interface{} {
-	return r.Properties[name].Default
 }
 
 func NewUnrecognisedResource(awsType string) Resource {

@@ -9,7 +9,7 @@ import (
 
 func azModeValidate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if str, ok := value.(string); ok {
-		if availabilityZones, ok := ctx.CurrentResource().PropertyValue("PreferredAvailabilityZones"); ok {
+		if availabilityZones, ok := ctx.CurrentResource().PropertyValueOrDefault("PreferredAvailabilityZones"); ok {
 			if str == "cross-az" && len(availabilityZones.([]interface{})) < 2 {
 				return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Cross-AZ clusters must have multiple preferred availability zones")}
 			}
@@ -20,7 +20,7 @@ func azModeValidate(value interface{}, ctx PropertyContext) (reporting.ValidateR
 }
 
 func numCacheNodesValidate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if engine, ok := ctx.CurrentResource().PropertyValue("Engine"); !ok || engine.(string) == "memcached" {
+	if engine, ok := ctx.CurrentResource().PropertyValueOrDefault("Engine"); !ok || engine.(string) == "memcached" {
 		return IntegerRangeValidate(1, 20)(value, ctx)
 	}
 

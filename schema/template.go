@@ -67,21 +67,6 @@ var outputSchema = Schema{
 	Required: constraints.Always,
 }
 
-type emptyCurrentResource struct {
-}
-
-func (emptyCurrentResource) PropertyValue(string) (interface{}, bool) {
-	return nil, false
-}
-
-func (emptyCurrentResource) PropertyDefault(string) interface{} {
-	return nil
-}
-
-func (emptyCurrentResource) Properties() []string {
-	return []string{}
-}
-
 func outputValidate(o parse.Output, ctx Context) (reporting.ValidateResult, reporting.Reports) {
 	if o.Description != nil {
 		if _, ok := o.Description.(string); !ok {

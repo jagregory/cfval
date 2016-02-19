@@ -22,7 +22,7 @@ var tier = NestedResource{
 				Options:     []string{"Standard", "SQS", "HTTP"},
 			},
 			ValidateFunc: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-				name, _ := ctx.CurrentResource().PropertyValue("Name")
+				name, _ := ctx.CurrentResource().PropertyValueOrDefault("Name")
 
 				if name == "WebServer" && value != "Standard" {
 					return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Must be Standard for WebServer tier")}

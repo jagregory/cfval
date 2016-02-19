@@ -13,8 +13,12 @@ type SelfRepresentation interface {
 
 type Properties map[string]Schema
 
-func (p Properties) PropertyDefault(name string) interface{} {
-	return p[name].Default
+func (p Properties) PropertyDefault(name string) (interface{}, bool) {
+	if def := p[name].Default; def != nil {
+		return def, true
+	}
+
+	return nil, false
 }
 
 func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string]bool) {

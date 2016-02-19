@@ -15,8 +15,8 @@ func (enum EnumValue) Describe() string {
 	return enum.Description
 }
 
-func (EnumValue) PropertyDefault(string) interface{} {
-	return nil
+func (EnumValue) PropertyDefault(string) (interface{}, bool) {
+	return nil, false
 }
 
 func (from EnumValue) CoercibleTo(to PropertyType) Coercion {

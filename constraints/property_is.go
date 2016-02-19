@@ -8,7 +8,7 @@ func PropertyIs(prop string, expected interface{}) ConstraintFunc {
 	return ConstraintFunc{
 		description: fmt.Sprintf("Property '%s' has value '%s'", prop, expected),
 		fn: func(cr CurrentResource) bool {
-			if val, found := cr.PropertyValue(prop); found {
+			if val, found := cr.PropertyValueOrDefault(prop); found {
 				return val == expected
 			}
 

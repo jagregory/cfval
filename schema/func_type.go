@@ -12,8 +12,8 @@ func (ft FuncType) Describe() string {
 	return ft.Description
 }
 
-func (FuncType) PropertyDefault(string) interface{} {
-	return nil
+func (FuncType) PropertyDefault(string) (interface{}, bool) {
+	return nil, false
 }
 
 func (from FuncType) CoercibleTo(to PropertyType) Coercion {

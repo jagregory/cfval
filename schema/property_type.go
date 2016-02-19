@@ -26,5 +26,5 @@ type PropertyType interface {
 	CoercibleTo(PropertyType) Coercion
 
 	// PropertyDefault returns the default value for a property, if one is set.
-	PropertyDefault(name string) interface{}
+	PropertyDefault(name string) (interface{}, bool)
 }

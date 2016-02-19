@@ -46,8 +46,8 @@ func (vt ValueType) Describe() string {
 	return strings.TrimPrefix(vt.String(), "Value")
 }
 
-func (ValueType) PropertyDefault(string) interface{} {
-	return nil
+func (ValueType) PropertyDefault(string) (interface{}, bool) {
+	return nil, false
 }
 
 func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
