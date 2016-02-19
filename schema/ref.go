@@ -50,24 +50,32 @@ func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reportin
 		panic("Template is nil")
 	}
 
+	reports := make(reporting.Reports, 3)
+
 	target := ref.resolveTarget(ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target)}
+		reports[0] = reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target)
+	} else {
+		reports[0] = reporting.NewSuccess(ctx, "Ref '%s' is a resource, parameter, or pseudo-parameter", ref.target)
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", ref.target)}
+		reports[1] = reporting.NewFailure(ctx, "%s cannot be used in a Ref", ref.target)
+	} else {
+		reports[1] = reporting.NewSuccess(ctx, "%s can be used in a Ref", ref.target)
 	}
 
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
+		reports[2] = reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
+		reports[2] = reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())
+	case CoercionAlways:
+		reports[2] = reporting.NewSuccess(ctx, "Ref value of '%s' is being assigned to a property with a compatible type", ref.target)
 	}
 
-	return reporting.ValidateAbort, nil
+	return reporting.ValidateAbort, reports
 }
 
 func (ref Ref) resolveTarget(definitions ResourceDefinitions, template *parse.Template) RefTarget {

@@ -22,10 +22,25 @@ func (a ByPath) Len() int           { return len(a) }
 func (a ByPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByPath) Less(i, j int) bool { return a[i].PathReadable < a[j].PathReadable }
 
+type ByGrouping reporting.Reports
+
+func (a ByGrouping) Len() int      { return len(a) }
+func (a ByGrouping) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByGrouping) Less(i, j int) bool {
+	if a[i].Level < a[j].Level {
+		return true
+	} else if a[i].Message < a[j].Message {
+		return true
+	}
+
+	return false
+}
+
 var ui = &cli.ColoredUi{
-	InfoColor:  cli.UiColorNone,
-	ErrorColor: cli.UiColorRed,
-	WarnColor:  cli.UiColorYellow,
+	InfoColor:   cli.UiColorGreen,
+	ErrorColor:  cli.UiColorRed,
+	WarnColor:   cli.UiColorYellow,
+	OutputColor: cli.UiColor{Code: cli.UiColorNone.Code, Bold: true},
 	Ui: &cli.BasicUi{
 		Reader:      os.Stdin,
 		Writer:      os.Stdout,
@@ -33,7 +48,7 @@ var ui = &cli.ColoredUi{
 	},
 }
 
-func groupReports(reports reporting.Reports) map[string]reporting.Reports {
+func groupReports(reports reporting.Reports) (map[string]reporting.Reports, []string) {
 	group := make(map[string]reporting.Reports)
 
 	for _, r := range reports {
@@ -44,15 +59,38 @@ func groupReports(reports reporting.Reports) map[string]reporting.Reports {
 		}
 	}
 
-	return group
+	paths := make([]string, 0, len(group))
+	for key, _ := range group {
+		paths = append(paths, key)
+	}
+	sort.StringSlice(paths).Sort()
+
+	return group, paths
+}
+
+func filterReportsByLevel(reports reporting.Reports, level string) reporting.Reports {
+	if level == "all" {
+		return reports
+	}
+
+	filtered := make(reporting.Reports, 0, len(reports))
+
+	for _, r := range reports {
+		if (level == "warning" && (r.Level == reporting.Warning || r.Level == reporting.Failure)) || (level == "failure" && r.Level == reporting.Failure) {
+			filtered = append(filtered, r)
+		}
+	}
+
+	return filtered
 }
 
 func printGroupedReports(reports reporting.Reports) {
-	sort.Sort(ByPath(reports))
-	grouped := groupReports(reports)
+	groupedItems, order := groupReports(reports)
 
-	for path, reports := range grouped {
-		ui.Info(path)
+	for _, path := range order {
+		reports := groupedItems[path]
+		sort.Sort(ByGrouping(reports))
+		ui.Output(path)
 
 		for _, report := range reports {
 			if report.Level == reporting.Failure {
@@ -60,7 +98,7 @@ func printGroupedReports(reports reporting.Reports) {
 			} else if report.Level == reporting.Warning {
 				ui.Warn("  ⁈ " + report.Message)
 			} else {
-				ui.Info("  ➜ " + report.Message)
+				ui.Info("  ✓ " + report.Message)
 			}
 		}
 
@@ -129,8 +167,9 @@ Usage: cfval validate [filename]
 Options:
 
   -forgiving             Ignore unrecognised resource types
+  -format                Output formatting [experimental]
+  -level                 Output level [experimental]
   -warnings-as-errors    Treat warnings as errors
-  -format                Experimental output formatting
 `
 }
 
@@ -142,11 +181,13 @@ func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
 	var forgiving bool
 	var format string
+	var level string
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "warnings-as-errors")
 	cmdFlags.BoolVar(&forgiving, "forgiving", false, "forgiving")
 	cmdFlags.StringVar(&format, "format", "oneline", "format")
+	cmdFlags.StringVar(&level, "level", "warning", "level")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
@@ -178,17 +219,17 @@ func (c ValidateCommand) Run(args []string) int {
 	stats := reports.Stats()
 
 	if format == "grouped" {
-		printGroupedReports(reports)
+		printGroupedReports(filterReportsByLevel(reports, level))
 	} else {
-		printReports(reports)
+		printReports(filterReportsByLevel(reports, level))
 	}
 
 	if warningsAsErrors || stats.Failures > 0 {
-		fmt.Printf("Fail: %d failures, %d warnings\n", stats.Failures, stats.Warnings)
+		fmt.Printf("Fail: %d pass, %d fail, %d warn\n", stats.Successes, stats.Failures, stats.Warnings)
 		return 1
 	}
 
-	fmt.Printf("Pass: %d failures, %d warnings\n", stats.Failures, stats.Warnings)
+	fmt.Printf("Pass: %d pass, %d fail, %d warn\n", stats.Successes, stats.Failures, stats.Warnings)
 	return 0
 }
 
