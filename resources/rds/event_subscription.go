@@ -26,7 +26,7 @@ var EventSubscription = Resource{
 		},
 
 		"SnsTopicArn": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 

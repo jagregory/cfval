@@ -17,12 +17,12 @@ var Trail = Resource{
 
 	Properties: Properties{
 		"CloudWatchLogsLogGroupArn": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.PropertyExists("CloudWatchLogsRoleArn"),
 		},
 
 		"CloudWatchLogsRoleArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"EnableLogFileValidation": Schema{

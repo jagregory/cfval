@@ -25,7 +25,7 @@ var spotFleetRequestConfigData = NestedResource{
 		},
 
 		"IamFleetRole": Schema{
-			Type:     ValueString, // ARN
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 

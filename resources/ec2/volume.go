@@ -37,7 +37,7 @@ var Volume = Resource{
 		},
 
 		"KmsKeyId": Schema{
-			Type: ValueString, // ARN
+			Type: ARN,
 		},
 
 		"Size": Schema{

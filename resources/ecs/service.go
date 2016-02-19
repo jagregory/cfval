@@ -9,9 +9,8 @@ import (
 var Service = Resource{
 	AwsType: "AWS::ECS::Service",
 
-	// ARN
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: ARN,
 	},
 
 	Properties: Properties{

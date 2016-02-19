@@ -16,7 +16,7 @@ var SubscriptionFilter = Resource{
 
 	Properties: Properties{
 		"DestinationArn": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 
@@ -31,7 +31,7 @@ var SubscriptionFilter = Resource{
 		},
 
 		"RoleArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 }

@@ -109,7 +109,7 @@ var ReplicationGroup = Resource{
 		},
 
 		"NotificationTopicArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		// If automatic failover is enabled, you must specify a value greater than 1.
@@ -154,7 +154,7 @@ var ReplicationGroup = Resource{
 
 		// A single-element string list that specifies an ARN of a Redis .rdb snapshot file that is stored in Amazon Simple Storage Service (Amazon S3). The snapshot file populates the node group. The Amazon S3 object name in the ARN cannot contain commas. For example, you can specify arn:aws:s3:::my_bucket/snapshot1.rdb.
 		"SnapshotArns": Schema{
-			Type:  ValueString,
+			Type:  ARN,
 			Array: true,
 		},
 

@@ -97,7 +97,7 @@ var CacheCluster = Resource{
 		},
 
 		"NotificationTopicArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"NumCacheNodes": Schema{
@@ -125,7 +125,7 @@ var CacheCluster = Resource{
 		},
 
 		"SnapshotArns": Schema{
-			Type:  ValueString,
+			Type:  ARN,
 			Array: true,
 		},
 

@@ -11,7 +11,7 @@ var Role = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 
@@ -27,7 +27,7 @@ var Role = Resource{
 		},
 
 		"ManagedPolicyArns": Schema{
-			Type:  ValueString,
+			Type:  ARN,
 			Array: true,
 		},
 

@@ -8,7 +8,7 @@ var User = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 
@@ -28,7 +28,7 @@ var User = Resource{
 		},
 
 		"ManagedPolicyArns": Schema{
-			Type:  ValueString,
+			Type:  ARN,
 			Array: true,
 		},
 

@@ -10,7 +10,7 @@ var replicationConfiguration = NestedResource{
 	Description: "S3 ReplicationConfiguration",
 	Properties: Properties{
 		"Role": Schema{
-			Type:     ValueString, // TODO: ARN
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 

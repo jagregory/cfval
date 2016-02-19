@@ -28,7 +28,7 @@ var Group = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 
@@ -39,7 +39,7 @@ var Group = Resource{
 
 	Properties: Properties{
 		"ManagedPolicyArns": Schema{
-			Type:  ValueString,
+			Type:  ARN,
 			Array: true,
 		},
 

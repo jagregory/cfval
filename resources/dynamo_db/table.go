@@ -11,13 +11,13 @@ var Table = Resource{
 
 	Attributes: map[string]Schema{
 		"StreamArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 
 	// Name
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: ARN,
 	},
 
 	Properties: Properties{

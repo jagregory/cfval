@@ -26,12 +26,12 @@ var Destination = Resource{
 		},
 
 		"RoleArn": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 
 		"TargetArn": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 	},

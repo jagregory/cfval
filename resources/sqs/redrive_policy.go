@@ -8,7 +8,7 @@ var redrivePolicy = NestedResource{
 
 	Properties: Properties{
 		"deadLetterTargetArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"maxReceiveCount": Schema{

@@ -8,7 +8,7 @@ var LogGroup = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 

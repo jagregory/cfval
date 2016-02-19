@@ -15,7 +15,7 @@ var notificationConfiguration = NestedResource{
 		},
 
 		"TopicARN": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 	},

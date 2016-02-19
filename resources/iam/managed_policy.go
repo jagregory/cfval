@@ -9,9 +9,8 @@ import (
 var ManagedPolicy = Resource{
 	AwsType: "AWS::IAM::ManagedPolicy",
 
-	// Arn
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: ARN,
 	},
 
 	Properties: Properties{

@@ -8,7 +8,7 @@ var Queue = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"QueueName": Schema{

@@ -37,14 +37,13 @@ var LifecycleHook = Resource{
 			Type: ValueString,
 		},
 
-		// TODO: Do we need an ARN type?
 		"NotificationTargetARN": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 
 		"RoleARN": Schema{
-			Type:     ValueString,
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 	},

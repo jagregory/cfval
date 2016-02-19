@@ -8,7 +8,7 @@ var spotFleetRequestConfigDataLaunchSpecificationIamInstanceProfile = NestedReso
 
 	Properties: Properties{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 }

@@ -6,9 +6,8 @@ import . "github.com/jagregory/cfval/schema"
 var Topic = Resource{
 	AwsType: "AWS::SNS::Topic",
 
-	// Topic ARN
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: ARN,
 	},
 
 	Properties: map[string]Schema{

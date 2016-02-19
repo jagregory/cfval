@@ -30,7 +30,7 @@ var Permission = Resource{
 		},
 
 		"SourceArn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 }

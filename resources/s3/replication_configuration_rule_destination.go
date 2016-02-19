@@ -10,7 +10,7 @@ var replicationConfigurationRuleDestination = NestedResource{
 	Description: "S3 ReplicationConfiguration Rules Destination",
 	Properties: Properties{
 		"Bucket": Schema{
-			Type:     ValueString, // TODO: ARN
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 

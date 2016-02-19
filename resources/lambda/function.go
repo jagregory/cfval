@@ -11,7 +11,7 @@ var Function = Resource{
 
 	Attributes: map[string]Schema{
 		"Arn": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 	},
 
@@ -45,7 +45,7 @@ var Function = Resource{
 		},
 
 		"Role": Schema{
-			Type:     ValueString, // ARN
+			Type:     ARN,
 			Required: constraints.Always,
 		},
 

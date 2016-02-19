@@ -12,7 +12,7 @@ var pseudoParameters = map[string]Schema{
 	},
 
 	"AWS::NotificationARNs": Schema{
-		Type:  ValueString,
+		Type:  ValueString, // TODO: ARN loop here
 		Array: true,
 	},
 
