@@ -62,11 +62,9 @@ func printReports(reports reporting.Reports) {
 		} else {
 			ui.Info(str)
 		}
-	}
-}
 
-func printSummary(stats reporting.Stats) {
-	fmt.Printf("%d failures, %d warnings\n", stats.Failures, stats.Warnings)
+		fmt.Println()
+	}
 }
 
 func getReadStream(args []string) (io.Reader, error) {
@@ -136,20 +134,17 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	fmt.Println(warningsAsErrors)
+	_, reports := schema.TemplateValidate(template, schema.NewResourceDefinitions(resources.AwsTypes))
+	stats := reports.Stats()
 
-	if ok, reports := schema.TemplateValidate(template, schema.NewResourceDefinitions(resources.AwsTypes)); !ok {
-		stats := reports.Stats()
+	printReports(reports)
 
-		printReports(reports)
-		fmt.Println()
-		printSummary(stats)
-
-		if warningsAsErrors || stats.Failures > 0 {
-			return 1
-		}
+	if warningsAsErrors || stats.Failures > 0 {
+		fmt.Printf("Fail: %d failures, %d warnings\n", stats.Failures, stats.Warnings)
+		return 1
 	}
 
+	fmt.Printf("Pass: %d failures, %d warnings\n", stats.Failures, stats.Warnings)
 	return 0
 }
 
