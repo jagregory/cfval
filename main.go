@@ -33,6 +33,41 @@ var ui = &cli.ColoredUi{
 	},
 }
 
+func groupReports(reports reporting.Reports) map[string]reporting.Reports {
+	group := make(map[string]reporting.Reports)
+
+	for _, r := range reports {
+		if items, ok := group[r.PathReadable]; ok {
+			group[r.PathReadable] = append(items, r)
+		} else {
+			group[r.PathReadable] = reporting.Reports{r}
+		}
+	}
+
+	return group
+}
+
+func printGroupedReports(reports reporting.Reports) {
+	sort.Sort(ByPath(reports))
+	grouped := groupReports(reports)
+
+	for path, reports := range grouped {
+		ui.Info(path)
+
+		for _, report := range reports {
+			if report.Level == reporting.Failure {
+				ui.Error("  ✗ " + report.Message)
+			} else if report.Level == reporting.Warning {
+				ui.Warn("  ⁈ " + report.Message)
+			} else {
+				ui.Info("  ➜ " + report.Message)
+			}
+		}
+
+		fmt.Println()
+	}
+}
+
 func printReports(reports reporting.Reports) {
 	sort.Sort(ByPath(reports))
 
@@ -95,6 +130,7 @@ Options:
 
   -forgiving             Ignore unrecognised resource types
   -warnings-as-errors    Treat warnings as errors
+  -format                Experimental output formatting
 `
 }
 
@@ -105,10 +141,12 @@ func (ValidateCommand) Synopsis() string {
 func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
 	var forgiving bool
+	var format string
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "warnings-as-errors")
 	cmdFlags.BoolVar(&forgiving, "forgiving", false, "forgiving")
+	cmdFlags.StringVar(&format, "format", "oneline", "format")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
@@ -139,7 +177,11 @@ func (c ValidateCommand) Run(args []string) int {
 	_, reports := schema.TemplateValidate(template, schema.NewResourceDefinitions(resources.AwsTypes))
 	stats := reports.Stats()
 
-	printReports(reports)
+	if format == "grouped" {
+		printGroupedReports(reports)
+	} else {
+		printReports(reports)
+	}
 
 	if warningsAsErrors || stats.Failures > 0 {
 		fmt.Printf("Fail: %d failures, %d warnings\n", stats.Failures, stats.Warnings)
