@@ -27,16 +27,6 @@ var Stack = Resource{
 	Properties: Properties{},
 }
 
-var WaitCondition = Resource{
-	AwsType:    "AWS::CloudFormation::WaitCondition",
-	Properties: Properties{},
-}
-
-var WaitConditionHandle = Resource{
-	AwsType:    "AWS::CloudFormation::WaitConditionHandle",
-	Properties: Properties{},
-}
-
 var CodeDeployApplication = Resource{
 	AwsType:    "AWS::CodeDeploy::Application",
 	Properties: Properties{},

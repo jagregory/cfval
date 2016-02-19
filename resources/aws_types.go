@@ -2,6 +2,7 @@ package resources
 
 import (
 	"github.com/jagregory/cfval/resources/auto_scaling"
+	"github.com/jagregory/cfval/resources/cloud_formation"
 	"github.com/jagregory/cfval/resources/cloud_front"
 	"github.com/jagregory/cfval/resources/cloud_trail"
 	"github.com/jagregory/cfval/resources/cloud_watch"
@@ -37,8 +38,8 @@ var AwsTypes = map[string]schema.Resource{
 	"AWS::CloudFormation::Init":                    not_supported.Init,
 	"AWS::CloudFormation::Interface":               not_supported.Interface,
 	"AWS::CloudFormation::Stack":                   not_supported.Stack,
-	"AWS::CloudFormation::WaitCondition":           not_supported.WaitCondition,
-	"AWS::CloudFormation::WaitConditionHandle":     not_supported.WaitConditionHandle,
+	"AWS::CloudFormation::WaitCondition":           cloud_formation.WaitCondition,
+	"AWS::CloudFormation::WaitConditionHandle":     cloud_formation.WaitConditionHandle,
 	"AWS::CloudFront::Distribution":                cloud_front.Distribution,
 	"AWS::CloudTrail::Trail":                       cloud_trail.Trail,
 	"AWS::CloudWatch::Alarm":                       cloud_watch.Alarm,
