@@ -20,10 +20,9 @@ func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, report
 		if resource, ok := template.Resources[resourceID]; ok {
 			if attributeName, ok := ga.definition[1].(string); ok {
 				definition := ctx.Definitions().Lookup(resource.Type)
-				// TODO: BUG this line below should be attribute, ok
-				if resource, ok := definition.Attributes[attributeName]; ok {
+				if attribute, ok := definition.Attributes[attributeName]; ok {
 					// TODO: make this common, so GetAtt and others can use it
-					targetType := resource.Type
+					targetType := attribute.Type
 					switch targetType.CoercibleTo(ctx.Property().Type) {
 					case CoercionNever:
 						return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe())}
