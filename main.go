@@ -151,6 +151,8 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
+	args = cmdFlags.Args()
+
 	stream, err := getReadStream(args)
 	if err != nil {
 		fmt.Println(err)
