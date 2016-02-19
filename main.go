@@ -62,7 +62,9 @@ func printReports(reports reporting.Reports) {
 		} else {
 			ui.Info(str)
 		}
+	}
 
+	if len(reports) > 0 {
 		fmt.Println()
 	}
 }
