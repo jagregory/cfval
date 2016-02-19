@@ -17,7 +17,7 @@ func TestAllowedMethodsFixedArrays(t *testing.T) {
 
 	testCFDistribution := func(allowedMethods []interface{}) schema.ResourceContext {
 		return schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			parse.NewTemplateResource("TestResource", map[string]interface{}{
 				"DistributionConfig": map[string]interface{}{
 					"Enabled": true,
 					"DefaultCacheBehavior": map[string]interface{}{

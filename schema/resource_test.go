@@ -27,23 +27,23 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 	}))
 
 	nothingSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{}),
+		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
 		res,
 	}
 	option1Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 		}),
 		res,
 	}
 	option2Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option2": "value",
 		}),
 		res,
 	}
 	bothSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 			"Option2": "value",
 		}),
@@ -91,29 +91,29 @@ func TestSchemaRequiredValidation(t *testing.T) {
 	}))
 
 	nothingSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{}),
+		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
 		res,
 	}
 	option1Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 		}),
 		res,
 	}
 	option2Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option2": "value",
 		}),
 		res,
 	}
 	option3Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option3": "value",
 		}),
 		res,
 	}
 	allSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 			"Option2": "value",
 			"Option3": "value",
@@ -161,23 +161,23 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	}))
 
 	nothingSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{}),
+		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
 		res,
 	}
 	option1Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 		}),
 		res,
 	}
 	option2Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option2": "value",
 		}),
 		res,
 	}
 	bothSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 			"Option2": "value",
 		}),
@@ -220,23 +220,23 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	}))
 
 	nothingSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{}),
+		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
 		res,
 	}
 	option1Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 		}),
 		res,
 	}
 	option2Set := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option2": "value",
 		}),
 		res,
 	}
 	bothSet := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"Option1": "value",
 			"Option2": "value",
 		}),

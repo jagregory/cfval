@@ -9,7 +9,7 @@ import (
 func TestEnumValidation(t *testing.T) {
 	template := &parse.Template{}
 	self := ResourceWithDefinition{
-		parse.NewTemplateResource(template, "", make(map[string]interface{})),
+		parse.NewTemplateResource("", make(map[string]interface{})),
 		Resource{},
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})

@@ -8,8 +8,8 @@ import (
 
 func TestGetAtt(t *testing.T) {
 	template := &parse.Template{
-		Resources: map[string]*parse.TemplateResource{
-			"MyResource": &parse.TemplateResource{
+		Resources: map[string]parse.TemplateResource{
+			"MyResource": parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},

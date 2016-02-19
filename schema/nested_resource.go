@@ -24,7 +24,7 @@ func (NestedResource) CoercibleTo(PropertyType) Coercion {
 func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if values, ok := value.(map[string]interface{}); ok {
 		property := ctx.Property()
-		tnr := parse.NewTemplateResource(ctx.Template(), property.Type.Describe(), values)
+		tnr := parse.NewTemplateResource(property.Type.Describe(), values)
 
 		nestedResourceContext := NewResourceContext(ctx, ResourceWithDefinition{tnr, property.Type})
 		failures, visited := res.Properties.Validate(nestedResourceContext)

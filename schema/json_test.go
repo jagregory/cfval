@@ -12,18 +12,16 @@ func TestJSONValidation(t *testing.T) {
 	}
 
 	template := &parse.Template{
-		Resources: map[string]*parse.TemplateResource{
-			"Resource1": &parse.TemplateResource{
+		Resources: map[string]parse.TemplateResource{
+			"Resource1": parse.TemplateResource{
 				Type: "ResourceA",
 			},
-			"Resource2": &parse.TemplateResource{
+			"Resource2": parse.TemplateResource{
 				Type: "ResourceB",
 			},
 		},
 	}
-	tr := parse.TemplateResource{
-		Tmpl: template,
-	}
+	tr := parse.TemplateResource{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{

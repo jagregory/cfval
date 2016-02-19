@@ -16,7 +16,7 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 
 	badVersionCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			parse.NewTemplateResource("TestResource", map[string]interface{}{
 				"EngineVersion": "2.7",
 				"CacheNodeType": "cache.m3.medium",
 			}),
@@ -26,7 +26,7 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 
 	badNodeTypeT1Ctx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			parse.NewTemplateResource("TestResource", map[string]interface{}{
 				"EngineVersion": "2.8",
 				"CacheNodeType": "cache.t1.micro",
 			}),
@@ -36,7 +36,7 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 
 	badNodeTypeT2Ctx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			parse.NewTemplateResource("TestResource", map[string]interface{}{
 				"EngineVersion": "2.8",
 				"CacheNodeType": "cache.t2.micro",
 			}),
@@ -46,7 +46,7 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 
 	goodCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+			parse.NewTemplateResource("TestResource", map[string]interface{}{
 				"EngineVersion": "2.8",
 				"CacheNodeType": "cache.m3.medium",
 			}),

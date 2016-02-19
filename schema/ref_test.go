@@ -8,9 +8,9 @@ import (
 
 func TestRefValidate(t *testing.T) {
 	template := &parse.Template{
-		Resources: map[string]*parse.TemplateResource{
-			"Resource1": &parse.TemplateResource{},
-			"Resource2": &parse.TemplateResource{
+		Resources: map[string]parse.TemplateResource{
+			"Resource1": parse.TemplateResource{},
+			"Resource2": parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},

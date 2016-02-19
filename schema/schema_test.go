@@ -62,16 +62,14 @@ func TestSchemaCustomValidation(t *testing.T) {
 	}
 
 	template := &parse.Template{
-		Resources: map[string]*parse.TemplateResource{
-			"abc": &parse.TemplateResource{
+		Resources: map[string]parse.TemplateResource{
+			"abc": parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},
 	}
 	self := ResourceWithDefinition{
-		parse.TemplateResource{
-			Tmpl: template,
-		},
+		parse.TemplateResource{},
 		res,
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{

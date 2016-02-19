@@ -14,7 +14,7 @@ func TestAZModeValidate(t *testing.T) {
 
 	singleAZCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "", map[string]interface{}{
+			parse.NewTemplateResource("", map[string]interface{}{
 				"PreferredAvailabilityZones": []interface{}{"one"},
 			}),
 			schema.Resource{},
@@ -23,7 +23,7 @@ func TestAZModeValidate(t *testing.T) {
 
 	multiAZCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "", map[string]interface{}{
+			parse.NewTemplateResource("", map[string]interface{}{
 				"PreferredAvailabilityZones": []interface{}{"one", "two"},
 			}),
 			schema.Resource{},
@@ -46,7 +46,7 @@ func TestNumCacheNodesValidate(t *testing.T) {
 
 	redisCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "", map[string]interface{}{
+			parse.NewTemplateResource("", map[string]interface{}{
 				"Engine": "redis",
 			}),
 			schema.Resource{},
@@ -55,7 +55,7 @@ func TestNumCacheNodesValidate(t *testing.T) {
 
 	memcachedCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-			parse.NewTemplateResource(template, "", map[string]interface{}{
+			parse.NewTemplateResource("", map[string]interface{}{
 				"Engine": "memcached",
 			}),
 			schema.Resource{},

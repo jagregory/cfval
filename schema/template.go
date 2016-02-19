@@ -12,7 +12,7 @@ func TemplateValidate(template *parse.Template, definitions ResourceDefinitions)
 	ctx := NewInitialContext(template, definitions)
 
 	for logicalID, resource := range template.Resources {
-		if _, errs := resourceValidate(*resource, ContextAdd(ctx, "Resources", logicalID)); errs != nil {
+		if _, errs := resourceValidate(resource, ContextAdd(ctx, "Resources", logicalID)); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

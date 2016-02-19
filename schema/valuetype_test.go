@@ -16,16 +16,14 @@ func TestValueTypeValidation(t *testing.T) {
 
 	property := Schema{Type: ValueString}
 	template := &parse.Template{
-		Resources: map[string]*parse.TemplateResource{
-			"good": &parse.TemplateResource{
+		Resources: map[string]parse.TemplateResource{
+			"good": parse.TemplateResource{
 				Type: "TestResource",
 			},
 		},
 	}
 	self := ResourceWithDefinition{
-		parse.TemplateResource{
-			Tmpl: template,
-		},
+		parse.TemplateResource{},
 		res,
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{

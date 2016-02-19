@@ -21,7 +21,7 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	}))
 
 	badCountryCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "AK",
 				"CountryCode":     "AU",
@@ -31,7 +31,7 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	})
 
 	badSubdivisionCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "NSW",
 				"CountryCode":     "US",
@@ -41,7 +41,7 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	})
 
 	goodCombinationCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
-		parse.NewTemplateResource(template, "TestResource", map[string]interface{}{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
 			"GeoLocation": map[string]interface{}{
 				"SubdivisionCode": "AK",
 				"CountryCode":     "US",

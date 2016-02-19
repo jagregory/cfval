@@ -1,15 +1,6 @@
 package schema
 
-import (
-	"github.com/jagregory/cfval/parse"
-	"github.com/jagregory/cfval/reporting"
-)
-
-// TODO: better name for this. It's either a TemplateResource or a "NestedTemplateResource"
-type SelfRepresentation interface {
-	Template() *parse.Template
-	Property(name string) (interface{}, bool)
-}
+import "github.com/jagregory/cfval/reporting"
 
 type Properties map[string]Schema
 

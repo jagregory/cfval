@@ -1,18 +1,28 @@
 package parse
 
+import "encoding/json"
+
 type TemplateResource struct {
-	Tmpl       *Template // TODO: haha, get rid of this
 	Type       string
 	properties map[string]interface{}
 	Metadata   map[string]interface{}
 }
 
-func (tr TemplateResource) Template() *Template {
-	if tr.Tmpl == nil {
-		panic("Nil Template")
+func (d *TemplateResource) UnmarshalJSON(b []byte) error {
+	var tmp struct {
+		Type                 string
+		Properties, Metadata map[string]interface{}
 	}
 
-	return tr.Tmpl
+	if err := json.Unmarshal(b, &tmp); err != nil {
+		return err
+	}
+
+	d.Type = tmp.Type
+	d.properties = tmp.Properties
+	d.Metadata = tmp.Metadata
+
+	return nil
 }
 
 func (tr TemplateResource) Properties() []string {
@@ -25,21 +35,11 @@ func (tr TemplateResource) Properties() []string {
 
 func (tr TemplateResource) PropertyValue(name string) (interface{}, bool) {
 	val, ok := tr.properties[name]
-
-	if ok {
-		return val, ok
-	}
-
-	return nil, false
+	return val, ok
 }
 
-func NewTemplateResource(template *Template, awsType string, properties map[string]interface{}) TemplateResource {
-	if template == nil {
-		panic("Template is nil")
-	}
-
+func NewTemplateResource(awsType string, properties map[string]interface{}) TemplateResource {
 	return TemplateResource{
-		Tmpl:       template,
 		Type:       awsType,
 		properties: properties,
 	}

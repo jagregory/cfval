@@ -11,9 +11,5 @@ func ParseTemplateJSON(data []byte, forgiving bool) (*Template, error) {
 		return nil, err
 	}
 
-	for _, tr := range temp.Resources {
-		tr.Tmpl = &temp
-	}
-
 	return &temp, nil
 }

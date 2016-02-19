@@ -33,9 +33,7 @@ func TestSingleValueValidate(t *testing.T) {
 
 	prop := Schema{}
 	template := &parse.Template{}
-	tr := parse.TemplateResource{
-		Tmpl: template,
-	}
+	tr := parse.TemplateResource{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, prop)
 
@@ -54,9 +52,7 @@ func TestSingleValueValidate(t *testing.T) {
 
 func TestFixedArrayValidateHelper(t *testing.T) {
 	template := &parse.Template{}
-	tr := parse.TemplateResource{
-		Tmpl: template,
-	}
+	tr := parse.TemplateResource{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
 

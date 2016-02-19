@@ -35,7 +35,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 				"TestResource": res,
 			}),
 			ResourceWithDefinition{
-				parse.NewTemplateResource(template, "TestResource", properties),
+				parse.NewTemplateResource("TestResource", properties),
 				res,
 			},
 			Schema{},
