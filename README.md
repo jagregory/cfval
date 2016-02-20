@@ -8,12 +8,14 @@
 
 `cfval` is a small tool which validates a CloudFormation JSON template and notifies you of any issues it can find. Missing required properties, properties which conflict with others, `Ref`s to parameters which don't exist or incompatible properties of resources, and much more.
 
+## Usage
+
 ```
 $ cfval validate my-template.json
 
 Resources.MyLaunchConfiguration.UserData.Ref ... Ref 'CloudInitScript' is not a resource or parameter
 
-1 failure
+Fail: 1 failure, 0 warnings
 ```
 
 ## Installation
@@ -25,6 +27,39 @@ For the latest stable release on OSX (still pre-release):
 For other operating systems and/or to use the absoltue latest, cfval is installable from source via `go get`.
 
     go get -v github.com/jagregory/cfval
+
+## Features
+
+`cfval` aims to identify as many possible issues with your CloudFormation templates *before* you try to run them. Issues are categorised as either:
+
+  * **Failure**: things which are definitely wrong, such as a `Ref` pointing to something which doesn't exist, an unexpected resource property, or a unmistakably wrong value assigned to a property (`"hello world"` to a list property or an EC2 Instance ID).
+
+  * **Warning:** things which are likely wrong, but we aren't certain. These are nearly always type coercion issues (a `String` being assigned to a more specific type like an `VpcID`) or unfortunate AWS documentation issues (a resource returning an ID when the docs suggest a Name). Please report any warnings which seem incorrect.
+
+The main high-level features are:
+
+  * Resource type checks (valid Type attribute)
+    * Property validations
+    * Unexpected properties
+    * Required properties
+    * Grouped required properties (e.g. must specify X when Y is specified)
+    * Alternate required properties (e.g. must specify X when Y isn't specified)
+    * Conflicting properties (e.g. can't specify X when Y is specified)
+    * Required when certain property values are specified (e.g. must specify X when Y is hello)
+  * `Ref` validations
+    * Target exists and is a Resource/Parameter/Pseudo-parameter
+    * Target actually is usable in a Ref
+    * Value from a Ref is compatible with the property it is being assigned to
+  * `GetAtt` validations
+    * Target resource exists
+    * Attribute is available on target resource
+    * Attribute type is compatible with the property it is being assigned to
+  * Pseudo-parameter validations (type checking)
+  * Various type validations
+    * IP addresses
+    * CIDR ranges
+    * Availability zone names
+    * etc...
 
 ## Known issues
 
