@@ -27,7 +27,7 @@ var VPC = Resource{
 
 	// ID
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: VpcID,
 	},
 
 	Properties: Properties{

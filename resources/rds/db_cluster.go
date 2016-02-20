@@ -40,11 +40,11 @@ var DBCluster = Resource{
 		},
 
 		"DBClusterParameterGroupName": Schema{
-			Type: ValueString,
+			Type: dbParameterGroupName,
 		},
 
 		"DBSubnetGroupName": Schema{
-			Type: ValueString,
+			Type: dbSubnetGroupName,
 		},
 
 		"Engine": Schema{
@@ -58,7 +58,7 @@ var DBCluster = Resource{
 		},
 
 		"KmsKeyId": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"MasterUsername": Schema{

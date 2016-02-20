@@ -23,7 +23,7 @@ var autoScalingEbsBlockDevice = NestedResource{
 		},
 
 		"SnapshotId": Schema{
-			Type: ValueString,
+			Type: SnapshotID,
 		},
 
 		"VolumeSize": Schema{

@@ -21,7 +21,7 @@ var VolumeAttachment = Resource{
 		},
 
 		"VolumeId": Schema{
-			Type:     ValueString,
+			Type:     VolumeID,
 			Required: constraints.Always,
 		},
 	},

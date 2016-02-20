@@ -13,7 +13,7 @@ var EIPAssociation = Resource{
 
 	Properties: Properties{
 		"AllocationId": Schema{
-			Type: ValueString,
+			Type: AllocationID,
 		},
 
 		"EIP": Schema{
@@ -25,7 +25,7 @@ var EIPAssociation = Resource{
 		},
 
 		"NetworkInterfaceId": Schema{
-			Type: ValueString,
+			Type: NetworkInterfaceID,
 		},
 
 		"PrivateIpAddress": Schema{

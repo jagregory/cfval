@@ -20,7 +20,7 @@ var DBSecurityGroupIngress = Resource{
 		},
 
 		"DBSecurityGroupName": Schema{
-			Type:     ValueString,
+			Type:     dbSecurityGroupName,
 			Required: constraints.Always,
 		},
 

@@ -27,7 +27,7 @@ var SubnetNetworkACLAssociation = Resource{
 		},
 
 		"NetworkAclId": Schema{
-			Type:     ValueString,
+			Type:     NetworkAclID,
 			Required: constraints.Always,
 		},
 	},

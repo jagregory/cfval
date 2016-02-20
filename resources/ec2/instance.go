@@ -34,7 +34,7 @@ var networkInterface = NestedResource{
 		},
 
 		"NetworkInterfaceId": Schema{
-			Type: ValueString,
+			Type: NetworkInterfaceID,
 		},
 
 		"PrivateIpAddress": Schema{
@@ -112,7 +112,7 @@ var Instance = Resource{
 		},
 
 		"ImageId": Schema{
-			Type:     ValueString,
+			Type:     ImageID,
 			Required: constraints.Always,
 		},
 
@@ -161,7 +161,7 @@ var Instance = Resource{
 		},
 
 		"SecurityGroupIds": Schema{
-			Type:      ValueString,
+			Type:      SecurityGroupID,
 			Array:     true,
 			Conflicts: constraints.PropertyExists("NetworkInterfaces"),
 		},

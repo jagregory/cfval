@@ -31,7 +31,7 @@ var NetworkInterfaceAttachment = Resource{
 		},
 
 		"NetworkInterfaceId": Schema{
-			Type:     ValueString,
+			Type:     NetworkInterfaceID,
 			Required: constraints.Always,
 		},
 	},

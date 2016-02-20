@@ -16,13 +16,13 @@ var VPNGatewayRoutePropagation = Resource{
 
 	Properties: Properties{
 		"RouteTableIds": Schema{
-			Type:     ValueString,
+			Type:     RouteTableID,
 			Array:    true,
 			Required: constraints.Always,
 		},
 
 		"VpnGatewayId": Schema{
-			Type:     ValueString,
+			Type:     VpnGatewayID,
 			Required: constraints.Always,
 		},
 	},

@@ -1,16 +1,19 @@
-package schema
+package elasti_cache
 
-import "github.com/jagregory/cfval/reporting"
+import (
+	"github.com/jagregory/cfval/reporting"
+	. "github.com/jagregory/cfval/schema"
+)
 
-var VolumeID = FuncType{
-	Description: "VolumeID",
+var cacheSubnetGroupName = FuncType{
+	Description: "CacheSubnetGroupName",
 
 	Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 		if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
 			return reporting.ValidateOK, errs
 		}
 
-		// TODO: VolumeID validation
+		// TODO: CacheSubnetGroupName validation
 		return reporting.ValidateOK, nil
 	},
 }

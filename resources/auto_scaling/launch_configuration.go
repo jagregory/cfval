@@ -25,11 +25,11 @@ var LaunchConfiguration = Resource{
 		},
 
 		"ClassicLinkVPCId": Schema{
-			Type: ValueString,
+			Type: VpcID,
 		},
 
 		"ClassicLinkVPCSecurityGroups": Schema{
-			Type:     ValueString,
+			Type:     SecurityGroupID,
 			Array:    true,
 			Required: constraints.PropertyExists("ClassicLinkVPCId"),
 		},
@@ -45,11 +45,11 @@ var LaunchConfiguration = Resource{
 		},
 
 		"ImageId": Schema{
-			Type: ValueString,
+			Type: ImageID,
 		},
 
 		"InstanceId": Schema{
-			Type: ValueString,
+			Type: InstanceID,
 		},
 
 		"InstanceMonitoring": Schema{
@@ -80,7 +80,7 @@ var LaunchConfiguration = Resource{
 		},
 
 		"SecurityGroups": Schema{
-			Type:  ValueString,
+			Type:  SecurityGroupName,
 			Array: true,
 		},
 

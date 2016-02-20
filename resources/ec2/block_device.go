@@ -26,7 +26,7 @@ var ec2EbsBlockDevice = NestedResource{
 		},
 
 		"SnapshotId": Schema{
-			Type: ValueString,
+			Type: SnapshotID,
 			// TODO: Required: Conditional If you specify both SnapshotId and VolumeSize, VolumeSize must be equal or greater than the size of the snapshot.
 		},
 

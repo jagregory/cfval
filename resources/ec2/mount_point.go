@@ -15,7 +15,7 @@ var mountPoint = NestedResource{
 		},
 
 		"VolumeId": Schema{
-			Type:     ValueString,
+			Type:     VolumeID,
 			Required: constraints.Always,
 		},
 	},

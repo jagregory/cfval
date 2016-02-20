@@ -31,7 +31,7 @@ func data() []testCase {
 	}
 
 	// TODO: add more types here
-	for _, enum := range []PropertyType{ARN, AvailabilityZone, CIDR, JSON, KeyName, Period, VpcID} {
+	for _, enum := range []PropertyType{ARN, AvailabilityZone, CIDR, JSON, KeyName, Period, InternetGatewayID, VpcID} {
 		coercions = append(coercions, testCase{from: enum, to: enum, result: CoercionAlways})
 
 		coercions = append(coercions, testCase{from: enum, to: ValueBool, result: CoercionNever})

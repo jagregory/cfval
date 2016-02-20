@@ -23,7 +23,7 @@ var spotFleetRequestConfigDataLaunchSpecificationBlockDeviceMappingEbs = NestedR
 		},
 
 		"SnapshotId": Schema{
-			Type: ValueString,
+			Type: SnapshotID,
 		},
 
 		"VolumeSize": Schema{

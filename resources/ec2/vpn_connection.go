@@ -36,7 +36,7 @@ var VPNConnection = Resource{
 		},
 
 		"VpnGatewayId": Schema{
-			Type: ValueString,
+			Type: VpnGatewayID,
 		},
 	},
 }

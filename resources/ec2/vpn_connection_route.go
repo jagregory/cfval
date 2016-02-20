@@ -21,7 +21,7 @@ var VPNConnectionRoute = Resource{
 		},
 
 		"VpnConnectionId": Schema{
-			Type:     ValueString,
+			Type:     VpnConnectionID,
 			Required: constraints.Always,
 		},
 	},

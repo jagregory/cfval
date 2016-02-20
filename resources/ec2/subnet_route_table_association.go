@@ -16,7 +16,7 @@ var SubnetRouteTableAssociation = Resource{
 
 	Properties: Properties{
 		"RouteTableId": Schema{
-			Type:     ValueString,
+			Type:     RouteTableID,
 			Required: constraints.Always,
 		},
 

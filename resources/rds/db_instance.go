@@ -125,7 +125,7 @@ var DBInstance = Resource{
 		},
 
 		"KmsKeyId": Schema{
-			Type: ValueString,
+			Type: ARN,
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("DBSnapshotIdentifier"),
 				constraints.PropertyExists("SourceDBInstanceIdentifier"),

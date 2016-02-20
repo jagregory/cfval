@@ -33,7 +33,7 @@ var spotFleetRequestConfigDataLaunchSpecificationNetworkInterface = NestedResour
 		},
 
 		"NetworkInterfaceId": Schema{
-			Type: ValueString,
+			Type: NetworkInterfaceID,
 		},
 
 		"PrivateIpAddresses": Schema{

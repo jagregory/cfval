@@ -12,7 +12,7 @@ var Volume = Resource{
 
 	// ID
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: VolumeID,
 	},
 
 	Properties: Properties{

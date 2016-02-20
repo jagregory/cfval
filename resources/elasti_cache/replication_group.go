@@ -95,7 +95,7 @@ var ReplicationGroup = Resource{
 		},
 
 		"CacheSubnetGroupName": Schema{
-			Type: ValueString,
+			Type: cacheSubnetGroupName,
 		},
 
 		"Engine": Schema{

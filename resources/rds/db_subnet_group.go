@@ -9,6 +9,7 @@ import (
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnet-group.html
 var DBSubnetGroup = Resource{
 	AwsType: "AWS::RDS::DBSubnetGroup",
+
 	Properties: map[string]Schema{
 		"DBSubnetGroupDescription": Schema{
 			Type:     ValueString,

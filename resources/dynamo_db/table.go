@@ -17,7 +17,7 @@ var Table = Resource{
 
 	// Name
 	ReturnValue: Schema{
-		Type: ARN,
+		Type: ValueString,
 	},
 
 	Properties: Properties{

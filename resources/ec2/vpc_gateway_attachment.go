@@ -27,7 +27,7 @@ var VPCGatewayAttachment = Resource{
 		},
 
 		"VpnGatewayId": Schema{
-			Type:      ValueString,
+			Type:      VpnGatewayID,
 			Required:  constraints.PropertyNotExists("InternetGatewayId"),
 			Conflicts: constraints.PropertyExists("InternetGatewayId"),
 		},

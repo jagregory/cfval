@@ -20,7 +20,7 @@ var VPCEndpoint = Resource{
 		},
 
 		"RouteTableIds": Schema{
-			Type:  ValueString,
+			Type:  RouteTableID,
 			Array: true,
 		},
 

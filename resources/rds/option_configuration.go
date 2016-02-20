@@ -11,7 +11,7 @@ var optionConfiguration = NestedResource{
 
 	Properties: Properties{
 		"DBSecurityGroupMemberships": Schema{
-			Type:      ValueString,
+			Type:      dbSecurityGroupName,
 			Array:     true,
 			Conflicts: constraints.PropertyExists("VPCSecurityGroupMemberships"),
 		},
@@ -30,7 +30,7 @@ var optionConfiguration = NestedResource{
 		},
 
 		"VpcSecurityGroupMemberships": Schema{
-			Type:      ValueString,
+			Type:      SecurityGroupID,
 			Array:     true,
 			Conflicts: constraints.PropertyExists("DBSecurityGroupMemberships"),
 		},

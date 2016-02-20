@@ -38,7 +38,7 @@ var AutoScalingGroup = Resource{
 		},
 
 		"InstanceId": Schema{
-			Type:     ValueString,
+			Type:     InstanceID,
 			Required: constraints.PropertyNotExists("LaunchConfigurationName"),
 		},
 
@@ -85,7 +85,7 @@ var AutoScalingGroup = Resource{
 		},
 
 		"VPCZoneIdentifier": Schema{
-			Type:     ValueString,
+			Type:     SubnetID,
 			Array:    true,
 			Required: constraints.PropertyNotExists("AvailabilityZones"),
 		},

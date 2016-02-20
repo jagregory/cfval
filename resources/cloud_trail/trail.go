@@ -39,7 +39,7 @@ var Trail = Resource{
 		},
 
 		"KMSKeyId": Schema{
-			Type: ValueString,
+			Type: ARN,
 		},
 
 		"S3BucketName": Schema{

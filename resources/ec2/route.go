@@ -49,7 +49,7 @@ var Route = Resource{
 		},
 
 		"NetworkInterfaceId": Schema{
-			Type: ValueString,
+			Type: NetworkInterfaceID,
 			Required: constraints.All{
 				constraints.PropertyNotExists("GatewayId"),
 				constraints.PropertyNotExists("InstanceId"),
@@ -63,12 +63,12 @@ var Route = Resource{
 		},
 
 		"RouteTableId": Schema{
-			Type:     ValueString,
+			Type:     RouteTableID,
 			Required: constraints.Always,
 		},
 
 		"VpcPeeringConnectionId": Schema{
-			Type: ValueString,
+			Type: VpcPeeringConnectionID,
 			Required: constraints.All{
 				constraints.PropertyNotExists("GatewayId"),
 				constraints.PropertyNotExists("InstanceId"),

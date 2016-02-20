@@ -29,7 +29,7 @@ var NetworkACLEntry = Resource{
 		},
 
 		"NetworkAclId": Schema{
-			Type:     ValueString,
+			Type:     NetworkAclID,
 			Required: constraints.Always,
 		},
 

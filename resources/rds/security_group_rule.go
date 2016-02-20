@@ -20,7 +20,7 @@ var securityGroupRule = NestedResource{
 		},
 
 		"EC2SecurityGroupOwnerId": Schema{
-			Type: ValueString,
+			Type: ValueString, // Account id
 		},
 	},
 }

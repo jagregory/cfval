@@ -11,7 +11,7 @@ var SubnetGroup = Resource{
 
 	// Name
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: cacheSubnetGroupName,
 	},
 
 	Properties: map[string]Schema{

@@ -8,7 +8,7 @@ var Eip = Resource{
 
 	Attributes: map[string]Schema{
 		"AllocationId": Schema{
-			Type: ValueString,
+			Type: AllocationID,
 		},
 	},
 

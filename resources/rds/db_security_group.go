@@ -12,7 +12,7 @@ var DBSecurityGroup = Resource{
 
 	// Name
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: dbSecurityGroupName,
 	},
 
 	Properties: Properties{
