@@ -190,7 +190,7 @@ func (c ValidateCommand) Run(args []string) int {
 }
 
 func main() {
-	app := cli.NewCLI("cfval", "0.1.0")
+	app := cli.NewCLI("cfval", Version)
 	app.Args = os.Args[1:]
 	app.Commands = map[string]cli.CommandFactory{
 		"validate": func() (cli.Command, error) {
