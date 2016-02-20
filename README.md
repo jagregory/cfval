@@ -18,9 +18,13 @@ Resources.MyLaunchConfiguration.UserData.Ref ... Ref 'CloudInitScript' is not a 
 
 ## Installation
 
-For now cfval is only installable via `go get`. This will change once development stabalises and I can push releases out.
+For the latest stable release on OSX (still pre-release):
 
-`go get -v github.com/jagregory/cfval`
+    brew install jagregory/tools/cfval
+
+For other operating systems and/or to use the absoltue latest, cfval is installable from source via `go get`.
+
+    go get -v github.com/jagregory/cfval
 
 ## Known issues
 
