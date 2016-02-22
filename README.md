@@ -3,8 +3,6 @@
 [![Build Status](https://travis-ci.org/jagregory/cfval.svg?branch=master)](https://travis-ci.org/jagregory/cfval)
 
 > Have you ever waited 15 minutes for CloudFormation to let you know that you forgot to set the Type of a DNS record? Yeah, and that's on a *good day*. Try 45 minutes for your CloudFront Distribution to fail...
->
-> After getting very tired of this process, and with a large infrastructure refactor looming, I decided some time could be better spent catching issues sooner in the process. Hence, cfval.
 
 `cfval` is a small tool which validates a CloudFormation JSON template and notifies you of any issues it can find. Missing required properties, properties which conflict with others, `Ref`s to parameters which don't exist or incompatible properties of resources, and much more.
 

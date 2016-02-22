@@ -28,7 +28,11 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 	}
 
 	if find, ok := value["Fn::FindInMap"]; ok {
-		return validateFindInMap(find, PropertyContextAdd(ctx, "Fn::FindInMap"))
+		if arr, ok := find.([]interface{}); ok {
+			return NewFindInMap(arr).Validate(PropertyContextAdd(ctx, "FindInMap"))
+		}
+
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "FindInMap must be an array")}
 	}
 
 	if base64, ok := value["Fn::Base64"]; ok {
@@ -37,53 +41,6 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here
 	return reporting.ValidateOK, nil
-}
-
-// TODO: Supported functions within a function
-func validateFindInMap(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	find, ok := value.([]interface{})
-	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options need to be an array")}
-	}
-
-	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options has wrong number of items, expected: 3, actual: %d", len(find))}
-	}
-
-	findInMapItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
-
-	mapName := find[0]
-	_, mapNameIsString := mapName.(string)
-	if _, errs := ValueString.Validate(mapName, PropertyContextAdd(findInMapItemContext, "0")); errs != nil {
-		return reporting.ValidateAbort, errs
-	}
-
-	if mapNameIsString {
-		// map name is a string, so we can do some further interrogation
-		// TODO: lookup whether MapName is a valid Map
-	}
-
-	topLevelKey := find[1]
-	_, topLevelKeyIsString := topLevelKey.(string)
-	if _, errs := ValueString.Validate(topLevelKey, PropertyContextAdd(findInMapItemContext, "1")); errs != nil {
-		return reporting.ValidateAbort, errs
-	}
-
-	if mapNameIsString && topLevelKeyIsString {
-		// TODO: lookup whether topLevelKey is in mapName
-	}
-
-	secondLevelKey := find[2]
-	_, secondLevelKeyIsString := secondLevelKey.(string)
-	if _, errs := ValueString.Validate(secondLevelKey, PropertyContextAdd(findInMapItemContext, "2")); errs != nil {
-		return reporting.ValidateAbort, errs
-	}
-
-	if mapNameIsString && topLevelKeyIsString && secondLevelKeyIsString {
-		// TODO: lookup whether secondLevelKeyIsString is in topLevelKey
-	}
-
-	return reporting.ValidateAbort, nil
 }
 
 func validateBase64(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
