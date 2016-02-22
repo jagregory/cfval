@@ -22,12 +22,18 @@ func TestGetAtt(t *testing.T) {
 					Type: InstanceID,
 				},
 
+				"ListInstanceId": Schema{
+					Type:  InstanceID,
+					Array: true,
+				},
+
 				"Name": Schema{
 					Type: ValueString,
 				},
 			},
 		},
 	}), currentResource, Schema{Type: InstanceID})
+	listCtx := NewPropertyContext(ctx, Schema{Type: InstanceID, Array: true})
 
 	if _, errs := NewGetAtt(nil).Validate(ctx); errs == nil {
 		t.Error("Should fail when no arguments supplied", errs)
@@ -54,6 +60,10 @@ func TestGetAtt(t *testing.T) {
 	}
 
 	if _, errs := NewGetAtt([]interface{}{"MyResource", "InstanceId"}).Validate(ctx); errs != nil {
+		t.Error("Should pass when valid property used for type of resource", errs)
+	}
+
+	if _, errs := NewGetAtt([]interface{}{"MyResource", "ListInstanceId"}).Validate(listCtx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
 	}
 }

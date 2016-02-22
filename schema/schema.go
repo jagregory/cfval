@@ -9,6 +9,7 @@ import (
 
 type ValidateFunc func(interface{}, PropertyContext) (reporting.ValidateResult, reporting.Reports)
 
+// A Schema defines the qualities and behaviour of a property.
 type Schema struct {
 	// Array is true when the expected value is an array of Type
 	Array bool
@@ -36,8 +37,6 @@ type Schema struct {
 	//
 	// e.g. prop X must be set to false when prop Y is true
 	ValidateFunc ValidateFunc
-
-	// ArrayValidateFunc ArrayValidateFunc
 }
 
 func (s Schema) TargetType() PropertyType {
@@ -53,19 +52,17 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 	propertyContext := NewPropertyContext(ctx, s)
 
 	if s.Array {
-		// TODO: fix array-as-a-whole validation
-		// if s.ArrayValidateFunc != nil {
-		// 	if ok, errs := s.ArrayValidateFunc(value.([]interface{}), tr, path); !ok {
-		// 		failures = append(failures, errs...)
-		// 		pass = false
-		// 	}
-		// } else {
-		for i, item := range value.([]interface{}) {
-			if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
-				failures = append(failures, errs...)
+		switch t := value.(type) {
+		case []interface{}:
+			for i, item := range t {
+				if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
+					failures = append(failures, errs...)
+				}
 			}
+		// case map[string]interface{}:
+		default:
+			failures = append(failures, reporting.NewFailure(ctx, "%T used in %s Array property", t, s.Type.Describe()))
 		}
-		// }
 	} else {
 		if _, errs := validateValue(value, propertyContext); errs != nil {
 			failures = append(failures, errs...)

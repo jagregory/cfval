@@ -17,24 +17,85 @@ func TestSchemaTargetType(t *testing.T) {
 }
 
 func TestSchemaTypeValidation(t *testing.T) {
-	template := &parse.Template{}
+	template := &parse.Template{
+		Parameters: map[string]parse.Parameter{
+			"StringParam": parse.Parameter{Type: "String"},
+		},
+
+		Resources: map[string]parse.TemplateResource{
+			"Resource1": parse.TemplateResource{
+				Type: "ResourceDef1",
+			},
+		},
+	}
 	self := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
+		"ResourceDef1": Resource{
+			Attributes: map[string]Schema{
+				"Name": Schema{
+					Type: ValueString,
+				},
+
+				"ID": Schema{
+					Type: JSON,
+				},
+			},
+		},
+	}), self, Schema{})
 	schema := Schema{Type: ValueString}
 
 	if _, errs := schema.Validate("abc", ctx); errs != nil {
-		t.Error("Should pass when value is correct type")
+		t.Error("Should pass when value is correct type", errs)
 	}
 
 	if _, errs := schema.Validate(123, ctx); errs == nil {
 		t.Error("Should fail when value is incorrect type")
 	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "StringParam"}, ctx); errs != nil {
+		t.Error("Should pass when Ref is correct type", errs)
+	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "NumberParam"}, ctx); errs == nil {
+		t.Error("Should fail when Ref is incorrect type")
+	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "Name"}}, ctx); errs != nil {
+		t.Error("Should pass when GetAtt is correct type", errs)
+	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "ID"}}, ctx); errs == nil {
+		t.Error("Should fail when GetAtt is incorrect type")
+	}
 }
 
 func TestSchemaArrayValidation(t *testing.T) {
-	template := &parse.Template{}
+	template := &parse.Template{
+		Resources: map[string]parse.TemplateResource{
+			"Target": parse.TemplateResource{
+				Type: "ResourceDef1",
+			},
+
+			"ArrayTarget": parse.TemplateResource{
+				Type: "ResourceDef2",
+			},
+		},
+	}
 	self := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
+		"ResourceDef1": Resource{
+			ReturnValue: Schema{
+				Type: ValueString,
+			},
+		},
+
+		"ResourceDef2": Resource{
+			ReturnValue: Schema{
+				Type:  ValueString,
+				Array: true,
+			},
+		},
+	}), self, Schema{})
 
 	schema := Schema{
 		Type:  ValueString,
@@ -42,7 +103,7 @@ func TestSchemaArrayValidation(t *testing.T) {
 	}
 
 	if _, errs := schema.Validate([]interface{}{"abc"}, ctx); errs != nil {
-		t.Error("Should pass when value is an array of the correct type")
+		t.Error("Should pass when value is an array of the correct type", errs)
 	}
 
 	if _, errs := schema.Validate([]interface{}{"abc", 123}, ctx); errs == nil {
@@ -51,6 +112,14 @@ func TestSchemaArrayValidation(t *testing.T) {
 
 	if _, errs := schema.Validate([]interface{}{123}, ctx); errs == nil {
 		t.Error("Should fail when value is an incorrect array")
+	}
+
+	if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "Target"}}, ctx); errs != nil {
+		t.Error("Should pass when value is an array with Refs of the correct type", errs)
+	}
+
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "ArrayTarget"}, ctx); errs != nil {
+		t.Error("Should pass when value is a Ref of the correct type", errs)
 	}
 }
 

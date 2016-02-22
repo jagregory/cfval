@@ -15,9 +15,12 @@ func TestRefValidate(t *testing.T) {
 			},
 		},
 		Parameters: map[string]parse.Parameter{
-			"Parameter1": parse.Parameter{},
-			"Parameter2": parse.Parameter{
+			"NoTypeParameter": parse.Parameter{},
+			"StringParameter": parse.Parameter{
 				Type: "String",
+			},
+			"ListInstanceIdParameter": parse.Parameter{
+				Type: "List<AWS::EC2::Instance::Id>",
 			},
 		},
 	}
@@ -31,6 +34,13 @@ func TestRefValidate(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: ValueString})
 	numberContext := NewPropertyContext(stringContext, Schema{Type: ValueNumber})
+	listInstanceIDContext := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
+		"TestResource": Resource{
+			ReturnValue: Schema{
+				Type: ValueString,
+			},
+		},
+	}), currentResource, Schema{Type: InstanceID, Array: true})
 
 	if _, errs := NewRef("Resource1").Validate(stringContext); errs == nil {
 		t.Error("Should fail on valid resource ref with Unknown ref type")
@@ -44,15 +54,15 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if _, errs := NewRef("Parameter1").Validate(stringContext); errs == nil {
+	if _, errs := NewRef("NoTypeParameter").Validate(stringContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with Unknown ref type", errs)
 	}
 
-	if _, errs := NewRef("Parameter2").Validate(stringContext); errs != nil {
+	if _, errs := NewRef("StringParameter").Validate(stringContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := NewRef("Parameter2").Validate(numberContext); errs == nil {
+	if _, errs := NewRef("StringParameter").Validate(numberContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
 	}
 
@@ -62,6 +72,14 @@ func TestRefValidate(t *testing.T) {
 
 	if _, errs := NewRef("AWS::StackName").Validate(numberContext); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
+	}
+
+	if _, errs := NewRef("StringParameter").Validate(stringContext); errs != nil {
+		t.Error("Should pass on valid parameter ref with matching types", errs)
+	}
+
+	if _, errs := NewRef("ListInstanceIdParameter").Validate(listInstanceIDContext); errs != nil {
+		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
 	if _, errs := NewRef("invalid").Validate(stringContext); errs == nil {

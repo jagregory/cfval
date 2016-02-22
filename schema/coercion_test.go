@@ -13,25 +13,35 @@ func data() []testCase {
 		testCase{from: ValueString, to: ValueNumber, result: CoercionBegrudgingly},
 		testCase{from: ValueString, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueString, to: ValueUnknown, result: CoercionBegrudgingly},
+		testCase{from: ValueString, to: JSON, result: CoercionNever},
 
 		testCase{from: ValueNumber, to: ValueBool, result: CoercionNever},
 		testCase{from: ValueNumber, to: ValueNumber, result: CoercionAlways},
 		testCase{from: ValueNumber, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueNumber, to: ValueUnknown, result: CoercionBegrudgingly},
+		testCase{from: ValueNumber, to: JSON, result: CoercionNever},
 
 		testCase{from: ValueBool, to: ValueBool, result: CoercionAlways},
 		testCase{from: ValueBool, to: ValueNumber, result: CoercionNever},
 		testCase{from: ValueBool, to: ValueString, result: CoercionAlways},
 		testCase{from: ValueBool, to: ValueUnknown, result: CoercionBegrudgingly},
+		testCase{from: ValueBool, to: JSON, result: CoercionNever},
 
 		testCase{from: ValueUnknown, to: ValueBool, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueNumber, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueString, result: CoercionBegrudgingly},
 		testCase{from: ValueUnknown, to: ValueUnknown, result: CoercionBegrudgingly},
+		testCase{from: ValueUnknown, to: JSON, result: CoercionBegrudgingly},
+
+		testCase{from: JSON, to: JSON, result: CoercionAlways},
+		testCase{from: JSON, to: ValueBool, result: CoercionNever},
+		testCase{from: JSON, to: ValueNumber, result: CoercionNever},
+		testCase{from: JSON, to: ValueString, result: CoercionNever},
+		testCase{from: JSON, to: ValueUnknown, result: CoercionBegrudgingly},
 	}
 
 	// TODO: add more types here
-	for _, enum := range []PropertyType{ARN, AvailabilityZone, CIDR, JSON, KeyName, Period, InternetGatewayID, VpcID} {
+	for _, enum := range []PropertyType{ARN, AvailabilityZone, CIDR, KeyName, Period, InternetGatewayID, VpcID} {
 		coercions = append(coercions, testCase{from: enum, to: enum, result: CoercionAlways})
 
 		coercions = append(coercions, testCase{from: enum, to: ValueBool, result: CoercionNever})

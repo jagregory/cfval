@@ -23,6 +23,10 @@ func (from ValueType) CoercibleTo(to PropertyType) Coercion {
 		return CoercionBegrudgingly
 	}
 
+	if ft, ok := to.(FuncType); ok && ft.Description == "JSON" {
+		return CoercionNever
+	}
+
 	if to == from {
 		return CoercionAlways
 	}

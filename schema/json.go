@@ -72,10 +72,21 @@ func validateJSONArray(value []interface{}, ctx PropertyContext) (reporting.Vali
 	return reporting.ValidateOK, failures
 }
 
+func coerceJSON(to PropertyType) Coercion {
+	if ft, ok := to.(FuncType); ok && ft.Description == "JSON" {
+		return CoercionAlways
+	} else if to == ValueUnknown {
+		return CoercionBegrudgingly
+	}
+
+	return CoercionNever
+}
+
 func init() {
 	JSON = FuncType{
 		Description: "JSON",
 
-		Fn: validateJSON,
+		Fn:          validateJSON,
+		CoercibleFn: coerceJSON,
 	}
 }
