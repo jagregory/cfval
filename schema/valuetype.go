@@ -17,6 +17,14 @@ const (
 	ValueNumber
 )
 
+func (from ValueType) Same(to PropertyType) bool {
+	if vt, ok := to.(ValueType); ok {
+		return vt == from
+	}
+
+	return false
+}
+
 // TODO: This really feels like it can be simplified
 func (from ValueType) CoercibleTo(to PropertyType) Coercion {
 	if from == ValueUnknown || to == ValueUnknown {

@@ -16,6 +16,14 @@ func (FuncType) PropertyDefault(string) (interface{}, bool) {
 	return nil, false
 }
 
+func (from FuncType) Same(to PropertyType) bool {
+	if ft, ok := to.(FuncType); ok {
+		return ft.Description == from.Description
+	}
+
+	return false
+}
+
 func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 	if from.CoercibleFn != nil {
 		return from.CoercibleFn(to)

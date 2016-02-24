@@ -7,6 +7,9 @@ type PropertyType interface {
 	// could be the AWS Resource Type or just any arbitrary description.
 	Describe() string
 
+	// Same returns true when two PropertyTypes represent the same AWS type.
+	Same(PropertyType) bool
+
 	// Validate checks that the property is valid, including any built-in function
 	// calls and stuff within the property.
 	Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports)

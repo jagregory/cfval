@@ -14,6 +14,14 @@ func (res NestedResource) Describe() string {
 	return res.Description
 }
 
+func (res NestedResource) Same(to PropertyType) bool {
+	if nr, ok := to.(NestedResource); ok {
+		return nr.Description == res.Description
+	}
+
+	return false
+}
+
 func (NestedResource) CoercibleTo(PropertyType) Coercion {
 	return CoercionNever
 }

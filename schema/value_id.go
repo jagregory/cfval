@@ -55,6 +55,14 @@ func (resourceID) PropertyDefault(string) (interface{}, bool) {
 	return nil, false
 }
 
+func (id resourceID) Same(to PropertyType) bool {
+	if toID, ok := to.(resourceID); ok {
+		return toID.description == id.description
+	}
+
+	return false
+}
+
 func (id resourceID) CoercibleTo(to PropertyType) Coercion {
 	if to == ValueString {
 		return CoercionAlways

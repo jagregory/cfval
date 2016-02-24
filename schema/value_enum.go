@@ -19,6 +19,14 @@ func (EnumValue) PropertyDefault(string) (interface{}, bool) {
 	return nil, false
 }
 
+func (from EnumValue) Same(to PropertyType) bool {
+	if ev, ok := to.(EnumValue); ok {
+		return ev.Description == from.Description
+	}
+
+	return false
+}
+
 func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
 	if to == ValueString {
 		return CoercionAlways
