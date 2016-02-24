@@ -9,9 +9,8 @@ var notificationConfiguration = NestedResource{
 	Description: "Auto Scaling NotificationConfiguration",
 	Properties: Properties{
 		"NotificationTypes": Schema{
-			Type:     autoScalingNotificationType,
+			Type:     Multiple(autoScalingNotificationType),
 			Required: constraints.Always,
-			Array:    true,
 		},
 
 		"TopicARN": Schema{

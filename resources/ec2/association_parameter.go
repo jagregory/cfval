@@ -15,8 +15,7 @@ var associationParameter = NestedResource{
 		},
 
 		"Value": Schema{
-			Array:    true,
-			Type:     ValueString,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 	},

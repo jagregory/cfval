@@ -16,8 +16,7 @@ var VPNGatewayRoutePropagation = Resource{
 
 	Properties: Properties{
 		"RouteTableIds": Schema{
-			Type:     RouteTableID,
-			Array:    true,
+			Type:     Multiple(RouteTableID),
 			Required: constraints.Always,
 		},
 

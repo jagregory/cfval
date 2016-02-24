@@ -16,8 +16,7 @@ var QueuePolicy = Resource{
 		},
 
 		"Queues": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 	},

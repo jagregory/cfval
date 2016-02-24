@@ -47,6 +47,10 @@ func (id resourceID) Validate(value interface{}, ctx PropertyContext) (reporting
 	return reporting.ValidateOK, nil
 }
 
+func (resourceID) IsArray() bool {
+	return false
+}
+
 func (id resourceID) Describe() string {
 	return id.description
 }

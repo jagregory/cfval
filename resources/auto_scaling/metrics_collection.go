@@ -15,8 +15,7 @@ var metricsCollection = NestedResource{
 		},
 
 		"Metrics": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 	},
 }

@@ -17,14 +17,12 @@ var DBSubnetGroup = Resource{
 		},
 
 		"SubnetIds": Schema{
-			Type:     SubnetID,
+			Type:     Multiple(SubnetID),
 			Required: constraints.Always,
-			Array:    true,
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

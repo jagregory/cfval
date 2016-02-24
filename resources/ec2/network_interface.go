@@ -16,8 +16,7 @@ var NetworkInterface = Resource{
 		},
 
 		"SecondaryPrivateIpAddresses": Schema{
-			Type:  IPAddress,
-			Array: true,
+			Type: Multiple(IPAddress),
 		},
 	},
 
@@ -32,8 +31,7 @@ var NetworkInterface = Resource{
 		},
 
 		"GroupSet": Schema{
-			Type:  SecurityGroupID,
-			Array: true,
+			Type: Multiple(SecurityGroupID),
 		},
 
 		"PrivateIpAddress": Schema{
@@ -41,8 +39,7 @@ var NetworkInterface = Resource{
 		},
 
 		"PrivateIpAddresses": Schema{
-			Type:  privateIPAddressSpecification,
-			Array: true,
+			Type: Multiple(privateIPAddressSpecification),
 		},
 
 		"SecondaryPrivateIpAddressCount": Schema{
@@ -59,8 +56,7 @@ var NetworkInterface = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

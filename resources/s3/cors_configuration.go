@@ -10,8 +10,7 @@ var corsConfiguration = NestedResource{
 	Description: "S3 Cors Configuration",
 	Properties: Properties{
 		"CorsRules": Schema{
-			Type:     corsRule,
-			Array:    true,
+			Type:     Multiple(corsRule),
 			Required: constraints.Always,
 		},
 	},

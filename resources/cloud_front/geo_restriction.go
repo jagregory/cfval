@@ -11,8 +11,7 @@ var geoRestriction = NestedResource{
 	Description: "CloudFront DistributionConfig Restrictions GeoRestriction",
 	Properties: Properties{
 		"Locations": Schema{
-			Type:  common.CountryCode,
-			Array: true,
+			Type: Multiple(common.CountryCode),
 			Required: constraints.Any{
 				constraints.PropertyIs("RestrictionType", "blacklist"),
 				constraints.PropertyIs("RestrictionType", "whitelist"),

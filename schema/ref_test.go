@@ -40,7 +40,7 @@ func TestRefValidate(t *testing.T) {
 				Type: ValueString,
 			},
 		},
-	}), currentResource, Schema{Type: InstanceID, Array: true})
+	}), currentResource, Schema{Type: Multiple(InstanceID)})
 
 	if _, errs := NewRef("Resource1").Validate(stringContext); errs == nil {
 		t.Error("Should fail on valid resource ref with Unknown ref type")

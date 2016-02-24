@@ -11,8 +11,7 @@ var containerDefinition = NestedResource{
 
 	Properties: Properties{
 		"Command": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Cpu": Schema{
@@ -20,13 +19,11 @@ var containerDefinition = NestedResource{
 		},
 
 		"EntryPoint": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Environment": Schema{
-			Type:  containerDefinitionEnvironment,
-			Array: true,
+			Type: Multiple(containerDefinitionEnvironment),
 		},
 
 		"Essential": Schema{
@@ -40,18 +37,15 @@ var containerDefinition = NestedResource{
 		},
 
 		"Links": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Memory": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"MountPoints": Schema{
-			Type:     containerDefinitionMountPoint,
-			Array:    true,
+			Type:     Multiple(containerDefinitionMountPoint),
 			Required: constraints.Always,
 		},
 
@@ -61,13 +55,11 @@ var containerDefinition = NestedResource{
 		},
 
 		"PortMappings": Schema{
-			Type:  containerDefinitionPortMapping,
-			Array: true,
+			Type: Multiple(containerDefinitionPortMapping),
 		},
 
 		"VolumesFrom": Schema{
-			Type:  containerDefinitionVolumesFrom,
-			Array: true,
+			Type: Multiple(containerDefinitionVolumesFrom),
 		},
 	},
 }

@@ -10,6 +10,10 @@ type NestedResource struct {
 	Properties
 }
 
+func (NestedResource) IsArray() bool {
+	return false
+}
+
 func (res NestedResource) Describe() string {
 	return res.Description
 }

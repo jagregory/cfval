@@ -10,13 +10,11 @@ var distributionConfig = NestedResource{
 	Description: "CloudFront DistributionConfig",
 	Properties: Properties{
 		"Aliases": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"CacheBehaviors": Schema{
-			Type:  cacheBehaviour,
-			Array: true,
+			Type: Multiple(cacheBehaviour),
 		},
 
 		"Comment": Schema{
@@ -24,8 +22,7 @@ var distributionConfig = NestedResource{
 		},
 
 		"CustomErrorResponses": Schema{
-			Type:  customErrorResponse,
-			Array: true,
+			Type: Multiple(customErrorResponse),
 		},
 
 		"DefaultCacheBehavior": Schema{
@@ -47,9 +44,8 @@ var distributionConfig = NestedResource{
 		},
 
 		"Origins": Schema{
-			Array:    true,
+			Type:     Multiple(origin),
 			Required: constraints.Always,
-			Type:     origin,
 		},
 
 		"PriceClass": Schema{

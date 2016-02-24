@@ -10,8 +10,7 @@ var ssmAssociation = NestedResource{
 	Description: "EC2 Instance SsmAssociation",
 	Properties: Properties{
 		"AssociationParameters": Schema{
-			Type:  associationParameter,
-			Array: true,
+			Type: Multiple(associationParameter),
 		},
 
 		"DocumentName": Schema{

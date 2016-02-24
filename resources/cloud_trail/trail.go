@@ -56,8 +56,7 @@ var Trail = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

@@ -30,8 +30,7 @@ var RecordSetGroup = Resource{
 		},
 
 		"RecordSets": Schema{
-			Type:     recordSet,
-			Array:    true,
+			Type:     Multiple(recordSet),
 			Required: constraints.Always,
 		},
 	},

@@ -27,8 +27,7 @@ var Role = Resource{
 		},
 
 		"ManagedPolicyArns": Schema{
-			Type:  ARN,
-			Array: true,
+			Type: Multiple(ARN),
 		},
 
 		"Path": Schema{
@@ -36,8 +35,7 @@ var Role = Resource{
 		},
 
 		"Policies": Schema{
-			Array: true,
-			Type:  rolePolicy,
+			Type: Multiple(rolePolicy),
 		},
 	},
 }

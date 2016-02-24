@@ -93,8 +93,7 @@ var DBInstance = Resource{
 		},
 
 		"DBSecurityGroups": Schema{
-			Type:      dbSecurityGroupName,
-			Array:     true,
+			Type:      Multiple(dbSecurityGroupName),
 			Conflicts: constraints.PropertyExists("VPCSecurityGroups"),
 		},
 
@@ -207,13 +206,11 @@ var DBInstance = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"VPCSecurityGroups": Schema{
-			Type:      SecurityGroupID,
-			Array:     true,
+			Type:      Multiple(SecurityGroupID),
 			Conflicts: constraints.PropertyExists("DBSubnetGroups"),
 		},
 	},

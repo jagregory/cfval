@@ -1,6 +1,44 @@
 package schema
 
-import "github.com/jagregory/cfval/reporting"
+import (
+	"fmt"
+
+	"github.com/jagregory/cfval/reporting"
+)
+
+type arrayPropertyType struct {
+	PropertyType
+}
+
+func (arrayPropertyType) IsArray() bool {
+	return true
+}
+
+func (pt arrayPropertyType) Describe() string {
+	return fmt.Sprintf("List<%s>", pt.PropertyType.Describe())
+}
+
+func (pt arrayPropertyType) Same(to PropertyType) bool {
+	if apt, ok := to.(arrayPropertyType); ok {
+		return pt.PropertyType.Same(apt.PropertyType)
+	}
+
+	return false
+}
+
+func (pt arrayPropertyType) CoercibleTo(to PropertyType) Coercion {
+	if pt.Same(to) {
+		return CoercionAlways
+	} else if vt, ok := to.(ValueType); ok && vt == ValueUnknown {
+		return CoercionBegrudgingly
+	}
+
+	return CoercionNever
+}
+
+func Multiple(pt PropertyType) PropertyType {
+	return arrayPropertyType{pt}
+}
 
 type PropertyType interface {
 	// Describe returns a human-readable description of the type in AWS, which
@@ -9,6 +47,10 @@ type PropertyType interface {
 
 	// Same returns true when two PropertyTypes represent the same AWS type.
 	Same(PropertyType) bool
+
+	// IsArray returns true when the PropertyType represents an array of
+	// another PropertyType
+	IsArray() bool
 
 	// Validate checks that the property is valid, including any built-in function
 	// calls and stuff within the property.

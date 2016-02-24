@@ -16,8 +16,7 @@ var Topic = Resource{
 		},
 
 		"Subscription": Schema{
-			Type:  snsSubscription,
-			Array: true,
+			Type: Multiple(snsSubscription),
 		},
 
 		"TopicName": Schema{

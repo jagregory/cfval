@@ -33,8 +33,7 @@ var ConfigurationTemplate = Resource{
 		},
 
 		"OptionSettings": Schema{
-			Type:  optionsSettings,
-			Array: true,
+			Type: Multiple(optionsSettings),
 		},
 
 		"SolutionStackName": Schema{

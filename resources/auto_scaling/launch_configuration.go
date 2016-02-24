@@ -20,8 +20,7 @@ var LaunchConfiguration = Resource{
 		},
 
 		"BlockDeviceMappings": Schema{
-			Type:  autoScalingBlockDeviceMapping,
-			Array: true,
+			Type: Multiple(autoScalingBlockDeviceMapping),
 		},
 
 		"ClassicLinkVPCId": Schema{
@@ -29,8 +28,7 @@ var LaunchConfiguration = Resource{
 		},
 
 		"ClassicLinkVPCSecurityGroups": Schema{
-			Type:     SecurityGroupID,
-			Array:    true,
+			Type:     Multiple(SecurityGroupID),
 			Required: constraints.PropertyExists("ClassicLinkVPCId"),
 		},
 
@@ -80,8 +78,7 @@ var LaunchConfiguration = Resource{
 		},
 
 		"SecurityGroups": Schema{
-			Type:  SecurityGroupName,
-			Array: true,
+			Type: Multiple(SecurityGroupName),
 		},
 
 		"SpotPrice": Schema{

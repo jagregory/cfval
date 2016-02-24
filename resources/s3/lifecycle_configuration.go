@@ -7,8 +7,7 @@ var lifecycleConfiguration = NestedResource{
 	Description: "S3 Lifecycle Configuration",
 	Properties: Properties{
 		"Rules": Schema{
-			Type:  lifecycleRule,
-			Array: true,
+			Type: Multiple(lifecycleRule),
 		},
 	},
 }

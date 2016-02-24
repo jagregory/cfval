@@ -28,8 +28,7 @@ var SecurityGroup = Resource{
 		},
 
 		"SecurityGroupEgress": Schema{
-			Array: true,
-			Type: NestedResource{
+			Type: Multiple(NestedResource{
 				Description: "EC2 Security Group Rule Egress",
 				Properties: Properties{
 					"CidrIp": Schema{
@@ -57,12 +56,11 @@ var SecurityGroup = Resource{
 						Required: constraints.Always,
 					},
 				},
-			},
+			}),
 		},
 
 		"SecurityGroupIngress": Schema{
-			Array: true,
-			Type: NestedResource{
+			Type: Multiple(NestedResource{
 				Description: "EC2 Security Group Rule Ingress",
 				Properties: Properties{
 					"CidrIp": Schema{
@@ -103,12 +101,11 @@ var SecurityGroup = Resource{
 						Required: constraints.Always,
 					},
 				},
-			},
+			}),
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"VpcId": Schema{

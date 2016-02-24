@@ -25,6 +25,10 @@ func (from ValueType) Same(to PropertyType) bool {
 	return false
 }
 
+func (t ValueType) IsArray() bool {
+	return false
+}
+
 // TODO: This really feels like it can be simplified
 func (from ValueType) CoercibleTo(to PropertyType) Coercion {
 	if from == ValueUnknown || to == ValueUnknown {

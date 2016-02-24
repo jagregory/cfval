@@ -20,8 +20,7 @@ var HostedZone = Resource{
 		},
 
 		"HostedZoneTags": Schema{
-			Type:  hostedZoneTag,
-			Array: true,
+			Type: Multiple(hostedZoneTag),
 		},
 
 		"Name": Schema{
@@ -30,8 +29,7 @@ var HostedZone = Resource{
 		},
 
 		"VPCs": Schema{
-			Type:  hostedZoneVPC,
-			Array: true,
+			Type: Multiple(hostedZoneVPC),
 		},
 	},
 }

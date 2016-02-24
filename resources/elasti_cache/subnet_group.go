@@ -21,9 +21,8 @@ var SubnetGroup = Resource{
 		},
 
 		"SubnetIds": Schema{
-			Type:     SubnetID,
+			Type:     Multiple(SubnetID),
 			Required: constraints.Always,
-			Array:    true,
 		},
 	},
 }

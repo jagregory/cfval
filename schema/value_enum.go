@@ -11,6 +11,10 @@ type EnumValue struct {
 	Options     []string
 }
 
+func (EnumValue) IsArray() bool {
+	return false
+}
+
 func (enum EnumValue) Describe() string {
 	return enum.Description
 }

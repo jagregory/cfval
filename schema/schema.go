@@ -12,7 +12,7 @@ type ValidateFunc func(interface{}, PropertyContext) (reporting.ValidateResult, 
 // A Schema defines the qualities and behaviour of a property.
 type Schema struct {
 	// Array is true when the expected value is an array of Type
-	Array bool
+	// Array bool
 
 	// Conflicts is an array of property names which cannot also be specified when
 	// this property is too.
@@ -51,13 +51,18 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 	failures := make(reporting.Reports, 0, 20)
 	propertyContext := NewPropertyContext(ctx, s)
 
-	if s.Array {
+	if s.Type.IsArray() {
 		switch t := value.(type) {
 		case []interface{}:
 			for i, item := range t {
+				// TODO: the propertyContext here has Array: true, which is wrong!
+				// nonArrayS := deArraySchema(s)
 				if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
 					failures = append(failures, errs...)
 				}
+				// if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
+				// 	failures = append(failures, errs...)
+				// }
 			}
 		// case map[string]interface{}:
 		default:
@@ -78,9 +83,12 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 // This function is used for single value properties, and each item in array
 // properties.
 func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	// fmt.Println("Validating item", value, ctx.Path())
+
 	failures := make(reporting.Reports, 0, 50)
 
 	result, errs := ctx.Property().Type.Validate(value, ctx)
+	// fmt.Println("Type validation", result, errs, ctx.Path())
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever failures
 		// have been reported so far

@@ -24,8 +24,7 @@ var Service = Resource{
 		},
 
 		"LoadBalancers": Schema{
-			Type:  loadBalancer,
-			Array: true,
+			Type: Multiple(loadBalancer),
 		},
 
 		"Role": Schema{

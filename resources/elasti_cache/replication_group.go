@@ -50,13 +50,11 @@ var ReplicationGroup = Resource{
 		},
 
 		"ReadEndPoint.Addresses.List": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"ReadEndPoint.Ports.List": Schema{
-			Type:  ValueNumber,
-			Array: true,
+			Type: Multiple(ValueNumber),
 		},
 	},
 
@@ -89,8 +87,7 @@ var ReplicationGroup = Resource{
 		},
 
 		"CacheSecurityGroupNames": Schema{
-			Type:      cacheSecurityGroupName,
-			Array:     true,
+			Type:      Multiple(cacheSecurityGroupName),
 			Conflicts: constraints.PropertyExists("SecurityGroupIds"),
 		},
 
@@ -132,8 +129,7 @@ var ReplicationGroup = Resource{
 		},
 
 		"PreferredCacheClusterAZs": Schema{
-			Type:  AvailabilityZone,
-			Array: true,
+			Type: Multiple(AvailabilityZone),
 		},
 
 		// Use the following format to specify a time range: ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). For example, you can specify sun:22:00-sun:23:30 for Sunday from 10 PM to 11:30 PM.
@@ -147,15 +143,13 @@ var ReplicationGroup = Resource{
 		},
 
 		"SecurityGroupIds": Schema{
-			Type:      SecurityGroupID,
-			Array:     true,
+			Type:      Multiple(SecurityGroupID),
 			Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
 		},
 
 		// A single-element string list that specifies an ARN of a Redis .rdb snapshot file that is stored in Amazon Simple Storage Service (Amazon S3). The snapshot file populates the node group. The Amazon S3 object name in the ARN cannot contain commas. For example, you can specify arn:aws:s3:::my_bucket/snapshot1.rdb.
 		"SnapshotArns": Schema{
-			Type:  ARN,
-			Array: true,
+			Type: Multiple(ARN),
 		},
 
 		"SnapshotRetentionLimit": Schema{

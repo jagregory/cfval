@@ -21,8 +21,7 @@ var EventSubscription = Resource{
 		},
 
 		"EventCategories": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"SnsTopicArn": Schema{
@@ -31,8 +30,7 @@ var EventSubscription = Resource{
 		},
 
 		"SourceIds": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"SourceType": Schema{

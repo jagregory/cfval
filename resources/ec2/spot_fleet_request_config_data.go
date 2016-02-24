@@ -30,8 +30,7 @@ var spotFleetRequestConfigData = NestedResource{
 		},
 
 		"LaunchSpecifications": Schema{
-			Type:     spotFleetRequestConfigDataLaunchSpecification,
-			Array:    true,
+			Type:     Multiple(spotFleetRequestConfigDataLaunchSpecification),
 			Required: constraints.Always,
 		},
 

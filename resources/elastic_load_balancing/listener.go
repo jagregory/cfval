@@ -35,8 +35,7 @@ var listener = NestedResource{
 		},
 
 		"PolicyNames": Schema{
-			Type:  policy,
-			Array: true,
+			Type: Multiple(policy),
 		},
 
 		"Protocol": Schema{

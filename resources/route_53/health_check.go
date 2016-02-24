@@ -16,8 +16,7 @@ var HealthCheck = Resource{
 		},
 
 		"HealthCheckTags": Schema{
-			Type:  healthCheckTag,
-			Array: true,
+			Type: Multiple(healthCheckTag),
 		},
 	},
 }

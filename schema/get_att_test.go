@@ -23,8 +23,7 @@ func TestGetAtt(t *testing.T) {
 				},
 
 				"ListInstanceId": Schema{
-					Type:  InstanceID,
-					Array: true,
+					Type: Multiple(InstanceID),
 				},
 
 				"Name": Schema{
@@ -33,7 +32,7 @@ func TestGetAtt(t *testing.T) {
 			},
 		},
 	}), currentResource, Schema{Type: InstanceID})
-	listCtx := NewPropertyContext(ctx, Schema{Type: InstanceID, Array: true})
+	listCtx := NewPropertyContext(ctx, Schema{Type: Multiple(InstanceID)})
 
 	if _, errs := NewGetAtt(nil).Validate(ctx); errs == nil {
 		t.Error("Should fail when no arguments supplied", errs)

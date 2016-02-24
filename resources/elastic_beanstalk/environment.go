@@ -40,8 +40,7 @@ var Environment = Resource{
 		},
 
 		"OptionSettings": Schema{
-			Type:  optionsSettings,
-			Array: true,
+			Type: Multiple(optionsSettings),
 		},
 
 		"SolutionStackName": Schema{
@@ -50,8 +49,7 @@ var Environment = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"TemplateName": Schema{

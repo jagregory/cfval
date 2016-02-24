@@ -50,8 +50,7 @@ var recordSetProperties = map[string]Schema{
 	},
 
 	"ResourceRecords": Schema{
-		Array:     true,
-		Type:      ValueString,
+		Type:      Multiple(ValueString),
 		Conflicts: constraints.PropertyExists("AliasTarget"),
 		Required:  constraints.PropertyNotExists("AliasTarget"),
 	},

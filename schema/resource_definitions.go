@@ -41,13 +41,11 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<Number>": Schema{
-		Type:  ValueNumber,
-		Array: true,
+		Type: Multiple(ValueNumber),
 	},
 
 	"CommaDelimitedList": Schema{
-		Type:  ValueString,
-		Array: true,
+		Type: Multiple(ValueString),
 	},
 
 	"AWS::EC2::AvailabilityZone::Name": Schema{
@@ -91,47 +89,38 @@ var parameterTypeSchemas = map[string]Schema{
 	},
 
 	"List<AWS::EC2::AvailabilityZone::Name>": Schema{
-		Type:  AvailabilityZone,
-		Array: true,
+		Type: Multiple(AvailabilityZone),
 	},
 
 	"List<AWS::EC2::Image::Id>": Schema{
-		Type:  ImageID,
-		Array: true,
+		Type: Multiple(ImageID),
 	},
 
 	"List<AWS::EC2::Instance::Id>": Schema{
-		Type:  InstanceID,
-		Array: true,
+		Type: Multiple(InstanceID),
 	},
 
 	"List<AWS::EC2::SecurityGroup::GroupName>": Schema{
-		Type:  SecurityGroupName,
-		Array: true,
+		Type: Multiple(SecurityGroupName),
 	},
 
 	"List<AWS::EC2::SecurityGroup::Id>": Schema{
-		Type:  SecurityGroupID,
-		Array: true,
+		Type: Multiple(SecurityGroupID),
 	},
 
 	"List<AWS::EC2::Subnet::Id>": Schema{
-		Type:  SubnetID,
-		Array: true,
+		Type: Multiple(SubnetID),
 	},
 
 	"List<AWS::EC2::Volume::Id>": Schema{
-		Type:  VolumeID,
-		Array: true,
+		Type: Multiple(VolumeID),
 	},
 
 	"List<AWS::EC2::VPC::Id>": Schema{
-		Type:  VpcID,
-		Array: true,
+		Type: Multiple(VpcID),
 	},
 
 	"List<AWS::Route53::HostedZone::Id>": Schema{
-		Type:  HostedZoneID,
-		Array: true,
+		Type: Multiple(HostedZoneID),
 	},
 }

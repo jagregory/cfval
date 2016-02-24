@@ -21,8 +21,7 @@ var DHCPOptions = Resource{
 		},
 
 		"DomainNameServers": Schema{
-			Type:  IPAddress,
-			Array: true,
+			Type: Multiple(IPAddress),
 			Required: constraints.All{
 				constraints.PropertyNotExists("NetbiosNameServers"),
 				constraints.PropertyNotExists("NtpServers"),
@@ -30,8 +29,7 @@ var DHCPOptions = Resource{
 		},
 
 		"NetbiosNameServers": Schema{
-			Type:  IPAddress,
-			Array: true,
+			Type: Multiple(IPAddress),
 			Required: constraints.All{
 				constraints.PropertyNotExists("DomainNameServers"),
 				constraints.PropertyNotExists("NtpServers"),
@@ -44,8 +42,7 @@ var DHCPOptions = Resource{
 		},
 
 		"NtpServers": Schema{
-			Type:  IPAddress,
-			Array: true,
+			Type: Multiple(IPAddress),
 			Required: constraints.All{
 				constraints.PropertyNotExists("DomainNameServers"),
 				constraints.PropertyNotExists("NetbiosNameServers"),
@@ -53,8 +50,7 @@ var DHCPOptions = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

@@ -16,8 +16,7 @@ var Policy = Resource{
 
 	Properties: map[string]Schema{
 		"Groups": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 			Required: constraints.All{
 				constraints.PropertyNotExists("Roles"),
 				constraints.PropertyNotExists("Users"),
@@ -35,8 +34,7 @@ var Policy = Resource{
 		},
 
 		"Roles": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 			Required: constraints.All{
 				constraints.PropertyNotExists("Groups"),
 				constraints.PropertyNotExists("Users"),
@@ -44,8 +42,7 @@ var Policy = Resource{
 		},
 
 		"Users": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 			Required: constraints.All{
 				constraints.PropertyNotExists("Groups"),
 				constraints.PropertyNotExists("Roles"),

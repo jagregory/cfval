@@ -14,8 +14,7 @@ var forwardedValues = NestedResource{
 		},
 
 		"Headers": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"QueryString": Schema{

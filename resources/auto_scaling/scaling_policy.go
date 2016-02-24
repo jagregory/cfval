@@ -58,8 +58,7 @@ var ScalingPolicy = Resource{
 		},
 
 		"StepAdjustments": Schema{
-			Type:      stepAdjustment,
-			Array:     true,
+			Type:      Multiple(stepAdjustment),
 			Required:  constraints.PropertyIs("PolicyType", "StepScaling"),
 			Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
 		},

@@ -50,13 +50,11 @@ var Volume = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"VolumeType": Schema{
-			Type:     common.EbsVolumeType,
-			Array:    true,
+			Type:     Multiple(common.EbsVolumeType),
 			Required: constraints.Always,
 		},
 	},

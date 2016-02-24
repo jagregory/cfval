@@ -19,8 +19,7 @@ var cookies = NestedResource{
 		},
 
 		"WhitelistedNames": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.PropertyIs("Forward", "whitelist"),
 		},
 	},

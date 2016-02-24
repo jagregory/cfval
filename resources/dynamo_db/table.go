@@ -22,14 +22,12 @@ var Table = Resource{
 
 	Properties: Properties{
 		"AttributeDefinitions": Schema{
-			Type:     attributeDefinition,
-			Array:    true,
+			Type:     Multiple(attributeDefinition),
 			Required: constraints.Always,
 		},
 
 		"GlobalSecondaryIndexes": Schema{
-			Type:  globalSecondaryIndex,
-			Array: true,
+			Type: Multiple(globalSecondaryIndex),
 		},
 
 		"KeySchema": Schema{
@@ -38,8 +36,7 @@ var Table = Resource{
 		},
 
 		"LocalSecondaryIndexes": Schema{
-			Type:  localSecondaryIndex,
-			Array: true,
+			Type: Multiple(localSecondaryIndex),
 		},
 
 		"StreamSpecification": Schema{

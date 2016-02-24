@@ -8,6 +8,10 @@ type FuncType struct {
 	CoercibleFn func(PropertyType) Coercion
 }
 
+func (FuncType) IsArray() bool {
+	return false
+}
+
 func (ft FuncType) Describe() string {
 	return ft.Description
 }

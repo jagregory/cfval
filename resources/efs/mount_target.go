@@ -25,8 +25,7 @@ var MountTarget = Resource{
 		},
 
 		"SecurityGroups": Schema{
-			Type:     SecurityGroupID,
-			Array:    true,
+			Type:     Multiple(SecurityGroupID),
 			Required: constraints.Always,
 		},
 

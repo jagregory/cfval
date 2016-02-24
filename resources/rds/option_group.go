@@ -32,14 +32,12 @@ var OptionGroup = Resource{
 		},
 
 		"OptionConfigurations": Schema{
-			Type:     optionConfiguration,
-			Array:    true,
+			Type:     Multiple(optionConfiguration),
 			Required: constraints.Always,
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

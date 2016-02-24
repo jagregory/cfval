@@ -11,8 +11,7 @@ var MetricFilter = Resource{
 
 	Properties: Properties{
 		"FilterPattern": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 
@@ -22,8 +21,7 @@ var MetricFilter = Resource{
 		},
 
 		"MetricTransformations": Schema{
-			Type:     metricTransformation,
-			Array:    true,
+			Type:     Multiple(metricTransformation),
 			Required: constraints.Always,
 		},
 	},

@@ -12,6 +12,15 @@ func TestPropertyTypeEquality(t *testing.T) {
 		ValueString,
 		ValueUnknown,
 		NestedResource{Description: "Something"},
+
+		Multiple(AvailabilityZone),
+		Multiple(InstanceID),
+		Multiple(JSON),
+		Multiple(ValueBool),
+		Multiple(ValueNumber),
+		Multiple(ValueString),
+		Multiple(ValueUnknown),
+		Multiple(NestedResource{Description: "Something"}),
 	}
 
 	for fi, from := range types {

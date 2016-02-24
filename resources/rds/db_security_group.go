@@ -21,8 +21,7 @@ var DBSecurityGroup = Resource{
 		},
 
 		"DBSecurityGroupIngress": Schema{
-			Type:     securityGroupRule,
-			Array:    true,
+			Type:     Multiple(securityGroupRule),
 			Required: constraints.Always,
 		},
 
@@ -32,8 +31,7 @@ var DBSecurityGroup = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

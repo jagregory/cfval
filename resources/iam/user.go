@@ -19,8 +19,7 @@ var User = Resource{
 
 	Properties: Properties{
 		"Groups": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"LoginProfile": Schema{
@@ -28,8 +27,7 @@ var User = Resource{
 		},
 
 		"ManagedPolicyArns": Schema{
-			Type:  ARN,
-			Array: true,
+			Type: Multiple(ARN),
 		},
 
 		"Path": Schema{
@@ -37,8 +35,7 @@ var User = Resource{
 		},
 
 		"Policies": Schema{
-			Type:  policy,
-			Array: true,
+			Type: Multiple(policy),
 		},
 	},
 }

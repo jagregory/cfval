@@ -28,8 +28,7 @@ var spotFleetRequestConfigDataLaunchSpecificationNetworkInterface = NestedResour
 		},
 
 		"Groups": Schema{
-			Type:  SecurityGroupID,
-			Array: true,
+			Type: Multiple(SecurityGroupID),
 		},
 
 		"NetworkInterfaceId": Schema{
@@ -37,8 +36,7 @@ var spotFleetRequestConfigDataLaunchSpecificationNetworkInterface = NestedResour
 		},
 
 		"PrivateIpAddresses": Schema{
-			Type:  spotFleetRequestConfigDataLaunchSpecificationNetworkInterfacePrivateIPAddress,
-			Array: true,
+			Type: Multiple(spotFleetRequestConfigDataLaunchSpecificationNetworkInterfacePrivateIPAddress),
 		},
 
 		"SecondaryPrivateIpAddressCount": Schema{

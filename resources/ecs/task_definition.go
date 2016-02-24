@@ -16,14 +16,12 @@ var TaskDefinition = Resource{
 
 	Properties: Properties{
 		"ContainerDefinitions": Schema{
-			Type:     containerDefinition,
-			Array:    true,
+			Type:     Multiple(containerDefinition),
 			Required: constraints.Always,
 		},
 
 		"Volumes": Schema{
-			Type:     volume,
-			Array:    true,
+			Type:     Multiple(volume),
 			Required: constraints.Always,
 		},
 	},

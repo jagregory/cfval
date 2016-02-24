@@ -27,8 +27,7 @@ var DBCluster = Resource{
 
 	Properties: Properties{
 		"AvailabilityZones": Schema{
-			Type:  AvailabilityZone,
-			Array: true,
+			Type: Multiple(AvailabilityZone),
 		},
 
 		"BackupRetentionPeriod": Schema{
@@ -99,13 +98,11 @@ var DBCluster = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"VpcSecurityGroupIds": Schema{
-			Type:  SecurityGroupID,
-			Array: true,
+			Type: Multiple(SecurityGroupID),
 		},
 	},
 }

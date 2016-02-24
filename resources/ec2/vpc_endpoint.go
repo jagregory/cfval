@@ -20,8 +20,7 @@ var VPCEndpoint = Resource{
 		},
 
 		"RouteTableIds": Schema{
-			Type:  RouteTableID,
-			Array: true,
+			Type: Multiple(RouteTableID),
 		},
 
 		"ServiceName": Schema{

@@ -39,8 +39,7 @@ var Group = Resource{
 
 	Properties: Properties{
 		"ManagedPolicyArns": Schema{
-			Type:  ARN,
-			Array: true,
+			Type: Multiple(ARN),
 		},
 
 		"Path": Schema{
@@ -48,8 +47,7 @@ var Group = Resource{
 		},
 
 		"Policies": Schema{
-			Type:  policy,
-			Array: true,
+			Type: Multiple(policy),
 		},
 	},
 }

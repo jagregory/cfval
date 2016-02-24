@@ -23,8 +23,7 @@ var websiteConfiguration = NestedResource{
 		},
 
 		"RoutingRules": Schema{
-			Type:  websiteConfigurationRoutingRule,
-			Array: true,
+			Type: Multiple(websiteConfigurationRoutingRule),
 		},
 	},
 }

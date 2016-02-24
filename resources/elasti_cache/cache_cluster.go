@@ -67,8 +67,7 @@ var CacheCluster = Resource{
 		},
 
 		"CacheSecurityGroupNames": Schema{
-			Type:  cacheSecurityGroupName,
-			Array: true,
+			Type: Multiple(cacheSecurityGroupName),
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("CacheSubnetGroupName"),
 				constraints.PropertyExists("VpcSecurityGroupIds"),
@@ -115,8 +114,7 @@ var CacheCluster = Resource{
 		},
 
 		"PreferredAvailabilityZones": Schema{
-			Type:     AvailabilityZone,
-			Array:    true,
+			Type:     Multiple(AvailabilityZone),
 			Required: constraints.PropertyIs("AZMode", "cross-az"),
 		},
 
@@ -125,8 +123,7 @@ var CacheCluster = Resource{
 		},
 
 		"SnapshotArns": Schema{
-			Type:  ARN,
-			Array: true,
+			Type: Multiple(ARN),
 		},
 
 		"SnapshotName": Schema{
@@ -142,13 +139,11 @@ var CacheCluster = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"VpcSecurityGroupIds": Schema{
-			Type:      SecurityGroupID,
-			Array:     true,
+			Type:      Multiple(SecurityGroupID),
 			Conflicts: constraints.PropertyExists("CacheSecurityGroupNames"),
 		},
 	},

@@ -29,8 +29,7 @@ var networkInterface = NestedResource{
 		},
 
 		"GroupSet": Schema{
-			Array: true,
-			Type:  SecurityGroupID,
+			Type: Multiple(SecurityGroupID),
 		},
 
 		"NetworkInterfaceId": Schema{
@@ -42,8 +41,7 @@ var networkInterface = NestedResource{
 		},
 
 		"PrivateIpAddresses": Schema{
-			Array: true,
-			Type:  privateIPAddressSpecification,
+			Type: Multiple(privateIPAddressSpecification),
 		},
 
 		"SecondaryPrivateIpAddressCount": Schema{
@@ -94,8 +92,7 @@ var Instance = Resource{
 		},
 
 		"BlockDeviceMappings": Schema{
-			Type:  ec2BlockDeviceMapping,
-			Array: true,
+			Type: Multiple(ec2BlockDeviceMapping),
 		},
 
 		"DisableApiTermination": Schema{
@@ -140,8 +137,7 @@ var Instance = Resource{
 		},
 
 		"NetworkInterfaces": Schema{
-			Array: true,
-			Type:  networkInterface,
+			Type: Multiple(networkInterface),
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("SecurityGroupIds"),
 				constraints.PropertyExists("SubnetId"),
@@ -161,14 +157,12 @@ var Instance = Resource{
 		},
 
 		"SecurityGroupIds": Schema{
-			Type:      SecurityGroupID,
-			Array:     true,
+			Type:      Multiple(SecurityGroupID),
 			Conflicts: constraints.PropertyExists("NetworkInterfaces"),
 		},
 
 		"SecurityGroups": Schema{
-			Type:  SecurityGroupName,
-			Array: true,
+			Type: Multiple(SecurityGroupName),
 		},
 
 		"SourceDestCheck": Schema{
@@ -176,8 +170,7 @@ var Instance = Resource{
 		},
 
 		"SsmAssociations": Schema{
-			Type:  ssmAssociation,
-			Array: true,
+			Type: Multiple(ssmAssociation),
 		},
 
 		"SubnetId": Schema{
@@ -186,8 +179,7 @@ var Instance = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 
 		"Tenancy": Schema{
@@ -202,8 +194,7 @@ var Instance = Resource{
 		},
 
 		"Volumes": Schema{
-			Type:  mountPoint,
-			Array: true,
+			Type: Multiple(mountPoint),
 		},
 
 		"AdditionalInfo": Schema{

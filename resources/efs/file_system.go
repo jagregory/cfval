@@ -13,8 +13,7 @@ var FileSystem = Resource{
 
 	Properties: Properties{
 		"FileSystemTags": Schema{
-			Type:  fileSystemTag,
-			Array: true,
+			Type: Multiple(fileSystemTag),
 		},
 	},
 }

@@ -11,8 +11,7 @@ var spotFleetRequestConfigDataLaunchSpecification = NestedResource{
 
 	Properties: Properties{
 		"BlockDeviceMappings": Schema{
-			Type:  spotFleetRequestConfigDataLaunchSpecificationBlockDeviceMapping,
-			Array: true,
+			Type: Multiple(spotFleetRequestConfigDataLaunchSpecificationBlockDeviceMapping),
 		},
 
 		"EbsOptimized": Schema{
@@ -46,8 +45,7 @@ var spotFleetRequestConfigDataLaunchSpecification = NestedResource{
 		},
 
 		"NetworkInterfaces": Schema{
-			Type:  spotFleetRequestConfigDataLaunchSpecificationNetworkInterface,
-			Array: true,
+			Type: Multiple(spotFleetRequestConfigDataLaunchSpecificationNetworkInterface),
 		},
 
 		"Placement": Schema{
@@ -59,8 +57,7 @@ var spotFleetRequestConfigDataLaunchSpecification = NestedResource{
 		},
 
 		"SecurityGroups": Schema{
-			Type:  spotFleetRequestConfigDataLaunchSpecificationSecurityGroup,
-			Array: true,
+			Type: Multiple(spotFleetRequestConfigDataLaunchSpecificationSecurityGroup),
 		},
 
 		"SubnetId": Schema{

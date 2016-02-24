@@ -19,8 +19,7 @@ var ManagedPolicy = Resource{
 		},
 
 		"Groups": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Path": Schema{
@@ -34,13 +33,11 @@ var ManagedPolicy = Resource{
 		},
 
 		"Roles": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Users": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 	},
 }

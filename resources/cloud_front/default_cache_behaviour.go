@@ -43,8 +43,7 @@ var defaultCacheBehaviour = NestedResource{
 		},
 
 		"TrustedSigners": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"ViewerProtocolPolicy": Schema{

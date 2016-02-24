@@ -11,19 +11,16 @@ var policy = NestedResource{
 	Description: "ElasticLoadBalancing Policy",
 	Properties: Properties{
 		"Attributes": Schema{
-			Type:     common.NameValue,
+			Type:     Multiple(common.NameValue),
 			Required: constraints.Always,
-			Array:    true,
 		},
 
 		"InstancePorts": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"LoadBalancerPorts": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"PolicyName": Schema{

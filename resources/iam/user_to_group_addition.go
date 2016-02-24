@@ -21,8 +21,7 @@ var UserToGroupAddition = Resource{
 		},
 
 		"Users": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 	},

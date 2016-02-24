@@ -8,8 +8,7 @@ var projection = NestedResource{
 
 	Properties: Properties{
 		"NonKeyAttributes": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"ProjectionType": Schema{

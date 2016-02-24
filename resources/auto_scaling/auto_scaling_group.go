@@ -16,8 +16,7 @@ var AutoScalingGroup = Resource{
 
 	Properties: Properties{
 		"AvailabilityZones": Schema{
-			Array:    true,
-			Type:     AvailabilityZone,
+			Type:     Multiple(AvailabilityZone),
 			Required: constraints.PropertyNotExists("VPCZoneIdentifier"),
 		},
 
@@ -48,8 +47,7 @@ var AutoScalingGroup = Resource{
 		},
 
 		"LoadBalancerNames": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"MaxSize": Schema{
@@ -57,8 +55,7 @@ var AutoScalingGroup = Resource{
 		},
 
 		"MetricsCollection": Schema{
-			Type:  metricsCollection,
-			Array: true,
+			Type: Multiple(metricsCollection),
 		},
 
 		"MinSize": Schema{
@@ -66,8 +63,7 @@ var AutoScalingGroup = Resource{
 		},
 
 		"NotificationConfigurations": Schema{
-			Type:  notificationConfiguration,
-			Array: true,
+			Type: Multiple(notificationConfiguration),
 		},
 
 		"PlacementGroup": Schema{
@@ -75,18 +71,15 @@ var AutoScalingGroup = Resource{
 		},
 
 		"Tags": Schema{
-			Type:  autoScalingTag,
-			Array: true,
+			Type: Multiple(autoScalingTag),
 		},
 
 		"TerminationPolicies": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"VPCZoneIdentifier": Schema{
-			Type:     SubnetID,
-			Array:    true,
+			Type:     Multiple(SubnetID),
 			Required: constraints.PropertyNotExists("AvailabilityZones"),
 		},
 	},

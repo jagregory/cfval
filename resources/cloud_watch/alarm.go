@@ -20,8 +20,7 @@ var Alarm = Resource{
 		},
 
 		"AlarmActions": Schema{
-			Array: true,
-			Type:  ValueString,
+			Type: Multiple(ValueString),
 		},
 
 		"AlarmDescription": Schema{
@@ -38,8 +37,7 @@ var Alarm = Resource{
 		},
 
 		"Dimensions": Schema{
-			Type:  metricDimension,
-			Array: true,
+			Type: Multiple(metricDimension),
 		},
 
 		"EvaluationPeriods": Schema{
@@ -48,8 +46,7 @@ var Alarm = Resource{
 		},
 
 		"InsufficientDataActions": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"MetricName": Schema{
@@ -63,8 +60,7 @@ var Alarm = Resource{
 		},
 
 		"OKActions": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Period": Schema{

@@ -7,18 +7,15 @@ var notificationConfiguration = NestedResource{
 	Description: "S3 NotificationConfiguration",
 	Properties: Properties{
 		"LambdaConfigurations": Schema{
-			Type:  lambdaConfiguration,
-			Array: true,
+			Type: Multiple(lambdaConfiguration),
 		},
 
 		"QueueConfigurations": Schema{
-			Type:  queueConfiguration,
-			Array: true,
+			Type: Multiple(queueConfiguration),
 		},
 
 		"TopicConfigurations": Schema{
-			Type:  topicConfiguration,
-			Array: true,
+			Type: Multiple(topicConfiguration),
 		},
 	},
 }

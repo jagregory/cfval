@@ -16,8 +16,7 @@ var TopicPolicy = Resource{
 		},
 
 		"Topics": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 	},

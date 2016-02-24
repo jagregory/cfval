@@ -43,13 +43,11 @@ var LoadBalancer = Resource{
 		},
 
 		"AppCookieStickinessPolicy": Schema{
-			Type:  appCookieStickinessPolicy,
-			Array: true,
+			Type: Multiple(appCookieStickinessPolicy),
 		},
 
 		"AvailabilityZones": Schema{
-			Type:      AvailabilityZone,
-			Array:     true,
+			Type:      Multiple(AvailabilityZone),
 			Conflicts: constraints.PropertyExists("Subnets"),
 		},
 
@@ -71,8 +69,7 @@ var LoadBalancer = Resource{
 		},
 
 		"Instances": Schema{
-			Type:  InstanceID,
-			Array: true,
+			Type: Multiple(InstanceID),
 		},
 
 		"LBCookieStickinessPolicy": Schema{
@@ -84,14 +81,12 @@ var LoadBalancer = Resource{
 		},
 
 		"Listeners": Schema{
-			Array:    true,
+			Type:     Multiple(listener),
 			Required: constraints.Always,
-			Type:     listener,
 		},
 
 		"Policies": Schema{
-			Array: true,
-			Type:  policy,
+			Type: Multiple(policy),
 		},
 
 		"Scheme": Schema{
@@ -103,19 +98,16 @@ var LoadBalancer = Resource{
 		},
 
 		"SecurityGroups": Schema{
-			Type:  SecurityGroupID,
-			Array: true,
+			Type: Multiple(SecurityGroupID),
 		},
 
 		"Subnets": Schema{
-			Type:      SubnetID,
-			Array:     true,
+			Type:      Multiple(SubnetID),
 			Conflicts: constraints.PropertyExists("AvailabilityZones"),
 		},
 
 		"Tags": Schema{
-			Type:  common.ResourceTag,
-			Array: true,
+			Type: Multiple(common.ResourceTag),
 		},
 	},
 }

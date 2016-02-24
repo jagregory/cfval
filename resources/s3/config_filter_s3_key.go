@@ -10,8 +10,7 @@ var configFilterS3Key = NestedResource{
 	Description: "S3 NotificationConfiguration Config Filter S3Key",
 	Properties: Properties{
 		"Rules": Schema{
-			Type:     configFilterS3KeyRule,
-			Array:    true,
+			Type:     Multiple(configFilterS3KeyRule),
 			Required: constraints.Always,
 		},
 	},

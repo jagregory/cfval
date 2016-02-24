@@ -10,28 +10,24 @@ var corsRule = NestedResource{
 	Description: "S3 Cors Configuration Rule",
 	Properties: Properties{
 		"AllowedHeaders": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"AllowedMethods": Schema{
-			Type: EnumValue{
+			Type: Multiple(EnumValue{
 				Description: "CORS Allowed Methods",
 				Options:     []string{"GET", "PUT", "HEAD", "POST", "DELETE"},
-			},
-			Array:    true,
+			}),
 			Required: constraints.Always,
 		},
 
 		"AllowedOrigins": Schema{
-			Type:     ValueString,
-			Array:    true,
+			Type:     Multiple(ValueString),
 			Required: constraints.Always,
 		},
 
 		"ExposedHeaders": Schema{
-			Type:  ValueString,
-			Array: true,
+			Type: Multiple(ValueString),
 		},
 
 		"Id": Schema{
