@@ -2,7 +2,7 @@ package parse
 
 import "encoding/json"
 
-func ParseTemplateJSON(data []byte, forgiving bool) (*Template, error) {
+func ParseTemplateJSON(data []byte) (*Template, error) {
 	var temp Template
 
 	err := json.Unmarshal(data, &temp)

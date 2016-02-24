@@ -128,9 +128,9 @@ Usage: cfval validate [filename]
 
 Options:
 
-  -forgiving             Ignore unrecognised resource types
-  -warnings-as-errors    Treat warnings as errors
-  -format                Experimental output formatting
+  -experiment:map-array-coercion  (Experimental) Objects can be used in properties which expect an array
+  -format                         Output formatting (online|grouped)
+  -warnings-as-errors             Treat warnings as errors
 `
 }
 
@@ -140,13 +140,11 @@ func (ValidateCommand) Synopsis() string {
 
 func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
-	var forgiving bool
 	var format string
 	var experimentMapArrayCoercion bool
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "Treats any warnings as errors and fails the validation")
-	cmdFlags.BoolVar(&forgiving, "forgiving", false, "Unrecognised resource types are ignored rather than failed")
 	cmdFlags.BoolVar(&experimentMapArrayCoercion, "experiment:map-array-coercion", false, "(Experimental) Objects can be used in properties which expect an array")
 	cmdFlags.StringVar(&format, "format", "oneline", "Output formatting (online|grouped)")
 	if err := cmdFlags.Parse(args); err != nil {
@@ -167,7 +165,7 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	template, err := parse.ParseTemplateJSON(bytes, forgiving)
+	template, err := parse.ParseTemplateJSON(bytes)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return 1
