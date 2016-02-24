@@ -120,9 +120,9 @@ func TestSchemaArrayValidation(t *testing.T) {
 		t.Error("Should fail when value is an array with Refs of the wrong type")
 	}
 
-	// if _, errs := schema.Validate(map[string]interface{}{"Ref": "ArrayTarget"}, ctx); errs != nil {
-	// 	t.Error("Should pass when value is a Ref of the correct type is used for whole value", errs)
-	// }
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "ArrayTarget"}, ctx); errs != nil {
+		t.Error("Should pass when value is a Ref of the correct type is used for whole value", errs)
+	}
 
 	if _, errs := schema.Validate(map[string]interface{}{"Ref": "Target"}, ctx); errs == nil {
 		t.Error("Should fail when value is a Ref of the correct type is used for whole value")

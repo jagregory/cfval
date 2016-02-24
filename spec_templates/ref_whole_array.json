@@ -1,0 +1,18 @@
+{
+  "Parameters": {
+    "subnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Value": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"]
+    }
+  },
+
+  "Resources": {
+    "x": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "InstanceId": "i-5fe31a21",
+        "VPCZoneIdentifier": { "Ref": "subnets" }
+      }
+    }
+  }
+}

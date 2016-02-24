@@ -66,7 +66,6 @@ func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reportin
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
 	}
 
-	// fmt.Printf("Ref value of '%s' is %s and is coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())
 	return reporting.ValidateAbort, nil
 }
 

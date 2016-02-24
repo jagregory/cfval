@@ -1,0 +1,19 @@
+{
+  "Mappings": {
+    "subnets": {
+      "vpc-yyyyyyyy": {
+        "private": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"]
+      }
+    }
+  },
+
+  "Resources": {
+    "x": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "InstanceId": "i-5fe31a21",
+        "VPCZoneIdentifier": { "Fn::FindInMap": ["subnets", "vpc-yyyyyyyy", "private"] }
+      }
+    }
+  }
+}

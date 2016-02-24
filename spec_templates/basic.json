@@ -1,0 +1,25 @@
+{
+  "Parameters": {
+    "ParamA": {
+      "Type": "String"
+    }
+  },
+
+  "Resources": {
+    "ResourceA": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-example1"
+      },
+      "Metadata": {
+        "Some": "JSON"
+      }
+    }
+  },
+
+  "Outputs": {
+    "OutputA": {
+      "Value": "Test"
+    }
+  }
+}

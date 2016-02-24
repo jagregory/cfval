@@ -52,22 +52,22 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 	propertyContext := NewPropertyContext(ctx, s)
 
 	if arrayType, ok := s.Type.(ArrayPropertyType); ok {
+		itemSchema := Schema{
+			Type: arrayType.Unwrap(),
+		}
+
 		switch t := value.(type) {
 		case []interface{}:
 			for i, item := range t {
-				// TODO: the propertyContext here has Array: true, which is wrong!
-				itemSchema := Schema{
-					Type: arrayType.Unwrap(),
-				}
-
 				if _, errs := itemSchema.Validate(item, ResourceContextAdd(ctx, strconv.Itoa(i))); errs != nil {
 					failures = append(failures, errs...)
 				}
-				// if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
-				// 	failures = append(failures, errs...)
-				// }
 			}
-		// case map[string]interface{}:
+		case map[string]interface{}:
+			// Is a map, quite possibly a Ref or something similar
+			if _, errs := validateValue(t, propertyContext); errs != nil {
+				failures = append(failures, errs...)
+			}
 		default:
 			failures = append(failures, reporting.NewFailure(ctx, "%T used in %s Array property", t, s.Type.Describe()))
 		}
@@ -86,12 +86,9 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 // This function is used for single value properties, and each item in array
 // properties.
 func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	// fmt.Println("Validating item", value, ctx.Path())
-
 	failures := make(reporting.Reports, 0, 50)
 
 	result, errs := ctx.Property().Type.Validate(value, ctx)
-	// fmt.Println("Type validation", result, errs, ctx.Path())
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever failures
 		// have been reported so far

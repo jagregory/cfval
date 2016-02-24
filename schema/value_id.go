@@ -85,7 +85,7 @@ func newResourceID(description, prefix string, long bool) resourceID {
 
 	if long {
 		regex = regexp.MustCompile(fmt.Sprintf("^%s-([a-z0-9]{8}|[a-z0-9]{17})$", prefix))
-		example = fmt.Sprintf("%s-5fe31a21 (\"%s-\" followed by 8 alphanumeric characters) or %s-5fe31a21663d3f1c4 (\"%s-\" followed by 17 alphanumeric characters)", prefix, prefix)
+		example = fmt.Sprintf("%s-5fe31a21 (\"%s-\" followed by 8 alphanumeric characters) or %s-5fe31a21663d3f1c4 (\"%s-\" followed by 17 alphanumeric characters)", prefix, prefix, prefix, prefix)
 	} else {
 		regex = regexp.MustCompile(fmt.Sprintf("^%s-[a-z0-9]{8}$", prefix))
 		example = fmt.Sprintf("%s-5fe31a21 (\"%s-\" followed by 8 alphanumeric characters)", prefix, prefix)
