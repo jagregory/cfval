@@ -36,6 +36,16 @@ type RefTarget interface {
 	TargetType() PropertyType
 }
 
+func keysExcept(m map[string]interface{}, ignore string) []string {
+	keys := make([]string, 0, len(m)-1)
+	for key := range m {
+		if key != ignore {
+			keys = append(keys, key)
+		}
+	}
+	return keys
+}
+
 func validateRef(ref parse.Ref, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ctx.Template == nil {
 		panic("Template is nil")
@@ -49,6 +59,10 @@ func validateRef(ref parse.Ref, ctx PropertyContext) (reporting.ValidateResult, 
 	refString, ok := refValue.(string)
 	if !ok || refString == "" {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Ref\" key: %s", refString)}
+	}
+
+	if len(ref.UnderlyingMap) > 1 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(ref.UnderlyingMap, "Ref"))}
 	}
 
 	target := resolveTarget(refString, ctx.Definitions(), ctx.Template())

@@ -50,7 +50,7 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should fail on ref with no target")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource1", "blah": "blah"}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource2", "blah": "blah"}}, stringContext); errs == nil {
 		t.Error("Should fail on valid ref with extra properties")
 	}
 
