@@ -29,7 +29,7 @@ func TestParsing(t *testing.T) {
   }
 }`
 
-	template, err := ParseTemplateJSON([]byte(json), false)
+	template, err := ParseTemplateJSON([]byte(json))
 
 	if err != nil {
 		t.Error("Failed to parse template", err)
