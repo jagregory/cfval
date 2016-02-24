@@ -40,7 +40,7 @@ func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (repo
 	}
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here
-	return reporting.ValidateOK, nil
+	return reporting.ValidateOK, nil // TODO: this really isn't clear what the intention is
 }
 
 func validateBase64(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {

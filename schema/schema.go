@@ -11,9 +11,6 @@ type ValidateFunc func(interface{}, PropertyContext) (reporting.ValidateResult, 
 
 // A Schema defines the qualities and behaviour of a property.
 type Schema struct {
-	// Array is true when the expected value is an array of Type
-	// Array bool
-
 	// Conflicts is an array of property names which cannot also be specified when
 	// this property is too.
 	Conflicts constraints.Constraint
@@ -48,36 +45,72 @@ func (s Schema) TargetType() PropertyType {
 }
 
 func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.ValidateResult, reporting.Reports) {
-	failures := make(reporting.Reports, 0, 20)
 	propertyContext := NewPropertyContext(ctx, s)
 
 	if arrayType, ok := s.Type.(ArrayPropertyType); ok {
-		itemSchema := Schema{
-			Type: arrayType.Unwrap(),
-		}
-
-		switch t := value.(type) {
-		case []interface{}:
-			for i, item := range t {
-				if _, errs := itemSchema.Validate(item, ResourceContextAdd(ctx, strconv.Itoa(i))); errs != nil {
-					failures = append(failures, errs...)
-				}
-			}
-		case map[string]interface{}:
-			// Is a map, quite possibly a Ref or something similar
-			if _, errs := validateValue(t, propertyContext); errs != nil {
-				failures = append(failures, errs...)
-			}
-		default:
-			failures = append(failures, reporting.NewFailure(ctx, "%T used in %s Array property", t, s.Type.Describe()))
-		}
+		return validateArray(arrayType, value, propertyContext)
 	} else {
-		if _, errs := validateValue(value, propertyContext); errs != nil {
-			failures = append(failures, errs...)
-		}
+		return validateValue(value, propertyContext)
+	}
+}
+
+func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	itemSchema := Schema{
+		Type: arrayType.Unwrap(),
 	}
 
-	return reporting.ValidateOK, reporting.Safe(failures)
+	switch t := value.(type) {
+	case []interface{}:
+		results := make(reporting.Reports, 0, 25)
+		for i, item := range t {
+			if _, errs := itemSchema.Validate(item, ResourceContextAdd(ctx, strconv.Itoa(i))); errs != nil {
+				results = append(results, errs...)
+			}
+		}
+		return reporting.ValidateOK, reporting.Safe(results)
+	case map[string]interface{}:
+		return validateMapWhereArrayShouldBe(arrayType, itemSchema, t, ctx)
+	default:
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%T used in %s property", t, arrayType.Describe())}
+	}
+}
+
+// validateMapWhereArrayShouldBe runs validations against a map which was found
+// where an Array was expected; this is possibly valid, and could either be a
+// function reference or some attempt at coercion.
+func validateMapWhereArrayShouldBe(arrayType ArrayPropertyType, itemSchema Schema, value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	// Is a map, quite possibly a Ref or something similar
+	result, errs := ValidateBuiltinFns(value, ctx)
+
+	if errs != nil {
+		return reporting.ValidateOK, errs
+	} else if result == reporting.ValidateOK {
+		// it's not very clear but an OK result meant that the Builtin validations
+		// weren't executed because it wasn't a builtin
+		if ctx.Options()[OptionExperimentMapArrayCoercion] {
+			// Not sure about this behaviour, so it's behind a flag until I decide
+			// whether it's wise or not.
+			//
+			// CloudFormation appears to allow you to flatten a single item array
+			// for array properties, e.g. X: [Y] can be specified as X: Y
+			//
+			// So in this case if we get a map here just validate it against the
+			// schema for the item of the array
+			results := make(reporting.Reports, 0, 25)
+
+			if _, errs := itemSchema.Validate(value, ctx); errs != nil {
+				results = append(results, errs...)
+			}
+
+			results = append(results, reporting.NewWarning(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe()))
+
+			return reporting.ValidateOK, reporting.Safe(results)
+		}
+
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe())}
+	}
+
+	return reporting.ValidateOK, nil
 }
 
 // validateValue takes a value and validates it against the Type of the
@@ -86,28 +119,28 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 // This function is used for single value properties, and each item in array
 // properties.
 func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	failures := make(reporting.Reports, 0, 50)
+	results := make(reporting.Reports, 0, 50)
 
 	result, errs := ctx.Property().Type.Validate(value, ctx)
 	if result == reporting.ValidateAbort {
-		// type validation instructed us to abort, so we bail with whatever failures
+		// type validation instructed us to abort, so we bail with whatever results
 		// have been reported so far
 		return reporting.ValidateOK, reporting.Safe(errs)
 	}
 
-	failures = append(failures, errs...)
+	results = append(results, errs...)
 
 	// run the custom validation if there is any, optionally bailing if the
 	// validate tells us to, otherwise combining the results with any prior
-	// failures
+	// results
 	if fn := ctx.Property().ValidateFunc; fn != nil {
 		result, errs := fn(value, ctx)
 		if result == reporting.ValidateAbort {
 			return reporting.ValidateOK, reporting.Safe(errs)
 		}
 
-		failures = append(failures, errs...)
+		results = append(results, errs...)
 	}
 
-	return reporting.ValidateOK, reporting.Safe(failures)
+	return reporting.ValidateOK, reporting.Safe(results)
 }

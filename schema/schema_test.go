@@ -3,7 +3,9 @@ package schema
 import (
 	"testing"
 
+	"github.com/jagregory/cfval/constraints"
 	"github.com/jagregory/cfval/parse"
+	"github.com/jagregory/cfval/reporting"
 )
 
 func TestSchemaTargetType(t *testing.T) {
@@ -170,5 +172,52 @@ func TestSchemaCustomValidation(t *testing.T) {
 
 	if _, errs := schema.Validate(map[string]interface{}{"Ref": "abc"}, ctx); errs != nil {
 		t.Error("Should not run validation with Ref", errs)
+	}
+}
+
+func TestSchemaMapToArrayCoercion(t *testing.T) {
+	res := parse.NewTemplateResource("TestType", map[string]interface{}{
+		"NestedArrayProp": map[string]interface{}{
+			"StringProp": "blah",
+		},
+	})
+
+	prop := Schema{
+		Type: Multiple(NestedResource{
+			Description: "TestType",
+			Properties: Properties{
+				"StringProp": Schema{
+					Type:     ValueString,
+					Required: constraints.Always,
+				},
+			},
+		}),
+	}
+
+	def := Resource{
+		Properties: Properties{
+			"NestedArrayProp": prop,
+		},
+	}
+
+	defaultOptionsBase := NewInitialContext(&parse.Template{}, NewResourceDefinitions(nil), ValidationOptions{})
+	defaultOptionsCtx := NewResourceContext(defaultOptionsBase, ResourceWithDefinition{res, def})
+
+	mapCoercionOptionsBase := NewInitialContext(&parse.Template{}, NewResourceDefinitions(nil), ValidationOptions{
+		OptionExperimentMapArrayCoercion: true,
+	})
+	mapCoercionOptionsCtx := NewResourceContext(mapCoercionOptionsBase, ResourceWithDefinition{res, def})
+
+	value := map[string]interface{}{
+		"StringProp": "blah",
+	}
+	if _, errs := prop.Validate(value, defaultOptionsCtx); errs == nil {
+		t.Error("Shouldn't be able to coerce a map into an array property", errs)
+	}
+
+	if _, errs := prop.Validate(value, mapCoercionOptionsCtx); errs == nil {
+		t.Error("Shouldn't be able to coerce a map into an array property without a warning", errs, len(errs))
+	} else if errs[0].Level != reporting.Warning {
+		t.Error("Shouldn't be able to coerce a map into an array property without a warning", errs, len(errs))
 	}
 }

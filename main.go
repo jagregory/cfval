@@ -142,11 +142,13 @@ func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
 	var forgiving bool
 	var format string
+	var experimentMapArrayCoercion bool
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
-	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "warnings-as-errors")
-	cmdFlags.BoolVar(&forgiving, "forgiving", false, "forgiving")
-	cmdFlags.StringVar(&format, "format", "oneline", "format")
+	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "Treats any warnings as errors and fails the validation")
+	cmdFlags.BoolVar(&forgiving, "forgiving", false, "Unrecognised resource types are ignored rather than failed")
+	cmdFlags.BoolVar(&experimentMapArrayCoercion, "experiment:map-array-coercion", false, "(Experimental) Objects can be used in properties which expect an array")
+	cmdFlags.StringVar(&format, "format", "oneline", "Output formatting (online|grouped)")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
@@ -171,7 +173,13 @@ func (c ValidateCommand) Run(args []string) int {
 		return 1
 	}
 
-	_, reports := schema.TemplateValidate(template, schema.NewResourceDefinitions(resources.AwsTypes))
+	_, reports := schema.TemplateValidate(
+		template,
+		schema.NewResourceDefinitions(resources.AwsTypes),
+		schema.ValidationOptions{
+			schema.OptionExperimentMapArrayCoercion: experimentMapArrayCoercion,
+		},
+	)
 	stats := reports.Stats()
 
 	if format == "grouped" {
