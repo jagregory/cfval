@@ -28,7 +28,7 @@ func TestValueTypeValidation(t *testing.T) {
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}), self, property)
+	}), self, property, ValidationOptions{})
 
 	if _, errs := ValueString.Validate("abc", ctx); errs != nil {
 		t.Error("Should pass with valid String")

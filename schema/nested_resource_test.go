@@ -39,6 +39,7 @@ func TestNestedResourceConstraints(t *testing.T) {
 				res,
 			},
 			Schema{},
+			ValidationOptions{},
 		)
 	}
 

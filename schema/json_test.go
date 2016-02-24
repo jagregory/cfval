@@ -36,7 +36,7 @@ func TestJSONValidation(t *testing.T) {
 				Type: ValueNumber,
 			},
 		},
-	}), currentResource, p)
+	}), currentResource, p, ValidationOptions{})
 
 	validRefs := map[string]interface{}{
 		"One": map[string]interface{}{

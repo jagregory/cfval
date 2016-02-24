@@ -31,7 +31,7 @@ func TestFindInMap(t *testing.T) {
 				Type: ValueString,
 			},
 		},
-	}), currentResource, Schema{Type: InstanceID})
+	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
 	if _, errs := NewFindInMap(nil).Validate(ctx); errs == nil {
 		t.Error("Should fail when no arguments supplied", errs)

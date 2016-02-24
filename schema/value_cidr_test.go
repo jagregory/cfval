@@ -12,7 +12,7 @@ func TestCidrValidation(t *testing.T) {
 		parse.NewTemplateResource("", make(map[string]interface{})),
 		Resource{},
 	}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{}, ValidationOptions{})
 
 	if _, errs := CIDR.Validate("", ctx); errs == nil {
 		t.Error("Cidr should fail on empty str, niling")

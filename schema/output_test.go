@@ -28,7 +28,7 @@ func TestOutputValidation(t *testing.T) {
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}), emptyCurrentResource{}, Schema{})
+	}), emptyCurrentResource{}, Schema{}, ValidationOptions{})
 
 	goodResourceOutput := parse.Output{
 		Description: "Ref with valid resource",

@@ -13,7 +13,7 @@ func TestAllowedMethodsFixedArrays(t *testing.T) {
 
 	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
 		"TestResource": res,
-	}))
+	}), schema.ValidationOptions{})
 
 	testCFDistribution := func(allowedMethods []interface{}) schema.ResourceContext {
 		return schema.NewResourceContext(ctx, schema.ResourceWithDefinition{

@@ -7,10 +7,10 @@ import (
 	"github.com/jagregory/cfval/parse"
 )
 
-func NewContextShorthand(template *parse.Template, resourceDefinitions ResourceDefinitions, currentResource constraints.CurrentResource, prop Schema) PropertyContext {
+func NewContextShorthand(template *parse.Template, resourceDefinitions ResourceDefinitions, currentResource constraints.CurrentResource, prop Schema, options ValidationOptions) PropertyContext {
 	return NewPropertyContext(
 		NewResourceContext(
-			NewInitialContext(template, resourceDefinitions),
+			NewInitialContext(template, resourceDefinitions, options),
 			currentResource,
 		),
 		prop,
@@ -35,7 +35,7 @@ func TestSingleValueValidate(t *testing.T) {
 	template := &parse.Template{}
 	tr := parse.TemplateResource{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, prop)
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, prop, ValidationOptions{})
 
 	for _, test := range pass {
 		if _, errs := SingleValueValidate(test.expected)(test.actual, ctx); errs != nil {
@@ -54,7 +54,7 @@ func TestFixedArrayValidateHelper(t *testing.T) {
 	template := &parse.Template{}
 	tr := parse.TemplateResource{}
 	currentResource := ResourceWithDefinition{tr, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{}, ValidationOptions{})
 
 	validate := FixedArrayValidate([]string{"a", "b", "c"}, []string{"d", "e"})
 
@@ -83,7 +83,7 @@ func TestRegexpValidateHelper(t *testing.T) {
 	template := &parse.Template{}
 	validator := RegexpValidate("^a string$", "Match failed")
 	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{}, ValidationOptions{})
 
 	_, errs := validator("a string", ctx)
 	if errs != nil {
@@ -107,7 +107,7 @@ func TestIntegerRangeValidateHelper(t *testing.T) {
 	template := &parse.Template{}
 	validator := IntegerRangeValidate(5, 10)
 	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{}, ValidationOptions{})
 
 	for _, valid := range []float64{5, 6, 7, 8, 9, 10} {
 		if _, errs := validator(valid, ctx); errs != nil {
@@ -126,7 +126,7 @@ func TestStringLengthValidateHelper(t *testing.T) {
 	template := &parse.Template{}
 	validator := StringLengthValidate(5, 10)
 	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{}, ValidationOptions{})
 
 	for _, valid := range []string{"abcde", "abcdefghij"} {
 		if _, errs := validator(valid, ctx); errs != nil {
@@ -145,7 +145,7 @@ func TestNumberOptionsValidateHelper(t *testing.T) {
 	template := &parse.Template{}
 	validator := NumberOptions(5, 10, 20)
 	currentResource := ResourceWithDefinition{parse.TemplateResource{}, Resource{}}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), currentResource, Schema{}, ValidationOptions{})
 
 	for _, valid := range []float64{5, 10, 20} {
 		if _, errs := validator(valid, ctx); errs != nil {

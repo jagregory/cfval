@@ -32,7 +32,7 @@ func TestRefValidate(t *testing.T) {
 				Type: ValueString,
 			},
 		},
-	}), currentResource, Schema{Type: ValueString})
+	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 	numberContext := NewPropertyContext(stringContext, Schema{Type: ValueNumber})
 	listInstanceIDContext := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": Resource{
@@ -40,7 +40,7 @@ func TestRefValidate(t *testing.T) {
 				Type: ValueString,
 			},
 		},
-	}), currentResource, Schema{Type: Multiple(InstanceID)})
+	}), currentResource, Schema{Type: Multiple(InstanceID)}, ValidationOptions{})
 
 	if _, errs := NewRef("Resource1").Validate(stringContext); errs == nil {
 		t.Error("Should fail on valid resource ref with Unknown ref type")

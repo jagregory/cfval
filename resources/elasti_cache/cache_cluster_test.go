@@ -10,7 +10,7 @@ import (
 func TestAZModeValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil))
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil), schema.ValidationOptions{})
 
 	singleAZCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
@@ -19,7 +19,8 @@ func TestAZModeValidate(t *testing.T) {
 			}),
 			schema.Resource{},
 		}),
-		prop)
+		prop,
+	)
 
 	multiAZCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
@@ -42,7 +43,7 @@ func TestAZModeValidate(t *testing.T) {
 func TestNumCacheNodesValidate(t *testing.T) {
 	template := &parse.Template{}
 	prop := schema.Schema{}
-	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil))
+	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(nil), schema.ValidationOptions{})
 
 	redisCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{

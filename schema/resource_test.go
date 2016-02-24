@@ -24,7 +24,7 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 	}
 	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}))
+	}), ValidationOptions{})
 
 	nothingSet := ResourceWithDefinition{
 		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
@@ -88,7 +88,7 @@ func TestSchemaRequiredValidation(t *testing.T) {
 	}
 	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}))
+	}), ValidationOptions{})
 
 	nothingSet := ResourceWithDefinition{
 		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
@@ -158,7 +158,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	}
 	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}))
+	}), ValidationOptions{})
 
 	nothingSet := ResourceWithDefinition{
 		parse.NewTemplateResource("TestResource", map[string]interface{}{}),
@@ -217,7 +217,7 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	}
 	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}))
+	}), ValidationOptions{})
 
 	nothingSet := ResourceWithDefinition{
 		parse.NewTemplateResource("TestResource", map[string]interface{}{}),

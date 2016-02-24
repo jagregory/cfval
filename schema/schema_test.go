@@ -41,7 +41,7 @@ func TestSchemaTypeValidation(t *testing.T) {
 				},
 			},
 		},
-	}), self, Schema{})
+	}), self, Schema{}, ValidationOptions{})
 	schema := Schema{Type: ValueString}
 
 	if _, errs := schema.Validate("abc", ctx); errs != nil {
@@ -94,7 +94,7 @@ func TestSchemaArrayValidation(t *testing.T) {
 				Type: Multiple(ValueString),
 			},
 		},
-	}), self, Schema{})
+	}), self, Schema{}, ValidationOptions{})
 
 	schema := Schema{
 		Type: Multiple(ValueString),
@@ -149,7 +149,7 @@ func TestSchemaCustomValidation(t *testing.T) {
 	}
 	ctx := NewContextShorthand(template, NewResourceDefinitions(map[string]Resource{
 		"TestResource": res,
-	}), self, Schema{})
+	}), self, Schema{}, ValidationOptions{})
 
 	schema := Schema{
 		Type:         ValueNumber,

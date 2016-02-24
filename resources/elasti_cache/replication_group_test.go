@@ -12,7 +12,7 @@ func TestAutomaticFailoverEnabled(t *testing.T) {
 	res := ReplicationGroup
 	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
 		"TestResource": res,
-	}))
+	}), schema.ValidationOptions{})
 
 	badVersionCtx := schema.NewPropertyContext(
 		schema.NewResourceContext(ctx, schema.ResourceWithDefinition{

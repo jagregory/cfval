@@ -12,7 +12,7 @@ func TestEnumValidation(t *testing.T) {
 		parse.NewTemplateResource("", make(map[string]interface{})),
 		Resource{},
 	}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{}, ValidationOptions{})
 
 	enum := EnumValue{
 		Options: []string{"a", "b", "c"},

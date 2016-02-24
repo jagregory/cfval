@@ -6,10 +6,10 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func TemplateValidate(template *parse.Template, definitions ResourceDefinitions) (bool, reporting.Reports) {
+func TemplateValidate(template *parse.Template, definitions ResourceDefinitions, options ValidationOptions) (bool, reporting.Reports) {
 	failures := make(reporting.Reports, 0, 100)
 
-	ctx := NewInitialContext(template, definitions)
+	ctx := NewInitialContext(template, definitions, options)
 
 	for logicalID, resource := range template.Resources {
 		if _, errs := resourceValidate(resource, ContextAdd(ctx, "Resources", logicalID)); errs != nil {

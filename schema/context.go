@@ -6,6 +6,7 @@ import (
 )
 
 type Context interface {
+	Options() ValidationOptions
 	Definitions() ResourceDefinitions
 	Path() []string
 	Template() *parse.Template
@@ -14,12 +15,14 @@ type Context interface {
 func ContextAdd(ctx Context, path ...string) Context {
 	return fullContext{
 		definitions: ctx.Definitions(),
+		options:     ctx.Options(),
 		path:        append(ctx.Path(), path...),
 		template:    ctx.Template(),
 	}
 }
 
 type ResourceContext interface {
+	Options() ValidationOptions
 	CurrentResource() constraints.CurrentResource
 	Definitions() ResourceDefinitions
 	Path() []string
@@ -29,6 +32,7 @@ type ResourceContext interface {
 func ResourceContextAdd(ctx ResourceContext, path ...string) ResourceContext {
 	return fullContext{
 		currentResource: ctx.CurrentResource(),
+		options:         ctx.Options(),
 		definitions:     ctx.Definitions(),
 		path:            append(ctx.Path(), path...),
 		template:        ctx.Template(),
@@ -36,6 +40,7 @@ func ResourceContextAdd(ctx ResourceContext, path ...string) ResourceContext {
 }
 
 type PropertyContext interface {
+	Options() ValidationOptions
 	CurrentResource() constraints.CurrentResource
 	Definitions() ResourceDefinitions
 	Path() []string
@@ -46,6 +51,7 @@ type PropertyContext interface {
 func PropertyContextAdd(ctx PropertyContext, path ...string) PropertyContext {
 	return fullContext{
 		currentResource: ctx.CurrentResource(),
+		options:         ctx.Options(),
 		definitions:     ctx.Definitions(),
 		path:            append(ctx.Path(), path...),
 		property:        ctx.Property(),
@@ -54,6 +60,7 @@ func PropertyContextAdd(ctx PropertyContext, path ...string) PropertyContext {
 }
 
 type fullContext struct {
+	options         ValidationOptions
 	currentResource constraints.CurrentResource
 	definitions     ResourceDefinitions
 	path            []string
@@ -81,11 +88,16 @@ func (ctx fullContext) Property() Schema {
 	return ctx.property
 }
 
-func NewInitialContext(template *parse.Template, definitions ResourceDefinitions) Context {
+func (ctx fullContext) Options() ValidationOptions {
+	return ctx.options
+}
+
+func NewInitialContext(template *parse.Template, definitions ResourceDefinitions, options ValidationOptions) Context {
 	return fullContext{
+		definitions: definitions,
+		options:     options,
 		path:        make([]string, 0, 25),
 		template:    template,
-		definitions: definitions,
 	}
 }
 
@@ -93,6 +105,7 @@ func NewResourceContext(ctx Context, currentResource constraints.CurrentResource
 	return fullContext{
 		currentResource: currentResource,
 		definitions:     ctx.Definitions(),
+		options:         ctx.Options(),
 		path:            ctx.Path(),
 		template:        ctx.Template(),
 	}
@@ -102,6 +115,7 @@ func NewPropertyContext(ctx ResourceContext, property Schema) PropertyContext {
 	return fullContext{
 		currentResource: ctx.CurrentResource(),
 		definitions:     ctx.Definitions(),
+		options:         ctx.Options(),
 		path:            ctx.Path(),
 		property:        property,
 		template:        ctx.Template(),

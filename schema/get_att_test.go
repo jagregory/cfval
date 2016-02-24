@@ -31,7 +31,7 @@ func TestGetAtt(t *testing.T) {
 				},
 			},
 		},
-	}), currentResource, Schema{Type: InstanceID})
+	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 	listCtx := NewPropertyContext(ctx, Schema{Type: Multiple(InstanceID)})
 
 	if _, errs := NewGetAtt(nil).Validate(ctx); errs == nil {

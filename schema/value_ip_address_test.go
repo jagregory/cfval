@@ -7,7 +7,7 @@ import (
 )
 
 func TestIPAddressValidation(t *testing.T) {
-	ctx := NewContextShorthand(&parse.Template{}, NewResourceDefinitions(nil), emptyCurrentResource{}, Schema{})
+	ctx := NewContextShorthand(&parse.Template{}, NewResourceDefinitions(nil), emptyCurrentResource{}, Schema{}, ValidationOptions{})
 
 	valids := []string{"1.2.3.4", "192.168.20.1", "255.255.255.255"}
 	invalids := []string{"1.2.3", "1.2.3.4.5", "1923.168.20.1", "256.265.355.255"}

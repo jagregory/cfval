@@ -18,7 +18,7 @@ func TestGeoLocationSubdivisionCodeValidation(t *testing.T) {
 	}
 	ctx := schema.NewInitialContext(template, schema.NewResourceDefinitions(map[string]schema.Resource{
 		"TestResource": res,
-	}))
+	}), schema.ValidationOptions{})
 
 	badCountryCtx := schema.NewResourceContext(ctx, schema.ResourceWithDefinition{
 		parse.NewTemplateResource("TestResource", map[string]interface{}{

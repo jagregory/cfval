@@ -12,7 +12,7 @@ func TestPeriodValidation(t *testing.T) {
 		parse.NewTemplateResource("", make(map[string]interface{})),
 		Resource{},
 	}
-	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{})
+	ctx := NewContextShorthand(template, NewResourceDefinitions(nil), self, Schema{}, ValidationOptions{})
 
 	if _, errs := Period.Validate("", ctx); errs == nil {
 		t.Error("Period should fail on empty string")
