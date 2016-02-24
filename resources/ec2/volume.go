@@ -54,7 +54,7 @@ var Volume = Resource{
 		},
 
 		"VolumeType": Schema{
-			Type:     Multiple(common.EbsVolumeType),
+			Type:     common.EbsVolumeType,
 			Required: constraints.Always,
 		},
 	},
