@@ -6,27 +6,27 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-type arrayPropertyType struct {
+type ArrayPropertyType struct {
 	PropertyType
 }
 
-func (arrayPropertyType) IsArray() bool {
-	return true
+func (apt ArrayPropertyType) Unwrap() PropertyType {
+	return apt.PropertyType
 }
 
-func (pt arrayPropertyType) Describe() string {
+func (pt ArrayPropertyType) Describe() string {
 	return fmt.Sprintf("List<%s>", pt.PropertyType.Describe())
 }
 
-func (pt arrayPropertyType) Same(to PropertyType) bool {
-	if apt, ok := to.(arrayPropertyType); ok {
+func (pt ArrayPropertyType) Same(to PropertyType) bool {
+	if apt, ok := to.(ArrayPropertyType); ok {
 		return pt.PropertyType.Same(apt.PropertyType)
 	}
 
 	return false
 }
 
-func (pt arrayPropertyType) CoercibleTo(to PropertyType) Coercion {
+func (pt ArrayPropertyType) CoercibleTo(to PropertyType) Coercion {
 	if pt.Same(to) {
 		return CoercionAlways
 	} else if vt, ok := to.(ValueType); ok && vt == ValueUnknown {
@@ -37,7 +37,11 @@ func (pt arrayPropertyType) CoercibleTo(to PropertyType) Coercion {
 }
 
 func Multiple(pt PropertyType) PropertyType {
-	return arrayPropertyType{pt}
+	if _, ok := pt.(ArrayPropertyType); ok {
+		panic("Multiple(Multiple(...)) call detected")
+	}
+
+	return ArrayPropertyType{pt}
 }
 
 type PropertyType interface {
@@ -47,10 +51,6 @@ type PropertyType interface {
 
 	// Same returns true when two PropertyTypes represent the same AWS type.
 	Same(PropertyType) bool
-
-	// IsArray returns true when the PropertyType represents an array of
-	// another PropertyType
-	IsArray() bool
 
 	// Validate checks that the property is valid, including any built-in function
 	// calls and stuff within the property.

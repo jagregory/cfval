@@ -100,33 +100,33 @@ func TestSchemaArrayValidation(t *testing.T) {
 		Type: Multiple(ValueString),
 	}
 
-	// if _, errs := schema.Validate([]interface{}{"abc"}, ctx); errs != nil {
-	// 	t.Error("Should pass when value is an array of the correct type", errs)
-	// }
-	//
-	// if _, errs := schema.Validate([]interface{}{"abc", 123}, ctx); errs == nil {
-	// 	t.Error("Should fail when value is a mixed array")
-	// }
-	//
-	// if _, errs := schema.Validate([]interface{}{123}, ctx); errs == nil {
-	// 	t.Error("Should fail when value is an incorrect array")
-	// }
-	//
-	// if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "Target"}}, ctx); errs != nil {
-	// 	t.Error("Should pass when value is an array with Refs of the correct type", errs)
-	// }
+	if _, errs := schema.Validate([]interface{}{"abc"}, ctx); errs != nil {
+		t.Error("Should pass when value is an array of the correct type", errs)
+	}
+
+	if _, errs := schema.Validate([]interface{}{"abc", 123}, ctx); errs == nil {
+		t.Error("Should fail when value is a mixed array")
+	}
+
+	if _, errs := schema.Validate([]interface{}{123}, ctx); errs == nil {
+		t.Error("Should fail when value is an incorrect array")
+	}
+
+	if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "Target"}}, ctx); errs != nil {
+		t.Error("Should pass when value is an array with Refs of the correct type", errs)
+	}
 
 	if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "ArrayTarget"}}, ctx); errs == nil {
 		t.Error("Should fail when value is an array with Refs of the wrong type")
 	}
-	//
+
 	// if _, errs := schema.Validate(map[string]interface{}{"Ref": "ArrayTarget"}, ctx); errs != nil {
 	// 	t.Error("Should pass when value is a Ref of the correct type is used for whole value", errs)
 	// }
-	//
-	// if _, errs := schema.Validate(map[string]interface{}{"Ref": "Target"}, ctx); errs == nil {
-	// 	t.Error("Should fail when value is a Ref of the correct type is used for whole value")
-	// }
+
+	if _, errs := schema.Validate(map[string]interface{}{"Ref": "Target"}, ctx); errs == nil {
+		t.Error("Should fail when value is a Ref of the correct type is used for whole value")
+	}
 }
 
 func TestSchemaCustomValidation(t *testing.T) {

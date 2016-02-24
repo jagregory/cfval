@@ -51,13 +51,16 @@ func (s Schema) Validate(value interface{}, ctx ResourceContext) (reporting.Vali
 	failures := make(reporting.Reports, 0, 20)
 	propertyContext := NewPropertyContext(ctx, s)
 
-	if s.Type.IsArray() {
+	if arrayType, ok := s.Type.(ArrayPropertyType); ok {
 		switch t := value.(type) {
 		case []interface{}:
 			for i, item := range t {
 				// TODO: the propertyContext here has Array: true, which is wrong!
-				// nonArrayS := deArraySchema(s)
-				if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
+				itemSchema := Schema{
+					Type: arrayType.Unwrap(),
+				}
+
+				if _, errs := itemSchema.Validate(item, ResourceContextAdd(ctx, strconv.Itoa(i))); errs != nil {
 					failures = append(failures, errs...)
 				}
 				// if _, errs := validateValue(item, PropertyContextAdd(propertyContext, strconv.Itoa(i))); errs != nil {
