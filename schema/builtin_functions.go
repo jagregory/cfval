@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -20,6 +18,6 @@ func ValidateBuiltinFns(value parse.Builtin, ctx PropertyContext) (reporting.Val
 	case parse.BuiltinBase64:
 		return validateBase64(value, PropertyContextAdd(ctx, string(parse.BuiltinBase64)))
 	default:
-		panic(fmt.Errorf("Unsupported Builtin %s", value.Key))
+		return reporting.ValidateOK, nil
 	}
 }

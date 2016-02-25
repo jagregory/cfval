@@ -15,7 +15,7 @@ func (d *Output) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	d.Value = convertToBuiltin(tmp.Value)
+	d.Value = convertAnyBuiltins(tmp.Value)
 
 	return nil
 }

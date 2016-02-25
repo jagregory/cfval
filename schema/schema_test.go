@@ -166,7 +166,7 @@ func TestSchemaCustomValidation(t *testing.T) {
 		t.Error("Should run custom validation when type is correct")
 	}
 
-	if _, errs := schema.Validate("abc", ctx); errs != nil && errs[0].Message != "Number used in String property" {
+	if _, errs := schema.Validate("abc", ctx); errs != nil && errs[0].Message != "String used in Number property" {
 		t.Error("Should not run validation when type is correct", errs)
 	}
 

@@ -1,0 +1,23 @@
+{
+  "Parameters": {
+    "ParamA": {
+      "Type": "String"
+    }
+  },
+
+  "Resources": {
+    "ResourceA": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-example1",
+        "Tags": [{ "Key": "Test", "Value": { "Ref": "ParamA" }}]
+      }
+    }
+  },
+
+  "Outputs": {
+    "OutputA": {
+      "Value": { "Fn::Select": [1, ["one", "two", "three"]] }
+    }
+  }
+}

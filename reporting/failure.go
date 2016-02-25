@@ -73,8 +73,8 @@ func NewWarning(path Path, format string, args ...interface{}) *Report {
 	return &Report{Warning, fmt.Sprintf(format, args...), path.Path(), strings.Join(path.Path(), ".")}
 }
 
-func NewInvalidTypeFailure(path Path, actual Type, expected Type) *Report {
-	return NewFailure(path, "%s used in %s property", actual.Describe(), expected.Describe())
+func NewInvalidTypeFailure(path Path, actual string, expected Type) *Report {
+	return NewFailure(path, "%s used in %s property", actual, expected.Describe())
 }
 
 // Safe returns either the given list of failures, or nil if there are no
