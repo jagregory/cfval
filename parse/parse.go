@@ -13,21 +13,31 @@ func ParseTemplateJSON(data []byte) (*Template, error) {
 
 	for _, resource := range temp.Resources {
 		for property, value := range resource.properties {
-			if ref, ok := convertToRef(value); ok {
-				resource.properties[property] = ref
+			if builtin, ok := convertToBuiltin(value); ok {
+				resource.properties[property] = builtin
 			}
 		}
 	}
 
 	for name, output := range temp.Outputs {
-		if ref, ok := convertToRef(output.Value); ok {
+		if builtin, ok := convertToBuiltin(output.Value); ok {
 			// TODO: This is a nasty way of modifying the struct
-			output.Value = ref
+			output.Value = builtin
 			temp.Outputs[name] = output
 		}
 	}
 
 	return &temp, nil
+}
+
+func convertToBuiltin(value interface{}) (interface{}, bool) {
+	if ref, ok := convertToRef(value); ok {
+		return ref, ok
+	} else if findInMap, ok := convertToFindInMap(value); ok {
+		return findInMap, ok
+	}
+
+	return nil, false
 }
 
 func convertToRef(value interface{}) (Ref, bool) {
@@ -40,6 +50,20 @@ func convertToRef(value interface{}) (Ref, bool) {
 	return Ref{}, false
 }
 
+func convertToFindInMap(value interface{}) (FindInMap, bool) {
+	if m, ok := value.(map[string]interface{}); ok {
+		if _, found := m["Fn::FindInMap"]; found {
+			return FindInMap{m}, true
+		}
+	}
+
+	return FindInMap{}, false
+}
+
 type Ref struct {
+	UnderlyingMap map[string]interface{}
+}
+
+type FindInMap struct {
 	UnderlyingMap map[string]interface{}
 }

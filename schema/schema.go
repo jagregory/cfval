@@ -71,6 +71,8 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 		return reporting.ValidateOK, reporting.Safe(results)
 	case parse.Ref:
 		return validateRef(t, ctx)
+	case parse.FindInMap:
+		return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
 	case map[string]interface{}:
 		return validateMapWhereArrayShouldBe(arrayType, itemSchema, t, ctx)
 	default:

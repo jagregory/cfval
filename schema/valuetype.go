@@ -72,6 +72,8 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 		switch t := value.(type) {
 		case parse.Ref:
 			return validateRef(t, ctx)
+		case parse.FindInMap:
+			return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
 		case map[string]interface{}:
 			builtinResult, errs := ValidateBuiltinFns(t, ctx)
 			if errs != nil {

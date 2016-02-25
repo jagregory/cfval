@@ -14,6 +14,8 @@ func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateRes
 	switch t := value.(type) {
 	case parse.Ref:
 		return validateRef(t, ctx)
+	case parse.FindInMap:
+		return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
 	case map[string]interface{}:
 		return validateJSONMap(t, ctx)
 	case []interface{}:

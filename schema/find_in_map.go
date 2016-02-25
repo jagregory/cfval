@@ -1,21 +1,32 @@
 package schema
 
-import "github.com/jagregory/cfval/reporting"
+import (
+	"github.com/jagregory/cfval/parse"
+	"github.com/jagregory/cfval/reporting"
+)
 
-type FindInMap struct {
-	args []interface{}
-}
+func validateFindInMap(findInMap parse.FindInMap, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	argsValue, found := findInMap.UnderlyingMap["Fn::FindInMap"]
+	if !found || argsValue == nil {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::FindInMap\" key")}
+	}
 
-func (fim FindInMap) Validate(ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	find := fim.args
+	argsArray, ok := argsValue.([]interface{})
+	if !ok {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::FindInMap\" key: %s", argsArray)}
+	}
 
-	if len(find) != 3 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options has wrong number of items, expected: 3, actual: %d", len(find))}
+	if len(findInMap.UnderlyingMap) > 1 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(findInMap.UnderlyingMap, "Fn::FindInMap"))}
+	}
+
+	if len(argsArray) != 3 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Options has wrong number of items, expected: 3, actual: %d", len(argsArray))}
 	}
 
 	findInMapItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
 
-	mapName := find[0]
+	mapName := argsArray[0]
 	_, mapNameIsString := mapName.(string)
 	if _, errs := ValueString.Validate(mapName, PropertyContextAdd(findInMapItemContext, "0")); errs != nil {
 		return reporting.ValidateAbort, errs
@@ -26,7 +37,7 @@ func (fim FindInMap) Validate(ctx PropertyContext) (reporting.ValidateResult, re
 		// TODO: lookup whether MapName is a valid Map
 	}
 
-	topLevelKey := find[1]
+	topLevelKey := argsArray[1]
 	_, topLevelKeyIsString := topLevelKey.(string)
 	if _, errs := ValueString.Validate(topLevelKey, PropertyContextAdd(findInMapItemContext, "1")); errs != nil {
 		return reporting.ValidateAbort, errs
@@ -36,7 +47,7 @@ func (fim FindInMap) Validate(ctx PropertyContext) (reporting.ValidateResult, re
 		// TODO: lookup whether topLevelKey is in mapName
 	}
 
-	secondLevelKey := find[2]
+	secondLevelKey := argsArray[2]
 	_, secondLevelKeyIsString := secondLevelKey.(string)
 	if _, errs := ValueString.Validate(secondLevelKey, PropertyContextAdd(findInMapItemContext, "2")); errs != nil {
 		return reporting.ValidateAbort, errs
@@ -47,8 +58,4 @@ func (fim FindInMap) Validate(ctx PropertyContext) (reporting.ValidateResult, re
 	}
 
 	return reporting.ValidateAbort, nil
-}
-
-func NewFindInMap(args []interface{}) FindInMap {
-	return FindInMap{args}
 }
