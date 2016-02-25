@@ -62,11 +62,11 @@ func TestSchemaTypeValidation(t *testing.T) {
 		t.Error("Should fail when Ref is incorrect type")
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "Name"}}, ctx); errs != nil {
+	if _, errs := schema.Validate(parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "Name"}}}, ctx); errs != nil {
 		t.Error("Should pass when GetAtt is correct type", errs)
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "ID"}}, ctx); errs == nil {
+	if _, errs := schema.Validate(parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"Resource1", "ID"}}}, ctx); errs == nil {
 		t.Error("Should fail when GetAtt is incorrect type")
 	}
 }

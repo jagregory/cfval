@@ -1,24 +1,33 @@
 package schema
 
-import "github.com/jagregory/cfval/reporting"
+import (
+	"github.com/jagregory/cfval/parse"
+	"github.com/jagregory/cfval/reporting"
+)
 
-type GetAtt struct {
-	definition []interface{}
-}
+func validateGetAtt(getAtt parse.GetAtt, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	getAttValue, found := getAtt.UnderlyingMap["Fn::GetAtt"]
+	if !found || getAttValue == nil {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAtt\" key")}
+	}
 
-func NewGetAtt(definition []interface{}) GetAtt {
-	return GetAtt{definition}
-}
+	getAttArray, ok := getAttValue.([]interface{})
+	if !ok || getAttArray == nil {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::GetAtt\" key: %s", getAttArray)}
+	}
 
-func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if len(ga.definition) != 2 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(ga.definition))}
+	if len(getAtt.UnderlyingMap) > 1 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(getAtt.UnderlyingMap, "Fn::GetAtt"))}
+	}
+
+	if len(getAttArray) != 2 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(getAttArray))}
 	}
 
 	template := ctx.Template()
-	if resourceID, ok := ga.definition[0].(string); ok {
+	if resourceID, ok := getAttArray[0].(string); ok {
 		if resource, ok := template.Resources[resourceID]; ok {
-			if attributeName, ok := ga.definition[1].(string); ok {
+			if attributeName, ok := getAttArray[1].(string); ok {
 				definition := ctx.Definitions().Lookup(resource.Type)
 				if attribute, ok := definition.Attributes[attributeName]; ok {
 					// TODO: make this common, so GetAtt and others can use it
@@ -35,7 +44,7 @@ func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, report
 			}
 
 			// attribute not found on resource
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, ga.definition[1])}
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, getAttArray[1])}
 		}
 
 		// resource not found
@@ -43,5 +52,5 @@ func (ga GetAtt) Validate(ctx PropertyContext) (reporting.ValidateResult, report
 	}
 
 	// resource not a string
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a valid resource name", ga.definition[0])}
+	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a valid resource name", getAttArray[0])}
 }

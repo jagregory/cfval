@@ -76,6 +76,8 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 			return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
 		case parse.Join:
 			return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
+		case parse.GetAtt:
+			return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
 		case map[string]interface{}:
 			builtinResult, errs := ValidateBuiltinFns(t, ctx)
 			if errs != nil {

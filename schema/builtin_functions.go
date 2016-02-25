@@ -13,15 +13,9 @@ func ValidateBuiltinFns(value interface{}, ctx PropertyContext) (reporting.Valid
 		return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
 	case parse.Join:
 		return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
+	case parse.GetAtt:
+		return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
 	case map[string]interface{}:
-		if getatt, ok := t["Fn::GetAtt"]; ok {
-			if arr, ok := getatt.([]interface{}); ok {
-				return NewGetAtt(arr).Validate(PropertyContextAdd(ctx, "GetAtt"))
-			}
-
-			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt must be an array")}
-		}
-
 		if base64, ok := t["Fn::Base64"]; ok {
 			return validateBase64(base64, PropertyContextAdd(ctx, "Fn::Base64"))
 		}

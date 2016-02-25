@@ -40,11 +40,11 @@ func TestOutputValidation(t *testing.T) {
 	}
 	goodAttrOutput := parse.Output{
 		Description: "GetAtt with valid resource",
-		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}},
+		Value:       parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}}},
 	}
 	badAttrOutput := parse.Output{
 		Description: "GetAtt with invalid resource",
-		Value:       map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}},
+		Value:       parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}}},
 	}
 
 	if _, errs := outputValidate(goodResourceOutput, ctx); errs != nil {
