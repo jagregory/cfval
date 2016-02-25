@@ -13,6 +13,7 @@ func validateJoin(join parse.Join, ctx PropertyContext) (reporting.ValidateResul
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Join\" key")}
 	}
 
+	// TODO: this will fail with { "Fn::Join": { "Fn::GetAZs": "" }} and such
 	items, ok := joinValue.([]interface{})
 	if !ok || items == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::Join\" key: %s", items)}

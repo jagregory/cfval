@@ -78,16 +78,9 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 			return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
 		case parse.GetAtt:
 			return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
+		case parse.Base64:
+			return validateBase64(t, PropertyContextAdd(ctx, "Fn::Base64"))
 		case map[string]interface{}:
-			builtinResult, errs := ValidateBuiltinFns(t, ctx)
-			if errs != nil {
-				return reporting.ValidateOK, errs
-			}
-
-			if builtinResult == reporting.ValidateAbort {
-				return reporting.ValidateAbort, nil
-			}
-
 			return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Value is a map but isn't a builtin")}
 		}
 

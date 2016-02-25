@@ -39,6 +39,8 @@ func convertToBuiltin(value interface{}) interface{} {
 		return join
 	} else if getAtt, ok := convertToGetAtt(value); ok {
 		return getAtt
+	} else if base64, ok := convertToBase64(value); ok {
+		return base64
 	}
 
 	switch t := value.(type) {
@@ -54,7 +56,7 @@ func convertToBuiltin(value interface{}) interface{} {
 func convertToRef(value interface{}) (Ref, bool) {
 	if m, ok := value.(map[string]interface{}); ok {
 		if _, found := m["Ref"]; found {
-			return Ref{m}, true
+			return Ref{convertMapToBuiltin(m)}, true
 		}
 	}
 
@@ -64,7 +66,7 @@ func convertToRef(value interface{}) (Ref, bool) {
 func convertToFindInMap(value interface{}) (FindInMap, bool) {
 	if m, ok := value.(map[string]interface{}); ok {
 		if _, found := m["Fn::FindInMap"]; found {
-			return FindInMap{m}, true
+			return FindInMap{convertMapToBuiltin(m)}, true
 		}
 	}
 
@@ -74,7 +76,7 @@ func convertToFindInMap(value interface{}) (FindInMap, bool) {
 func convertToJoin(value interface{}) (Join, bool) {
 	if m, ok := value.(map[string]interface{}); ok {
 		if _, found := m["Fn::Join"]; found {
-			return Join{m}, true
+			return Join{convertMapToBuiltin(m)}, true
 		}
 	}
 
@@ -84,11 +86,21 @@ func convertToJoin(value interface{}) (Join, bool) {
 func convertToGetAtt(value interface{}) (GetAtt, bool) {
 	if m, ok := value.(map[string]interface{}); ok {
 		if _, found := m["Fn::GetAtt"]; found {
-			return GetAtt{m}, true
+			return GetAtt{convertMapToBuiltin(m)}, true
 		}
 	}
 
 	return GetAtt{}, false
+}
+
+func convertToBase64(value interface{}) (Base64, bool) {
+	if m, ok := value.(map[string]interface{}); ok {
+		if _, found := m["Fn::Base64"]; found {
+			return Base64{convertMapToBuiltin(m)}, true
+		}
+	}
+
+	return Base64{}, false
 }
 
 type Ref struct {
@@ -104,5 +116,9 @@ type Join struct {
 }
 
 type GetAtt struct {
+	UnderlyingMap map[string]interface{}
+}
+
+type Base64 struct {
 	UnderlyingMap map[string]interface{}
 }

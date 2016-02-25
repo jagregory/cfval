@@ -20,6 +20,8 @@ func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateRes
 		return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
 	case parse.GetAtt:
 		return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
+	case parse.Base64:
+		return validateBase64(t, PropertyContextAdd(ctx, "Fn::Base64"))
 	case map[string]interface{}:
 		return validateJSONMap(t, ctx)
 	case []interface{}:
@@ -42,19 +44,9 @@ func validateJSONMap(value map[string]interface{}, ctx PropertyContext) (reporti
 	failures := make(reporting.Reports, 0, 100)
 	stringItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
 
-	// We pass a ValueString here as the property type so Refs etc... treat the
-	// JSON as an assignable string value rather than a complex type. Bit hacky.
-	builtinResult, errs := ValidateBuiltinFns(value, stringItemContext)
-
-	if errs != nil {
-		failures = append(failures, errs...)
-	} else if builtinResult == reporting.ValidateAbort {
-		return reporting.ValidateAbort, nil
-	} else {
-		for k, v := range value {
-			if _, errs := validateJSON(v, PropertyContextAdd(stringItemContext, k)); errs != nil {
-				failures = append(failures, errs...)
-			}
+	for k, v := range value {
+		if _, errs := validateJSON(v, PropertyContextAdd(stringItemContext, k)); errs != nil {
+			failures = append(failures, errs...)
 		}
 	}
 

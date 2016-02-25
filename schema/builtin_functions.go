@@ -15,18 +15,10 @@ func ValidateBuiltinFns(value interface{}, ctx PropertyContext) (reporting.Valid
 		return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
 	case parse.GetAtt:
 		return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
-	case map[string]interface{}:
-		if base64, ok := t["Fn::Base64"]; ok {
-			return validateBase64(base64, PropertyContextAdd(ctx, "Fn::Base64"))
-		}
+	case parse.Base64:
+		return validateBase64(t, PropertyContextAdd(ctx, "Fn::Base64"))
 	}
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here
 	return reporting.ValidateOK, nil // TODO: this really isn't clear what the intention is
-}
-
-func validateBase64(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	base64ItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
-	_, errs := ValueString.Validate(value, base64ItemContext)
-	return reporting.ValidateAbort, errs
 }

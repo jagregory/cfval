@@ -77,6 +77,8 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 		return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
 	case parse.GetAtt:
 		return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
+	case parse.Base64:
+		return validateBase64(t, PropertyContextAdd(ctx, "Fn::Base64"))
 	case map[string]interface{}:
 		return validateMapWhereArrayShouldBe(arrayType, itemSchema, t, ctx)
 	default:
@@ -88,38 +90,27 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 // where an Array was expected; this is possibly valid, and could either be a
 // function reference or some attempt at coercion.
 func validateMapWhereArrayShouldBe(arrayType ArrayPropertyType, itemSchema Schema, value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	// Is a map, quite possibly a Ref or something similar
-	result, errs := ValidateBuiltinFns(value, ctx)
+	if ctx.Options()[OptionExperimentMapArrayCoercion] {
+		// Not sure about this behaviour, so it's behind a flag until I decide
+		// whether it's wise or not.
+		//
+		// CloudFormation appears to allow you to flatten a single item array
+		// for array properties, e.g. X: [Y] can be specified as X: Y
+		//
+		// So in this case if we get a map here just validate it against the
+		// schema for the item of the array
+		results := make(reporting.Reports, 0, 25)
 
-	if errs != nil {
-		return reporting.ValidateOK, errs
-	} else if result == reporting.ValidateOK {
-		// it's not very clear but an OK result meant that the Builtin validations
-		// weren't executed because it wasn't a builtin
-		if ctx.Options()[OptionExperimentMapArrayCoercion] {
-			// Not sure about this behaviour, so it's behind a flag until I decide
-			// whether it's wise or not.
-			//
-			// CloudFormation appears to allow you to flatten a single item array
-			// for array properties, e.g. X: [Y] can be specified as X: Y
-			//
-			// So in this case if we get a map here just validate it against the
-			// schema for the item of the array
-			results := make(reporting.Reports, 0, 25)
-
-			if _, errs := itemSchema.Validate(value, ctx); errs != nil {
-				results = append(results, errs...)
-			}
-
-			results = append(results, reporting.NewWarning(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe()))
-
-			return reporting.ValidateOK, reporting.Safe(results)
+		if _, errs := itemSchema.Validate(value, ctx); errs != nil {
+			results = append(results, errs...)
 		}
 
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe())}
+		results = append(results, reporting.NewWarning(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe()))
+
+		return reporting.ValidateOK, reporting.Safe(results)
 	}
 
-	return reporting.ValidateOK, nil
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe())}
 }
 
 // validateValue takes a value and validates it against the Type of the

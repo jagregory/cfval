@@ -18,6 +18,7 @@ func TestParsing(t *testing.T) {
 				"RefTarget": { "Ref": "ParamA" },
 				"MapTarget": { "Fn::FindInMap": ["a", "b", "c"] },
 				"JoinTarget": { "Fn::Join": ["a", ["b", "c"]] },
+				"Base64Target": { "Fn::Base64": { "Ref": "ParamA" } },
 				"Array": [{ "Ref": "ParamA" }],
 				"Map": {
 					"Nested": { "Ref": "ParamA" }
@@ -53,8 +54,8 @@ func TestParsing(t *testing.T) {
 
 	if len(template.Resources) != 1 {
 		t.Error("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
-	} else if len(template.Resources["ResourceA"].properties) != 6 {
-		t.Errorf("Incorrect number of properties found, expected 6 got %d", len(template.Resources["ResourceA"].properties))
+	} else if len(template.Resources["ResourceA"].properties) != 7 {
+		t.Errorf("Incorrect number of properties found, expected 7 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
 		if template.Resources["ResourceA"].properties["Name"] != "TestInstance" {
 			t.Error("Didn't parse Properties of ResourceA")
@@ -70,6 +71,12 @@ func TestParsing(t *testing.T) {
 
 		if _, ok := template.Resources["ResourceA"].properties["JoinTarget"].(Join); !ok {
 			t.Error("Didn't convert Join")
+		}
+
+		if b64, ok := template.Resources["ResourceA"].properties["Base64Target"].(Base64); !ok {
+			t.Error("Didn't convert Base64")
+		} else if v, ok := b64.UnderlyingMap["Fn::Base64"].(Ref); !ok {
+			t.Error("Didn't convert Ref in Base64", b64, v)
 		}
 
 		if _, ok := template.Resources["ResourceA"].properties["Array"].([]interface{})[0].(Ref); !ok {
