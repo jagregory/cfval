@@ -94,11 +94,23 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "invalid"}}, stringContext); errs == nil {
-		t.Error("Should fail on invalid ref")
+	invalidFns := []parse.IntrinsicFunctionSignature{
+		parse.FnAnd,
+		parse.FnBase64,
+		parse.FnEquals,
+		parse.FnFindInMap,
+		parse.FnGetAtt,
+		parse.FnGetAZs,
+		parse.FnIf,
+		parse.FnJoin,
+		parse.FnNot,
+		parse.FnOr,
+		parse.FnRef,
+		parse.FnSelect,
 	}
-
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "StringParameter"}}}}, stringContext); errs == nil {
-		t.Error("Should fail on Ref within Ref")
+	for _, fn := range invalidFns {
+		if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, stringContext); errs == nil {
+			t.Errorf("Should fail with %s as target: %s", fn, errs)
+		}
 	}
 }
