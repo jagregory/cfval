@@ -61,29 +61,29 @@ func TestParsing(t *testing.T) {
 			t.Error("Didn't parse Properties of ResourceA")
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["RefTarget"].(Builtin); b.Key != "Ref" {
+		if b, _ := template.Resources["ResourceA"].properties["RefTarget"].(IntrinsicFunction); b.Key != "Ref" {
 			t.Error("Didn't convert Ref")
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["MapTarget"].(Builtin); b.Key != "Fn::FindInMap" {
+		if b, _ := template.Resources["ResourceA"].properties["MapTarget"].(IntrinsicFunction); b.Key != "Fn::FindInMap" {
 			t.Error("Didn't convert FindInMap")
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["JoinTarget"].(Builtin); b.Key != "Fn::Join" {
+		if b, _ := template.Resources["ResourceA"].properties["JoinTarget"].(IntrinsicFunction); b.Key != "Fn::Join" {
 			t.Error("Didn't convert Join")
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["Base64Target"].(Builtin); b.Key != "Fn::Base64" {
+		if b, _ := template.Resources["ResourceA"].properties["Base64Target"].(IntrinsicFunction); b.Key != "Fn::Base64" {
 			t.Error("Didn't convert Base64")
-		} else if nb, _ := b.UnderlyingMap["Fn::Base64"].(Builtin); nb.Key != "Ref" {
+		} else if nb, _ := b.UnderlyingMap["Fn::Base64"].(IntrinsicFunction); nb.Key != "Ref" {
 			t.Error("Didn't convert Ref in Base64", b, nb)
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["Array"].([]interface{})[0].(Builtin); b.Key != "Ref" {
+		if b, _ := template.Resources["ResourceA"].properties["Array"].([]interface{})[0].(IntrinsicFunction); b.Key != "Ref" {
 			t.Error("Didn't convert Array[Ref]")
 		}
 
-		if b, _ := template.Resources["ResourceA"].properties["Map"].(map[string]interface{})["Nested"].(Builtin); b.Key != "Ref" {
+		if b, _ := template.Resources["ResourceA"].properties["Map"].(map[string]interface{})["Nested"].(IntrinsicFunction); b.Key != "Ref" {
 			t.Error("Didn't convert Map[Ref]")
 		}
 
@@ -105,15 +105,15 @@ func TestParsing(t *testing.T) {
 			t.Error("Didn't parse OutputA")
 		}
 
-		if b, _ := template.Outputs["OutputB"].Value.(Builtin); b.Key != "Ref" {
+		if b, _ := template.Outputs["OutputB"].Value.(IntrinsicFunction); b.Key != "Ref" {
 			t.Error("Didn't convert output Ref")
 		}
 
-		if b, _ := template.Outputs["OutputC"].Value.(Builtin); b.Key != "Fn::FindInMap" {
+		if b, _ := template.Outputs["OutputC"].Value.(IntrinsicFunction); b.Key != "Fn::FindInMap" {
 			t.Error("Didn't convert output FindInMap")
 		}
 
-		if b, _ := template.Outputs["OutputD"].Value.(Builtin); b.Key != "Fn::Join" {
+		if b, _ := template.Outputs["OutputD"].Value.(IntrinsicFunction); b.Key != "Fn::Join" {
 			t.Error("Didn't convert output Join")
 		}
 	}

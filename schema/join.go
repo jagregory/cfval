@@ -7,7 +7,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateJoin(join parse.Builtin, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateJoin(join parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	joinValue, found := join.UnderlyingMap["Fn::Join"]
 	if !found || joinValue == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Join\" key")}

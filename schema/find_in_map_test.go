@@ -33,35 +33,35 @@ func TestFindInMap(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": 123}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": 123}}, ctx); errs == nil {
 		t.Error("Should fail when invalid type used for args", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{}}, ctx); errs == nil {
 		t.Error("Should fail when no args", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", "b", "c"}, "blah": "blah"}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", "b", "c"}, "blah": "blah"}}, ctx); errs == nil {
 		t.Error("Should fail when valid with extra properties", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", "b", "c", "d"}}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", "b", "c", "d"}}}, ctx); errs == nil {
 		t.Error("Should fail when too many arguments supplied", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a"}}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a"}}}, ctx); errs == nil {
 		t.Error("Should fail when too few arguments supplied", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", 1, "a"}}}, ctx); errs == nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"a", 1, "a"}}}, ctx); errs == nil {
 		t.Error("Should fail when invalid types supplied", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"map", "key", "subkey"}}}, ctx); errs != nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"map", "key", "subkey"}}}, ctx); errs != nil {
 		t.Error("Should pass when valid types used", errs)
 	}
 
-	if _, errs := validateFindInMap(parse.Builtin{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"map", parse.Builtin{"Ref", map[string]interface{}{"Ref": "MyResource"}}, "subkey"}}}, ctx); errs != nil {
+	if _, errs := validateFindInMap(parse.IntrinsicFunction{"Fn::FindInMap", map[string]interface{}{"Fn::FindInMap": []interface{}{"map", parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "MyResource"}}, "subkey"}}}, ctx); errs != nil {
 		t.Error("Should short circuit and pass when ref used", errs)
 	}
 }

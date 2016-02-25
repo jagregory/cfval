@@ -70,8 +70,8 @@ func (ValueType) PropertyDefault(string) (interface{}, bool) {
 func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
 		switch t := value.(type) {
-		case parse.Builtin:
-			return ValidateBuiltinFns(t, ctx)
+		case parse.IntrinsicFunction:
+			return ValidateIntrinsicFunctions(t, ctx)
 		default:
 			return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(ctx, convert(value), vt)}
 		}

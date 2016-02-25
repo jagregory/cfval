@@ -32,19 +32,19 @@ func TestOutputValidation(t *testing.T) {
 
 	goodResourceOutput := parse.Output{
 		Description: "Ref with valid resource",
-		Value:       parse.Builtin{"Ref", map[string]interface{}{"Ref": "MyResource"}},
+		Value:       parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "MyResource"}},
 	}
 	badResourceOutput := parse.Output{
 		Description: "Ref with invalid resource",
-		Value:       parse.Builtin{"Ref", map[string]interface{}{"Ref": "Missing"}},
+		Value:       parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Missing"}},
 	}
 	goodAttrOutput := parse.Output{
 		Description: "GetAtt with valid resource",
-		Value:       parse.Builtin{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}}},
+		Value:       parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}}},
 	}
 	badAttrOutput := parse.Output{
 		Description: "GetAtt with invalid resource",
-		Value:       parse.Builtin{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}}},
+		Value:       parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}}},
 	}
 
 	if _, errs := outputValidate(goodResourceOutput, ctx); errs != nil {

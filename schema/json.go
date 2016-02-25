@@ -12,8 +12,8 @@ var JSON FuncType
 
 func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	switch t := value.(type) {
-	case parse.Builtin:
-		return ValidateBuiltinFns(t, ctx)
+	case parse.IntrinsicFunction:
+		return ValidateIntrinsicFunctions(t, ctx)
 	case map[string]interface{}:
 		return validateJSONMap(t, ctx)
 	case []interface{}:

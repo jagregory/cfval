@@ -46,7 +46,7 @@ func keysExcept(m map[string]interface{}, ignore string) []string {
 	return keys
 }
 
-func validateRef(ref parse.Builtin, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ctx.Template == nil {
 		panic("Template is nil")
 	}

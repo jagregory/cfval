@@ -5,7 +5,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateBase64(base64 parse.Builtin, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateBase64(base64 parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	base64Value, found := base64.UnderlyingMap["Fn::Base64"]
 	if !found || base64Value == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Base64\" key")}

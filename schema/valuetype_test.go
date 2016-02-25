@@ -38,21 +38,21 @@ func TestValueTypeValidation(t *testing.T) {
 		t.Error("Should fail with non-String")
 	}
 
-	if _, errs := ValueString.Validate(parse.Builtin{"Ref", map[string]interface{}{"Ref": "bad"}}, ctx); errs == nil {
+	if _, errs := ValueString.Validate(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "bad"}}, ctx); errs == nil {
 		t.Error("Should fail with invalid ref")
 	}
 
-	result, errs := ValueString.Validate(parse.Builtin{"Ref", map[string]interface{}{"Ref": "good"}}, ctx)
+	result, errs := ValueString.Validate(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "good"}}, ctx)
 	if errs != nil {
 		t.Error("Should pass with valid ref", errs)
 	}
 	if result != reporting.ValidateAbort {
-		t.Error("Should always abort validation when something is a builtin but isn't valid - this prevents further validation on something which looks like a complex type")
+		t.Error("Should always abort validation when something is a intrinsic function but isn't valid - this prevents further validation on something which looks like a complex type")
 	}
 
-	// TODO: test other builtins are correctly handled by valuetype
+	// TODO: test other intrinsic functions are correctly handled by valuetype
 
 	if _, errs := ValueString.Validate(map[string]interface{}{"something": "else"}, ctx); errs == nil {
-		t.Error("Should fail with non-builtin map")
+		t.Error("Should fail with non-intrinsic function map")
 	}
 }

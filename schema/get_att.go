@@ -5,7 +5,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateGetAtt(getAtt parse.Builtin, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateGetAtt(getAtt parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	getAttValue, found := getAtt.UnderlyingMap["Fn::GetAtt"]
 	if !found || getAttValue == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAtt\" key")}

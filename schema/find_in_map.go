@@ -5,7 +5,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateFindInMap(findInMap parse.Builtin, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateFindInMap(findInMap parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	argsValue, found := findInMap.UnderlyingMap["Fn::FindInMap"]
 	if !found || argsValue == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::FindInMap\" key")}

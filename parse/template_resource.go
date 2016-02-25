@@ -19,8 +19,8 @@ func (d *TemplateResource) UnmarshalJSON(b []byte) error {
 	}
 
 	d.Type = tmp.Type
-	d.properties = convertAnyBuiltins(tmp.Properties).(map[string]interface{})
-	d.Metadata = convertAnyBuiltins(tmp.Metadata).(map[string]interface{})
+	d.properties = convertAnyIntrinsicFunctions(tmp.Properties).(map[string]interface{})
+	d.Metadata = convertAnyIntrinsicFunctions(tmp.Metadata).(map[string]interface{})
 
 	return nil
 }
