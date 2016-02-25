@@ -14,7 +14,8 @@ func TestParsing(t *testing.T) {
     "ResourceA": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "Name": "TestInstance"
+        "Name": "TestInstance",
+				"Target": { "Ref": "ParamA" }
       },
       "Metadata": {
         "Some": "JSON"
@@ -37,8 +38,8 @@ func TestParsing(t *testing.T) {
 
 	if len(template.Resources) != 1 {
 		t.Error("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
-	} else if len(template.Resources["ResourceA"].properties) != 1 {
-		t.Error("Incorrect number of properties found, expected 1 got ", len(template.Resources["ResourceA"].properties))
+	} else if len(template.Resources["ResourceA"].properties) != 2 {
+		t.Error("Incorrect number of properties found, expected 2 got ", len(template.Resources["ResourceA"].properties))
 	} else {
 		if template.Resources["ResourceA"].properties["Name"] != "TestInstance" {
 			t.Error("Didn't parse Properties of ResourceA")

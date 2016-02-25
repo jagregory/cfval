@@ -32,11 +32,11 @@ func TestOutputValidation(t *testing.T) {
 
 	goodResourceOutput := parse.Output{
 		Description: "Ref with valid resource",
-		Value:       map[string]interface{}{"Ref": "MyResource"},
+		Value:       parse.Ref{map[string]interface{}{"Ref": "MyResource"}},
 	}
 	badResourceOutput := parse.Output{
 		Description: "Ref with invalid resource",
-		Value:       map[string]interface{}{"Ref": "Missing"},
+		Value:       parse.Ref{map[string]interface{}{"Ref": "Missing"}},
 	}
 	goodAttrOutput := parse.Output{
 		Description: "GetAtt with valid resource",

@@ -3,6 +3,7 @@ package schema
 import (
 	"strings"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -68,8 +69,11 @@ func (ValueType) PropertyDefault(string) (interface{}, bool) {
 
 func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ok := vt.validateValue(value); !ok {
-		if complex, ok := value.(map[string]interface{}); ok {
-			builtinResult, errs := ValidateBuiltinFns(complex, ctx)
+		switch t := value.(type) {
+		case parse.Ref:
+			return validateRef(t, ctx)
+		case map[string]interface{}:
+			builtinResult, errs := ValidateBuiltinFns(t, ctx)
 			if errs != nil {
 				return reporting.ValidateOK, errs
 			}

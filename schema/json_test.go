@@ -40,23 +40,19 @@ func TestJSONValidation(t *testing.T) {
 
 	validRefs := map[string]interface{}{
 		"One": map[string]interface{}{
-			"Value": map[string]interface{}{
-				"Ref": "Resource1",
-			},
+			"Value": parse.Ref{map[string]interface{}{"Ref": "Resource1"}},
 		},
 		"Two": []interface{}{
-			map[string]interface{}{"Ref": "Resource2"},
+			parse.Ref{map[string]interface{}{"Ref": "Resource2"}},
 		},
 	}
 
 	invalidRefs := map[string]interface{}{
 		"One": map[string]interface{}{
-			"Value": map[string]interface{}{
-				"Ref": "Resource9",
-			},
+			"Value": parse.Ref{map[string]interface{}{"Ref": "Resource9"}},
 		},
 		"Two": []interface{}{
-			map[string]interface{}{"Ref": "Resource10"},
+			parse.Ref{map[string]interface{}{"Ref": "Resource10"}},
 		},
 	}
 

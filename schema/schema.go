@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -68,6 +69,8 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 			}
 		}
 		return reporting.ValidateOK, reporting.Safe(results)
+	case parse.Ref:
+		return validateRef(t, ctx)
 	case map[string]interface{}:
 		return validateMapWhereArrayShouldBe(arrayType, itemSchema, t, ctx)
 	default:

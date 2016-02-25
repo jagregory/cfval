@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
@@ -11,6 +12,8 @@ var JSON FuncType
 
 func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	switch t := value.(type) {
+	case parse.Ref:
+		return validateRef(t, ctx)
 	case map[string]interface{}:
 		return validateJSONMap(t, ctx)
 	case []interface{}:

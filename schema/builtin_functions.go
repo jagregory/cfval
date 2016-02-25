@@ -3,40 +3,38 @@ package schema
 import (
 	"strconv"
 
+	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
 
-func ValidateBuiltinFns(value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if ref, ok := value["Ref"]; ok {
-		if str, ok := ref.(string); ok {
-			return NewRef(str).Validate(PropertyContextAdd(ctx, "Ref"))
+func ValidateBuiltinFns(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	switch t := value.(type) {
+	case parse.Ref:
+		return validateRef(t, PropertyContextAdd(ctx, "Ref"))
+	case map[string]interface{}:
+		if join, ok := t["Fn::Join"]; ok {
+			return validateJoin(join, PropertyContextAdd(ctx, "Fn::Join"))
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref must be a string")}
-	}
+		if getatt, ok := t["Fn::GetAtt"]; ok {
+			if arr, ok := getatt.([]interface{}); ok {
+				return NewGetAtt(arr).Validate(PropertyContextAdd(ctx, "GetAtt"))
+			}
 
-	if join, ok := value["Fn::Join"]; ok {
-		return validateJoin(join, PropertyContextAdd(ctx, "Fn::Join"))
-	}
-
-	if getatt, ok := value["Fn::GetAtt"]; ok {
-		if arr, ok := getatt.([]interface{}); ok {
-			return NewGetAtt(arr).Validate(PropertyContextAdd(ctx, "GetAtt"))
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt must be an array")}
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt must be an array")}
-	}
+		if find, ok := t["Fn::FindInMap"]; ok {
+			if arr, ok := find.([]interface{}); ok {
+				return NewFindInMap(arr).Validate(PropertyContextAdd(ctx, "FindInMap"))
+			}
 
-	if find, ok := value["Fn::FindInMap"]; ok {
-		if arr, ok := find.([]interface{}); ok {
-			return NewFindInMap(arr).Validate(PropertyContextAdd(ctx, "FindInMap"))
+			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "FindInMap must be an array")}
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "FindInMap must be an array")}
-	}
-
-	if base64, ok := value["Fn::Base64"]; ok {
-		return validateBase64(base64, PropertyContextAdd(ctx, "Fn::Base64"))
+		if base64, ok := t["Fn::Base64"]; ok {
+			return validateBase64(base64, PropertyContextAdd(ctx, "Fn::Base64"))
+		}
 	}
 
 	// not a builtin, but this isn't necessarily bad so we don't return an error here

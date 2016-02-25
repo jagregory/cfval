@@ -38,11 +38,11 @@ func TestValueTypeValidation(t *testing.T) {
 		t.Error("Should fail with non-String")
 	}
 
-	if _, errs := ValueString.Validate(map[string]interface{}{"Ref": "bad"}, ctx); errs == nil {
+	if _, errs := ValueString.Validate(parse.Ref{map[string]interface{}{"Ref": "bad"}}, ctx); errs == nil {
 		t.Error("Should fail with invalid ref")
 	}
 
-	result, errs := ValueString.Validate(map[string]interface{}{"Ref": "good"}, ctx)
+	result, errs := ValueString.Validate(parse.Ref{map[string]interface{}{"Ref": "good"}}, ctx)
 	if errs != nil {
 		t.Error("Should pass with valid ref", errs)
 	}

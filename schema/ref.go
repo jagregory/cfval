@@ -36,45 +36,47 @@ type RefTarget interface {
 	TargetType() PropertyType
 }
 
-type Ref struct {
-	target string
-}
-
-func NewRef(target string) Ref {
-	return Ref{target}
-}
-
-func (ref Ref) Validate(ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateRef(ref parse.Ref, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	if ctx.Template == nil {
 		panic("Template is nil")
 	}
 
-	target := ref.resolveTarget(ctx.Definitions(), ctx.Template())
+	refValue, found := ref.UnderlyingMap["Ref"]
+	if !found || refValue == nil {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Ref\" key")}
+	}
+
+	refString, ok := refValue.(string)
+	if !ok || refString == "" {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Ref\" key: %s", refString)}
+	}
+
+	target := resolveTarget(refString, ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", ref.target)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", refString)}
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", ref.target)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", refString)}
 	}
 
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", ref.target, targetType.Describe(), ctx.Property().Type.Describe())}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
 	}
 
 	return reporting.ValidateAbort, nil
 }
 
-func (ref Ref) resolveTarget(definitions ResourceDefinitions, template *parse.Template) RefTarget {
-	if resource, ok := template.Resources[ref.target]; ok {
+func resolveTarget(target string, definitions ResourceDefinitions, template *parse.Template) RefTarget {
+	if resource, ok := template.Resources[target]; ok {
 		return definitions.Lookup(resource.Type)
-	} else if parameter, ok := template.Parameters[ref.target]; ok {
+	} else if parameter, ok := template.Parameters[target]; ok {
 		return definitions.LookupParameter(parameter.Type)
-	} else if pseudoParameters, ok := pseudoParameters[ref.target]; ok {
+	} else if pseudoParameters, ok := pseudoParameters[target]; ok {
 		return pseudoParameters
 	}
 

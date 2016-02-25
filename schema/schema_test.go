@@ -54,11 +54,11 @@ func TestSchemaTypeValidation(t *testing.T) {
 		t.Error("Should fail when value is incorrect type")
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "StringParam"}, ctx); errs != nil {
+	if _, errs := schema.Validate(parse.Ref{map[string]interface{}{"Ref": "StringParam"}}, ctx); errs != nil {
 		t.Error("Should pass when Ref is correct type", errs)
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "NumberParam"}, ctx); errs == nil {
+	if _, errs := schema.Validate(parse.Ref{map[string]interface{}{"Ref": "NumberParam"}}, ctx); errs == nil {
 		t.Error("Should fail when Ref is incorrect type")
 	}
 
@@ -114,19 +114,19 @@ func TestSchemaArrayValidation(t *testing.T) {
 		t.Error("Should fail when value is an incorrect array")
 	}
 
-	if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "Target"}}, ctx); errs != nil {
+	if _, errs := schema.Validate([]interface{}{"abc", parse.Ref{map[string]interface{}{"Ref": "Target"}}}, ctx); errs != nil {
 		t.Error("Should pass when value is an array with Refs of the correct type", errs)
 	}
 
-	if _, errs := schema.Validate([]interface{}{"abc", map[string]interface{}{"Ref": "ArrayTarget"}}, ctx); errs == nil {
+	if _, errs := schema.Validate([]interface{}{"abc", parse.Ref{map[string]interface{}{"Ref": "ArrayTarget"}}}, ctx); errs == nil {
 		t.Error("Should fail when value is an array with Refs of the wrong type")
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "ArrayTarget"}, ctx); errs != nil {
+	if _, errs := schema.Validate(parse.Ref{map[string]interface{}{"Ref": "ArrayTarget"}}, ctx); errs != nil {
 		t.Error("Should pass when value is a Ref of the correct type is used for whole value", errs)
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "Target"}, ctx); errs == nil {
+	if _, errs := schema.Validate(parse.Ref{map[string]interface{}{"Ref": "Target"}}, ctx); errs == nil {
 		t.Error("Should fail when value is a Ref of the correct type is used for whole value")
 	}
 }
@@ -170,7 +170,7 @@ func TestSchemaCustomValidation(t *testing.T) {
 		t.Error("Should not run validation when type is correct", errs)
 	}
 
-	if _, errs := schema.Validate(map[string]interface{}{"Ref": "abc"}, ctx); errs != nil {
+	if _, errs := schema.Validate(parse.Ref{map[string]interface{}{"Ref": "abc"}}, ctx); errs != nil {
 		t.Error("Should not run validation with Ref", errs)
 	}
 }

@@ -53,7 +53,7 @@ func TestFindInMap(t *testing.T) {
 		t.Error("Should pass when valid types used", errs)
 	}
 
-	if _, errs := NewFindInMap([]interface{}{"map", map[string]interface{}{"Ref": "MyResource"}, "subkey"}).Validate(ctx); errs != nil {
+	if _, errs := NewFindInMap([]interface{}{"map", parse.Ref{map[string]interface{}{"Ref": "MyResource"}}, "subkey"}).Validate(ctx); errs != nil {
 		t.Error("Should short circuit and pass when ref used", errs)
 	}
 }
