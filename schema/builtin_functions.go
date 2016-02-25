@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"fmt"
+
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -17,8 +19,7 @@ func ValidateBuiltinFns(value parse.Builtin, ctx PropertyContext) (reporting.Val
 		return validateGetAtt(value, PropertyContextAdd(ctx, string(parse.BuiltinGetAtt)))
 	case parse.BuiltinBase64:
 		return validateBase64(value, PropertyContextAdd(ctx, string(parse.BuiltinBase64)))
+	default:
+		panic(fmt.Errorf("Unsupported Builtin %s", value.Key))
 	}
-
-	// not a builtin, but this isn't necessarily bad so we don't return an error here
-	return reporting.ValidateOK, nil // TODO: this really isn't clear what the intention is
 }
