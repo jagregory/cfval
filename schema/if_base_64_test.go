@@ -53,19 +53,8 @@ func TestBase64(t *testing.T) {
 		t.Error("Should short circuit and pass when If used", errs)
 	}
 
-	invalidFns := []parse.IntrinsicFunctionSignature{
-		parse.FnAnd,
-		parse.FnBase64,
-		parse.FnEquals,
-		parse.FnFindInMap,
-		parse.FnGetAtt,
-		parse.FnGetAZs,
-		parse.FnJoin,
-		parse.FnNot,
-		parse.FnOr,
-		parse.FnRef,
-		parse.FnSelect,
-	}
+	invalidFns := parse.AllIntrinsicFunctions.
+		Except(parse.FnIf)
 	for _, fn := range invalidFns {
 		if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, ctx); errs == nil {
 			t.Errorf("Should fail with %s as value: %s", fn, errs)

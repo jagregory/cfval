@@ -22,7 +22,24 @@ const (
 	FnSelect                               = "Fn::Select"
 )
 
-var AllIntrinsicFunctions = []IntrinsicFunctionSignature{
+type IntrinsicFunctionSignatures []IntrinsicFunctionSignature
+
+func (s IntrinsicFunctionSignatures) Except(keys ...IntrinsicFunctionSignature) IntrinsicFunctionSignatures {
+	set := make(map[IntrinsicFunctionSignature]bool, len(keys))
+	for _, k := range keys {
+		set[k] = true
+	}
+
+	arr := make(IntrinsicFunctionSignatures, 0, len(s)-1)
+	for _, k := range s {
+		if !set[k] {
+			arr = append(arr, k)
+		}
+	}
+	return arr
+}
+
+var AllIntrinsicFunctions = IntrinsicFunctionSignatures{
 	FnAnd,
 	FnBase64,
 	FnEquals,

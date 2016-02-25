@@ -65,19 +65,8 @@ func TestGetAZs(t *testing.T) {
 		t.Error("Should pass with nested Ref", errs)
 	}
 
-	invalidFns := []parse.IntrinsicFunctionSignature{
-		parse.FnAnd,
-		parse.FnBase64,
-		parse.FnEquals,
-		parse.FnFindInMap,
-		parse.FnGetAtt,
-		parse.FnGetAZs,
-		parse.FnIf,
-		parse.FnJoin,
-		parse.FnNot,
-		parse.FnOr,
-		parse.FnSelect,
-	}
+	invalidFns := parse.AllIntrinsicFunctions.
+		Except(parse.FnRef)
 	for _, fn := range invalidFns {
 		if _, errs := validateGetAZs(parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{"Fn::GetAZs": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, ctx); errs == nil {
 			t.Errorf("Should fail with nested %s: %s", fn, errs)

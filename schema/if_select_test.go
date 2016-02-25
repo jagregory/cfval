@@ -90,18 +90,8 @@ func TestSelect(t *testing.T) {
 		t.Error("Should pass with FindInMap in index", errs)
 	}
 
-	invalidIndexFns := []parse.IntrinsicFunctionSignature{
-		parse.FnAnd,
-		parse.FnBase64,
-		parse.FnEquals,
-		parse.FnGetAtt,
-		parse.FnGetAZs,
-		parse.FnIf,
-		parse.FnJoin,
-		parse.FnNot,
-		parse.FnOr,
-		parse.FnSelect,
-	}
+	invalidIndexFns := parse.AllIntrinsicFunctions.
+		Except(parse.FnFindInMap, parse.FnRef)
 	for _, fn := range invalidIndexFns {
 		if _, errs := validateSelect(parse.IntrinsicFunction{"Fn::Select", map[string]interface{}{"Fn::Select": []interface{}{parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}, validArray}}}, ctx); errs == nil {
 			t.Errorf("Should fail with %s in index: %s", fn, errs)
@@ -128,15 +118,8 @@ func TestSelect(t *testing.T) {
 		t.Error("Should pass with If in array", errs)
 	}
 
-	invalidArrayFns := []parse.IntrinsicFunctionSignature{
-		parse.FnAnd,
-		parse.FnBase64,
-		parse.FnEquals,
-		parse.FnJoin,
-		parse.FnNot,
-		parse.FnOr,
-		parse.FnSelect,
-	}
+	invalidArrayFns := parse.AllIntrinsicFunctions.
+		Except(parse.FnFindInMap, parse.FnGetAZs, parse.FnGetAtt, parse.FnIf, parse.FnRef)
 	for _, fn := range invalidArrayFns {
 		if _, errs := validateSelect(parse.IntrinsicFunction{"Fn::Select", map[string]interface{}{"Fn::Select": []interface{}{float64(1), parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}}, ctx); errs == nil {
 			t.Errorf("Should fail with %s as array: %s", fn, errs)

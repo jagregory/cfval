@@ -30,6 +30,10 @@ func TestGetAtt(t *testing.T) {
 					Type: ValueString,
 				},
 			},
+
+			ReturnValue: Schema{
+				Type: InstanceID,
+			},
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 	listCtx := NewPropertyContext(ctx, Schema{Type: Multiple(InstanceID)})
@@ -72,5 +76,24 @@ func TestGetAtt(t *testing.T) {
 
 	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "ListInstanceId"}}}, listCtx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
+	}
+
+	invalidResourceFns := parse.AllIntrinsicFunctions
+	for _, fn := range invalidResourceFns {
+		if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}, "InstanceId"}}}, ctx); errs == nil {
+			t.Errorf("Should fail with %s in Resource: %s", fn, errs)
+		}
+	}
+
+	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "MyResource"}}}}}, ctx); errs != nil {
+		t.Errorf("Should pass with Ref in Attribute: %s", errs)
+	}
+
+	invalidAttributeFns := parse.AllIntrinsicFunctions.
+		Except(parse.FnRef)
+	for _, fn := range invalidAttributeFns {
+		if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}}, ctx); errs == nil {
+			t.Errorf("Should fail with %s in Attribute: %s", fn, errs)
+		}
 	}
 }
