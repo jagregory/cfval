@@ -12,16 +12,8 @@ var JSON FuncType
 
 func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
 	switch t := value.(type) {
-	case parse.Ref:
-		return validateRef(t, ctx)
-	case parse.FindInMap:
-		return validateFindInMap(t, PropertyContextAdd(ctx, "Fn::FindInMap"))
-	case parse.Join:
-		return validateJoin(t, PropertyContextAdd(ctx, "Fn::Join"))
-	case parse.GetAtt:
-		return validateGetAtt(t, PropertyContextAdd(ctx, "Fn::GetAtt"))
-	case parse.Base64:
-		return validateBase64(t, PropertyContextAdd(ctx, "Fn::Base64"))
+	case parse.Builtin:
+		return ValidateBuiltinFns(t, ctx)
 	case map[string]interface{}:
 		return validateJSONMap(t, ctx)
 	case []interface{}:

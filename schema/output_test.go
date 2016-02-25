@@ -32,19 +32,19 @@ func TestOutputValidation(t *testing.T) {
 
 	goodResourceOutput := parse.Output{
 		Description: "Ref with valid resource",
-		Value:       parse.Ref{map[string]interface{}{"Ref": "MyResource"}},
+		Value:       parse.Builtin{"Ref", map[string]interface{}{"Ref": "MyResource"}},
 	}
 	badResourceOutput := parse.Output{
 		Description: "Ref with invalid resource",
-		Value:       parse.Ref{map[string]interface{}{"Ref": "Missing"}},
+		Value:       parse.Builtin{"Ref", map[string]interface{}{"Ref": "Missing"}},
 	}
 	goodAttrOutput := parse.Output{
 		Description: "GetAtt with valid resource",
-		Value:       parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}}},
+		Value:       parse.Builtin{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Id"}}},
 	}
 	badAttrOutput := parse.Output{
 		Description: "GetAtt with invalid resource",
-		Value:       parse.GetAtt{map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}}},
+		Value:       parse.Builtin{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"Missing", "Id"}}},
 	}
 
 	if _, errs := outputValidate(goodResourceOutput, ctx); errs != nil {
@@ -52,7 +52,7 @@ func TestOutputValidation(t *testing.T) {
 	}
 
 	if _, errs := outputValidate(badResourceOutput, ctx); errs == nil {
-		t.Error("Resource output should fail if resource doesn't exist", errs)
+		t.Error("Resource output should fail if resource doesn't exist")
 	}
 
 	if _, errs := outputValidate(goodAttrOutput, ctx); errs != nil {
@@ -60,6 +60,6 @@ func TestOutputValidation(t *testing.T) {
 	}
 
 	if _, errs := outputValidate(badAttrOutput, ctx); errs == nil {
-		t.Error("GetAtt output should fail if resource doesn't exist", errs)
+		t.Error("GetAtt output should fail if resource doesn't exist")
 	}
 }

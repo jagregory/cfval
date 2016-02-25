@@ -42,59 +42,59 @@ func TestRefValidate(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: Multiple(InstanceID)}, ValidationOptions{})
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": 123}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": 123}}, stringContext); errs == nil {
 		t.Error("Should fail on ref with invalid target type")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{}}, stringContext); errs == nil {
 		t.Error("Should fail on ref with no target")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource2", "blah": "blah"}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "Resource2", "blah": "blah"}}, stringContext); errs == nil {
 		t.Error("Should fail on valid ref with extra properties")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource1"}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "Resource1"}}, stringContext); errs == nil {
 		t.Error("Should fail on valid resource ref with Unknown ref type")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource2"}}, stringContext); errs != nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "Resource2"}}, stringContext); errs != nil {
 		t.Error("Should pass on valid resource ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "Resource2"}}, numberContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "Resource2"}}, numberContext); errs == nil {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "NoTypeParameter"}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "NoTypeParameter"}}, stringContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with Unknown ref type", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "StringParameter"}}, numberContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, numberContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "AWS::StackName"}}, stringContext); errs != nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "AWS::StackName"}}, stringContext); errs != nil {
 		t.Error("Should pass on valid pseudo-parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "AWS::StackName"}}, numberContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "AWS::StackName"}}, numberContext); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "ListInstanceIdParameter"}}, listInstanceIDContext); errs != nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "ListInstanceIdParameter"}}, listInstanceIDContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.Ref{map[string]interface{}{"Ref": "invalid"}}, stringContext); errs == nil {
+	if _, errs := validateRef(parse.Builtin{"Ref", map[string]interface{}{"Ref": "invalid"}}, stringContext); errs == nil {
 		t.Error("Should fail on invalid ref")
 	}
 }
