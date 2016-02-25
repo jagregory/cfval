@@ -11,35 +11,42 @@ func ParseTemplateJSON(data []byte) (*Template, error) {
 		return nil, err
 	}
 
-	for _, resource := range temp.Resources {
-		for property, value := range resource.properties {
-			if builtin, ok := convertToBuiltin(value); ok {
-				resource.properties[property] = builtin
-			}
-		}
-	}
-
-	for name, output := range temp.Outputs {
-		if builtin, ok := convertToBuiltin(output.Value); ok {
-			// TODO: This is a nasty way of modifying the struct
-			output.Value = builtin
-			temp.Outputs[name] = output
-		}
-	}
-
 	return &temp, nil
 }
 
-func convertToBuiltin(value interface{}) (interface{}, bool) {
+func convertMapToBuiltin(value map[string]interface{}) map[string]interface{} {
+	converted := make(map[string]interface{}, len(value))
+	for id, prop := range value {
+		converted[id] = convertToBuiltin(prop)
+	}
+	return converted
+}
+
+func convertArrayToBuiltin(value []interface{}) []interface{} {
+	arr := make([]interface{}, len(value))
+	for i, v := range value {
+		arr[i] = convertToBuiltin(v)
+	}
+	return arr
+}
+
+func convertToBuiltin(value interface{}) interface{} {
 	if ref, ok := convertToRef(value); ok {
-		return ref, ok
+		return ref
 	} else if findInMap, ok := convertToFindInMap(value); ok {
-		return findInMap, ok
+		return findInMap
 	} else if join, ok := convertToJoin(value); ok {
-		return join, ok
+		return join
 	}
 
-	return nil, false
+	switch t := value.(type) {
+	case map[string]interface{}:
+		return convertMapToBuiltin(t)
+	case []interface{}:
+		return convertArrayToBuiltin(t)
+	default:
+		return value
+	}
 }
 
 func convertToRef(value interface{}) (Ref, bool) {

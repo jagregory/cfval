@@ -69,7 +69,7 @@ func TestJoin(t *testing.T) {
 		t.Error("Should pass when valid types used", errs)
 	}
 
-	if _, errs := validateJoin(parse.Join{map[string]interface{}{"Fn::Join": []interface{}{"d", []interface{}{parse.Ref{map[string]interface{}{"Ref": "MyResource"}}, []interface{}{"b", "c"}}}}}, ctx); errs != nil {
+	if _, errs := validateJoin(parse.Join{map[string]interface{}{"Fn::Join": []interface{}{"d", []interface{}{parse.Ref{map[string]interface{}{"Ref": "MyResource"}}, "b", "c"}}}}, ctx); errs != nil {
 		t.Error("Should short circuit and pass when ref used", errs)
 	}
 }

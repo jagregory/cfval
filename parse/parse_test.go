@@ -17,7 +17,11 @@ func TestParsing(t *testing.T) {
         "Name": "TestInstance",
 				"RefTarget": { "Ref": "ParamA" },
 				"MapTarget": { "Fn::FindInMap": ["a", "b", "c"] },
-				"JoinTarget": { "Fn::Join": ["a", ["b", "c"]] }
+				"JoinTarget": { "Fn::Join": ["a", ["b", "c"]] },
+				"Array": [{ "Ref": "ParamA" }],
+				"Map": {
+					"Nested": { "Ref": "ParamA" }
+				}
       },
       "Metadata": {
         "Some": "JSON"
@@ -49,8 +53,8 @@ func TestParsing(t *testing.T) {
 
 	if len(template.Resources) != 1 {
 		t.Error("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
-	} else if len(template.Resources["ResourceA"].properties) != 4 {
-		t.Errorf("Incorrect number of properties found, expected 4 got %d", len(template.Resources["ResourceA"].properties))
+	} else if len(template.Resources["ResourceA"].properties) != 6 {
+		t.Errorf("Incorrect number of properties found, expected 6 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
 		if template.Resources["ResourceA"].properties["Name"] != "TestInstance" {
 			t.Error("Didn't parse Properties of ResourceA")
@@ -66,6 +70,14 @@ func TestParsing(t *testing.T) {
 
 		if _, ok := template.Resources["ResourceA"].properties["JoinTarget"].(Join); !ok {
 			t.Error("Didn't convert Join")
+		}
+
+		if _, ok := template.Resources["ResourceA"].properties["Array"].([]interface{})[0].(Ref); !ok {
+			t.Error("Didn't convert Array[Ref]")
+		}
+
+		if _, ok := template.Resources["ResourceA"].properties["Map"].(map[string]interface{})["Nested"].(Ref); !ok {
+			t.Error("Didn't convert Map[Ref]")
 		}
 
 		if template.Resources["ResourceA"].Metadata["Some"] != "JSON" {
@@ -87,15 +99,15 @@ func TestParsing(t *testing.T) {
 		}
 
 		if _, ok := template.Outputs["OutputB"].Value.(Ref); !ok {
-			t.Error("Didn't convert Ref")
+			t.Error("Didn't convert output Ref")
 		}
 
 		if _, ok := template.Outputs["OutputC"].Value.(FindInMap); !ok {
-			t.Error("Didn't convert FindInMap")
+			t.Error("Didn't convert output FindInMap")
 		}
 
 		if _, ok := template.Outputs["OutputD"].Value.(Join); !ok {
-			t.Error("Didn't convert Join")
+			t.Error("Didn't convert output Join")
 		}
 	}
 }
