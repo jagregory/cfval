@@ -71,7 +71,7 @@ func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.
 	if ok := vt.validateValue(value); !ok {
 		switch t := value.(type) {
 		case parse.IntrinsicFunction:
-			return ValidateIntrinsicFunctions(t, ctx)
+			return ValidateIntrinsicFunctions(t, ctx, SupportedFunctionsAll)
 		default:
 			return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(ctx, convert(value), vt)}
 		}

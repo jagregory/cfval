@@ -21,10 +21,6 @@ func validateSelect(builtin parse.IntrinsicFunction, ctx PropertyContext) (repor
 	switch t := value.(type) {
 	case []interface{}:
 		return validateSelectParameters(builtin, t, ctx)
-	case parse.IntrinsicFunction:
-		if t.Key == parse.FnRef {
-			return validateRef(t, PropertyContextAdd(ctx, string(parse.FnRef)))
-		}
 	}
 
 	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::Select\" key: %s", value)}
@@ -66,11 +62,10 @@ func validateSelectIndex(builtin parse.IntrinsicFunction, index interface{}, arr
 
 		return reporting.ValidateOK, nil
 	case parse.IntrinsicFunction:
-		if t.Key == parse.FnRef {
-			return validateRef(t, ctx)
-		} else if t.Key == parse.FnFindInMap {
-			return validateFindInMap(t, ctx)
-		}
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+			parse.FnRef:       true,
+			parse.FnFindInMap: true,
+		})
 	}
 
 	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid value for index %v", index)}
@@ -91,18 +86,13 @@ func validateSelectArray(builtin parse.IntrinsicFunction, array interface{}, ctx
 		}
 		return reporting.ValidateOK, reporting.Safe(reports)
 	case parse.IntrinsicFunction:
-		if t.Key == parse.FnRef {
-			return validateRef(t, ctx)
-		} else if t.Key == parse.FnFindInMap {
-			return validateFindInMap(t, ctx)
-		} else if t.Key == parse.FnGetAtt {
-			return validateGetAtt(t, ctx)
-		} else if t.Key == parse.FnGetAZs {
-			return validateGetAZs(t, ctx)
-		} else if t.Key == parse.FnIf {
-			return reporting.ValidateOK, nil
-			// return validateIf(t, ctx) // TODO: really should inline all this into ValidateIntrinsicFunctions with an enabled/disabled map
-		}
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+			parse.FnRef:       true,
+			parse.FnFindInMap: true,
+			parse.FnGetAtt:    true,
+			parse.FnGetAZs:    true,
+			parse.FnIf:        true,
+		})
 	}
 
 	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid value for array %s", array)}

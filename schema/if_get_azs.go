@@ -20,9 +20,9 @@ func validateGetAZs(builtin parse.IntrinsicFunction, ctx PropertyContext) (repor
 	case string:
 		return reporting.ValidateAbort, nil
 	case parse.IntrinsicFunction:
-		if t.Key == parse.FnRef {
-			return validateRef(t, PropertyContextAdd(ctx, string(parse.FnRef)))
-		}
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+			parse.FnRef: true,
+		})
 	}
 
 	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::GetAZs\" key: %s", value)}

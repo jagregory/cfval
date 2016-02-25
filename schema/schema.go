@@ -70,7 +70,7 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 		}
 		return reporting.ValidateOK, reporting.Safe(results)
 	case parse.IntrinsicFunction:
-		return ValidateIntrinsicFunctions(t, ctx)
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctionsAll)
 	case map[string]interface{}:
 		return validateMapWhereArrayShouldBe(arrayType, itemSchema, t, ctx)
 	default:

@@ -5,7 +5,28 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+type SupportedFunctions map[parse.IntrinsicFunctionSignature]bool
+
+var SupportedFunctionsAll = SupportedFunctions{
+	parse.FnAnd:       true,
+	parse.FnBase64:    true,
+	parse.FnEquals:    true,
+	parse.FnFindInMap: true,
+	parse.FnGetAtt:    true,
+	parse.FnGetAZs:    true,
+	parse.FnIf:        true,
+	parse.FnJoin:      true,
+	parse.FnNot:       true,
+	parse.FnOr:        true,
+	parse.FnRef:       true,
+	parse.FnSelect:    true,
+}
+
+func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyContext, supportedFunctions SupportedFunctions) (reporting.ValidateResult, reporting.Reports) {
+	if !supportedFunctions[value.Key] {
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s not valid in this location", value.Key)}
+	}
+
 	switch value.Key {
 	case parse.FnBase64:
 		return validateBase64(value, PropertyContextAdd(ctx, string(parse.FnBase64)))
