@@ -35,6 +35,8 @@ func convertToBuiltin(value interface{}) (interface{}, bool) {
 		return ref, ok
 	} else if findInMap, ok := convertToFindInMap(value); ok {
 		return findInMap, ok
+	} else if join, ok := convertToJoin(value); ok {
+		return join, ok
 	}
 
 	return nil, false
@@ -60,10 +62,24 @@ func convertToFindInMap(value interface{}) (FindInMap, bool) {
 	return FindInMap{}, false
 }
 
+func convertToJoin(value interface{}) (Join, bool) {
+	if m, ok := value.(map[string]interface{}); ok {
+		if _, found := m["Fn::Join"]; found {
+			return Join{m}, true
+		}
+	}
+
+	return Join{}, false
+}
+
 type Ref struct {
 	UnderlyingMap map[string]interface{}
 }
 
 type FindInMap struct {
+	UnderlyingMap map[string]interface{}
+}
+
+type Join struct {
 	UnderlyingMap map[string]interface{}
 }

@@ -16,7 +16,8 @@ func TestParsing(t *testing.T) {
       "Properties": {
         "Name": "TestInstance",
 				"RefTarget": { "Ref": "ParamA" },
-				"MapTarget": { "Fn::FindInMap": ["a", "b", "c"] }
+				"MapTarget": { "Fn::FindInMap": ["a", "b", "c"] },
+				"JoinTarget": { "Fn::Join": ["a", ["b", "c"]] }
       },
       "Metadata": {
         "Some": "JSON"
@@ -33,7 +34,10 @@ func TestParsing(t *testing.T) {
     },
 		"OutputC": {
       "Value": { "Fn::FindInMap": ["a", "b", "c"] }
-    }
+    },
+		"OutputD": {
+			"Value": { "Fn::Join": ["a", ["b", "c"]] }
+		}
   }
 }`
 
@@ -45,8 +49,8 @@ func TestParsing(t *testing.T) {
 
 	if len(template.Resources) != 1 {
 		t.Error("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
-	} else if len(template.Resources["ResourceA"].properties) != 3 {
-		t.Errorf("Incorrect number of properties found, expected 2 got %d", len(template.Resources["ResourceA"].properties))
+	} else if len(template.Resources["ResourceA"].properties) != 4 {
+		t.Errorf("Incorrect number of properties found, expected 4 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
 		if template.Resources["ResourceA"].properties["Name"] != "TestInstance" {
 			t.Error("Didn't parse Properties of ResourceA")
@@ -60,6 +64,10 @@ func TestParsing(t *testing.T) {
 			t.Error("Didn't convert FindInMap")
 		}
 
+		if _, ok := template.Resources["ResourceA"].properties["JoinTarget"].(Join); !ok {
+			t.Error("Didn't convert Join")
+		}
+
 		if template.Resources["ResourceA"].Metadata["Some"] != "JSON" {
 			t.Error("Didn't parse Metadata of ResourceA")
 		}
@@ -71,8 +79,8 @@ func TestParsing(t *testing.T) {
 		t.Error("Didn't parse ParamA")
 	}
 
-	if len(template.Outputs) != 3 {
-		t.Error("Incorrect number of outputs found, expected 1 got ", len(template.Outputs))
+	if len(template.Outputs) != 4 {
+		t.Error("Incorrect number of outputs found, expected 4 got ", len(template.Outputs))
 	} else {
 		if template.Outputs["OutputA"].Value != "Test" {
 			t.Error("Didn't parse OutputA")
@@ -84,6 +92,10 @@ func TestParsing(t *testing.T) {
 
 		if _, ok := template.Outputs["OutputC"].Value.(FindInMap); !ok {
 			t.Error("Didn't convert FindInMap")
+		}
+
+		if _, ok := template.Outputs["OutputD"].Value.(Join); !ok {
+			t.Error("Didn't convert Join")
 		}
 	}
 }
