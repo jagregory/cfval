@@ -49,7 +49,26 @@ func TestBase64(t *testing.T) {
 		t.Error("Should pass when valid types used", errs)
 	}
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "MyResource"}}}}, ctx); errs != nil {
-		t.Error("Should short circuit and pass when ref used", errs)
+	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{"Fn::If", map[string]interface{}{"Fn::If": "boo"}}}}, ctx); errs != nil {
+		t.Error("Should short circuit and pass when If used", errs)
+	}
+
+	invalidFns := []parse.IntrinsicFunctionSignature{
+		parse.FnAnd,
+		parse.FnBase64,
+		parse.FnEquals,
+		parse.FnFindInMap,
+		parse.FnGetAtt,
+		parse.FnGetAZs,
+		parse.FnJoin,
+		parse.FnNot,
+		parse.FnOr,
+		parse.FnRef,
+		parse.FnSelect,
+	}
+	for _, fn := range invalidFns {
+		if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, ctx); errs == nil {
+			t.Errorf("Should fail with %s as value: %s", fn, errs)
+		}
 	}
 }

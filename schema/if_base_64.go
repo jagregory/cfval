@@ -5,17 +5,25 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateBase64(base64 parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	base64Value, found := base64.UnderlyingMap["Fn::Base64"]
-	if !found || base64Value == nil {
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-builtin.html
+func validateBase64(builtin parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	value, found := builtin.UnderlyingMap["Fn::Base64"]
+	if !found || value == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Base64\" key")}
 	}
 
-	if len(base64.UnderlyingMap) > 1 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(base64.UnderlyingMap, "Fn::Base64"))}
+	if len(builtin.UnderlyingMap) > 1 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Base64"))}
 	}
 
-	base64ItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
-	_, errs := ValueString.Validate(base64Value, base64ItemContext)
-	return reporting.ValidateAbort, errs
+	switch t := value.(type) {
+	case string:
+		return reporting.ValidateAbort, nil
+	case parse.IntrinsicFunction:
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+			parse.FnIf: true,
+		})
+	}
+
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid value %s", value)}
 }
