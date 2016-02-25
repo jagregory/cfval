@@ -47,10 +47,6 @@ func keysExcept(m map[string]interface{}, ignore string) []string {
 }
 
 func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if ctx.Template == nil {
-		panic("Template is nil")
-	}
-
 	refValue, found := ref.UnderlyingMap["Ref"]
 	if !found || refValue == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Ref\" key")}

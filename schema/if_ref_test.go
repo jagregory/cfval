@@ -97,4 +97,8 @@ func TestRefValidate(t *testing.T) {
 	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "invalid"}}, stringContext); errs == nil {
 		t.Error("Should fail on invalid ref")
 	}
+
+	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "StringParameter"}}}}, stringContext); errs == nil {
+		t.Error("Should fail on Ref within Ref")
+	}
 }

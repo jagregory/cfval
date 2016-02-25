@@ -22,7 +22,7 @@ const (
 	FnSelect                               = "Fn::Select"
 )
 
-var allIntrinsicFunctions = []IntrinsicFunctionSignature{
+var AllIntrinsicFunctions = []IntrinsicFunctionSignature{
 	FnAnd,
 	FnBase64,
 	FnEquals,
@@ -54,7 +54,7 @@ func convertArrayToIntrinsicFunction(value []interface{}) []interface{} {
 }
 
 func convertAnyIntrinsicFunctions(value interface{}) interface{} {
-	for _, key := range allIntrinsicFunctions {
+	for _, key := range AllIntrinsicFunctions {
 		if fn, ok := convertToIntrinsicFunction(key, value); ok {
 			return fn
 		}
