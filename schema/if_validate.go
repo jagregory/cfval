@@ -19,6 +19,8 @@ func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyConte
 		return validateJoin(value, PropertyContextAdd(ctx, string(parse.FnJoin)))
 	case parse.FnRef:
 		return validateRef(value, PropertyContextAdd(ctx, string(parse.FnRef)))
+	case parse.FnSelect:
+		return validateSelect(value, PropertyContextAdd(ctx, string(parse.FnSelect)))
 	default:
 		return reporting.ValidateOK, nil
 	}
