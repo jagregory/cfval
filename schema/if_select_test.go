@@ -8,6 +8,10 @@ import (
 
 func TestSelect(t *testing.T) {
 	template := &parse.Template{
+		Conditions: map[string]parse.Condition{
+			"Condition": parse.Condition{},
+		},
+
 		Resources: map[string]parse.TemplateResource{
 			"MyResource": parse.TemplateResource{
 				Type: "TestResource",

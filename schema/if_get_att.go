@@ -36,34 +36,6 @@ func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) (repor
 	}
 
 	return reporting.ValidateOK, reporting.Safe(reports)
-	// 	if resourceID, ok := args[0].(string); ok {
-	// 		if resource, ok := template.Resources[resourceID]; ok {
-	// 			if attributeName, ok := args[1].(string); ok {
-	// 				definition := ctx.Definitions().Lookup(resource.Type)
-	// 				if attribute, ok := definition.Attributes[attributeName]; ok {
-	// 					// TODO: make this common, so GetAtt and others can use it
-	// 					targetType := attribute.Type
-	// 					switch targetType.CoercibleTo(ctx.Property().Type) {
-	// 					case CoercionNever:
-	// 						return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe())}
-	// 					case CoercionBegrudgingly:
-	// 						return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "GetAtt value of %s.%s is %s but is being dangerously coerced to a %s property", resourceID, attributeName, targetType.Describe(), ctx.Property().Type.Describe())}
-	// 					}
-	//
-	// 					return reporting.ValidateAbort, nil
-	// 				}
-	// 			}
-	//
-	// 			// attribute not found on resource
-	// 			return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, args[1])}
-	// 		}
-	//
-	// 		// resource not found
-	// 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a resource", resourceID)}
-	// 	}
-	//
-	// 	// resource not a string
-	// 	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt '%s' is not a valid resource name", args[0])}
 }
 
 func validateGetAttResourceID(builtin parse.IntrinsicFunction, resourceID interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {

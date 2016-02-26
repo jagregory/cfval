@@ -28,22 +28,26 @@ func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyConte
 	}
 
 	switch value.Key {
+	case parse.FnAnd:
+		return validateAnd(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnBase64:
-		return validateBase64(value, PropertyContextAdd(ctx, string(parse.FnBase64)))
+		return validateBase64(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnEquals:
-		return validateEquals(value, PropertyContextAdd(ctx, string(parse.FnEquals)))
+		return validateEquals(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnFindInMap:
-		return validateFindInMap(value, PropertyContextAdd(ctx, string(parse.FnFindInMap)))
+		return validateFindInMap(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnGetAtt:
-		return validateGetAtt(value, PropertyContextAdd(ctx, string(parse.FnGetAtt)))
+		return validateGetAtt(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnGetAZs:
-		return validateGetAZs(value, PropertyContextAdd(ctx, string(parse.FnGetAZs)))
+		return validateGetAZs(value, PropertyContextAdd(ctx, string(value.Key)))
+	case parse.FnIf:
+		return validateIf(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnJoin:
-		return validateJoin(value, PropertyContextAdd(ctx, string(parse.FnJoin)))
+		return validateJoin(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnRef:
-		return validateRef(value, PropertyContextAdd(ctx, string(parse.FnRef)))
+		return validateRef(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnSelect:
-		return validateSelect(value, PropertyContextAdd(ctx, string(parse.FnSelect)))
+		return validateSelect(value, PropertyContextAdd(ctx, string(value.Key)))
 	default:
 		return reporting.ValidateOK, nil
 	}

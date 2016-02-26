@@ -36,7 +36,7 @@ var ExampleValidIFs = map[parse.IntrinsicFunctionSignature]func() parse.Intrinsi
 	},
 
 	parse.FnIf: func() parse.IntrinsicFunction {
-		return IF(parse.FnIf)("not implemented yet")
+		return IF(parse.FnIf)([]interface{}{"Condition", "a", "b"})
 	},
 
 	parse.FnJoin: func() parse.IntrinsicFunction {
