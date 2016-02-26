@@ -20,6 +20,10 @@ const (
 	FnOr                                   = "Fn::Or"
 	FnRef                                  = "Ref"
 	FnSelect                               = "Fn::Select"
+
+	// FnCondition is not really a Intrinsic Function, but it behaves like one for
+	// parsing purposes.
+	FnCondition = "Condition"
 )
 
 type IntrinsicFunctionSignatures []IntrinsicFunctionSignature
@@ -42,6 +46,7 @@ func (s IntrinsicFunctionSignatures) Except(keys ...IntrinsicFunctionSignature) 
 var AllIntrinsicFunctions = IntrinsicFunctionSignatures{
 	FnAnd,
 	FnBase64,
+	FnCondition,
 	FnEquals,
 	FnFindInMap,
 	FnGetAtt,

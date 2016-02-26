@@ -10,14 +10,20 @@ var IF = func(key parse.IntrinsicFunctionSignature) func(args interface{}) parse
 	}
 }
 
+func conditionFactory() parse.IntrinsicFunction {
+	return IF(parse.FnCondition)("Condition")
+}
+
 var ExampleValidIFs = map[parse.IntrinsicFunctionSignature]func() parse.IntrinsicFunction{
 	parse.FnAnd: func() parse.IntrinsicFunction {
-		return IF(parse.FnAnd)("not implemented yet")
+		return IF(parse.FnAnd)([]interface{}{conditionFactory(), conditionFactory()})
 	},
 
 	parse.FnBase64: func() parse.IntrinsicFunction {
 		return IF(parse.FnBase64)("a string to encode")
 	},
+
+	parse.FnCondition: conditionFactory,
 
 	parse.FnEquals: func() parse.IntrinsicFunction {
 		return IF(parse.FnEquals)([]interface{}{"a", "b"})

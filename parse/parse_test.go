@@ -46,6 +46,9 @@ func TestParsing(t *testing.T) {
     },
 		"OutputD": {
 			"Value": { "Fn::Join": ["a", ["b", "c"]] }
+		},
+		"OutputE": {
+			"Value": { "Fn::Not": { "Condition": "ConditionA" } }
 		}
   }
 }`
@@ -102,8 +105,8 @@ func TestParsing(t *testing.T) {
 		t.Error("Didn't parse ParamA")
 	}
 
-	if len(template.Outputs) != 4 {
-		t.Error("Incorrect number of outputs found, expected 4 got ", len(template.Outputs))
+	if len(template.Outputs) != 5 {
+		t.Error("Incorrect number of outputs found, expected 5 got ", len(template.Outputs))
 	} else {
 		if template.Outputs["OutputA"].Value != "Test" {
 			t.Error("Didn't parse OutputA")
@@ -119,6 +122,12 @@ func TestParsing(t *testing.T) {
 
 		if b, _ := template.Outputs["OutputD"].Value.(IntrinsicFunction); b.Key != "Fn::Join" {
 			t.Error("Didn't convert output Join")
+		}
+
+		if b, _ := template.Outputs["OutputE"].Value.(IntrinsicFunction); b.Key != "Fn::Not" {
+			t.Error("Didn't convert output Join")
+		} else if bn, _ := b.UnderlyingMap["Fn::Not"].(IntrinsicFunction); bn.Key != "Condition" {
+			t.Error("Didn't convert output Condition in Not")
 		}
 	}
 

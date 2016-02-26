@@ -48,6 +48,7 @@ func validateEqualsItem(value interface{}, ctx PropertyContext) (reporting.Valid
 	case parse.IntrinsicFunction:
 		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
 			parse.FnAnd:       true,
+			parse.FnCondition: true,
 			parse.FnEquals:    true,
 			parse.FnFindInMap: true,
 			parse.FnIf:        true,

@@ -53,6 +53,7 @@ func TestEqual(t *testing.T) {
 
 	validFns := []parse.IntrinsicFunctionSignature{
 		parse.FnAnd,
+		parse.FnCondition,
 		parse.FnEquals,
 		parse.FnFindInMap,
 		parse.FnIf,

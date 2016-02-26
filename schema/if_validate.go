@@ -7,6 +7,8 @@ import (
 
 type SupportedFunctions map[parse.IntrinsicFunctionSignature]bool
 
+// SupportedFunctionsAll deliberately excludes Condition, because it isn't valid
+// anywhere except nested in other conditions (and they cater for it explicitly)
 var SupportedFunctionsAll = SupportedFunctions{
 	parse.FnAnd:       true,
 	parse.FnBase64:    true,
