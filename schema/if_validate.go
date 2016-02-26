@@ -30,6 +30,8 @@ func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyConte
 	switch value.Key {
 	case parse.FnBase64:
 		return validateBase64(value, PropertyContextAdd(ctx, string(parse.FnBase64)))
+	case parse.FnEquals:
+		return validateEquals(value, PropertyContextAdd(ctx, string(parse.FnEquals)))
 	case parse.FnFindInMap:
 		return validateFindInMap(value, PropertyContextAdd(ctx, string(parse.FnFindInMap)))
 	case parse.FnGetAtt:
