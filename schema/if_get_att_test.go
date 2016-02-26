@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jagregory/cfval/parse"
@@ -36,64 +37,41 @@ func TestGetAtt(t *testing.T) {
 			},
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
+
+	scenarios := []IFScenario{
+		IFScenario{IF(parse.FnGetAtt)(123), false, "invalid type used for args"},
+		IFScenario{IF(parse.FnGetAtt)(nil), false, "nil used for args"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{}), false, "no args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{}}, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"example", "example"}, "blah": "blah"}}, false, "extra properties"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"a", "b", "c"}), false, "too many args"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"a"}), false, "too few args"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"UnknownResource", "prop"}), false, "invalid resource"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "BadProp"}), false, "invalid property used for type of resource"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "Name"}), false, "valid property of wrong type"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "InstanceId"}), true, "valid property"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[parse.FnRef]()}), true, "Ref in Attribute"},
+	}
+
+	for _, fn := range parse.AllIntrinsicFunctions {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnGetAtt)([]interface{}{ExampleValidIFs[fn](), "InstanceId"}), false, fmt.Sprintf("%s as Resource", fn)})
+	}
+
+	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnRef) {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[fn]()}), false, fmt.Sprintf("%s in Attribute", fn)})
+	}
+
+	for i, s := range scenarios {
+		_, errs := validateGetAtt(s.fn, ctx)
+		if s.pass && errs != nil {
+			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
+		} else if !s.pass && errs == nil {
+			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
+		}
+	}
+
 	listCtx := NewPropertyContext(ctx, Schema{Type: Multiple(InstanceID)})
-
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{}}}, ctx); errs == nil {
-		t.Error("Should fail when no arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{}}, ctx); errs == nil {
-		t.Error("Should fail when key missing", errs)
-	}
-
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"a", "b"}, "blah": "blah"}}, ctx); errs == nil {
-		t.Error("Should fail when extra keys", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"a", "b", "c"}), ctx); errs == nil {
-		t.Error("Should fail when too many arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"a"}), ctx); errs == nil {
-		t.Error("Should fail when too few arguments supplied", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"UnknownResource", "prop"}), ctx); errs == nil {
-		t.Error("Should fail when invalid resource used", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "BadProp"}), ctx); errs == nil {
-		t.Error("Should fail when invalid property used for type of resource", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "Name"}), ctx); errs == nil {
-		t.Error("Should fail when valid property of wrong type", errs)
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "InstanceId"}), ctx); errs != nil {
-		t.Error("Should pass when valid property used for type of resource", errs)
-	}
-
 	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "ListInstanceId"}), listCtx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
-	}
-
-	invalidResourceFns := parse.AllIntrinsicFunctions
-	for _, fn := range invalidResourceFns {
-		if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{ExampleValidIFs[fn](), "InstanceId"}), ctx); errs == nil {
-			t.Errorf("Should fail with %s in Resource: %s", fn, errs)
-		}
-	}
-
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[parse.FnRef]()}), ctx); errs != nil {
-		t.Errorf("Should pass with Ref in Attribute: %s", errs)
-	}
-
-	invalidAttributeFns := parse.AllIntrinsicFunctions.
-		Except(parse.FnRef)
-	for _, fn := range invalidAttributeFns {
-		if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[fn]()}), ctx); errs == nil {
-			t.Errorf("Should fail with %s in Attribute: %s", fn, errs)
-		}
 	}
 }

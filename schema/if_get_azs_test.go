@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jagregory/cfval/parse"
@@ -37,44 +38,28 @@ func TestGetAZs(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	if _, errs := validateGetAZs(IF(parse.FnGetAZs)(nil), ctx); errs == nil {
-		t.Error("Should fail when no arguments supplied", errs)
+	scenarios := []IFScenario{
+		IFScenario{IF(parse.FnGetAZs)(123), false, "invalid type used for arg"},
+		IFScenario{IF(parse.FnGetAZs)(nil), false, "nil used for arg"},
+		IFScenario{IF(parse.FnGetAZs)([]interface{}{}), false, "no args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{}}, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{"Fn::GetAZs": "", "blah": "blah"}}, false, "extra properties"},
+		IFScenario{IF(parse.FnGetAZs)(""), true, "empty arg"},
+		IFScenario{IF(parse.FnGetAZs)("ap-southeast-2"), true, "valid region"},
+		// TODO: IFScenario{IF(parse.FnGetAZs)("ap-southeast-9"), false, "invalid region"},
+		IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), true, "Ref used as arg"},
 	}
 
-	if _, errs := validateGetAZs(IF(parse.FnGetAZs)(""), ctx); errs != nil {
-		t.Error("Should pass when empty argument supplied", errs)
+	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnRef) {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s as arg", fn)})
 	}
 
-	if _, errs := validateGetAZs(parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{}}, ctx); errs == nil {
-		t.Error("Should fail when key missing", errs)
-	}
-
-	if _, errs := validateGetAZs(parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{"Fn::GetAZs": "ap-southeast-2", "blah": "blah"}}, ctx); errs == nil {
-		t.Error("Should fail when extra keys", errs)
-	}
-
-	if _, errs := validateGetAZs(IF(parse.FnGetAZs)(123), ctx); errs == nil {
-		t.Error("Should fail when wrong type used", errs)
-	}
-
-	if _, errs := validateGetAZs(IF(parse.FnGetAZs)("ap-southeast-2"), ctx); errs != nil {
-		t.Error("Should pass when region used", errs)
-	}
-
-	if _, errs := validateGetAZs(IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), ctx); errs != nil {
-		t.Error("Should pass with nested Ref", errs)
-	}
-
-	invalidFns := parse.AllIntrinsicFunctions.
-		Except(parse.FnRef)
-	for _, fn := range invalidFns {
-		if _, errs := validateGetAZs(IF(parse.FnGetAZs)(ExampleValidIFs[fn]()), ctx); errs == nil {
-			t.Errorf("Should fail with nested %s: %s", fn, errs)
+	for i, s := range scenarios {
+		_, errs := validateGetAZs(s.fn, ctx)
+		if s.pass && errs != nil {
+			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
+		} else if !s.pass && errs == nil {
+			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
 		}
 	}
-
-	// TODO: region validation
-	// if _, errs := validateGetAZs(IF(parse.FnGetAZs)("ap-southeast-9"), ctx); errs == nil {
-	// 	t.Error("Should fail when invalid region used", errs)
-	// }
 }

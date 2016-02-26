@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jagregory/cfval/parse"
@@ -33,31 +34,25 @@ func TestBase64(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	if _, errs := validateBase64(IF(parse.FnBase64)(123), ctx); errs == nil {
-		t.Error("Should fail when invalid type used for args", errs)
+	scenarios := []IFScenario{
+		IFScenario{IF(parse.FnBase64)(123), false, "invalid type used for args"},
+		IFScenario{IF(parse.FnBase64)(nil), false, "nil used for args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{}}, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": "example", "blah": "blah"}}, false, "extra properties"},
+		IFScenario{IF(parse.FnBase64)("example"), true, "valid value used"},
+		IFScenario{IF(parse.FnBase64)(ExampleValidIFs[parse.FnIf]()), true, "If used"},
 	}
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{}}, ctx); errs == nil {
-		t.Error("Should fail when no args", errs)
+	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnIf) {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnBase64)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s as value", fn)})
 	}
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": []interface{}{"a", []interface{}{"b", "c"}}, "blah": "blah"}}, ctx); errs == nil {
-		t.Error("Should fail when valid with extra properties", errs)
-	}
-
-	if _, errs := validateBase64(IF(parse.FnBase64)("blah"), ctx); errs != nil {
-		t.Error("Should pass when valid types used", errs)
-	}
-
-	if _, errs := validateBase64(IF(parse.FnBase64)(IF(parse.FnIf)("boo")), ctx); errs != nil {
-		t.Error("Should short circuit and pass when If used", errs)
-	}
-
-	invalidFns := parse.AllIntrinsicFunctions.
-		Except(parse.FnIf)
-	for _, fn := range invalidFns {
-		if _, errs := validateBase64(IF(parse.FnBase64)(ExampleValidIFs[fn]()), ctx); errs == nil {
-			t.Errorf("Should fail with %s as value: %s", fn, errs)
+	for i, s := range scenarios {
+		_, errs := validateBase64(s.fn, ctx)
+		if s.pass && errs != nil {
+			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
+		} else if !s.pass && errs == nil {
+			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
 		}
 	}
 }

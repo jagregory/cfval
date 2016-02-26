@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jagregory/cfval/parse"
@@ -42,62 +43,44 @@ func TestRefValidate(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: Multiple(InstanceID)}, ValidationOptions{})
 
-	if _, errs := validateRef(IF(parse.FnRef)(123), stringContext); errs == nil {
-		t.Error("Should fail on ref with invalid target type")
+	scenarios := []IFScenario{
+		IFScenario{IF(parse.FnRef)(123), false, "invalid type used for target"},
+		IFScenario{IF(parse.FnRef)(nil), false, "nil used for target"},
+		IFScenario{parse.IntrinsicFunction{"Ref", map[string]interface{}{}}, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": []interface{}{"delim", []interface{}{"a", "b"}}, "blah": "blah"}}, false, "extra properties"},
+		IFScenario{IF(parse.FnRef)("Resource1"), false, "valid resource ref with Unknown ref type"},
+		IFScenario{IF(parse.FnRef)("NoTypeParameter"), false, "valid parameter ref with Unknown ref type"},
+		IFScenario{IF(parse.FnRef)("Resource2"), true, "valid resource ref with matching types"},
+		IFScenario{IF(parse.FnRef)("StringParameter"), true, "valid parameter ref with matching types"},
+		IFScenario{IF(parse.FnRef)("AWS::StackName"), true, "valid pseudo-parameter ref with matching types"},
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{}}, stringContext); errs == nil {
-		t.Error("Should fail on ref with no target")
+	for _, fn := range parse.AllIntrinsicFunctions {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnRef)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s as target", fn)})
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource2", "blah": "blah"}}, stringContext); errs == nil {
-		t.Error("Should fail on valid ref with extra properties")
-	}
-
-	if _, errs := validateRef(IF(parse.FnRef)("Resource1"), stringContext); errs == nil {
-		t.Error("Should fail on valid resource ref with Unknown ref type")
-	}
-
-	if _, errs := validateRef(IF(parse.FnRef)("Resource2"), stringContext); errs != nil {
-		t.Error("Should pass on valid resource ref with matching types", errs)
+	for i, s := range scenarios {
+		_, errs := validateRef(s.fn, stringContext)
+		if s.pass && errs != nil {
+			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
+		} else if !s.pass && errs == nil {
+			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
+		}
 	}
 
 	if _, errs := validateRef(IF(parse.FnRef)("Resource2"), numberContext); errs == nil {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("NoTypeParameter"), stringContext); errs == nil {
-		t.Error("Should fail on valid parameter ref with Unknown ref type", errs)
-	}
-
-	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), stringContext); errs != nil {
-		t.Error("Should pass on valid parameter ref with matching types", errs)
-	}
-
 	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), numberContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
-	}
-
-	if _, errs := validateRef(IF(parse.FnRef)("AWS::StackName"), stringContext); errs != nil {
-		t.Error("Should pass on valid pseudo-parameter ref with matching types", errs)
 	}
 
 	if _, errs := validateRef(IF(parse.FnRef)("AWS::StackName"), numberContext); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), stringContext); errs != nil {
-		t.Error("Should pass on valid parameter ref with matching types", errs)
-	}
-
 	if _, errs := validateRef(IF(parse.FnRef)("ListInstanceIdParameter"), listInstanceIDContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
-	}
-
-	invalidFns := parse.AllIntrinsicFunctions
-	for _, fn := range invalidFns {
-		if _, errs := validateRef(IF(parse.FnRef)(ExampleValidIFs[fn]()), stringContext); errs == nil {
-			t.Errorf("Should fail with %s as target: %s", fn, errs)
-		}
 	}
 }
