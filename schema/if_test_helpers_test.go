@@ -54,7 +54,7 @@ var ExampleValidIFs = map[parse.IntrinsicFunctionSignature]func() parse.Intrinsi
 	},
 
 	parse.FnOr: func() parse.IntrinsicFunction {
-		return IF(parse.FnOr)("not implemented yet")
+		return IF(parse.FnOr)([]interface{}{conditionFactory(), conditionFactory()})
 	},
 
 	parse.FnRef: func() parse.IntrinsicFunction {

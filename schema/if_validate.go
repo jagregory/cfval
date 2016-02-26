@@ -48,6 +48,8 @@ func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyConte
 		return validateIf(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnJoin:
 		return validateJoin(value, PropertyContextAdd(ctx, string(value.Key)))
+	case parse.FnOr:
+		return validateOr(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnRef:
 		return validateRef(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnSelect:
