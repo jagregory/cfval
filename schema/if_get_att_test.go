@@ -50,49 +50,49 @@ func TestGetAtt(t *testing.T) {
 		t.Error("Should fail when extra keys", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"a", "b", "c"}}}, ctx); errs == nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"a", "b", "c"}), ctx); errs == nil {
 		t.Error("Should fail when too many arguments supplied", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"a"}}}, ctx); errs == nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"a"}), ctx); errs == nil {
 		t.Error("Should fail when too few arguments supplied", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"UnknownResource", "prop"}}}, ctx); errs == nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"UnknownResource", "prop"}), ctx); errs == nil {
 		t.Error("Should fail when invalid resource used", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "BadProp"}}}, ctx); errs == nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "BadProp"}), ctx); errs == nil {
 		t.Error("Should fail when invalid property used for type of resource", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "Name"}}}, ctx); errs == nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "Name"}), ctx); errs == nil {
 		t.Error("Should fail when valid property of wrong type", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "InstanceId"}}}, ctx); errs != nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "InstanceId"}), ctx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", "ListInstanceId"}}}, listCtx); errs != nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "ListInstanceId"}), listCtx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
 	}
 
 	invalidResourceFns := parse.AllIntrinsicFunctions
 	for _, fn := range invalidResourceFns {
-		if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}, "InstanceId"}}}, ctx); errs == nil {
+		if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{ExampleValidIFs[fn](), "InstanceId"}), ctx); errs == nil {
 			t.Errorf("Should fail with %s in Resource: %s", fn, errs)
 		}
 	}
 
-	if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "MyResource"}}}}}, ctx); errs != nil {
+	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[parse.FnRef]()}), ctx); errs != nil {
 		t.Errorf("Should pass with Ref in Attribute: %s", errs)
 	}
 
 	invalidAttributeFns := parse.AllIntrinsicFunctions.
 		Except(parse.FnRef)
 	for _, fn := range invalidAttributeFns {
-		if _, errs := validateGetAtt(parse.IntrinsicFunction{"Fn::GetAtt", map[string]interface{}{"Fn::GetAtt": []interface{}{"MyResource", parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}}, ctx); errs == nil {
+		if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[fn]()}), ctx); errs == nil {
 			t.Errorf("Should fail with %s in Attribute: %s", fn, errs)
 		}
 	}

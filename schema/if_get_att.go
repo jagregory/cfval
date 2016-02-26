@@ -13,7 +13,7 @@ func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) (repor
 
 	args, ok := value.([]interface{})
 	if !ok || args == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::GetAtt\" key: %s", args)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::GetAtt\" key: %T", value)}
 	}
 
 	if len(builtin.UnderlyingMap) > 1 {

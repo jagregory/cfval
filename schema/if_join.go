@@ -7,46 +7,92 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateJoin(join parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	joinValue, found := join.UnderlyingMap["Fn::Join"]
-	if !found || joinValue == nil {
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-builtin.html
+func validateJoin(builtin parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	value, found := builtin.UnderlyingMap["Fn::Join"]
+	if !found || value == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Join\" key")}
 	}
 
 	// TODO: this will fail with { "Fn::Join": { "Fn::GetAZs": "" }} and such
-	items, ok := joinValue.([]interface{})
+	items, ok := value.([]interface{})
 	if !ok || items == nil {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::Join\" key: %s", items)}
 	}
 
-	if len(join.UnderlyingMap) > 1 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(join.UnderlyingMap, "Fn::Join"))}
+	if len(builtin.UnderlyingMap) > 1 {
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Join"))}
 	}
 
 	if len(items) != 2 {
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join has incorrect number of arguments (expected: 2, actual: %d)", len(items))}
 	}
 
-	if _, ok := items[0].(string); !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join '%s' is not a valid delimiter", items[0])}
+	reports := make(reporting.Reports, 0, 10)
+	delimiter := items[0]
+	values := items[1]
+
+	if _, errs := validateJoinDelimiter(builtin, delimiter, ctx); errs != nil {
+		reports = append(reports, errs...)
 	}
 
-	parts, ok := items[1].([]interface{})
-	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Join items are not valid: %s", items[1])}
+	if _, errs := validateJoinList(builtin, values, ctx); errs != nil {
+		reports = append(reports, errs...)
 	}
 
-	joinItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
-	failures := make(reporting.Reports, 0, len(parts))
-	for i, part := range parts {
-		if _, errs := ValueString.Validate(part, PropertyContextAdd(joinItemContext, "1", strconv.Itoa(i))); errs != nil {
-			failures = append(failures, errs...)
+	return reporting.ValidateAbort, reporting.Safe(reports)
+}
+
+func validateJoinDelimiter(builtin parse.IntrinsicFunction, delimiter interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	if _, ok := delimiter.(string); !ok {
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "\"%s\" is not a valid delimiter", delimiter)}
+	}
+
+	return reporting.ValidateOK, nil
+}
+
+func validateJoinList(builtin parse.IntrinsicFunction, values interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	switch parts := values.(type) {
+	case []interface{}:
+		reports := make(reporting.Reports, 0, 10)
+		builtinItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
+		for i, part := range parts {
+			if _, errs := validateJoinListValue(part, PropertyContextAdd(builtinItemContext, "Values", strconv.Itoa(i))); errs != nil {
+				reports = append(reports, errs...)
+			}
 		}
+
+		return reporting.ValidateOK, reporting.Safe(reports)
+	case parse.IntrinsicFunction:
+		return ValidateIntrinsicFunctions(parts, ctx, SupportedFunctions{
+			parse.FnBase64:    true,
+			parse.FnFindInMap: true,
+			parse.FnGetAtt:    true,
+			parse.FnGetAZs:    true,
+			parse.FnIf:        true,
+			parse.FnJoin:      true,
+			parse.FnSelect:    true,
+			parse.FnRef:       true,
+		})
 	}
 
-	if len(failures) == 0 {
-		return reporting.ValidateAbort, nil
+	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Join items are not valid: %s", values)}
+}
+
+func validateJoinListValue(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+	switch vt := value.(type) {
+	case parse.IntrinsicFunction:
+		return ValidateIntrinsicFunctions(vt, ctx, SupportedFunctions{
+			parse.FnBase64:    true,
+			parse.FnFindInMap: true,
+			parse.FnGetAtt:    true,
+			parse.FnGetAZs:    true,
+			parse.FnIf:        true,
+			parse.FnJoin:      true,
+			parse.FnSelect:    true,
+			parse.FnRef:       true,
+		})
 	}
 
-	return reporting.ValidateAbort, failures
+	return ValueString.Validate(value, ctx)
 }

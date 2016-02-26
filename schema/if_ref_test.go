@@ -42,7 +42,7 @@ func TestRefValidate(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: Multiple(InstanceID)}, ValidationOptions{})
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": 123}}, stringContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)(123), stringContext); errs == nil {
 		t.Error("Should fail on ref with invalid target type")
 	}
 
@@ -54,49 +54,49 @@ func TestRefValidate(t *testing.T) {
 		t.Error("Should fail on valid ref with extra properties")
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource1"}}, stringContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)("Resource1"), stringContext); errs == nil {
 		t.Error("Should fail on valid resource ref with Unknown ref type")
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource2"}}, stringContext); errs != nil {
+	if _, errs := validateRef(IF(parse.FnRef)("Resource2"), stringContext); errs != nil {
 		t.Error("Should pass on valid resource ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource2"}}, numberContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)("Resource2"), numberContext); errs == nil {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "NoTypeParameter"}}, stringContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)("NoTypeParameter"), stringContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with Unknown ref type", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
+	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), stringContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, numberContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), numberContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "AWS::StackName"}}, stringContext); errs != nil {
+	if _, errs := validateRef(IF(parse.FnRef)("AWS::StackName"), stringContext); errs != nil {
 		t.Error("Should pass on valid pseudo-parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "AWS::StackName"}}, numberContext); errs == nil {
+	if _, errs := validateRef(IF(parse.FnRef)("AWS::StackName"), numberContext); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "StringParameter"}}, stringContext); errs != nil {
+	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), stringContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "ListInstanceIdParameter"}}, listInstanceIDContext); errs != nil {
+	if _, errs := validateRef(IF(parse.FnRef)("ListInstanceIdParameter"), listInstanceIDContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
 	invalidFns := parse.AllIntrinsicFunctions
 	for _, fn := range invalidFns {
-		if _, errs := validateRef(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, stringContext); errs == nil {
+		if _, errs := validateRef(IF(parse.FnRef)(ExampleValidIFs[fn]()), stringContext); errs == nil {
 			t.Errorf("Should fail with %s as target: %s", fn, errs)
 		}
 	}

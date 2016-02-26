@@ -14,7 +14,7 @@ func validateFindInMap(builtin parse.IntrinsicFunction, ctx PropertyContext) (re
 
 	args, ok := value.([]interface{})
 	if !ok {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::FindInMap\" key: %s", args)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::FindInMap\" key: %T", value)}
 	}
 
 	if len(builtin.UnderlyingMap) > 1 {

@@ -54,7 +54,7 @@ func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) (reporting.Va
 
 	refString, ok := refValue.(string)
 	if !ok || refString == "" {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Ref\" key: %s", refString)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Ref\" key: %T", refValue)}
 	}
 
 	if len(ref.UnderlyingMap) > 1 {

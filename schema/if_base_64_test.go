@@ -33,7 +33,7 @@ func TestBase64(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": 123}}, ctx); errs == nil {
+	if _, errs := validateBase64(IF(parse.FnBase64)(123), ctx); errs == nil {
 		t.Error("Should fail when invalid type used for args", errs)
 	}
 
@@ -45,18 +45,18 @@ func TestBase64(t *testing.T) {
 		t.Error("Should fail when valid with extra properties", errs)
 	}
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": "blah"}}, ctx); errs != nil {
+	if _, errs := validateBase64(IF(parse.FnBase64)("blah"), ctx); errs != nil {
 		t.Error("Should pass when valid types used", errs)
 	}
 
-	if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{"Fn::If", map[string]interface{}{"Fn::If": "boo"}}}}, ctx); errs != nil {
+	if _, errs := validateBase64(IF(parse.FnBase64)(IF(parse.FnIf)("boo")), ctx); errs != nil {
 		t.Error("Should short circuit and pass when If used", errs)
 	}
 
 	invalidFns := parse.AllIntrinsicFunctions.
 		Except(parse.FnIf)
 	for _, fn := range invalidFns {
-		if _, errs := validateBase64(parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": parse.IntrinsicFunction{fn, map[string]interface{}{string(fn): "MyResource"}}}}, ctx); errs == nil {
+		if _, errs := validateBase64(IF(parse.FnBase64)(ExampleValidIFs[fn]()), ctx); errs == nil {
 			t.Errorf("Should fail with %s as value: %s", fn, errs)
 		}
 	}
