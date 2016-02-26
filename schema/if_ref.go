@@ -71,6 +71,12 @@ func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) (reporting.Va
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", refString)}
 	}
 
+	if refString == "AWS::NoValue" {
+		// AWS::NoValue is a magic absent-value value so we don't do any type
+		// assertions on it
+		return reporting.ValidateAbort, nil
+	}
+
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
 		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}

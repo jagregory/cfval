@@ -83,4 +83,16 @@ func TestRefValidate(t *testing.T) {
 	if _, errs := validateRef(IF(parse.FnRef)("ListInstanceIdParameter"), listInstanceIDContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
+
+	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), stringContext); errs != nil {
+		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
+	}
+
+	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), numberContext); errs != nil {
+		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
+	}
+
+	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), listInstanceIDContext); errs != nil {
+		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
+	}
 }
