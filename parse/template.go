@@ -1,7 +1,8 @@
 package parse
 
 type Template struct {
-	Resources  map[string]TemplateResource
-	Parameters map[string]Parameter
+	Conditions map[string]Condition
 	Outputs    map[string]Output
+	Parameters map[string]Parameter
+	Resources  map[string]TemplateResource
 }

@@ -10,6 +10,10 @@ func TestParsing(t *testing.T) {
     }
   },
 
+	"Conditions": {
+		"ConditionA": { "Fn::Equals": ["a", "b"] }
+	},
+
   "Resources": {
     "ResourceA": {
       "Type": "AWS::EC2::Instance",
@@ -53,7 +57,7 @@ func TestParsing(t *testing.T) {
 	}
 
 	if len(template.Resources) != 1 {
-		t.Error("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
+		t.Errorf("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
 	} else if len(template.Resources["ResourceA"].properties) != 7 {
 		t.Errorf("Incorrect number of properties found, expected 7 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
@@ -115,6 +119,14 @@ func TestParsing(t *testing.T) {
 
 		if b, _ := template.Outputs["OutputD"].Value.(IntrinsicFunction); b.Key != "Fn::Join" {
 			t.Error("Didn't convert output Join")
+		}
+	}
+
+	if len(template.Conditions) != 1 {
+		t.Error("Incorrect number of conditions found, expected 1 got ", len(template.Conditions))
+	} else {
+		if b, _ := template.Conditions["ConditionA"].Fn.(IntrinsicFunction); b.Key != "Fn::Equals" {
+			t.Error("Didn't parse ConditionA")
 		}
 	}
 }

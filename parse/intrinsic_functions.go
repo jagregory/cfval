@@ -54,22 +54,6 @@ var AllIntrinsicFunctions = IntrinsicFunctionSignatures{
 	FnSelect,
 }
 
-func convertMapToIntrinsicFunction(value map[string]interface{}) map[string]interface{} {
-	converted := make(map[string]interface{}, len(value))
-	for id, prop := range value {
-		converted[id] = convertAnyIntrinsicFunctions(prop)
-	}
-	return converted
-}
-
-func convertArrayToIntrinsicFunction(value []interface{}) []interface{} {
-	arr := make([]interface{}, len(value))
-	for i, v := range value {
-		arr[i] = convertAnyIntrinsicFunctions(v)
-	}
-	return arr
-}
-
 func convertAnyIntrinsicFunctions(value interface{}) interface{} {
 	for _, key := range AllIntrinsicFunctions {
 		if fn, ok := convertToIntrinsicFunction(key, value); ok {
@@ -85,6 +69,22 @@ func convertAnyIntrinsicFunctions(value interface{}) interface{} {
 	default:
 		return value
 	}
+}
+
+func convertMapToIntrinsicFunction(value map[string]interface{}) map[string]interface{} {
+	converted := make(map[string]interface{}, len(value))
+	for id, prop := range value {
+		converted[id] = convertAnyIntrinsicFunctions(prop)
+	}
+	return converted
+}
+
+func convertArrayToIntrinsicFunction(value []interface{}) []interface{} {
+	arr := make([]interface{}, len(value))
+	for i, v := range value {
+		arr[i] = convertAnyIntrinsicFunctions(v)
+	}
+	return arr
 }
 
 func convertToIntrinsicFunction(key IntrinsicFunctionSignature, value interface{}) (IntrinsicFunction, bool) {
