@@ -62,7 +62,7 @@ func TestGetAtt(t *testing.T) {
 	}
 
 	for i, s := range scenarios {
-		_, errs := validateGetAtt(s.fn, ctx)
+		errs := validateGetAtt(s.fn, ctx)
 		if s.pass && errs != nil {
 			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
 		} else if !s.pass && errs == nil {
@@ -71,7 +71,7 @@ func TestGetAtt(t *testing.T) {
 	}
 
 	listCtx := NewPropertyContext(ctx, Schema{Type: Multiple(InstanceID)})
-	if _, errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "ListInstanceId"}), listCtx); errs != nil {
+	if errs := validateGetAtt(IF(parse.FnGetAtt)([]interface{}{"MyResource", "ListInstanceId"}), listCtx); errs != nil {
 		t.Error("Should pass when valid property used for type of resource", errs)
 	}
 }

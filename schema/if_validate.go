@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"fmt"
+
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -24,37 +26,45 @@ var SupportedFunctionsAll = SupportedFunctions{
 	parse.FnSelect:    true,
 }
 
+type IntrinsicFunctionValidate func(value parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports
+
 func ValidateIntrinsicFunctions(value parse.IntrinsicFunction, ctx PropertyContext, supportedFunctions SupportedFunctions) (reporting.ValidateResult, reporting.Reports) {
 	if !supportedFunctions[value.Key] {
-		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s not valid in this location", value.Key)}
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s not valid in this location", value.Key)}
 	}
+
+	var reports reporting.Reports
 
 	switch value.Key {
 	case parse.FnAnd:
-		return validateAnd(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateAnd(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnBase64:
-		return validateBase64(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateBase64(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnCondition:
-		return validateCondition(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateCondition(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnEquals:
-		return validateEquals(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateEquals(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnFindInMap:
-		return validateFindInMap(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateFindInMap(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnGetAtt:
-		return validateGetAtt(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateGetAtt(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnGetAZs:
-		return validateGetAZs(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateGetAZs(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnIf:
-		return validateIf(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateIf(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnJoin:
-		return validateJoin(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateJoin(value, PropertyContextAdd(ctx, string(value.Key)))
+	case parse.FnNot:
+		reports = validateNot(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnOr:
-		return validateOr(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateOr(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnRef:
-		return validateRef(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateRef(value, PropertyContextAdd(ctx, string(value.Key)))
 	case parse.FnSelect:
-		return validateSelect(value, PropertyContextAdd(ctx, string(value.Key)))
+		reports = validateSelect(value, PropertyContextAdd(ctx, string(value.Key)))
 	default:
-		return reporting.ValidateOK, nil
+		panic(fmt.Errorf("Unexpected Intrinsic Function %s", value.Key))
 	}
+
+	return reporting.ValidateAbort, reporting.Safe(reports)
 }

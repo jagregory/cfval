@@ -6,24 +6,25 @@ import (
 )
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
-func validateGetAZs(builtin parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateGetAZs(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
 	value, found := builtin.UnderlyingMap["Fn::GetAZs"]
 	if !found || value == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAZs\" key")}
+		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAZs\" key")}
 	}
 
 	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::GetAZs"))}
+		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::GetAZs"))}
 	}
 
 	switch t := value.(type) {
 	case string:
-		return reporting.ValidateAbort, nil
+		return nil
 	case parse.IntrinsicFunction:
-		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
 			parse.FnRef: true,
 		})
+		return errs
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::GetAZs\" key: %s", value)}
+	return reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::GetAZs\" key: %s", value)}
 }

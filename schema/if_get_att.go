@@ -5,23 +5,23 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
 	value, found := builtin.UnderlyingMap["Fn::GetAtt"]
 	if !found || value == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAtt\" key")}
+		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAtt\" key")}
 	}
 
 	args, ok := value.([]interface{})
 	if !ok || args == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::GetAtt\" key: %T", value)}
+		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::GetAtt\" key: %T", value)}
 	}
 
 	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::GetAtt"))}
+		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::GetAtt"))}
 	}
 
 	if len(args) != 2 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(args))}
+		return reporting.Reports{reporting.NewFailure(ctx, "GetAtt has incorrect number of arguments (expected: 2, actual: %d)", len(args))}
 	}
 
 	reports := make(reporting.Reports, 0, 10)
@@ -29,29 +29,29 @@ func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) (repor
 	resourceID := args[0]
 	attributeID := args[1]
 
-	if _, errs := validateGetAttResourceID(builtin, resourceID, ctx); errs != nil {
+	if errs := validateGetAttResourceID(builtin, resourceID, ctx); errs != nil {
 		reports = append(reports, errs...)
-	} else if _, errs := validateGetAttAttributeID(builtin, resourceID, attributeID, ctx); errs != nil {
+	} else if errs := validateGetAttAttributeID(builtin, resourceID, attributeID, ctx); errs != nil {
 		reports = append(reports, errs...)
 	}
 
-	return reporting.ValidateOK, reporting.Safe(reports)
+	return reporting.Safe(reports)
 }
 
-func validateGetAttResourceID(builtin parse.IntrinsicFunction, resourceID interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateGetAttResourceID(builtin parse.IntrinsicFunction, resourceID interface{}, ctx PropertyContext) reporting.Reports {
 	switch t := resourceID.(type) {
 	case string:
 		if _, found := ctx.Template().Resources[t]; found {
-			return reporting.ValidateOK, nil
+			return nil
 		}
 
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s is not a resource", t)}
+		return reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s is not a resource", t)}
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s is not a valid resource name", resourceID)}
+	return reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s is not a valid resource name", resourceID)}
 }
 
-func validateGetAttAttributeID(builtin parse.IntrinsicFunction, resourceID, attributeID interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateGetAttAttributeID(builtin parse.IntrinsicFunction, resourceID, attributeID interface{}, ctx PropertyContext) reporting.Reports {
 	resource := ctx.Template().Resources[resourceID.(string)]
 	definition := ctx.Definitions().Lookup(resource.Type)
 
@@ -61,18 +61,19 @@ func validateGetAttAttributeID(builtin parse.IntrinsicFunction, resourceID, attr
 			targetType := attribute.Type
 			switch targetType.CoercibleTo(ctx.Property().Type) {
 			case CoercionNever:
-				return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, t, targetType.Describe(), ctx.Property().Type.Describe())}
+				return reporting.Reports{reporting.NewFailure(ctx, "GetAtt value of %s.%s is %s but is being assigned to a %s property", resourceID, t, targetType.Describe(), ctx.Property().Type.Describe())}
 			case CoercionBegrudgingly:
-				return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "GetAtt value of %s.%s is %s but is being dangerously coerced to a %s property", resourceID, t, targetType.Describe(), ctx.Property().Type.Describe())}
+				return reporting.Reports{reporting.NewWarning(ctx, "GetAtt value of %s.%s is %s but is being dangerously coerced to a %s property", resourceID, t, targetType.Describe(), ctx.Property().Type.Describe())}
 			}
 
-			return reporting.ValidateAbort, nil
+			return nil
 		}
 	case parse.IntrinsicFunction:
-		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
 			parse.FnRef: true,
 		})
+		return errs
 	}
 
-	return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, attributeID)}
+	return reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, attributeID)}
 }

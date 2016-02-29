@@ -46,45 +46,45 @@ func keysExcept(m map[string]interface{}, ignore string) []string {
 	return keys
 }
 
-func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
 	refValue, found := ref.UnderlyingMap["Ref"]
 	if !found || refValue == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Missing \"Ref\" key")}
+		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Ref\" key")}
 	}
 
 	refString, ok := refValue.(string)
 	if !ok || refString == "" {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Ref\" key: %T", refValue)}
+		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Ref\" key: %T", refValue)}
 	}
 
 	if len(ref.UnderlyingMap) > 1 {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(ref.UnderlyingMap, "Ref"))}
+		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(ref.UnderlyingMap, "Ref"))}
 	}
 
 	target := resolveTarget(refString, ctx.Definitions(), ctx.Template())
 	if target == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", refString)}
+		return reporting.Reports{reporting.NewFailure(ctx, "Ref '%s' is not a resource, parameter, or pseudo-parameter", refString)}
 	}
 
 	targetType := target.TargetType()
 	if targetType == nil {
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", refString)}
+		return reporting.Reports{reporting.NewFailure(ctx, "%s cannot be used in a Ref", refString)}
 	}
 
 	if refString == "AWS::NoValue" {
 		// AWS::NoValue is a magic absent-value value so we don't do any type
 		// assertions on it
-		return reporting.ValidateAbort, nil
+		return nil
 	}
 
 	switch targetType.CoercibleTo(ctx.Property().Type) {
 	case CoercionNever:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
+		return reporting.Reports{reporting.NewFailure(ctx, "Ref value of '%s' is %s but is being assigned to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
 	case CoercionBegrudgingly:
-		return reporting.ValidateAbort, reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
+		return reporting.Reports{reporting.NewWarning(ctx, "Ref value of '%s' is %s but is being dangerously coerced to a %s property", refString, targetType.Describe(), ctx.Property().Type.Describe())}
 	}
 
-	return reporting.ValidateAbort, nil
+	return nil
 }
 
 func resolveTarget(target string, definitions ResourceDefinitions, template *parse.Template) RefTarget {

@@ -48,7 +48,7 @@ func TestFindInMap(t *testing.T) {
 	}
 
 	for i, s := range scenarios {
-		_, errs := validateFindInMap(s.fn, ctx)
+		errs := validateFindInMap(s.fn, ctx)
 		if s.pass && errs != nil {
 			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
 		} else if !s.pass && errs == nil {

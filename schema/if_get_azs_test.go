@@ -55,7 +55,7 @@ func TestGetAZs(t *testing.T) {
 	}
 
 	for i, s := range scenarios {
-		_, errs := validateGetAZs(s.fn, ctx)
+		errs := validateGetAZs(s.fn, ctx)
 		if s.pass && errs != nil {
 			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
 		} else if !s.pass && errs == nil {

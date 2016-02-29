@@ -52,7 +52,7 @@ func TestBase64(t *testing.T) {
 	}
 
 	for i, s := range scenarios {
-		_, errs := validateBase64(s.fn, ctx)
+		errs := validateBase64(s.fn, ctx)
 		if s.pass && errs != nil {
 			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
 		} else if !s.pass && errs == nil {

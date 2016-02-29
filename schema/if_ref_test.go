@@ -60,7 +60,7 @@ func TestRefValidate(t *testing.T) {
 	}
 
 	for i, s := range scenarios {
-		_, errs := validateRef(s.fn, stringContext)
+		errs := validateRef(s.fn, stringContext)
 		if s.pass && errs != nil {
 			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
 		} else if !s.pass && errs == nil {
@@ -68,31 +68,31 @@ func TestRefValidate(t *testing.T) {
 		}
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("Resource2"), numberContext); errs == nil {
+	if errs := validateRef(IF(parse.FnRef)("Resource2"), numberContext); errs == nil {
 		t.Error("Should fail on valid resource ref with non-matching types")
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("StringParameter"), numberContext); errs == nil {
+	if errs := validateRef(IF(parse.FnRef)("StringParameter"), numberContext); errs == nil {
 		t.Error("Should fail on valid parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("AWS::StackName"), numberContext); errs == nil {
+	if errs := validateRef(IF(parse.FnRef)("AWS::StackName"), numberContext); errs == nil {
 		t.Error("Should fail on valid pseudo-parameter ref with non-matching types")
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("ListInstanceIdParameter"), listInstanceIDContext); errs != nil {
+	if errs := validateRef(IF(parse.FnRef)("ListInstanceIdParameter"), listInstanceIDContext); errs != nil {
 		t.Error("Should pass on valid parameter ref with matching types", errs)
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), stringContext); errs != nil {
+	if errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), stringContext); errs != nil {
 		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), numberContext); errs != nil {
+	if errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), numberContext); errs != nil {
 		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
 	}
 
-	if _, errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), listInstanceIDContext); errs != nil {
+	if errs := validateRef(IF(parse.FnRef)("AWS::NoValue"), listInstanceIDContext); errs != nil {
 		t.Error("Should pass on AWS::NoValue being assigned to anything", errs)
 	}
 }
