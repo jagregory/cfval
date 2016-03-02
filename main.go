@@ -29,7 +29,7 @@ var ui = &cli.ColoredUi{
 	Ui: &cli.BasicUi{
 		Reader:      os.Stdin,
 		Writer:      os.Stdout,
-		ErrorWriter: os.Stderr,
+		ErrorWriter: os.Stdout,
 	},
 }
 
