@@ -27,18 +27,18 @@ var ScalingPolicy = Resource{
 
 		"Cooldown": Schema{
 			Type:      ValueString,
-			Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
+			Conflicts: constraints.PropertyIs("PolicyType", "StepScaling"),
 		},
 
 		"EstimatedInstanceWarmup": Schema{
 			Type:      ValueNumber,
-			Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
+			Conflicts: constraints.PropertyIs("PolicyType", "SimpleScaling"),
 		},
 
 		"MetricAggregationType": Schema{
 			Type:      metricAggregationType,
 			Default:   "Average",
-			Conflicts: constraints.PropertyNot("PolicyType", "StepScaling"),
+			Conflicts: constraints.PropertyIs("PolicyType", "SimpleScaling"),
 		},
 
 		// TODO: This property replaces the MinAdjustmentStep property
@@ -54,7 +54,7 @@ var ScalingPolicy = Resource{
 		"ScalingAdjustment": Schema{
 			Type:      ValueNumber,
 			Required:  constraints.PropertyIs("PolicyType", "SimpleScaling"),
-			Conflicts: constraints.PropertyNot("PolicyType", "SimpleScaling"),
+			Conflicts: constraints.Not(constraints.PropertyIs("PolicyType", "SimpleScaling")),
 		},
 
 		"StepAdjustments": Schema{
