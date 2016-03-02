@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/jagregory/cfval/parse"
@@ -45,7 +46,7 @@ func (from ValueType) CoercibleTo(to PropertyType) Coercion {
 	}
 
 	if to == ValueString {
-		return CoercionAlways
+		return CoercionBegrudgingly
 	}
 
 	if from == ValueString {
@@ -68,19 +69,30 @@ func (ValueType) PropertyDefault(string) (interface{}, bool) {
 }
 
 func (vt ValueType) Validate(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if ok := vt.validateValue(value); !ok {
-		switch t := value.(type) {
-		case parse.IntrinsicFunction:
-			return ValidateIntrinsicFunctions(t, ctx, SupportedFunctionsAll)
-		default:
-			return reporting.ValidateOK, reporting.Reports{reporting.NewInvalidTypeFailure(ctx, convert(value), vt)}
-		}
+	if isValidValueForType(vt, value) {
+		return reporting.ValidateOK, nil
 	}
 
-	return reporting.ValidateOK, nil
+	switch t := value.(type) {
+	case parse.IntrinsicFunction:
+		return ValidateIntrinsicFunctions(t, ctx, SupportedFunctionsAll)
+	case map[string]interface{}:
+		return reporting.ValidateAbort, reporting.Reports{reporting.NewFailure(ctx, "Object used in %s property", vt.Describe())}
+	}
+
+	errs := coerce(valueTypeOf(value), vt, ctx)
+	if errs != nil {
+		// We've either dangerously coerced, or failed to coerce, the value here
+		// so we should abort further validations to prevent any type-specific
+		// validations from running. e.g. StringLength or IntegerRange
+		return reporting.ValidateAbort, reporting.Safe(errs)
+	}
+
+	return reporting.ValidateOK, reporting.Safe(errs)
 }
 
-func (vt ValueType) validateValue(value interface{}) bool {
+// TODO: is this needed anymore? Coercion might just catch this behaviour
+func isValidValueForType(vt ValueType, value interface{}) bool {
 	switch vt {
 	case ValueBool:
 		if _, ok := value.(bool); ok {
@@ -115,5 +127,20 @@ func convert(v interface{}) string {
 		return "List<?>"
 	default:
 		return "Unknown"
+	}
+}
+
+func valueTypeOf(v interface{}) ValueType {
+	switch t := v.(type) {
+	case bool:
+		return ValueBool
+	case float64:
+		return ValueNumber
+	case string:
+		return ValueString
+	case int:
+		panic("Numbers are parsed as float64 in JSON, if you're seeing this panic either things have changed in Go's JSON parsing or you're using an int in a test")
+	default:
+		panic(fmt.Errorf("Didn't expect %T here, should've been handled further up", t))
 	}
 }

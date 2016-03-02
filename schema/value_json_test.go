@@ -38,26 +38,29 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}), currentResource, p, ValidationOptions{})
 
-	validRefs := map[string]interface{}{
+	validRef := map[string]interface{}{
 		"One": map[string]interface{}{
-			"Value": parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource1"}},
+			"Value": IF(parse.FnRef)("Resource1"),
 		},
-		"Two": []interface{}{
-			parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource2"}},
-		},
+	}
+
+	coercedRef := map[string]interface{}{
+		"Two": []interface{}{IF(parse.FnRef)("Resource2")},
 	}
 
 	invalidRefs := map[string]interface{}{
 		"One": map[string]interface{}{
-			"Value": parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource9"}},
+			"Value": IF(parse.FnRef)("Resource9"),
 		},
-		"Two": []interface{}{
-			parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "Resource10"}},
-		},
+		"Two": []interface{}{IF(parse.FnRef)("Resource10")},
 	}
 
-	if _, errs := JSON.Validate(validRefs, ctx); errs != nil {
-		t.Error("Should pass with valid refs", errs)
+	if _, errs := JSON.Validate(validRef, ctx); errs != nil {
+		t.Errorf("Should pass with valid refs (errs: %s)", errs)
+	}
+
+	if _, errs := JSON.Validate(coercedRef, ctx); !hasWarning(errs, "Ref value of 'Resource2' is Number but is being dangerously coerced to a String property") {
+		t.Errorf("Should warn with coerced refs (errs: %s)", errs)
 	}
 
 	if _, errs := JSON.Validate(invalidRefs, ctx); errs == nil {

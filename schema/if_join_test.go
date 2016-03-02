@@ -39,16 +39,16 @@ func TestJoin(t *testing.T) {
 	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 
 	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnJoin)(123), false, "invalid type used for arg"},
+		IFScenario{IF(parse.FnJoin)(float64(123)), false, "invalid type used for arg"},
 		IFScenario{IF(parse.FnJoin)(nil), false, "nil used for arg"},
 		IFScenario{IF(parse.FnJoin)([]interface{}{}), false, "no args"},
 		IFScenario{IF(parse.FnJoin)([]interface{}{"a", "b", "c"}), false, "too many args"},
 		IFScenario{IF(parse.FnJoin)([]interface{}{"a"}), false, "too few args"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Join", map[string]interface{}{}}, false, "empty map"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Join", map[string]interface{}{"Fn::Join": []interface{}{"delim", []interface{}{"a", "b"}}, "blah": "blah"}}, false, "extra properties"},
-		IFScenario{IF(parse.FnJoin)([]interface{}{1, []interface{}{"b", "c"}}), false, "invalid type for delimiter"},
-		IFScenario{IF(parse.FnJoin)([]interface{}{"a", 1}), false, "invalid type for values"},
-		IFScenario{IF(parse.FnJoin)([]interface{}{"a", []interface{}{"a", 1}}), false, "invalid type used in values"},
+		IFScenario{IF(parse.FnJoin)([]interface{}{float64(1), []interface{}{"b", "c"}}), false, "invalid type for delimiter"},
+		IFScenario{IF(parse.FnJoin)([]interface{}{"a", float64(1)}), false, "invalid type for values"},
+		IFScenario{IF(parse.FnJoin)([]interface{}{"a", []interface{}{"a", float64(1)}}), false, "invalid type used in values"},
 		IFScenario{IF(parse.FnJoin)([]interface{}{"d", []interface{}{"a", "b"}}), true, "valid"},
 	}
 

@@ -14,11 +14,11 @@ func data() []testCase {
 		testCase{from: ValueString, to: JSON, result: CoercionNever},
 
 		testCase{from: ValueNumber, to: ValueBool, result: CoercionNever},
-		testCase{from: ValueNumber, to: ValueString, result: CoercionAlways},
+		testCase{from: ValueNumber, to: ValueString, result: CoercionBegrudgingly},
 		testCase{from: ValueNumber, to: JSON, result: CoercionNever},
 
 		testCase{from: ValueBool, to: ValueNumber, result: CoercionNever},
-		testCase{from: ValueBool, to: ValueString, result: CoercionAlways},
+		testCase{from: ValueBool, to: ValueString, result: CoercionBegrudgingly},
 		testCase{from: ValueBool, to: JSON, result: CoercionNever},
 
 		testCase{from: JSON, to: ValueBool, result: CoercionNever},

@@ -117,7 +117,7 @@ func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateRe
 	if result == reporting.ValidateAbort {
 		// type validation instructed us to abort, so we bail with whatever results
 		// have been reported so far
-		return reporting.ValidateOK, reporting.Safe(errs)
+		return reporting.ValidateAbort, reporting.Safe(errs)
 	}
 
 	results = append(results, errs...)
@@ -128,7 +128,7 @@ func validateValue(value interface{}, ctx PropertyContext) (reporting.ValidateRe
 	if fn := ctx.Property().ValidateFunc; fn != nil {
 		result, errs := fn(value, ctx)
 		if result == reporting.ValidateAbort {
-			return reporting.ValidateOK, reporting.Safe(errs)
+			return reporting.ValidateAbort, reporting.Safe(errs)
 		}
 
 		results = append(results, errs...)

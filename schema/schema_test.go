@@ -50,7 +50,7 @@ func TestSchemaTypeValidation(t *testing.T) {
 		t.Error("Should pass when value is correct type", errs)
 	}
 
-	if _, errs := schema.Validate(123, ctx); errs == nil {
+	if _, errs := schema.Validate(float64(123), ctx); errs == nil {
 		t.Error("Should fail when value is incorrect type")
 	}
 
@@ -106,11 +106,11 @@ func TestSchemaArrayValidation(t *testing.T) {
 		t.Error("Should pass when value is an array of the correct type", errs)
 	}
 
-	if _, errs := schema.Validate([]interface{}{"abc", 123}, ctx); errs == nil {
+	if _, errs := schema.Validate([]interface{}{"abc", float64(123)}, ctx); errs == nil {
 		t.Error("Should fail when value is a mixed array")
 	}
 
-	if _, errs := schema.Validate([]interface{}{123}, ctx); errs == nil {
+	if _, errs := schema.Validate([]interface{}{float64(123)}, ctx); errs == nil {
 		t.Error("Should fail when value is an incorrect array")
 	}
 
@@ -166,8 +166,8 @@ func TestSchemaCustomValidation(t *testing.T) {
 		t.Error("Should run custom validation when type is correct")
 	}
 
-	if _, errs := schema.Validate("abc", ctx); errs != nil && errs[0].Message != "String used in Number property" {
-		t.Error("Should not run validation when type is correct", errs)
+	if _, errs := schema.Validate("blah", ctx); !hasWarning(errs, "String is dangerously coerced to a Number property") {
+		t.Errorf("Should not run validation when type is incorrect (errs: %s)", errs)
 	}
 
 	if _, errs := schema.Validate(parse.IntrinsicFunction{"Ref", map[string]interface{}{"Ref": "abc"}}, ctx); errs != nil {
