@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	"github.com/jagregory/cfval/parse"
 	"github.com/jagregory/cfval/reporting"
 )
@@ -22,6 +23,11 @@ type Schema struct {
 	// e.g. prop X must be set to false when prop Y is true, if prop Y unspecified
 	// but has a Default of true then this validation can safely fail.
 	Default interface{}
+
+	// Deprecated indicates that this property has been deprecated and should no
+	// longer be used (although may still work for an indeterimate amount of time)
+	// Some properties are replaced by others, or separate resources.
+	Deprecated deprecations.Deprecation
 
 	// Required is set to true if this property must have a value in the template
 	Required constraints.Constraint

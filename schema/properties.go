@@ -48,15 +48,21 @@ func (p Properties) Validate(ctx ResourceContext) reporting.Reports {
 	for key, schema := range p {
 		visited[key] = true
 		value, _ := self.PropertyValue(key)
+		keyCtx := ResourceContextAdd(ctx, key)
 
 		// Validate conflicting properties
 		if value != nil && schema.Conflicts != nil && schema.Conflicts.Pass(self) {
-			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "Conflict: %s", schema.Conflicts.Describe(self)))
+			failures = append(failures, reporting.NewFailure(keyCtx, "Conflict: %s", schema.Conflicts.Describe(self)))
 		}
 
 		// Validate Required
 		if value == nil && schema.Required != nil && schema.Required.Pass(self) {
-			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "%s is required because %s", key, schema.Required.Describe(self)))
+			failures = append(failures, reporting.NewFailure(keyCtx, "%s is required because %s", key, schema.Required.Describe(self)))
+		}
+
+		// Validate Deprecated
+		if value != nil && schema.Deprecated != nil {
+			failures = append(failures, reporting.NewWarning(keyCtx, schema.Deprecated.Describe(key)))
 		}
 
 		// assuming the above either failed and logged some failures, or passed and
@@ -65,7 +71,7 @@ func (p Properties) Validate(ctx ResourceContext) reporting.Reports {
 			continue
 		}
 
-		if _, errs := schema.Validate(value, ResourceContextAdd(ctx, key)); errs != nil {
+		if _, errs := schema.Validate(value, keyCtx); errs != nil {
 			failures = append(failures, errs...)
 		}
 	}

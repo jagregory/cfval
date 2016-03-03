@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	"github.com/jagregory/cfval/parse"
 )
 
@@ -284,5 +285,42 @@ func TestUnexpectedProperties(t *testing.T) {
 
 	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); errs == nil {
 		t.Error("Unexpected property should fail validation")
+	}
+}
+
+func TestDeprecatedProperties(t *testing.T) {
+	res := Resource{
+		Properties: Properties{
+			"Deprecated": Schema{
+				Type:       ValueString,
+				Deprecated: deprecations.Deprecated("blah blah."),
+			},
+
+			"DeprecatedBy": Schema{
+				Type:       ValueString,
+				Deprecated: deprecations.ReplacedBy("SomethingElse", "blah blah."),
+			},
+		},
+	}
+
+	template := &parse.Template{}
+	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
+	}), ValidationOptions{})
+
+	unexpected := ResourceWithDefinition{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
+			"Deprecated":   "value",
+			"DeprecatedBy": "value",
+		}),
+		res,
+	}
+
+	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "Deprecated is deprecated: blah blah.") {
+		t.Errorf("Deprecated property use should warn (errs: %s)", errs)
+	}
+
+	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "DeprecatedBy is replaced by SomethingElse: blah blah.") {
+		t.Errorf("Deprecated property use should warn (errs: %s)", errs)
 	}
 }
