@@ -64,6 +64,10 @@ func TestParsing(t *testing.T) {
 	} else if len(template.Resources["ResourceA"].properties) != 7 {
 		t.Errorf("Incorrect number of properties found, expected 7 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
+		if template.Resources["ResourceA"].LogicalID != "ResourceA" {
+			t.Error("Didn't parse LogicalID of ResourceA")
+		}
+
 		if template.Resources["ResourceA"].properties["Name"] != "TestInstance" {
 			t.Error("Didn't parse Properties of ResourceA")
 		}

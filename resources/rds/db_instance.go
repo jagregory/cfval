@@ -25,7 +25,7 @@ var DBInstance = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"AllocatedStorage": Schema{
 			Type: ValueString,
 			// TODO: If any value is used in the Iops parameter, AllocatedStorage

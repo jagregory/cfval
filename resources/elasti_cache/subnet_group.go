@@ -14,7 +14,7 @@ var SubnetGroup = Resource{
 		Type: cacheSubnetGroupName,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"Description": Schema{
 			Type:     ValueString,
 			Required: constraints.Always,

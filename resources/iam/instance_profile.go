@@ -20,7 +20,7 @@ var InstanceProfile = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"Path": Schema{
 			Type:     ValueString,
 			Required: constraints.Always,

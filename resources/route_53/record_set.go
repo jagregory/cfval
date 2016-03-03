@@ -5,7 +5,7 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var recordSetProperties = map[string]Schema{
+var recordSetProperties = Properties{
 	"AliasTarget": Schema{
 		Type: aliasTarget,
 		Conflicts: constraints.Any{

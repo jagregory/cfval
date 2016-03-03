@@ -14,7 +14,7 @@ var Policy = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"Groups": Schema{
 			Type: Multiple(ValueString),
 			Required: constraints.All{

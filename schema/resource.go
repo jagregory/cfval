@@ -3,11 +3,15 @@ package schema
 import "github.com/jagregory/cfval/reporting"
 
 type Resource struct {
-	AwsType    string
-	Attributes map[string]Schema
-	Properties
+	AwsType      string
+	Attributes   map[string]Schema
+	Properties   ValidatableProperties
 	ReturnValue  Schema
 	ValidateFunc func(ResourceContext) (reporting.ValidateResult, reporting.Reports)
+}
+
+func (rd Resource) PropertyDefault(name string) (interface{}, bool) {
+	return rd.Properties.PropertyDefault(name)
 }
 
 func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, reporting.Reports) {

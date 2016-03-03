@@ -8,7 +8,7 @@ import (
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-policy.html
 var rolePolicy = NestedResource{
 	Description: "IAM Role Policy",
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"PolicyDocument": Schema{
 			Type:     JSON,
 			Required: constraints.Always,

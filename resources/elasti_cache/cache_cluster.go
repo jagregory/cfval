@@ -46,7 +46,7 @@ var CacheCluster = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"AutoMinorVersionUpgrade": Schema{
 			Type: ValueBool,
 		},

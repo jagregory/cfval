@@ -8,7 +8,7 @@ import (
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 var aliasTarget = NestedResource{
 	Description: "Route53 RecordSet AliasTarget",
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"DNSName": Schema{
 			Type:     ValueString,
 			Required: constraints.Always,

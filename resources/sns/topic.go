@@ -10,7 +10,7 @@ var Topic = Resource{
 		Type: ARN,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"DisplayName": Schema{
 			Type: ValueString,
 		},

@@ -10,7 +10,7 @@ import (
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset-geolocation.html
 var geoLocation = NestedResource{
 	Description: "Route 53 Record Set GeoLocation",
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"ContinentCode": Schema{
 			Type:     continentCode,
 			Required: constraints.PropertyNotExists("CountryCode"),

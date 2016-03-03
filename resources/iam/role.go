@@ -20,7 +20,7 @@ var Role = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"AssumeRolePolicyDocument": Schema{
 			Type:     JSON,
 			Required: constraints.Always,

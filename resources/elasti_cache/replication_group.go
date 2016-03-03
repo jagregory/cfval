@@ -63,7 +63,7 @@ var ReplicationGroup = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"AutomaticFailoverEnabled": Schema{
 			Type:    ValueBool,
 			Default: true,

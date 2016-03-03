@@ -10,7 +10,7 @@ import (
 func TestResourcePropertyConflictValidation(t *testing.T) {
 	template := &parse.Template{}
 	res := Resource{
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"Option1": Schema{
 				Type:      ValueString,
 				Conflicts: constraints.PropertyExists("Option2"),
@@ -70,7 +70,7 @@ func TestResourcePropertyConflictValidation(t *testing.T) {
 func TestSchemaRequiredValidation(t *testing.T) {
 	template := &parse.Template{}
 	res := Resource{
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"Option1": Schema{
 				Type:     ValueString,
 				Required: constraints.Always,
@@ -145,7 +145,7 @@ func TestSchemaRequiredValidation(t *testing.T) {
 func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 	template := &parse.Template{}
 	res := Resource{
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"Option1": Schema{
 				Type:     ValueString,
 				Required: constraints.PropertyExists("Option2"),
@@ -204,7 +204,7 @@ func TestResourcePropertyRequiredIfValidation(t *testing.T) {
 func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 	template := &parse.Template{}
 	res := Resource{
-		Properties: map[string]Schema{
+		Properties: Properties{
 			"Option1": Schema{
 				Type:     ValueString,
 				Required: constraints.PropertyNotExists("Option2"),

@@ -7,7 +7,15 @@ import (
 
 type NestedResource struct {
 	Description string
-	Properties
+	Properties  ValidatableProperties
+}
+
+func (res NestedResource) AwsType() string {
+	return res.Description
+}
+
+func (res NestedResource) PropertyDefault(name string) (interface{}, bool) {
+	return res.Properties.PropertyDefault(name)
 }
 
 func (NestedResource) IsArray() bool {
@@ -42,7 +50,7 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		failures, visited := res.Properties.Validate(nestedResourceContext)
 
 		// Reject any properties we weren't expecting
-		for key := range res.Properties {
+		for key := range res.Properties.values() {
 			if !visited[key] {
 				failures = append(failures, reporting.NewFailure(PropertyContextAdd(ctx, key), "Unknown property '%s' for nested %s", key, res.Description))
 			}

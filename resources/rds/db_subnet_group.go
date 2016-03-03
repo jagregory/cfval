@@ -15,7 +15,7 @@ var DBSubnetGroup = Resource{
 		Type: ValueString,
 	},
 
-	Properties: map[string]Schema{
+	Properties: Properties{
 		"DBSubnetGroupDescription": Schema{
 			Type:     ValueString,
 			Required: constraints.Always,

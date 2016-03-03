@@ -3,6 +3,7 @@ package parse
 import "encoding/json"
 
 type TemplateResource struct {
+	LogicalID  string
 	Type       string
 	properties map[string]interface{}
 	Metadata   map[string]interface{}

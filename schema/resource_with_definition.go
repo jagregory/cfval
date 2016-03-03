@@ -11,6 +11,14 @@ type ResourceWithDefinition struct {
 	PropertyDefaults
 }
 
+func (r ResourceWithDefinition) AwsType() string {
+	return r.TemplateResource.Type
+}
+
+func (r ResourceWithDefinition) Id() string {
+	return r.TemplateResource.LogicalID
+}
+
 func (r ResourceWithDefinition) PropertyValueOrDefault(name string) (interface{}, bool) {
 	if v, ok := r.PropertyValue(name); ok {
 		return v, true

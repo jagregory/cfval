@@ -2,6 +2,33 @@ package schema
 
 import "github.com/jagregory/cfval/reporting"
 
+// ValidatableProperties is a wrapper around Properties to allow us to support
+// undefined or unsupported properties
+type ValidatableProperties interface {
+	PropertyDefault(string) (interface{}, bool)
+	Validate(ResourceContext) (reporting.Reports, map[string]bool)
+	values() map[string]Schema
+}
+
+// UnsupportedProperties is a convinience type to give less intrusive errors for
+// resource types we haven't implemented yet. People will get one "unsupported"
+// warning per-resource, rather than lots of "unknown property" errors.
+type UnsupportedProperties struct{}
+
+func (UnsupportedProperties) PropertyDefault(name string) (interface{}, bool) {
+	return nil, false
+}
+
+func (UnsupportedProperties) Validate(ctx ResourceContext) (reporting.Reports, map[string]bool) {
+	return reporting.Reports{
+		reporting.NewWarning(ctx, "<unsupported> cfval does support validating %s resources yet", ctx.CurrentResource().AwsType()),
+	}, map[string]bool{}
+}
+
+func (UnsupportedProperties) values() map[string]Schema {
+	return map[string]Schema{}
+}
+
 type Properties map[string]Schema
 
 func (p Properties) PropertyDefault(name string) (interface{}, bool) {
@@ -44,6 +71,10 @@ func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string
 	}
 
 	return failures, visited
+}
+
+func (p Properties) values() map[string]Schema {
+	return map[string]Schema(p)
 }
 
 func collectKeys(m1 map[string]Schema, m2 map[string]interface{}) []string {
