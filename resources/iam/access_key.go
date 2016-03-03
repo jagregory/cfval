@@ -30,7 +30,7 @@ var AccessKey = Resource{
 				Description: "Status",
 				Options:     []string{"Active", "Inactive"},
 			},
-			Required: constraints.Always,
+			Default: "Active",
 		},
 
 		"UserName": Schema{
