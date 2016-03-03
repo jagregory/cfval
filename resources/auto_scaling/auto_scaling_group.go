@@ -2,6 +2,7 @@ package auto_scaling
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	. "github.com/jagregory/cfval/schema"
 )
 
@@ -60,6 +61,10 @@ var AutoScalingGroup = Resource{
 
 		"MinSize": Schema{
 			Type: ValueString,
+		},
+
+		"NotificationConfiguration": Schema{
+			Deprecated: deprecations.Deprecated("A single NotificationConfiguration should be specified as a list in the NotificationConfigurations property."),
 		},
 
 		"NotificationConfigurations": Schema{

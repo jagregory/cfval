@@ -30,6 +30,8 @@ var Table = Resource{
 			Type: Multiple(globalSecondaryIndex),
 		},
 
+		// TODO: The attributes in the KeySchema property must also be defined in
+		// the AttributeDefinitions property.
 		"KeySchema": Schema{
 			Type:     Multiple(keySchema),
 			Required: constraints.Always,

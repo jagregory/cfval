@@ -2,6 +2,7 @@ package dynamo_db
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	. "github.com/jagregory/cfval/schema"
 )
 
@@ -14,6 +15,10 @@ var keySchema = NestedResource{
 			Type:         ValueString,
 			Required:     constraints.Always,
 			ValidateFunc: StringLengthValidate(1, 255),
+		},
+
+		"HashKeyElement": Schema{
+			Deprecated: deprecations.Deprecated("The HashKeyElement should now be defined in the AttributeDefinitions property of the AWS::DynamoDB::Table resource, and the AttributeName property of the KeySchema used them together."),
 		},
 
 		"KeyType": Schema{

@@ -2,6 +2,7 @@ package cloud_front
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	. "github.com/jagregory/cfval/schema"
 )
 
@@ -21,8 +22,16 @@ var distributionConfig = NestedResource{
 			Type: ValueString,
 		},
 
+		"CNAMEs": Schema{
+			Deprecated: deprecations.Deprecated("CNAMEs should be specified in the Aliases property."),
+		},
+
 		"CustomErrorResponses": Schema{
 			Type: Multiple(customErrorResponse),
+		},
+
+		"CustomOrigin": Schema{
+			Deprecated: deprecations.Deprecated("An CustomOrigin should be specified as an item in the Origins property."),
 		},
 
 		"DefaultCacheBehavior": Schema{
@@ -54,6 +63,10 @@ var distributionConfig = NestedResource{
 
 		"Restrictions": Schema{
 			Type: restrictions,
+		},
+
+		"S3Origin": Schema{
+			Deprecated: deprecations.Deprecated("An S3Origin should be specified as an item in the Origins property."),
 		},
 
 		"ViewerCertificate": Schema{
