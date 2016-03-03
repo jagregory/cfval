@@ -2,6 +2,7 @@ package auto_scaling
 
 import (
 	"github.com/jagregory/cfval/constraints"
+	"github.com/jagregory/cfval/deprecations"
 	. "github.com/jagregory/cfval/schema"
 )
 
@@ -41,9 +42,12 @@ var ScalingPolicy = Resource{
 			Conflicts: constraints.PropertyIs("PolicyType", "SimpleScaling"),
 		},
 
-		// TODO: This property replaces the MinAdjustmentStep property
 		"MinAdjustmentMagnitude": Schema{
 			Type: ValueNumber,
+		},
+
+		"MinAdjustmentStep": Schema{
+			Deprecated: deprecations.Deprecated("MinAdjustmentStep is deprecated, use the MinAdjustmentMagnitude property instead."),
 		},
 
 		"PolicyType": Schema{
