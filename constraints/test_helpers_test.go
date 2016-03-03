@@ -1,19 +1,19 @@
 package constraints
 
-type TestCurrentResource struct {
+type testCurrentResource struct {
 	values   map[string]interface{}
 	defaults map[string]interface{}
 }
 
-func (TestCurrentResource) AwsType() string {
+func (testCurrentResource) AwsType() string {
 	return "Type"
 }
 
-func (TestCurrentResource) Id() string {
+func (testCurrentResource) Id() string {
 	return "TestID"
 }
 
-func (c TestCurrentResource) Properties() []string {
+func (c testCurrentResource) Properties() []string {
 	props := make([]string, 0, len(c.values))
 	for key := range c.values {
 		props = append(props, key)
@@ -21,7 +21,7 @@ func (c TestCurrentResource) Properties() []string {
 	return props
 }
 
-func (c TestCurrentResource) PropertyValueOrDefault(name string) (interface{}, bool) {
+func (c testCurrentResource) PropertyValueOrDefault(name string) (interface{}, bool) {
 	if v, ok := c.PropertyValue(name); ok {
 		return v, true
 	}
@@ -33,12 +33,12 @@ func (c TestCurrentResource) PropertyValueOrDefault(name string) (interface{}, b
 	return nil, false
 }
 
-func (c TestCurrentResource) PropertyDefault(name string) (interface{}, bool) {
+func (c testCurrentResource) PropertyDefault(name string) (interface{}, bool) {
 	v, ok := c.defaults[name]
 	return v, ok
 }
 
-func (c TestCurrentResource) PropertyValue(name string) (interface{}, bool) {
+func (c testCurrentResource) PropertyValue(name string) (interface{}, bool) {
 	v, ok := c.values[name]
 	return v, ok
 }
