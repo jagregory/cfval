@@ -104,6 +104,28 @@ func printReports(reports reporting.Reports) {
 	}
 }
 
+func printTabbed(reports reporting.Reports) {
+	sort.Sort(ByPath(reports))
+
+	for _, report := range reports {
+		path := report.PathReadable
+
+		if report.Level == reporting.Failure {
+			fmt.Print("ERROR\t")
+		} else if report.Level == reporting.Warning {
+			fmt.Print("WARN\t")
+		} else {
+			fmt.Print("\t\t")
+		}
+
+		fmt.Printf("%s\t%s\n", path, report.Message)
+	}
+
+	if len(reports) > 0 {
+		fmt.Println()
+	}
+}
+
 func getReadStream(args []string) (io.Reader, error) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
@@ -129,7 +151,7 @@ Usage: cfval validate [filename]
 Options:
 
   -experiment:map-array-coercion  (Experimental) Objects can be used in properties which expect an array
-  -format                         Output formatting (online|grouped)
+  -format                         Output formatting (online|grouped|machine)
   -warnings-as-errors             Treat warnings as errors
 `
 }
@@ -146,7 +168,7 @@ func (c ValidateCommand) Run(args []string) int {
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "Treats any warnings as errors and fails the validation")
 	cmdFlags.BoolVar(&experimentMapArrayCoercion, "experiment:map-array-coercion", false, "(Experimental) Objects can be used in properties which expect an array")
-	cmdFlags.StringVar(&format, "format", "oneline", "Output formatting (online|grouped)")
+	cmdFlags.StringVar(&format, "format", "oneline", "Output formatting (online|grouped|machine)")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
@@ -182,6 +204,8 @@ func (c ValidateCommand) Run(args []string) int {
 
 	if format == "grouped" {
 		printGroupedReports(reports)
+	} else if format == "machine" {
+		printTabbed(reports)
 	} else {
 		printReports(reports)
 	}
