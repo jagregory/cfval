@@ -73,7 +73,7 @@ var LoadBalancer = Resource{
 		},
 
 		"LBCookieStickinessPolicy": Schema{
-			Type: lbCookieStickinessPolicy,
+			Type: Multiple(lbCookieStickinessPolicy),
 		},
 
 		"LoadBalancerName": Schema{
