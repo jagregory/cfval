@@ -31,7 +31,7 @@ var Table = Resource{
 		},
 
 		"KeySchema": Schema{
-			Type:     keySchema,
+			Type:     Multiple(keySchema),
 			Required: constraints.Always,
 		},
 

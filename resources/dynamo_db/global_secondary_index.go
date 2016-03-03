@@ -17,7 +17,7 @@ var globalSecondaryIndex = NestedResource{
 		},
 
 		"KeySchema": Schema{
-			Type:     keySchema,
+			Type:     Multiple(keySchema),
 			Required: constraints.Always,
 		},
 

@@ -7,7 +7,7 @@ import (
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-lsi.html
 var localSecondaryIndex = NestedResource{
-	Description: "DynamoDB Local Secondary Indexe",
+	Description: "DynamoDB Local Secondary Index",
 
 	Properties: Properties{
 		"IndexName": Schema{
@@ -17,7 +17,7 @@ var localSecondaryIndex = NestedResource{
 		},
 
 		"KeySchema": Schema{
-			Type:     keySchema,
+			Type:     Multiple(keySchema),
 			Required: constraints.Always,
 		},
 
