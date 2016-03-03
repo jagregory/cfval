@@ -3,7 +3,7 @@ package deprecations
 import "fmt"
 
 type Deprecation interface {
-	Describe(property string) string
+	Describe() string
 }
 
 func Deprecated(description string) Deprecation {
@@ -16,14 +16,14 @@ func ReplacedBy(property, description string) Deprecation {
 
 type simpleDeprecation string
 
-func (d simpleDeprecation) Describe(property string) string {
-	return fmt.Sprintf("%s is deprecated: %s", property, d)
+func (d simpleDeprecation) Describe() string {
+	return fmt.Sprintf("Deprecated: %s", d)
 }
 
 type replacement struct {
 	description, replacedBy string
 }
 
-func (d replacement) Describe(property string) string {
-	return fmt.Sprintf("%s is replaced by %s: %s", property, d.replacedBy, d.description)
+func (d replacement) Describe() string {
+	return fmt.Sprintf("Replaced by %s: %s", d.replacedBy, d.description)
 }

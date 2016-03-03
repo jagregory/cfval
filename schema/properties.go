@@ -62,7 +62,8 @@ func (p Properties) Validate(ctx ResourceContext) reporting.Reports {
 
 		// Validate Deprecated
 		if value != nil && schema.Deprecated != nil {
-			failures = append(failures, reporting.NewWarning(keyCtx, schema.Deprecated.Describe(key)))
+			failures = append(failures, reporting.NewWarning(keyCtx, schema.Deprecated.Describe()))
+			continue
 		}
 
 		// assuming the above either failed and logged some failures, or passed and
