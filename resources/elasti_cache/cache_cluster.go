@@ -75,7 +75,7 @@ var CacheCluster = Resource{
 		},
 
 		"CacheSubnetGroupName": Schema{
-			Type: cacheSecurityGroupName,
+			Type: cacheSubnetGroupName,
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("CacheSecurityGroupNames"),
 				constraints.PropertyExists("VpcSecurityGroupIds"),
