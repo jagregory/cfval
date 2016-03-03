@@ -44,6 +44,10 @@ var parameterTypeSchemas = map[string]Schema{
 		Type: Multiple(ValueNumber),
 	},
 
+	"List<String>": Schema{
+		Type: Multiple(ValueString),
+	},
+
 	"CommaDelimitedList": Schema{
 		Type: Multiple(ValueString),
 	},
