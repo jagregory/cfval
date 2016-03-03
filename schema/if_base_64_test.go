@@ -36,7 +36,7 @@ func TestBase64(t *testing.T) {
 				Type: ValueString,
 			},
 		},
-	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
+	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 
 	scenarios := []IFScenario{
 		IFScenario{IF(parse.FnBase64)(123), false, "invalid type used for args"},
@@ -47,7 +47,16 @@ func TestBase64(t *testing.T) {
 		IFScenario{IF(parse.FnBase64)(ExampleValidIFs[parse.FnIf]()), true, "If used"},
 	}
 
-	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnIf) {
+	validIfs := []parse.IntrinsicFunctionSignature{
+		parse.FnIf,
+		parse.FnJoin,
+		parse.FnRef,
+	}
+	for _, fn := range validIfs {
+		scenarios = append(scenarios, IFScenario{IF(parse.FnBase64)(ExampleValidIFs[fn]()), true, fmt.Sprintf("%s as value", fn)})
+	}
+
+	for _, fn := range parse.AllIntrinsicFunctions.Except(validIfs...) {
 		scenarios = append(scenarios, IFScenario{IF(parse.FnBase64)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s as value", fn)})
 	}
 

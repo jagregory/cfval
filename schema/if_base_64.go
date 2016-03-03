@@ -21,7 +21,9 @@ func validateBase64(builtin parse.IntrinsicFunction, ctx PropertyContext) report
 		return nil
 	case parse.IntrinsicFunction:
 		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
-			parse.FnIf: true,
+			parse.FnIf:   true,
+			parse.FnJoin: true,
+			parse.FnRef:  true,
 		})
 		return errs
 	}
