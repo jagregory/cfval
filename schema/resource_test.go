@@ -316,11 +316,11 @@ func TestDeprecatedProperties(t *testing.T) {
 		res,
 	}
 
-	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "Deprecated is deprecated: blah blah.") {
+	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "Deprecated: blah blah.") {
 		t.Errorf("Deprecated property use should warn (errs: %s)", errs)
 	}
 
-	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "DeprecatedBy is replaced by SomethingElse: blah blah.") {
+	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); !hasWarning(errs, "Replaced by SomethingElse: blah blah.") {
 		t.Errorf("Deprecated property use should warn (errs: %s)", errs)
 	}
 }
