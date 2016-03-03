@@ -75,5 +75,5 @@ func validateGetAttAttributeID(builtin parse.IntrinsicFunction, resourceID, attr
 		return errs
 	}
 
-	return reporting.Reports{reporting.NewFailure(ctx, "GetAtt %s.%s is not an attribute", resourceID, attributeID)}
+	return reporting.Reports{reporting.NewFailure(ctx, "%s is not an attribute of %s", attributeID, resource.Type)}
 }

@@ -20,11 +20,12 @@ func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, repo
 	}
 
 	failures, visited := rd.Properties.Validate(ctx)
+	currentResource := ctx.CurrentResource()
 
 	// Reject any properties we weren't expecting
-	for _, key := range ctx.CurrentResource().Properties() {
+	for _, key := range currentResource.Properties() {
 		if !visited[key] {
-			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "Unknown property '%s' for %s", key, rd.AwsType))
+			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "%s is not a property of %s", key, rd.AwsType))
 		}
 	}
 
