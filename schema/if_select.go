@@ -53,14 +53,10 @@ func validateSelectIndex(builtin parse.IntrinsicFunction, index interface{}, arr
 	}
 
 	switch t := index.(type) {
+	case string:
+		return reporting.Reports{reporting.NewFailure(ctx, "Wrong type for index %T", index)}
 	case float64:
-		if t < 0 {
-			return reporting.Reports{reporting.NewFailure(ctx, "Index cannot less than zero")}
-		} else if arr, ok := array.([]interface{}); ok && int(t) >= len(arr) {
-			return reporting.Reports{reporting.NewFailure(ctx, "Index cannot greater than array length")}
-		}
-
-		return nil
+		return validateIndexNumericalValue(t, array, ctx)
 	case parse.IntrinsicFunction:
 		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
 			parse.FnRef:       true,
@@ -69,7 +65,17 @@ func validateSelectIndex(builtin parse.IntrinsicFunction, index interface{}, arr
 		return errs
 	}
 
-	return reporting.Reports{reporting.NewFailure(ctx, "Invalid value for index %v", index)}
+	return reporting.Reports{reporting.NewFailure(ctx, "Invalid value for index %#v", index)}
+}
+
+func validateIndexNumericalValue(index float64, array interface{}, ctx PropertyContext) reporting.Reports {
+	if index < 0 {
+		return reporting.Reports{reporting.NewFailure(ctx, "Index cannot less than zero")}
+	} else if arr, ok := array.([]interface{}); ok && int(index) >= len(arr) {
+		return reporting.Reports{reporting.NewFailure(ctx, "Index cannot greater than array length")}
+	}
+
+	return nil
 }
 
 func validateSelectArray(builtin parse.IntrinsicFunction, array interface{}, ctx PropertyContext) reporting.Reports {
