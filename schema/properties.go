@@ -6,7 +6,7 @@ import "github.com/jagregory/cfval/reporting"
 // undefined or unsupported properties
 type ValidatableProperties interface {
 	PropertyDefault(string) (interface{}, bool)
-	Validate(ResourceContext) (reporting.Reports, map[string]bool)
+	Validate(ResourceContext) reporting.Reports
 	values() map[string]Schema
 }
 
@@ -19,10 +19,10 @@ func (UnsupportedProperties) PropertyDefault(name string) (interface{}, bool) {
 	return nil, false
 }
 
-func (UnsupportedProperties) Validate(ctx ResourceContext) (reporting.Reports, map[string]bool) {
+func (UnsupportedProperties) Validate(ctx ResourceContext) reporting.Reports {
 	return reporting.Reports{
 		reporting.NewWarning(ctx, "<unsupported> cfval does support validating %s resources yet", ctx.CurrentResource().AwsType()),
-	}, map[string]bool{}
+	}
 }
 
 func (UnsupportedProperties) values() map[string]Schema {
@@ -39,7 +39,7 @@ func (p Properties) PropertyDefault(name string) (interface{}, bool) {
 	return nil, false
 }
 
-func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string]bool) {
+func (p Properties) Validate(ctx ResourceContext) reporting.Reports {
 	failures := make(reporting.Reports, 0, len(p)*2)
 	visited := make(map[string]bool)
 
@@ -70,7 +70,14 @@ func (p Properties) Validate(ctx ResourceContext) (reporting.Reports, map[string
 		}
 	}
 
-	return failures, visited
+	// Reject any properties we weren't expecting
+	for _, key := range self.Properties() {
+		if !visited[key] {
+			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "%s is not a property of %s", key, self.AwsType()))
+		}
+	}
+
+	return reporting.Safe(failures)
 }
 
 func (p Properties) values() map[string]Schema {

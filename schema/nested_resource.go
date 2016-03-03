@@ -47,20 +47,9 @@ func (res NestedResource) Validate(value interface{}, ctx PropertyContext) (repo
 		tnr := parse.NewTemplateResource(property.Type.Describe(), values)
 
 		nestedResourceContext := NewResourceContext(ctx, ResourceWithDefinition{tnr, property.Type})
-		failures, visited := res.Properties.Validate(nestedResourceContext)
+		failures := res.Properties.Validate(nestedResourceContext)
 
-		// Reject any properties we weren't expecting
-		for key := range res.Properties.values() {
-			if !visited[key] {
-				failures = append(failures, reporting.NewFailure(PropertyContextAdd(ctx, key), "Unknown property '%s' for nested %s", key, res.Description))
-			}
-		}
-
-		if len(failures) == 0 {
-			return reporting.ValidateOK, nil
-		}
-
-		return reporting.ValidateOK, failures
+		return reporting.ValidateOK, reporting.Safe(failures)
 	}
 
 	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "Invalid type %T for nested resource %s", value, res.Description)}

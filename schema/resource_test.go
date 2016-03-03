@@ -259,3 +259,30 @@ func TestResourcePropertyRequiredUnlessValidation(t *testing.T) {
 		t.Error("Resource should pass if both Option1 and Option2 are set", errs)
 	}
 }
+
+func TestUnexpectedProperties(t *testing.T) {
+	res := Resource{
+		Properties: Properties{
+			"Expected": Schema{
+				Type: ValueString,
+			},
+		},
+	}
+
+	template := &parse.Template{}
+	ctx := NewInitialContext(template, NewResourceDefinitions(map[string]Resource{
+		"TestResource": res,
+	}), ValidationOptions{})
+
+	unexpected := ResourceWithDefinition{
+		parse.NewTemplateResource("TestResource", map[string]interface{}{
+			"Expected":      "value",
+			"SomethingElse": "value",
+		}),
+		res,
+	}
+
+	if _, errs := res.Validate(NewResourceContext(ctx, unexpected)); errs == nil {
+		t.Error("Unexpected property should fail validation")
+	}
+}

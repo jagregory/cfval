@@ -19,21 +19,9 @@ func (rd Resource) Validate(ctx ResourceContext) (reporting.ValidateResult, repo
 		return rd.ValidateFunc(ctx)
 	}
 
-	failures, visited := rd.Properties.Validate(ctx)
-	currentResource := ctx.CurrentResource()
+	failures := rd.Properties.Validate(ctx)
 
-	// Reject any properties we weren't expecting
-	for _, key := range currentResource.Properties() {
-		if !visited[key] {
-			failures = append(failures, reporting.NewFailure(ResourceContextAdd(ctx, key), "%s is not a property of %s", key, rd.AwsType))
-		}
-	}
-
-	if len(failures) == 0 {
-		return reporting.ValidateOK, nil
-	}
-
-	return reporting.ValidateOK, failures
+	return reporting.ValidateOK, reporting.Safe(failures)
 }
 
 func (rd Resource) TargetType() PropertyType {
