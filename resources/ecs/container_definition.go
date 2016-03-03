@@ -41,12 +41,12 @@ var containerDefinition = NestedResource{
 		},
 
 		"Memory": Schema{
-			Type: Multiple(ValueString),
+			Type:     ValueNumber,
+			Required: constraints.Always,
 		},
 
 		"MountPoints": Schema{
-			Type:     Multiple(containerDefinitionMountPoint),
-			Required: constraints.Always,
+			Type: Multiple(containerDefinitionMountPoint),
 		},
 
 		"Name": Schema{
