@@ -4,9 +4,9 @@ package schema
 
 import "fmt"
 
-const _ValidateOption_name = "OptionExperimentMapArrayCoercion"
+const _ValidateOption_name = "OptionExperimentDisableObjectArrayCoercion"
 
-var _ValidateOption_index = [...]uint8{0, 32}
+var _ValidateOption_index = [...]uint8{0, 42}
 
 func (i ValidateOption) String() string {
 	if i < 0 || i >= ValidateOption(len(_ValidateOption_index)-1) {

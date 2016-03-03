@@ -204,18 +204,18 @@ func TestSchemaMapToArrayCoercion(t *testing.T) {
 	defaultOptionsCtx := NewResourceContext(defaultOptionsBase, ResourceWithDefinition{res, def})
 
 	mapCoercionOptionsBase := NewInitialContext(&parse.Template{}, NewResourceDefinitions(nil), ValidationOptions{
-		OptionExperimentMapArrayCoercion: true,
+		OptionExperimentDisableObjectArrayCoercion: true,
 	})
 	mapCoercionOptionsCtx := NewResourceContext(mapCoercionOptionsBase, ResourceWithDefinition{res, def})
 
 	value := map[string]interface{}{
 		"StringProp": "blah",
 	}
-	if _, errs := prop.Validate(value, defaultOptionsCtx); errs == nil {
+	if _, errs := prop.Validate(value, mapCoercionOptionsCtx); errs == nil {
 		t.Error("Shouldn't be able to coerce a map into an array property", errs)
 	}
 
-	if _, errs := prop.Validate(value, mapCoercionOptionsCtx); errs == nil {
+	if _, errs := prop.Validate(value, defaultOptionsCtx); errs == nil {
 		t.Error("Shouldn't be able to coerce a map into an array property without a warning", errs, len(errs))
 	} else if errs[0].Level != reporting.Warning {
 		t.Error("Shouldn't be able to coerce a map into an array property without a warning", errs, len(errs))

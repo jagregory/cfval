@@ -88,27 +88,24 @@ func validateArray(arrayType ArrayPropertyType, value interface{}, ctx PropertyC
 // where an Array was expected; this is possibly valid, and could either be a
 // function reference or some attempt at coercion.
 func validateMapWhereArrayShouldBe(arrayType ArrayPropertyType, itemSchema Schema, value map[string]interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-	if ctx.Options()[OptionExperimentMapArrayCoercion] {
-		// Not sure about this behaviour, so it's behind a flag until I decide
-		// whether it's wise or not.
-		//
-		// CloudFormation appears to allow you to flatten a single item array
-		// for array properties, e.g. X: [Y] can be specified as X: Y
-		//
-		// So in this case if we get a map here just validate it against the
-		// schema for the item of the array
-		results := make(reporting.Reports, 0, 25)
-
-		if _, errs := itemSchema.Validate(value, ctx); errs != nil {
-			results = append(results, errs...)
-		}
-
-		results = append(results, reporting.NewWarning(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe()))
-
-		return reporting.ValidateOK, reporting.Safe(results)
+	if ctx.Options()[OptionExperimentDisableObjectArrayCoercion] {
+		return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe())}
 	}
 
-	return reporting.ValidateOK, reporting.Reports{reporting.NewFailure(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe())}
+	// CloudFormation appears to allow you to flatten a single item array
+	// for array properties, e.g. X: [Y] can be specified as X: Y
+	//
+	// So in this case if we get a map here just validate it against the
+	// schema for the item of the array and provide a warning.
+	results := make(reporting.Reports, 0, 25)
+
+	if _, errs := itemSchema.Validate(value, ctx); errs != nil {
+		results = append(results, errs...)
+	}
+
+	results = append(results, reporting.NewWarning(ctx, "%s used instead of %s", arrayType.Unwrap().Describe(), arrayType.Describe()))
+
+	return reporting.ValidateOK, reporting.Safe(results)
 }
 
 // validateValue takes a value and validates it against the Type of the

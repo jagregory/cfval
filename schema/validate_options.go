@@ -7,5 +7,5 @@ type ValidationOptions map[ValidateOption]bool
 type ValidateOption int
 
 const (
-	OptionExperimentMapArrayCoercion ValidateOption = iota
+	OptionExperimentDisableObjectArrayCoercion ValidateOption = iota
 )

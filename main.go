@@ -150,9 +150,9 @@ Usage: cfval validate [filename]
 
 Options:
 
-  -experiment:map-array-coercion  (Experimental) Objects can be used in properties which expect an array
-  -format                         Output formatting (online|grouped|machine)
-  -warnings-as-errors             Treat warnings as errors
+  -experiment:disable-object-array-coercion  (Experimental) Fail when objects are used in properties which expect an array
+  -format                                    Output formatting (online|grouped|machine)
+  -warnings-as-errors                        Treat warnings as errors
 `
 }
 
@@ -163,11 +163,11 @@ func (ValidateCommand) Synopsis() string {
 func (c ValidateCommand) Run(args []string) int {
 	var warningsAsErrors bool
 	var format string
-	var experimentMapArrayCoercion bool
+	var experimentDisableObjectArrayCoercion bool
 
 	cmdFlags := flag.NewFlagSet("validate", flag.ContinueOnError)
 	cmdFlags.BoolVar(&warningsAsErrors, "warnings-as-errors", false, "Treats any warnings as errors and fails the validation")
-	cmdFlags.BoolVar(&experimentMapArrayCoercion, "experiment:map-array-coercion", false, "(Experimental) Objects can be used in properties which expect an array")
+	cmdFlags.BoolVar(&experimentDisableObjectArrayCoercion, "experiment:disable-object-array-coercion", false, "(Experimental) Fail when objects are used in properties which expect an array")
 	cmdFlags.StringVar(&format, "format", "oneline", "Output formatting (online|grouped|machine)")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
@@ -197,7 +197,7 @@ func (c ValidateCommand) Run(args []string) int {
 		template,
 		schema.NewResourceDefinitions(resources.AwsTypes),
 		schema.ValidationOptions{
-			schema.OptionExperimentMapArrayCoercion: experimentMapArrayCoercion,
+			schema.OptionExperimentDisableObjectArrayCoercion: experimentDisableObjectArrayCoercion,
 		},
 	)
 	stats := reports.Stats()
