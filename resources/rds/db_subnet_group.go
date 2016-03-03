@@ -10,6 +10,11 @@ import (
 var DBSubnetGroup = Resource{
 	AwsType: "AWS::RDS::DBSubnetGroup",
 
+	// Name
+	ReturnValue: Schema{
+		Type: ValueString,
+	},
+
 	Properties: map[string]Schema{
 		"DBSubnetGroupDescription": Schema{
 			Type:     ValueString,
