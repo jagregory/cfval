@@ -26,7 +26,7 @@ func validateJSON(value interface{}, ctx PropertyContext) (reporting.ValidateRes
 		return ValueNumber.Validate(t, numberItemContext)
 	case bool:
 		boolItemContext := NewPropertyContext(ctx, Schema{Type: ValueBool})
-		return ValueNumber.Validate(t, boolItemContext)
+		return ValueBool.Validate(t, boolItemContext)
 	default:
 		panic(fmt.Sprintf("Unexpected JSON type %T", t))
 	}
