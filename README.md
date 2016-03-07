@@ -22,6 +22,10 @@ For the latest stable release on OSX (still pre-release):
 
     brew install jagregory/tools/cfval
 
+Or to update:
+
+    brew update && brew upgrade cfval
+
 For other operating systems and/or to use the absoltue latest, cfval is installable from source via `go get`.
 
     go get -v github.com/jagregory/cfval
