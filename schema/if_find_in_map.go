@@ -28,17 +28,20 @@ func validateFindInMap(builtin parse.IntrinsicFunction, ctx PropertyContext) rep
 	reports := make(reporting.Reports, 0, 10)
 
 	mapName := args[0]
-	if errs := validateFindInMapMapName(builtin, mapName, PropertyContextAdd(ctx, "MapName")); errs != nil {
+	mapNameCtx := PropertyContextAdd(NewPropertyContext(ctx, Schema{Type: ValueString}), "MapName")
+	if errs := validateFindInMapMapName(builtin, mapName, mapNameCtx); errs != nil {
 		reports = append(reports, errs...)
 	}
 
 	topLevelKey := args[1]
-	if errs := validateFindInMapTopLevelKey(builtin, mapName, topLevelKey, PropertyContextAdd(ctx, "TopLevelKey")); errs != nil {
+	topLevelKeyCtx := PropertyContextAdd(NewPropertyContext(ctx, Schema{Type: ValueString}), "TopLevelKey")
+	if errs := validateFindInMapTopLevelKey(builtin, mapName, topLevelKey, topLevelKeyCtx); errs != nil {
 		reports = append(reports, errs...)
 	}
 
 	secondLevelKey := args[2]
-	if errs := validateFindInMapSecondLevelKey(builtin, mapName, topLevelKey, secondLevelKey, PropertyContextAdd(ctx, "SecondLevelKey")); errs != nil {
+	secondLevelKeyCtx := PropertyContextAdd(NewPropertyContext(ctx, Schema{Type: ValueString}), "SecondLevelKey")
+	if errs := validateFindInMapSecondLevelKey(builtin, mapName, topLevelKey, secondLevelKey, secondLevelKeyCtx); errs != nil {
 		reports = append(reports, errs...)
 	}
 

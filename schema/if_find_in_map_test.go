@@ -55,4 +55,9 @@ func TestFindInMap(t *testing.T) {
 			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
 		}
 	}
+
+	coercionOfNestedIF := IF(parse.FnFindInMap)([]interface{}{ExampleValidIFs[parse.FnRef](), ExampleValidIFs[parse.FnRef](), ExampleValidIFs[parse.FnRef]()})
+	if errs := validateFindInMap(coercionOfNestedIF, NewPropertyContext(ctx, Schema{Type: InstanceID})); errs != nil {
+		t.Errorf("Should pass with nested-Ref able to be coerced (errs: %s)", errs)
+	}
 }
