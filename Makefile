@@ -19,4 +19,4 @@ fetch_sample_templates:
 	s3cmd sync s3://cloudformation-templates-ap-southeast-2 ./specs/sample_templates
 
 test_sample_templates:
-	find ./specs/sample_templates -exec sh -c "echo; echo Validating: {}; ./cfval validate -experiment:map-array-coercion -format=machine {}" \; -name \*.template -or -name \*.json
+	find ./specs/sample_templates -exec sh -c "echo; echo Validating: {}; ./cfval validate -format=machine {}" \; -name \*.template -or -name \*.json

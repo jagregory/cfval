@@ -5,84 +5,89 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var recordSetProperties = Properties{
-	"AliasTarget": Schema{
-		Type: aliasTarget,
-		Conflicts: constraints.Any{
-			constraints.PropertyExists("ResourceRecords"),
-			constraints.PropertyExists("TTL"),
+func recordSetProperties(includeComment bool) Properties {
+	properties := Properties{
+		"AliasTarget": Schema{
+			Type: aliasTarget,
+			Conflicts: constraints.Any{
+				constraints.PropertyExists("ResourceRecords"),
+				constraints.PropertyExists("TTL"),
+			},
 		},
-	},
 
-	"Failover": Schema{
-		Type: EnumValue{
-			Description: "Failover",
-			Options:     []string{"PRIMARY", "SECONDARY"},
+		"Failover": Schema{
+			Type: EnumValue{
+				Description: "Failover",
+				Options:     []string{"PRIMARY", "SECONDARY"},
+			},
 		},
-	},
 
-	"GeoLocation": Schema{
-		Type: geoLocation,
-	},
-
-	"HealthCheckId": Schema{
-		Type: ValueString,
-	},
-
-	"HostedZoneId": Schema{
-		Type:      HostedZoneID,
-		Conflicts: constraints.PropertyExists("HostedZoneName"),
-	},
-
-	"HostedZoneName": Schema{
-		Type:      ValueString,
-		Conflicts: constraints.PropertyExists("HostedZoneId"),
-	},
-
-	"Name": Schema{
-		Type:     ValueString,
-		Required: constraints.Always,
-	},
-
-	// TODO: Region validation: http://docs.aws.amazon.com/general/latest/gr/rande.html
-	"Region": Schema{
-		Type: ValueString,
-	},
-
-	"ResourceRecords": Schema{
-		Type:      Multiple(ValueString),
-		Conflicts: constraints.PropertyExists("AliasTarget"),
-		Required:  constraints.PropertyNotExists("AliasTarget"),
-	},
-
-	"SetIdentifier": Schema{
-		Type: ValueString,
-		Required: constraints.Any{
-			constraints.PropertyExists("Weight"),
-			constraints.PropertyExists("Latency"),
-			constraints.PropertyExists("Failover"),
-			constraints.PropertyExists("GeoLocation"),
+		"GeoLocation": Schema{
+			Type: geoLocation,
 		},
-	},
 
-	"TTL": Schema{
-		Type:      ValueString,
-		Conflicts: constraints.PropertyExists("AliasTarget"),
-	},
+		"HealthCheckId": Schema{
+			Type: ValueString,
+		},
 
-	"Type": Schema{
-		Type:     recordSetType,
-		Required: constraints.Always,
-	},
+		"HostedZoneId": Schema{
+			Type:      HostedZoneID,
+			Conflicts: constraints.PropertyExists("HostedZoneName"),
+		},
 
-	"Weight": Schema{
-		Type: ValueNumber,
-	},
-}
+		"HostedZoneName": Schema{
+			Type:      ValueString,
+			Conflicts: constraints.PropertyExists("HostedZoneId"),
+		},
 
-var recordSet = NestedResource{
-	Description: "RecordSetGroup RecordSet",
-	Properties:  recordSetProperties,
+		"Name": Schema{
+			Type:     ValueString,
+			Required: constraints.Always,
+		},
+
+		// TODO: Region validation: http://docs.aws.amazon.com/general/latest/gr/rande.html
+		"Region": Schema{
+			Type: ValueString,
+		},
+
+		"ResourceRecords": Schema{
+			Type:      Multiple(ValueString),
+			Conflicts: constraints.PropertyExists("AliasTarget"),
+			Required:  constraints.PropertyNotExists("AliasTarget"),
+		},
+
+		"SetIdentifier": Schema{
+			Type: ValueString,
+			Required: constraints.Any{
+				constraints.PropertyExists("Weight"),
+				constraints.PropertyExists("Latency"),
+				constraints.PropertyExists("Failover"),
+				constraints.PropertyExists("GeoLocation"),
+			},
+		},
+
+		"TTL": Schema{
+			Type:      ValueString,
+			Conflicts: constraints.PropertyExists("AliasTarget"),
+		},
+
+		"Type": Schema{
+			Type:     recordSetType,
+			Required: constraints.Always,
+		},
+
+		"Weight": Schema{
+			Type: ValueNumber,
+		},
+	}
+
+	if includeComment {
+		properties["Comment"] = Schema{
+			Type: ValueString,
+		}
+	}
+
+	return properties
 }
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
@@ -94,5 +99,5 @@ var RecordSet = Resource{
 		Type: ValueString,
 	},
 
-	Properties: recordSetProperties,
+	Properties: recordSetProperties(true),
 }

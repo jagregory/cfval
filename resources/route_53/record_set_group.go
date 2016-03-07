@@ -5,6 +5,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
+var recordSetGroupRecordSet = NestedResource{
+	Description: "RecordSetGroup RecordSet",
+	Properties:  recordSetProperties(false),
+}
+
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordsetgroup.html
 var RecordSetGroup = Resource{
 	AwsType: "AWS::Route53::RecordSetGroup",
@@ -30,7 +35,7 @@ var RecordSetGroup = Resource{
 		},
 
 		"RecordSets": Schema{
-			Type:     Multiple(recordSet),
+			Type:     Multiple(recordSetGroupRecordSet),
 			Required: constraints.Always,
 		},
 	},
