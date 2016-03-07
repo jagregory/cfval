@@ -1,0 +1,25 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-5fe31a21"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "foo": {
+            "services": {
+              "sysvinit": {
+                "bar": {
+                  "ensureRunning": true,
+                  "enabled": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
