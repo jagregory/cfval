@@ -1,6 +1,37 @@
 package schema
 
-import "github.com/jagregory/cfval/parse"
+import (
+	"testing"
+
+	"github.com/jagregory/cfval/parse"
+	"github.com/jagregory/cfval/reporting"
+)
+
+type ifValidateFunc func(parse.IntrinsicFunction, PropertyContext) reporting.Reports
+
+type IFScenario struct {
+	fn           parse.IntrinsicFunction
+	propertyType PropertyType
+	pass         bool
+	message      string
+}
+
+func (s IFScenario) evaluate(t *testing.T, i int, fn ifValidateFunc, ctx PropertyContext) {
+	errs := fn(s.fn, NewPropertyContext(ctx, Schema{Type: s.propertyType}))
+	if s.pass && errs != nil {
+		t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
+	} else if !s.pass && errs == nil {
+		t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
+	}
+}
+
+type IFScenarios []IFScenario
+
+func (scenarios IFScenarios) evaluate(t *testing.T, fn ifValidateFunc, ctx PropertyContext) {
+	for i, s := range scenarios {
+		s.evaluate(t, i, fn, ctx)
+	}
+}
 
 var IF = func(key parse.IntrinsicFunctionSignature) func(args interface{}) parse.IntrinsicFunction {
 	return func(args interface{}) parse.IntrinsicFunction {

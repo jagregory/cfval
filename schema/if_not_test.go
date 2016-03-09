@@ -38,11 +38,11 @@ func TestNot(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 
-	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnNot)(123), false, "invalid type used for args"},
-		IFScenario{IF(parse.FnNot)(nil), false, "nil used for args"},
-		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{}}, false, "empty map"},
-		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{"Fn::Not": "blah", "blah": "blah"}}, false, "extra properties"},
+	scenarios := IFScenarios{
+		IFScenario{IF(parse.FnNot)(123), ValueString, false, "invalid type used for args"},
+		IFScenario{IF(parse.FnNot)(nil), ValueString, false, "nil used for args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{}}, ValueString, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{"Fn::Not": "blah", "blah": "blah"}}, ValueString, false, "extra properties"},
 	}
 
 	validFns := []parse.IntrinsicFunctionSignature{
@@ -56,18 +56,11 @@ func TestNot(t *testing.T) {
 		parse.FnRef,
 	}
 	for _, fn := range validFns {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnNot)(ExampleValidIFs[fn]()), true, fmt.Sprintf("%s allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnNot)(ExampleValidIFs[fn]()), ValueString, true, fmt.Sprintf("%s allowed as condition", fn)})
 	}
 	for _, fn := range parse.AllIntrinsicFunctions.Except(validFns...) {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnNot)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s not allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnNot)(ExampleValidIFs[fn]()), ValueString, false, fmt.Sprintf("%s not allowed as condition", fn)})
 	}
 
-	for i, s := range scenarios {
-		errs := validateNot(s.fn, ctx)
-		if s.pass && errs != nil {
-			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
-		} else if !s.pass && errs == nil {
-			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
-		}
-	}
+	scenarios.evaluate(t, validateNot, ctx)
 }

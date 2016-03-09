@@ -38,25 +38,18 @@ func TestCondition(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 
-	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnCondition)(123), false, "invalid type used for args"},
-		IFScenario{IF(parse.FnCondition)(nil), false, "nil used for args"},
-		IFScenario{parse.IntrinsicFunction{"Condition", map[string]interface{}{}}, false, "empty map"},
-		IFScenario{parse.IntrinsicFunction{"Condition", map[string]interface{}{"Condition": "Condition", "blah": "blah"}}, false, "extra properties"},
-		IFScenario{IF(parse.FnCondition)("NotACondition"), false, "invalid condition"},
-		IFScenario{IF(parse.FnCondition)("Condition"), true, "valid condition"},
+	scenarios := IFScenarios{
+		IFScenario{IF(parse.FnCondition)(123), ValueString, false, "invalid type used for args"},
+		IFScenario{IF(parse.FnCondition)(nil), ValueString, false, "nil used for args"},
+		IFScenario{parse.IntrinsicFunction{"Condition", map[string]interface{}{}}, ValueString, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Condition", map[string]interface{}{"Condition": "Condition", "blah": "blah"}}, ValueString, false, "extra properties"},
+		IFScenario{IF(parse.FnCondition)("NotACondition"), ValueString, false, "invalid condition"},
+		IFScenario{IF(parse.FnCondition)("Condition"), ValueString, true, "valid condition"},
 	}
 
 	for _, fn := range parse.AllIntrinsicFunctions {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnCondition)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s not allowed as condition name", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnCondition)(ExampleValidIFs[fn]()), ValueString, false, fmt.Sprintf("%s not allowed as condition name", fn)})
 	}
 
-	for i, s := range scenarios {
-		errs := validateCondition(s.fn, ctx)
-		if s.pass && errs != nil {
-			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
-		} else if !s.pass && errs == nil {
-			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
-		}
-	}
+	scenarios.evaluate(t, validateCondition, ctx)
 }

@@ -38,28 +38,21 @@ func TestGetAZs(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnGetAZs)(123), false, "invalid type used for arg"},
-		IFScenario{IF(parse.FnGetAZs)(nil), false, "nil used for arg"},
-		IFScenario{IF(parse.FnGetAZs)([]interface{}{}), false, "no args"},
-		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{}}, false, "empty map"},
-		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{"Fn::GetAZs": "", "blah": "blah"}}, false, "extra properties"},
-		IFScenario{IF(parse.FnGetAZs)(""), true, "empty arg"},
-		IFScenario{IF(parse.FnGetAZs)("ap-southeast-2"), true, "valid region"},
-		// TODO: IFScenario{IF(parse.FnGetAZs)("ap-southeast-9"), false, "invalid region"},
-		IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), true, "Ref used as arg"},
+	scenarios := IFScenarios{
+		IFScenario{IF(parse.FnGetAZs)(123), InstanceID, false, "invalid type used for arg"},
+		IFScenario{IF(parse.FnGetAZs)(nil), InstanceID, false, "nil used for arg"},
+		IFScenario{IF(parse.FnGetAZs)([]interface{}{}), InstanceID, false, "no args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{}}, InstanceID, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::GetAZs", map[string]interface{}{"Fn::GetAZs": "", "blah": "blah"}}, InstanceID, false, "extra properties"},
+		IFScenario{IF(parse.FnGetAZs)(""), InstanceID, true, "empty arg"},
+		IFScenario{IF(parse.FnGetAZs)("ap-southeast-2"), InstanceID, true, "valid region"},
+		// TODO: IFScenario{IF(parse.FnGetAZs)("ap-southeast-9"), InstanceID, false, "invalid region"},
+		IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), InstanceID, true, "Ref used as arg"},
 	}
 
 	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnRef) {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[fn]()), false, fmt.Sprintf("%s as arg", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[fn]()), InstanceID, false, fmt.Sprintf("%s as arg", fn)})
 	}
 
-	for i, s := range scenarios {
-		errs := validateGetAZs(s.fn, ctx)
-		if s.pass && errs != nil {
-			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
-		} else if !s.pass && errs == nil {
-			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
-		}
-	}
+	scenarios.evaluate(t, validateGetAZs, ctx)
 }

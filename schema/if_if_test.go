@@ -42,19 +42,19 @@ func TestIf(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: InstanceID}, ValidationOptions{})
 
-	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnIf)(123), false, "invalid type used for arg"},
-		IFScenario{IF(parse.FnIf)(nil), false, "nil used for arg"},
-		IFScenario{IF(parse.FnIf)([]interface{}{}), false, "no args"},
-		IFScenario{parse.IntrinsicFunction{"Fn::If", map[string]interface{}{}}, false, "empty map"},
-		IFScenario{parse.IntrinsicFunction{"Fn::If", map[string]interface{}{"Fn::If": "", "blah": "blah"}}, false, "extra properties"},
-		IFScenario{IF(parse.FnIf)([]interface{}{"NotACondition", "a", "b"}), false, "not a valid condition name"},
-		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", "b"}), true, "valid condition name"},
-		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", IF(parse.FnRef)("AWS::NoValue")}), true, "AWS::NoValue"},
+	scenarios := IFScenarios{
+		IFScenario{IF(parse.FnIf)(123), InstanceID, false, "invalid type used for arg"},
+		IFScenario{IF(parse.FnIf)(nil), InstanceID, false, "nil used for arg"},
+		IFScenario{IF(parse.FnIf)([]interface{}{}), InstanceID, false, "no args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::If", map[string]interface{}{}}, InstanceID, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::If", map[string]interface{}{"Fn::If": "", "blah": "blah"}}, InstanceID, false, "extra properties"},
+		IFScenario{IF(parse.FnIf)([]interface{}{"NotACondition", "a", "b"}), InstanceID, false, "not a valid condition name"},
+		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", "b"}), InstanceID, true, "valid condition name"},
+		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", IF(parse.FnRef)("AWS::NoValue")}), InstanceID, true, "AWS::NoValue"},
 	}
 
 	for _, fn := range parse.AllIntrinsicFunctions {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{ExampleValidIFs[fn](), "a", "b"}), false, fmt.Sprintf("%s in place of condition name", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{ExampleValidIFs[fn](), "a", "b"}), InstanceID, false, fmt.Sprintf("%s in place of condition name", fn)})
 	}
 
 	validValueFns := []parse.IntrinsicFunctionSignature{
@@ -68,20 +68,13 @@ func TestIf(t *testing.T) {
 		parse.FnRef,
 	}
 	for _, fn := range validValueFns {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", ExampleValidIFs[fn](), "b"}), true, fmt.Sprintf("%s allowed for true value", fn)})
-		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", ExampleValidIFs[fn]()}), true, fmt.Sprintf("%s allowed for false value", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", ExampleValidIFs[fn](), "b"}), InstanceID, true, fmt.Sprintf("%s allowed for true value", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", ExampleValidIFs[fn]()}), InstanceID, true, fmt.Sprintf("%s allowed for false value", fn)})
 	}
 	for _, fn := range parse.AllIntrinsicFunctions.Except(validValueFns...) {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", ExampleValidIFs[fn](), "b"}), false, fmt.Sprintf("%s not allowed for true value", fn)})
-		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", ExampleValidIFs[fn]()}), false, fmt.Sprintf("%s not allowed for false value", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", ExampleValidIFs[fn](), "b"}), InstanceID, false, fmt.Sprintf("%s not allowed for true value", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", ExampleValidIFs[fn]()}), InstanceID, false, fmt.Sprintf("%s not allowed for false value", fn)})
 	}
 
-	for i, s := range scenarios {
-		errs := validateIf(s.fn, ctx)
-		if s.pass && errs != nil {
-			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
-		} else if !s.pass && errs == nil {
-			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
-		}
-	}
+	scenarios.evaluate(t, validateIf, ctx)
 }

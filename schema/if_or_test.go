@@ -38,16 +38,16 @@ func TestOr(t *testing.T) {
 		},
 	}), currentResource, Schema{Type: ValueString}, ValidationOptions{})
 
-	scenarios := []IFScenario{
-		IFScenario{IF(parse.FnOr)(123), false, "invalid type used for args"},
-		IFScenario{IF(parse.FnOr)(nil), false, "nil used for args"},
-		IFScenario{parse.IntrinsicFunction{"Fn::Or", map[string]interface{}{}}, false, "empty map"},
-		IFScenario{parse.IntrinsicFunction{"Fn::Or", map[string]interface{}{"Fn::Or": []interface{}{"a", []interface{}{"b", "c"}}, "blah": "blah"}}, false, "extra properties"},
-		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), false, "too many arguments"},
-		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition]()}), false, "too few arguments"},
-		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), true, "minimum arguments"},
-		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), true, "some arguments"},
-		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), true, "maximum arguments"},
+	scenarios := IFScenarios{
+		IFScenario{IF(parse.FnOr)(123), ValueString, false, "invalid type used for args"},
+		IFScenario{IF(parse.FnOr)(nil), ValueString, false, "nil used for args"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Or", map[string]interface{}{}}, ValueString, false, "empty map"},
+		IFScenario{parse.IntrinsicFunction{"Fn::Or", map[string]interface{}{"Fn::Or": []interface{}{"a", []interface{}{"b", "c"}}, "blah": "blah"}}, ValueString, false, "extra properties"},
+		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, false, "too many arguments"},
+		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition]()}), ValueString, false, "too few arguments"},
+		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "minimum arguments"},
+		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "some arguments"},
+		IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "maximum arguments"},
 	}
 
 	validFns := []parse.IntrinsicFunctionSignature{
@@ -61,20 +61,13 @@ func TestOr(t *testing.T) {
 		parse.FnRef,
 	}
 	for _, fn := range validFns {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), true, fmt.Sprintf("%s allowed as condition", fn)})
-		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[fn]()}), true, fmt.Sprintf("%s allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, fmt.Sprintf("%s allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[fn]()}), ValueString, true, fmt.Sprintf("%s allowed as condition", fn)})
 	}
 	for _, fn := range parse.AllIntrinsicFunctions.Except(validFns...) {
-		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), false, fmt.Sprintf("%s not allowed as condition", fn)})
-		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[fn]()}), false, fmt.Sprintf("%s not allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), ValueString, false, fmt.Sprintf("%s not allowed as condition", fn)})
+		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[fn]()}), ValueString, false, fmt.Sprintf("%s not allowed as condition", fn)})
 	}
 
-	for i, s := range scenarios {
-		errs := validateOr(s.fn, ctx)
-		if s.pass && errs != nil {
-			t.Errorf("Scenario %d: Should pass with %s (errs: %s)", i+1, s.message, errs)
-		} else if !s.pass && errs == nil {
-			t.Errorf("Scenario %d: Should fail with %s", i+1, s.message)
-		}
-	}
+	scenarios.evaluate(t, validateOr, ctx)
 }
