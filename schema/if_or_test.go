@@ -54,11 +54,9 @@ func TestOr(t *testing.T) {
 		parse.FnAnd,
 		parse.FnCondition,
 		parse.FnEquals,
-		parse.FnFindInMap,
 		parse.FnIf,
 		parse.FnNot,
 		parse.FnOr,
-		parse.FnRef,
 	}
 	for _, fn := range validFns {
 		scenarios = append(scenarios, IFScenario{IF(parse.FnOr)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, fmt.Sprintf("%s allowed as condition", fn)})

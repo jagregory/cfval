@@ -48,14 +48,12 @@ func validateAndOrItem(value interface{}, ctx PropertyContext) reporting.Reports
 			parse.FnAnd:       true,
 			parse.FnCondition: true,
 			parse.FnEquals:    true,
-			parse.FnFindInMap: true,
 			parse.FnIf:        true,
 			parse.FnNot:       true,
 			parse.FnOr:        true,
-			parse.FnRef:       true,
 		})
 		return errs
 	}
 
-	return reporting.Reports{reporting.NewFailure(ctx, "Invalid condition: %s", value)}
+	return reporting.Reports{reporting.NewFailure(ctx, "Invalid condition: %#v", value)}
 }

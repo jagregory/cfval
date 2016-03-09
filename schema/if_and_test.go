@@ -46,6 +46,8 @@ func TestAnd(t *testing.T) {
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, false, "too many arguments"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition]()}), ValueString, false, "too few arguments"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "minimum arguments"},
+		IFScenario{IF(parse.FnAnd)([]interface{}{true, true}), ValueString, false, "invalid arguments (booleans not allowed)"},
+		IFScenario{IF(parse.FnAnd)([]interface{}{"true", "true"}), ValueString, false, "invalid arguments (strings not allowed)"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "some arguments"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "maximum arguments"},
 		// IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnRef](), ExampleValidIFs[parse.FnRef]()}), InstanceID, true, "nested-Ref able to be coerced"},
@@ -55,11 +57,9 @@ func TestAnd(t *testing.T) {
 		parse.FnAnd,
 		parse.FnCondition,
 		parse.FnEquals,
-		parse.FnFindInMap,
 		parse.FnIf,
 		parse.FnNot,
 		parse.FnOr,
-		parse.FnRef,
 	}
 	for _, fn := range validFns {
 		scenarios = append(scenarios, IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[fn](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, fmt.Sprintf("%s allowed as condition", fn)})
