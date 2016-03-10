@@ -31,7 +31,7 @@ func (from FuncType) Same(to PropertyType) bool {
 func (from FuncType) CoercibleTo(to PropertyType) Coercion {
 	if from.CoercibleFn != nil {
 		return from.CoercibleFn(to)
-	} else if to == ValueString {
+	} else if to == ValueString || to.Same(JSON) {
 		return CoercionAlways
 	} else if ft, ok := to.(FuncType); ok && ft.Description == from.Description {
 		return CoercionAlways

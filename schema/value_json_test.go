@@ -44,10 +44,6 @@ func TestJSONValidation(t *testing.T) {
 		},
 	}
 
-	coercedRef := map[string]interface{}{
-		"Two": []interface{}{IF(parse.FnRef)("Resource2")},
-	}
-
 	invalidRefs := map[string]interface{}{
 		"One": map[string]interface{}{
 			"Value": IF(parse.FnRef)("Resource9"),
@@ -57,10 +53,6 @@ func TestJSONValidation(t *testing.T) {
 
 	if _, errs := JSON.Validate(validRef, ctx); errs != nil {
 		t.Errorf("Should pass with valid refs (errs: %s)", errs)
-	}
-
-	if _, errs := JSON.Validate(coercedRef, ctx); !hasWarning(errs, "Ref value of 'Resource2' is Number but is being dangerously coerced to a String property") {
-		t.Errorf("Should warn with coerced refs (errs: %s)", errs)
 	}
 
 	if _, errs := JSON.Validate(invalidRefs, ctx); errs == nil {

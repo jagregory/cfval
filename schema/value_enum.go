@@ -32,7 +32,7 @@ func (from EnumValue) Same(to PropertyType) bool {
 }
 
 func (from EnumValue) CoercibleTo(to PropertyType) Coercion {
-	if to == ValueString {
+	if to == ValueString || to.Same(JSON) {
 		return CoercionAlways
 	} else if ft, ok := to.(EnumValue); ok && ft.Description == from.Description {
 		return CoercionAlways

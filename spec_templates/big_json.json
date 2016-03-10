@@ -1,0 +1,29 @@
+{
+  "Parameters": {
+    "foo": {
+      "Type": "CommaDelimitedList"
+    }
+  },
+  "Resources": {
+    "BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [ "s3:*" ],
+              "Resource": [ "arn:aws:s3:::foo" ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "foo"
+                }
+              }
+            }
+          ]
+        },
+        "Bucket": "foo"
+      }
+    }
+  }
+}

@@ -70,6 +70,8 @@ func (id resourceID) Same(to PropertyType) bool {
 func (id resourceID) CoercibleTo(to PropertyType) Coercion {
 	if to == ValueString {
 		return CoercionAlways
+	} else if to.Same(JSON) {
+		return CoercionAlways
 	} else if rid, ok := to.(resourceID); ok && rid.Describe() == id.Describe() {
 		return CoercionAlways
 	} else if to == ValueUnknown {
