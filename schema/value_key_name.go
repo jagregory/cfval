@@ -2,15 +2,10 @@ package schema
 
 import "github.com/jagregory/cfval/reporting"
 
-var KeyName = FuncType{
-	Description: "KeyName",
-
-	Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
-			return reporting.ValidateOK, errs
-		}
-
+var KeyName = ConstrainedString(
+	"KeyName",
+	func(value string, ctx PropertyContext) reporting.Reports {
 		// TODO: KeyName validation
-		return reporting.ValidateOK, nil
+		return nil
 	},
-}
+)

@@ -2,15 +2,11 @@ package schema
 
 import "github.com/jagregory/cfval/reporting"
 
-var HostedZoneID = FuncType{
-	Description: "HostedZoneID",
+var HostedZoneID = ConstrainedString(
+	"HostedZoneID",
 
-	Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
-			return reporting.ValidateOK, errs
-		}
-
+	func(value string, ctx PropertyContext) reporting.Reports {
 		// TODO: HostedZoneID validation
-		return reporting.ValidateOK, nil
+		return nil
 	},
-}
+)

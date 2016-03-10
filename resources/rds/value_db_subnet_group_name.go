@@ -5,15 +5,11 @@ import (
 	. "github.com/jagregory/cfval/schema"
 )
 
-var dbSubnetGroupName = FuncType{
-	Description: "DBSubnetGroupName",
+var dbSubnetGroupName = ConstrainedString(
+	"DBSubnetGroupName",
 
-	Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
-		if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
-			return reporting.ValidateOK, errs
-		}
-
+	func(value string, ctx PropertyContext) reporting.Reports {
 		// TODO: DBSubnetGroupName validation
-		return reporting.ValidateOK, nil
+		return nil
 	},
-}
+)

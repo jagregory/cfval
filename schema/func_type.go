@@ -2,6 +2,21 @@ package schema
 
 import "github.com/jagregory/cfval/reporting"
 
+type constrainedStringValidate func(value string, ctx PropertyContext) reporting.Reports
+
+func ConstrainedString(description string, fn constrainedStringValidate) PropertyType {
+	return FuncType{
+		Description: description,
+		Fn: func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports) {
+			if result, errs := ValueString.Validate(value, ctx); result == reporting.ValidateAbort || errs != nil {
+				return reporting.ValidateOK, errs
+			}
+
+			return reporting.ValidateOK, fn(value.(string), ctx)
+		},
+	}
+}
+
 type FuncType struct {
 	Description string
 	Fn          func(value interface{}, ctx PropertyContext) (reporting.ValidateResult, reporting.Reports)
