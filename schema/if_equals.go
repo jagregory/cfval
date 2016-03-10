@@ -27,12 +27,12 @@ func validateEquals(builtin parse.IntrinsicFunction, ctx PropertyContext) report
 	reports := make(reporting.Reports, 0, 10)
 
 	left := args[0]
-	if errs := validateEqualsItem(left, PropertyContextAdd(ctx, "Value-1")); errs != nil {
+	if errs := validateEqualsItem(left, PropertyContextAdd(NewPropertyContext(ctx, Schema{Type: ValueString}), "Value-1")); errs != nil {
 		reports = append(reports, errs...)
 	}
 
 	right := args[1]
-	if errs := validateEqualsItem(right, PropertyContextAdd(ctx, "Value-2")); errs != nil {
+	if errs := validateEqualsItem(right, PropertyContextAdd(NewPropertyContext(ctx, Schema{Type: ValueString}), "Value-2")); errs != nil {
 		reports = append(reports, errs...)
 	}
 

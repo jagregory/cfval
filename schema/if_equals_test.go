@@ -49,6 +49,7 @@ func TestEqual(t *testing.T) {
 		IFScenario{IF(parse.FnEquals)([]interface{}{"a", nil}), ValueString, false, "nil in right"},
 		IFScenario{IF(parse.FnEquals)([]interface{}{"a", "b"}), ValueString, true, "both strings"},
 		IFScenario{IF(parse.FnEquals)([]interface{}{"a", 1}), ValueString, true, "mixed types"},
+		IFScenario{IF(parse.FnEquals)([]interface{}{"a", IF(parse.FnRef)("MyResource")}), ValueBool, true, "nested-Refs"},
 	}
 
 	validFns := []parse.IntrinsicFunctionSignature{
