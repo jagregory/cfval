@@ -50,7 +50,7 @@ func validateSelectIndex(builtin parse.IntrinsicFunction, index interface{}, arr
 
 	switch t := index.(type) {
 	case string:
-		return reporting.Reports{reporting.NewFailure(ctx, "Wrong type for index %T", index)}
+		return reporting.Reports{reporting.NewWarning(ctx, "Wrong type for index %T (can't ensure validity of index)", index)}
 	case float64:
 		return validateIndexNumericalValue(t, array, ctx)
 	case parse.IntrinsicFunction:
