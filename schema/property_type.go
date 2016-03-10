@@ -29,6 +29,9 @@ func (pt ArrayPropertyType) Same(to PropertyType) bool {
 func (pt ArrayPropertyType) CoercibleTo(to PropertyType) Coercion {
 	if pt.Same(to) {
 		return CoercionAlways
+	} else if at, ok := to.(ArrayPropertyType); ok {
+		singleItemCoercion := pt.Unwrap().CoercibleTo(at.Unwrap())
+		return singleItemCoercion
 	} else if vt, ok := to.(ValueType); ok && vt == ValueUnknown {
 		return CoercionBegrudgingly
 	}

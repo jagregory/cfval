@@ -65,9 +65,17 @@ func TestCoercions(t *testing.T) {
 			t.Errorf("%s should not be coercible to %s", mulF.Describe(), c.to.Describe())
 		}
 
-		if mulF.CoercibleTo(mulT) != CoercionNever {
-			t.Errorf("%s should not be coercible to %s", mulF.Describe(), mulT.Describe())
+		if mulF.CoercibleTo(mulT) != c.from.CoercibleTo(c.to) {
+			t.Errorf("%s should have same coercion as items %s", mulF.Describe(), mulT.Describe())
 		}
+	}
+
+	if Multiple(InstanceID).CoercibleTo(Multiple(ValueString)) != CoercionAlways {
+		t.Error("Multiple(InstanceID) should be coercible to Multiple(String)")
+	}
+
+	if Multiple(ValueString).CoercibleTo(Multiple(InstanceID)) != CoercionBegrudgingly {
+		t.Error("Multiple(String) should be begrudgingly coercible to Multiple(InstanceID)")
 	}
 }
 
