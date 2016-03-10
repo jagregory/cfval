@@ -51,6 +51,7 @@ func TestGetAtt(t *testing.T) {
 		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "Name"}), InstanceID, false, "valid property of wrong type"},
 		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "InstanceId"}), InstanceID, true, "valid property"},
 		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[parse.FnRef]()}), InstanceID, true, "Ref in Attribute"},
+		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", ExampleValidIFs[parse.FnRef]()}), ValueBool, true, "Ref in Attribute with differing type"},
 		IFScenario{IF(parse.FnGetAtt)([]interface{}{"MyResource", "ListInstanceId"}), Multiple(InstanceID), true, "valid property used for type of resource"},
 	}
 

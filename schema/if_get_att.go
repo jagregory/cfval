@@ -69,7 +69,8 @@ func validateGetAttAttributeID(builtin parse.IntrinsicFunction, resourceID, attr
 			return nil
 		}
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		getAttAttributeNameType := Schema{Type: ValueString}
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, getAttAttributeNameType), SupportedFunctions{
 			parse.FnRef: true,
 		})
 		return errs
