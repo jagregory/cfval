@@ -52,19 +52,22 @@ func validateJoinDelimiter(builtin parse.IntrinsicFunction, delimiter interface{
 }
 
 func validateJoinList(builtin parse.IntrinsicFunction, values interface{}, ctx PropertyContext) reporting.Reports {
+	valuesCtx := PropertyContextAdd(ctx, "Values")
+
 	switch parts := values.(type) {
 	case []interface{}:
 		reports := make(reporting.Reports, 0, 10)
-		builtinItemContext := NewPropertyContext(ctx, Schema{Type: ValueString})
+		valueType := Schema{Type: ValueString}
 		for i, part := range parts {
-			if errs := validateJoinListValue(part, PropertyContextAdd(builtinItemContext, "Values", strconv.Itoa(i))); errs != nil {
+			if errs := validateJoinListValue(part, PropertyContextAdd(NewPropertyContext(valuesCtx, valueType), strconv.Itoa(i))); errs != nil {
 				reports = append(reports, errs...)
 			}
 		}
 
 		return reporting.Safe(reports)
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(parts, ctx, SupportedFunctions{
+		listType := Schema{Type: Multiple(ValueString)}
+		_, errs := ValidateIntrinsicFunctions(parts, NewPropertyContext(valuesCtx, listType), SupportedFunctions{
 			parse.FnBase64:    true,
 			parse.FnFindInMap: true,
 			parse.FnGetAtt:    true,
