@@ -15,7 +15,6 @@ func validateJoin(builtin parse.IntrinsicFunction, ctx PropertyContext) reportin
 
 	value := builtin.UnderlyingMap[string(parse.FnJoin)]
 
-	// TODO: this will fail with { "Fn::Join": { "Fn::GetAZs": "" }} and such
 	items, ok := value.([]interface{})
 	if !ok || items == nil {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::Join\" key: %s", items)}
