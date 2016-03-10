@@ -40,9 +40,12 @@ func TestNot(t *testing.T) {
 
 	scenarios := IFScenarios{
 		IFScenario{IF(parse.FnNot)(123), ValueString, false, "invalid type used for args"},
+		IFScenario{IF(parse.FnNot)(true), ValueString, false, "invalid type used for args"},
 		IFScenario{IF(parse.FnNot)(nil), ValueString, false, "nil used for args"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{}}, ValueString, false, "empty map"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Not", map[string]interface{}{"Fn::Not": "blah", "blah": "blah"}}, ValueString, false, "extra properties"},
+		IFScenario{IF(parse.FnNot)(nil), ValueString, false, "nil used for args"},
+		IFScenario{IF(parse.FnNot)(IF(parse.FnRef)("MyResource")), ValueBool, true, "Nested Ref ok with different PropertyType"},
 	}
 
 	validFns := []parse.IntrinsicFunctionSignature{

@@ -18,7 +18,8 @@ func validateNot(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting
 
 	switch t := value.(type) {
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		itemType := Schema{Type: ValueString}
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, itemType), SupportedFunctions{
 			parse.FnAnd:       true,
 			parse.FnCondition: true,
 			parse.FnEquals:    true,
