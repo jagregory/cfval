@@ -50,7 +50,6 @@ func TestAnd(t *testing.T) {
 		IFScenario{IF(parse.FnAnd)([]interface{}{"true", "true"}), ValueString, false, "invalid arguments (strings not allowed)"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "some arguments"},
 		IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition](), ExampleValidIFs[parse.FnCondition]()}), ValueString, true, "maximum arguments"},
-		// IFScenario{IF(parse.FnAnd)([]interface{}{ExampleValidIFs[parse.FnRef](), ExampleValidIFs[parse.FnRef]()}), InstanceID, true, "nested-Ref able to be coerced"},
 	}
 
 	validFns := []parse.IntrinsicFunctionSignature{

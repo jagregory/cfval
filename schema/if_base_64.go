@@ -16,6 +16,10 @@ func validateBase64(builtin parse.IntrinsicFunction, ctx PropertyContext) report
 		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Base64"))}
 	}
 
+	return validateBase64Value(value, NewPropertyContext(ctx, Schema{Type: ValueString}))
+}
+
+func validateBase64Value(value interface{}, ctx PropertyContext) reporting.Reports {
 	switch t := value.(type) {
 	case string:
 		return nil

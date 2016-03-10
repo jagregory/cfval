@@ -43,6 +43,7 @@ func TestBase64(t *testing.T) {
 		IFScenario{IF(parse.FnBase64)(nil), ValueString, false, "nil used for args"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{}}, ValueString, false, "empty map"},
 		IFScenario{parse.IntrinsicFunction{"Fn::Base64", map[string]interface{}{"Fn::Base64": "example", "blah": "blah"}}, ValueString, false, "extra properties"},
+		IFScenario{IF(parse.FnBase64)(IF(parse.FnRef)("MyResource")), InstanceID, true, "ok with nested-Refs of different types"},
 		IFScenario{IF(parse.FnBase64)("example"), ValueString, true, "valid value used"},
 		IFScenario{IF(parse.FnBase64)(ExampleValidIFs[parse.FnIf]()), ValueString, true, "If used"},
 	}
