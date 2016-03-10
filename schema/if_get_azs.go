@@ -20,7 +20,8 @@ func validateGetAZs(builtin parse.IntrinsicFunction, ctx PropertyContext) report
 	case string:
 		return nil
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		azType := Schema{Type: ValueString} // TODO: Region
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, azType), SupportedFunctions{
 			parse.FnRef: true,
 		})
 		return errs

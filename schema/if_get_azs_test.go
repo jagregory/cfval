@@ -48,6 +48,7 @@ func TestGetAZs(t *testing.T) {
 		IFScenario{IF(parse.FnGetAZs)("ap-southeast-2"), InstanceID, true, "valid region"},
 		// TODO: IFScenario{IF(parse.FnGetAZs)("ap-southeast-9"), InstanceID, false, "invalid region"},
 		IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), InstanceID, true, "Ref used as arg"},
+		IFScenario{IF(parse.FnGetAZs)(ExampleValidIFs[parse.FnRef]()), ValueBool, true, "Ref used as arg with different property type"},
 	}
 
 	for _, fn := range parse.AllIntrinsicFunctions.Except(parse.FnRef) {
