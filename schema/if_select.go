@@ -58,7 +58,8 @@ func validateSelectIndex(builtin parse.IntrinsicFunction, index interface{}, arr
 	case float64:
 		return validateIndexNumericalValue(t, array, ctx)
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		indexType := Schema{Type: ValueNumber}
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, indexType), SupportedFunctions{
 			parse.FnRef:       true,
 			parse.FnFindInMap: true,
 		})
@@ -93,7 +94,8 @@ func validateSelectArray(builtin parse.IntrinsicFunction, array interface{}, ctx
 		}
 		return reporting.Safe(reports)
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		arrayType := Schema{Type: Multiple(ValueString)}
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, arrayType), SupportedFunctions{
 			parse.FnRef:       true,
 			parse.FnFindInMap: true,
 			parse.FnGetAtt:    true,
