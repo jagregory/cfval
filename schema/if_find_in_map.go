@@ -7,18 +7,14 @@ import (
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-findinmap.html
 func validateFindInMap(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::FindInMap"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::FindInMap\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnFindInMap, builtin, ctx); errs != nil {
+		return errs
 	}
 
+	value := builtin.UnderlyingMap[string(parse.FnFindInMap)]
 	args, ok := value.([]interface{})
 	if !ok {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::FindInMap\" key: %T", value)}
-	}
-
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::FindInMap"))}
 	}
 
 	if len(args) != 3 {

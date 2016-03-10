@@ -9,19 +9,16 @@ import (
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-builtin.html
 func validateJoin(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::Join"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Join\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnJoin, builtin, ctx); errs != nil {
+		return errs
 	}
+
+	value := builtin.UnderlyingMap[string(parse.FnJoin)]
 
 	// TODO: this will fail with { "Fn::Join": { "Fn::GetAZs": "" }} and such
 	items, ok := value.([]interface{})
 	if !ok || items == nil {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid \"Fn::Join\" key: %s", items)}
-	}
-
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Join"))}
 	}
 
 	if len(items) != 2 {

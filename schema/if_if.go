@@ -7,18 +7,14 @@ import (
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html#d0e97711
 func validateIf(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::If"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::If\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnIf, builtin, ctx); errs != nil {
+		return errs
 	}
 
+	value := builtin.UnderlyingMap[string(parse.FnIf)]
 	args, ok := value.([]interface{})
 	if !ok || args == nil {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::If\" key: %T", value)}
-	}
-
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::If"))}
 	}
 
 	if len(args) != 3 {

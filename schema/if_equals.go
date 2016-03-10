@@ -6,18 +6,14 @@ import (
 )
 
 func validateEquals(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::Equals"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Equals\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnEquals, builtin, ctx); errs != nil {
+		return errs
 	}
 
+	value := builtin.UnderlyingMap[string(parse.FnEquals)]
 	args, ok := value.([]interface{})
 	if !ok || args == nil {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::Equals\" key: %T", value)}
-	}
-
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Equals"))}
 	}
 
 	if len(args) != 2 {

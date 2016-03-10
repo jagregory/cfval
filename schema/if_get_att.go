@@ -6,18 +6,14 @@ import (
 )
 
 func validateGetAtt(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::GetAtt"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::GetAtt\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnGetAtt, builtin, ctx); errs != nil {
+		return errs
 	}
 
+	value := builtin.UnderlyingMap[string(parse.FnGetAtt)]
 	args, ok := value.([]interface{})
 	if !ok || args == nil {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Fn::GetAtt\" key: %T", value)}
-	}
-
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::GetAtt"))}
 	}
 
 	if len(args) != 2 {

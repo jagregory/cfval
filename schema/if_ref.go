@@ -46,19 +46,15 @@ func keysExcept(m map[string]interface{}, ignore string) []string {
 	return keys
 }
 
-func validateRef(ref parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	refValue, found := ref.UnderlyingMap["Ref"]
-	if !found || refValue == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Ref\" key")}
+func validateRef(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnRef, builtin, ctx); errs != nil {
+		return errs
 	}
 
+	refValue := builtin.UnderlyingMap[string(parse.FnRef)]
 	refString, ok := refValue.(string)
 	if !ok || refString == "" {
 		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Ref\" key: %T", refValue)}
-	}
-
-	if len(ref.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(ref.UnderlyingMap, "Ref"))}
 	}
 
 	target := resolveTarget(refString, ctx.Definitions(), ctx.Template())

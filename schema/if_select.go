@@ -9,15 +9,11 @@ import (
 
 // see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-select.html
 func validateSelect(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
-	value, found := builtin.UnderlyingMap["Fn::Select"]
-	if !found || value == nil {
-		return reporting.Reports{reporting.NewFailure(ctx, "Missing \"Fn::Select\" key")}
+	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnSelect, builtin, ctx); errs != nil {
+		return errs
 	}
 
-	if len(builtin.UnderlyingMap) > 1 {
-		return reporting.Reports{reporting.NewFailure(ctx, "Unexpected extra keys: %s", keysExcept(builtin.UnderlyingMap, "Fn::Select"))}
-	}
-
+	value := builtin.UnderlyingMap[string(parse.FnSelect)]
 	switch t := value.(type) {
 	case []interface{}:
 		return validateSelectParameters(builtin, t, ctx)
