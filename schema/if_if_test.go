@@ -51,6 +51,11 @@ func TestIf(t *testing.T) {
 		IFScenario{IF(parse.FnIf)([]interface{}{"NotACondition", "a", "b"}), InstanceID, false, "not a valid condition name"},
 		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", "b"}), InstanceID, true, "valid condition name"},
 		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", "a", IF(parse.FnRef)("AWS::NoValue")}), InstanceID, true, "AWS::NoValue"},
+
+		// TODO: This is to fix #45, but in the case of Fn::Ifs I think this is
+		//       desirable behaviour. Probably will undo this soon and get all IFs
+		//			 inline with this.
+		IFScenario{IF(parse.FnIf)([]interface{}{"Condition", true, IF(parse.FnRef)("MyResource")}), ValueBool, true, "nested-Ref doesn't get confused with PropertyType"},
 	}
 
 	for _, fn := range parse.AllIntrinsicFunctions {

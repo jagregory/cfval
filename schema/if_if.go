@@ -59,9 +59,14 @@ func validateIfConditionName(value interface{}, ctx PropertyContext) reporting.R
 }
 
 func validateIfValue(value interface{}, ctx PropertyContext) reporting.Reports {
+	// TODO: This is to fix #45, but in the case of Fn::Ifs I think this is
+	//       desirable behaviour. Probably will undo this soon and get all IFs
+	//			 inline with this.
+	valueType := Schema{Type: ValueString}
+
 	switch t := value.(type) {
 	case parse.IntrinsicFunction:
-		_, errs := ValidateIntrinsicFunctions(t, ctx, SupportedFunctions{
+		_, errs := ValidateIntrinsicFunctions(t, NewPropertyContext(ctx, valueType), SupportedFunctions{
 			parse.FnAnd:       true,
 			parse.FnCondition: true,
 			parse.FnEquals:    true,
