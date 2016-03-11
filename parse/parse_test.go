@@ -1,6 +1,9 @@
 package parse
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestParsing(t *testing.T) {
 	json := `{
@@ -26,7 +29,8 @@ func TestParsing(t *testing.T) {
 				"Array": [{ "Ref": "ParamA" }],
 				"Map": {
 					"Nested": { "Ref": "ParamA" }
-				}
+				},
+				"Condition": "This isn't really a condition, just an arbitrary property"
       },
       "Metadata": {
         "Some": "JSON"
@@ -61,8 +65,8 @@ func TestParsing(t *testing.T) {
 
 	if len(template.Resources) != 1 {
 		t.Errorf("Incorrect number of resources found, expected 1 got: %d", len(template.Resources))
-	} else if len(template.Resources["ResourceA"].properties) != 7 {
-		t.Errorf("Incorrect number of properties found, expected 7 got %d", len(template.Resources["ResourceA"].properties))
+	} else if len(template.Resources["ResourceA"].properties) != 8 {
+		t.Errorf("Incorrect number of properties found, expected 8 got %d", len(template.Resources["ResourceA"].properties))
 	} else {
 		if template.Resources["ResourceA"].LogicalID != "ResourceA" {
 			t.Error("Didn't parse LogicalID of ResourceA")
@@ -98,6 +102,10 @@ func TestParsing(t *testing.T) {
 			t.Error("Didn't convert Map[Ref]")
 		}
 
+		if condition := template.Resources["ResourceA"].properties["Condition"]; condition != "This isn't really a condition, just an arbitrary property" {
+			t.Errorf("Didn't parse Condition property as a string (as it's not really a intrinsic function Condition) [%s]", condition)
+		}
+
 		if template.Resources["ResourceA"].Metadata["Some"] != "JSON" {
 			t.Error("Didn't parse Metadata of ResourceA")
 		}
@@ -112,6 +120,7 @@ func TestParsing(t *testing.T) {
 	if len(template.Outputs) != 5 {
 		t.Error("Incorrect number of outputs found, expected 5 got ", len(template.Outputs))
 	} else {
+		fmt.Printf("%#v\n", template.Outputs["OutputA"])
 		if template.Outputs["OutputA"].Value != "Test" {
 			t.Error("Didn't parse OutputA")
 		}

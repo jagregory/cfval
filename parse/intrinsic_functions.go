@@ -59,8 +59,8 @@ var AllIntrinsicFunctions = IntrinsicFunctionSignatures{
 	FnSelect,
 }
 
-func convertAnyIntrinsicFunctions(value interface{}) interface{} {
-	for _, key := range AllIntrinsicFunctions {
+func convertAnyIntrinsicFunctions(value interface{}, fns IntrinsicFunctionSignatures) interface{} {
+	for _, key := range fns {
 		if fn, ok := convertToIntrinsicFunction(key, value); ok {
 			return fn
 		}
@@ -68,26 +68,26 @@ func convertAnyIntrinsicFunctions(value interface{}) interface{} {
 
 	switch t := value.(type) {
 	case map[string]interface{}:
-		return convertMapToIntrinsicFunction(t)
+		return convertMapToIntrinsicFunction(t, fns)
 	case []interface{}:
-		return convertArrayToIntrinsicFunction(t)
+		return convertArrayToIntrinsicFunction(t, fns)
 	default:
 		return value
 	}
 }
 
-func convertMapToIntrinsicFunction(value map[string]interface{}) map[string]interface{} {
+func convertMapToIntrinsicFunction(value map[string]interface{}, fns IntrinsicFunctionSignatures) map[string]interface{} {
 	converted := make(map[string]interface{}, len(value))
 	for id, prop := range value {
-		converted[id] = convertAnyIntrinsicFunctions(prop)
+		converted[id] = convertAnyIntrinsicFunctions(prop, fns)
 	}
 	return converted
 }
 
-func convertArrayToIntrinsicFunction(value []interface{}) []interface{} {
+func convertArrayToIntrinsicFunction(value []interface{}, fns IntrinsicFunctionSignatures) []interface{} {
 	arr := make([]interface{}, len(value))
 	for i, v := range value {
-		arr[i] = convertAnyIntrinsicFunctions(v)
+		arr[i] = convertAnyIntrinsicFunctions(v, fns)
 	}
 	return arr
 }
@@ -95,7 +95,7 @@ func convertArrayToIntrinsicFunction(value []interface{}) []interface{} {
 func convertToIntrinsicFunction(key IntrinsicFunctionSignature, value interface{}) (IntrinsicFunction, bool) {
 	if m, ok := value.(map[string]interface{}); ok {
 		if _, found := m[string(key)]; found {
-			return IntrinsicFunction{key, convertMapToIntrinsicFunction(m)}, true
+			return IntrinsicFunction{key, convertMapToIntrinsicFunction(m, AllIntrinsicFunctions)}, true
 		}
 	}
 

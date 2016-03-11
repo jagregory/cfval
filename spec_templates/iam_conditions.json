@@ -1,0 +1,23 @@
+{
+  "Resources": {
+    "BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [ "s3:*" ],
+              "Resource": [ "arn:aws:s3:::foo" ],
+              "Effect": "Allow",
+              "Condition": {
+                "IpAddress": { "aws:SourceIp": [ "127.0.0.1/32" ] }
+              },
+              "Principal": { "AWS": "*" }
+            }
+          ]
+        },
+        "Bucket": "foo"
+      }
+    }
+  }
+}

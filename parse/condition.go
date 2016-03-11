@@ -15,7 +15,7 @@ func (d *Condition) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	d.Fn = convertAnyIntrinsicFunctions(tmp)
+	d.Fn = convertAnyIntrinsicFunctions(tmp, AllIntrinsicFunctions.Except(FnCondition))
 
 	return nil
 }

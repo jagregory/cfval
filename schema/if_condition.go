@@ -15,7 +15,7 @@ func validateCondition(builtin parse.IntrinsicFunction, ctx PropertyContext) rep
 	value := builtin.UnderlyingMap[string(parse.FnCondition)]
 	condition, ok := value.(string)
 	if !ok || condition == "" {
-		return reporting.Reports{reporting.NewFailure(ctx, "Invalid type for \"Condition\" key: %T", value)}
+		return reporting.Reports{reporting.NewFailure(ctx, `Invalid type for "Condition" key: %T`, value)}
 	}
 
 	if _, found := ctx.Template().Conditions[condition]; !found {
