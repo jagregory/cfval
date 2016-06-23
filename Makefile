@@ -20,3 +20,11 @@ fetch_sample_templates:
 
 test_sample_templates:
 	find ./specs/sample_templates -exec sh -c "echo; echo Validating: {}; ./cfval validate -format=machine {}" \; -name \*.template -or -name \*.json
+
+update_docs_last_modified:
+	@grep --include \*.go -RPohe '(?<=// see: )(.*)$$' . | \
+	cut -d'#' -f1 | \
+	sort | \
+	uniq | \
+	xargs -P50 -n1 -I{} sh -c "export url={}; curl -s -I -X HEAD \$${url} | grep Last-Modified | xargs echo \$${url}" | \
+	sort > docs/aws_modifications.txt
