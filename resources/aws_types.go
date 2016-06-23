@@ -61,6 +61,7 @@ var AwsTypes = map[string]schema.Resource{
 	"AWS::EC2::EIPAssociation":                     ec2.EIPAssociation,
 	"AWS::EC2::Instance":                           ec2.Instance,
 	"AWS::EC2::InternetGateway":                    ec2.InternetGateway,
+	"AWS::EC2::NatGateway":                         ec2.NatGateway,
 	"AWS::EC2::NetworkAcl":                         ec2.NetworkACL,
 	"AWS::EC2::NetworkAclEntry":                    ec2.NetworkACLEntry,
 	"AWS::EC2::NetworkInterface":                   ec2.NetworkInterface,

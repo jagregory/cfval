@@ -24,11 +24,13 @@ var Route = Resource{
 			Type: InternetGatewayID,
 			Required: constraints.All{
 				constraints.PropertyNotExists("InstanceId"),
+				constraints.PropertyNotExists("NatGatewayId"),
 				constraints.PropertyNotExists("NetworkInterfaceId"),
 				constraints.PropertyNotExists("VpcPeeringConnectionId"),
 			},
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("InstanceId"),
+				constraints.PropertyExists("NatGatewayId"),
 				constraints.PropertyExists("NetworkInterfaceId"),
 				constraints.PropertyExists("VpcPeeringConnectionId"),
 			},
@@ -38,11 +40,29 @@ var Route = Resource{
 			Type: InstanceID,
 			Required: constraints.All{
 				constraints.PropertyNotExists("GatewayId"),
+				constraints.PropertyNotExists("NatGatewayId"),
 				constraints.PropertyNotExists("NetworkInterfaceId"),
 				constraints.PropertyNotExists("VpcPeeringConnectionId"),
 			},
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("GatewayId"),
+				constraints.PropertyExists("NatGatewayId"),
+				constraints.PropertyExists("NetworkInterfaceId"),
+				constraints.PropertyExists("VpcPeeringConnectionId"),
+			},
+		},
+
+		"NatGatewayId": Schema{
+			Type: NatGatewayID,
+			Required: constraints.All{
+				constraints.PropertyNotExists("GatewayId"),
+				constraints.PropertyNotExists("InstanceId"),
+				constraints.PropertyNotExists("NetworkInterfaceId"),
+				constraints.PropertyNotExists("VpcPeeringConnectionId"),
+			},
+			Conflicts: constraints.Any{
+				constraints.PropertyExists("GatewayId"),
+				constraints.PropertyExists("InstanceId"),
 				constraints.PropertyExists("NetworkInterfaceId"),
 				constraints.PropertyExists("VpcPeeringConnectionId"),
 			},
@@ -53,11 +73,13 @@ var Route = Resource{
 			Required: constraints.All{
 				constraints.PropertyNotExists("GatewayId"),
 				constraints.PropertyNotExists("InstanceId"),
+				constraints.PropertyNotExists("NatGatewayId"),
 				constraints.PropertyNotExists("VpcPeeringConnectionId"),
 			},
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("GatewayId"),
 				constraints.PropertyExists("InstanceId"),
+				constraints.PropertyExists("NatGatewayId"),
 				constraints.PropertyExists("VpcPeeringConnectionId"),
 			},
 		},
@@ -72,11 +94,13 @@ var Route = Resource{
 			Required: constraints.All{
 				constraints.PropertyNotExists("GatewayId"),
 				constraints.PropertyNotExists("InstanceId"),
+				constraints.PropertyNotExists("NatGatewayId"),
 				constraints.PropertyNotExists("NetworkInterfaceId"),
 			},
 			Conflicts: constraints.Any{
 				constraints.PropertyExists("GatewayId"),
 				constraints.PropertyExists("InstanceId"),
+				constraints.PropertyExists("NatGatewayId"),
 				constraints.PropertyExists("NetworkInterfaceId"),
 			},
 		},
