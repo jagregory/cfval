@@ -10,9 +10,9 @@ import (
 var RouteTable = Resource{
 	AwsType: "AWS::EC2::RouteTable",
 
-	// Name
+	// ID
 	ReturnValue: Schema{
-		Type: ValueString,
+		Type: RouteTableID,
 	},
 
 	Properties: Properties{
