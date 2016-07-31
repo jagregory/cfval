@@ -5,7 +5,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-builtin.html
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-base64.html
 func validateBase64(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
 	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnBase64, builtin, ctx); errs != nil {
 		return errs

@@ -7,7 +7,7 @@ import (
 	"github.com/jagregory/cfval/reporting"
 )
 
-// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-builtin.html
+// see: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html
 func validateJoin(builtin parse.IntrinsicFunction, ctx PropertyContext) reporting.Reports {
 	if errs := validateIntrinsicFunctionBasicCriteria(parse.FnJoin, builtin, ctx); errs != nil {
 		return errs
