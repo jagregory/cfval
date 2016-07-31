@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+
+require "net/http"
+require "uri"
+require "nokogiri"
+require "open3"
+require "yaml"
+require "digest"
+
+def pandoc(html)
+  o, s = Open3.capture2('pandoc -f html -t markdown_github', stdin_data: html)
+  o
+end
+
+def download_document(url)
+  tries ||= 3
+  filename = `basename #{url}`.chomp
+  print "#{filename}: "
+  begin
+    response = Net::HTTP.get_response(URI.parse(url))
+
+    if response.code == '200'
+      content = response.body
+      html = Nokogiri::HTML(content)
+      important_bit = html.at_css('#main-content #main-col-body .section').to_xhtml(indent: 2)
+
+      File.write("./docs/aws/#{filename}.md", pandoc(important_bit))
+
+      last_modified = response['last-modified']
+      hash = Digest::MD5.hexdigest(important_bit)
+
+      puts "Success"
+      [filename, last_modified, hash]
+    else
+      puts "Failed (status code: #{response.code})"
+      return [filenname, nil, nil]
+    end
+  rescue => ex
+    tries -= 1
+    if tries > 0
+      print "Retrying... "
+      retry
+    else
+      puts "Failed"
+      return [filenname, nil, nil]
+    end
+  end
+end
+
+all_urls = `grep --include \\*.go -RPohe '(?<=// see: )(.*)$' . | cut -d'#' -f1`
+  .split
+  .sort
+  .uniq
+
+modifications = YAML.load_file('./docs/aws_modifications.yaml') || {}
+
+all_urls.each do |url|
+  filename,last_modified,hash = download_document url
+  metadata = modifications[filename] || {}
+  metadata['url'] = url
+
+  if last_modified
+    metadata['last_modified'] = last_modified
+  end
+
+  if hash
+    metadata['hash'] = hash
+  end
+
+  modifications[filename] = metadata
+
+  # inefficient, but flush on every read
+  File.write('./docs/aws_modifications.yaml', modifications.to_yaml)
+end
+
+File.write('./docs/aws_modifications.yaml', modifications.to_yaml)

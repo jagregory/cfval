@@ -1,0 +1,821 @@
+---
+aws-properties-as-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3dbfcf1d2a24e8c341b70ce570d217dd
+aws-properties-as-launchconfig-blockdev-mapping.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-mapping.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: f935286219ec09f3b54ffa3294fd62b5
+aws-properties-as-launchconfig-blockdev-template.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig-blockdev-template.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: e1d11e4a23a87a52ad0115d7b13a928d
+aws-properties-as-launchconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 37fb4520393c2dc34b67a2de374b4db1
+aws-properties-as-metricscollection.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-metricscollection.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: dfecad4c12501ac7394a238529f86828
+aws-properties-as-notificationconfigurations.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-notificationconfigurations.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 439d3a07ef939ddc6fcd9e3115643cd6
+aws-properties-as-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 34c2472635f32a32a623080c88e0e557
+aws-properties-autoscaling-scalingpolicy-stepadjustments.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-scalingpolicy-stepadjustments.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 212ceebd6a3e68d34f848ab5ea3bd1a0
+aws-properties-beanstalk-configurationtemplate-sourceconfiguration.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-configurationtemplate-sourceconfiguration.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: c67d1e2b3763538f62253c59e3a5cf6c
+aws-properties-beanstalk-environment-tier.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-environment-tier.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a36cf3c033a16ae963eceedc42190a45
+aws-properties-beanstalk-environment.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-environment.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a44fece64d10d25a059628b94d5af0af
+aws-properties-beanstalk-option-settings.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-option-settings.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f3675fb9c97edd84ecdb4b7623af5e46
+aws-properties-beanstalk-sourcebundle.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-sourcebundle.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 5841fb6d28e9e9c6bce273dccd95735a
+aws-properties-beanstalk-version.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-version.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: d24f684a71610ae4160247898075676e
+aws-properties-beanstalk.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 6590b24c3b38425c240b5e9d527c4137
+aws-properties-cloudfront-cachebehavior.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-cachebehavior.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: e70908077dcf86852f0370ffb49f46c8
+aws-properties-cloudfront-customorigin.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-customorigin.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: d6d9e239f85770087813e0145a456f2b
+aws-properties-cloudfront-distribution.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: a084cb3aafe716f5b845332cf8b566bb
+aws-properties-cloudfront-distributionconfig-customerrorresponse.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-customerrorresponse.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 10e8cdbf1c7d67d7a928584e23cbd5a7
+aws-properties-cloudfront-distributionconfig-restrictions-georestriction.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-restrictions-georestriction.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 3c9125e29f391df0e58d5c915e47e0bb
+aws-properties-cloudfront-distributionconfig-restrictions.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig-restrictions.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: ac5355ec064acaa745de907c6787379c
+aws-properties-cloudfront-distributionconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distributionconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b8b619227f9150eae3123a7ebff5a9c4
+aws-properties-cloudfront-forwardedvalues-cookies.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-forwardedvalues-cookies.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 29bb5c615f777322342552e24e3cfdeb
+aws-properties-cloudfront-forwardedvalues.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-forwardedvalues.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a34dd7f9ba753536c866131d218d108b
+aws-properties-cloudfront-logging.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-logging.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: de04725f3a342c7836ef9af42da5faa9
+aws-properties-cloudfront-origin.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-origin.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3270ffc66c2b8aa1fea63c31a28e951d
+aws-properties-cw-alarm.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: c632b029ac2120d8b9453011ac4f729e
+aws-properties-cw-dimension.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dimension.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 8244d5c13c28ad06d9962c0b7c0bb29f
+aws-properties-dynamodb-attributedef.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-attributedef.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 2cce738921a30bcb8992825db2cbaf2f
+aws-properties-dynamodb-gsi.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-gsi.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 6f8438c5413f6fe8c5aa5762f79db2cd
+aws-properties-dynamodb-keyschema.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-keyschema.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f2e5302232f8923d631a533d2686e396
+aws-properties-dynamodb-lsi.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-lsi.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5a588748ae55b6a2f9ea5c43ee5855bd
+aws-properties-dynamodb-projectionobject.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-projectionobject.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: d0279e1789af1e938f8211ffbdad1248
+aws-properties-dynamodb-provisionedthroughput.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-provisionedthroughput.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 0685962e39e534e85a42944f14af58ca
+aws-properties-dynamodb-streamspecification.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dynamodb-streamspecification.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 52ee3136d35a68905e72b6e6595e4530
+aws-properties-ec2-blockdev-mapping.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-mapping.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 123d45540f3ccc582f1ea1dc58c76dd9
+aws-properties-ec2-blockdev-template.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-template.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 95aa0125a2a7a40ffb8add2587a9f86e
+aws-properties-ec2-ebs-volume.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-ebs-volume.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1a29bc46be40a72d91a47d3631beafb4
+aws-properties-ec2-ebs-volumeattachment.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-ebs-volumeattachment.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 25b8d1ac2e3d490b8c853924f4fbbfab
+aws-properties-ec2-eip-association.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-eip-association.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 1c76bda69c9e3e89507d294e6cd39198
+aws-properties-ec2-eip.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-eip.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 9f33f447eeb801477c5a38b3eedc5395
+aws-properties-ec2-elb-AppCookieStickinessPolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-AppCookieStickinessPolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f375548393b0c969c2835b72b039a6b9
+aws-properties-ec2-elb-LBCookieStickinessPolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-LBCookieStickinessPolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: aa4b2d8e7c8d674079636de01460fd2e
+aws-properties-ec2-elb-accessloggingpolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-accessloggingpolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 907831cee462438a6ab153c6ea62a927
+aws-properties-ec2-elb-connectiondrainingpolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-connectiondrainingpolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3da0be3c83ed4e503bf2788398997e7e
+aws-properties-ec2-elb-connectionsettings.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-connectionsettings.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 6a2ffddc9bcc9652c751aa928947a6f4
+aws-properties-ec2-elb-listener.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-listener.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3bb986d6942db1f0739f9900e3d1b51d
+aws-properties-ec2-elb-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: dd1cfd51709c4f1446e4984451bc1040
+aws-properties-ec2-elb.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 37250e617895b15f39efc8eab02a70f7
+aws-properties-ec2-icmp.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-icmp.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 63c56c6078e7362d9875b28c86926b36
+aws-properties-ec2-instance-ssmassociations-associationparameters.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance-ssmassociations-associationparameters.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a2d983141eb418313d8a92c3a64e6733
+aws-properties-ec2-instance-ssmassociations.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance-ssmassociations.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1d0869c4a11c4a5f2238173de4df42de
+aws-properties-ec2-instance.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: d9901e0e4bb805370b610141d8c3d96b
+aws-properties-ec2-mount-point.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-mount-point.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3c897ab6d5caadca22ca45c2c4d71419
+aws-properties-ec2-network-iface-embedded.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-network-iface-embedded.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f308d2b04be7b744c6d40e4e408071ee
+aws-properties-ec2-network-interface-privateipspec.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-network-interface-privateipspec.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 004dd2387da18c19c2586b0a25e52116
+aws-properties-ec2-port-range.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-port-range.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 8997a41699d8115ff32ba280e2ec1e5f
+aws-properties-ec2-security-group-ingress.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: aaf05b66f1572b9f441d317d1c2f79a1
+aws-properties-ec2-security-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 22ea1181c4ea269bc89b3067e887bb65
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-blockdevicemappings-ebs.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-blockdevicemappings-ebs.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 8f1938f6e9e8e6c15827f4e59f5b6632
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-blockdevicemappings.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-blockdevicemappings.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a59ce7367aa7ada8cab919ecc06bee6c
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-iaminstanceprofile.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-iaminstanceprofile.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3f893ea548466221e1185577e84867d7
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-monitoring.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-monitoring.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1b3ebc4b4abead71379dd54fb5d9f950
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-networkinterfaces-privateipaddresses.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-networkinterfaces-privateipaddresses.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 337888b2525834f00962a70b58a85efa
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-networkinterfaces.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-networkinterfaces.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 81edd78c8b7a0cacc771d3027af15abb
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-placement.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-placement.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 4ee432da78a6584fd7b13a3a05c05036
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-securitygroups.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications-securitygroups.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3af3943620ab842c61f3a74b615ada11
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata-launchspecifications.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 87f70ddc42d0344d1cfff1a6304ad5f8
+aws-properties-ec2-spotfleet-spotfleetrequestconfigdata.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-spotfleet-spotfleetrequestconfigdata.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 979db689be1b182392f7111bb8bc773f
+aws-properties-ecs-service-loadbalancers.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-service-loadbalancers.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 4b97037fa193cfd200772779f7226ecd
+aws-properties-ecs-taskdefinition-containerdefinitions-environment.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions-environment.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 7c96fb72656864d0062a9218154b1238
+aws-properties-ecs-taskdefinition-containerdefinitions-mountpoints.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions-mountpoints.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: c0a2599c450ca8df5f90a79a5d42244f
+aws-properties-ecs-taskdefinition-containerdefinitions-portmappings.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions-portmappings.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 72f83555fce25969114d94e9e637b089
+aws-properties-ecs-taskdefinition-containerdefinitions-volumesfrom.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions-volumesfrom.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 0c852e3dace5cb1eb74e7b85316803dc
+aws-properties-ecs-taskdefinition-containerdefinitions.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 505129b1f97f82d7dac96a4b8c755604
+aws-properties-ecs-taskdefinition-volumes-host.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-volumes-host.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 11d1ac04adb0acdeec75ba87550a0a67
+aws-properties-ecs-taskdefinition-volumes.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-volumes.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1cb80b094918ceb74fb22d8c1c0c560d
+aws-properties-efs-filesystem-filesystemtags.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-efs-filesystem-filesystemtags.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 32e31fbce9af8ffec7787a3f6f68fe0f
+aws-properties-elasticache-cache-cluster.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1eb10d082b8af66d50502d41050be29a
+aws-properties-elasticache-parameter-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-parameter-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: d3d174636bf57f34737aeaf72c0d3769
+aws-properties-elasticache-security-group-ingress.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-security-group-ingress.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: cf32e999a662a8cb49b705f8cd2d8b21
+aws-properties-elasticache-security-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-security-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 1a8ad33b8bf2c5e38ce0cea2c8a39adb
+aws-properties-elasticache-subnetgroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-subnetgroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: c81fc6d737cf8e2432880a1788d11a8a
+aws-properties-iam-accesskey.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-accesskey.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 37b31e3068129d4c1ad68fac9278c276
+aws-properties-iam-addusertogroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-addusertogroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: d5a2dab801e85afd75e1d8d976d451d2
+aws-properties-iam-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 81d151c649e4373579cc93e7d5e268f5
+aws-properties-iam-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 329ebe60615c3bfb30e588256e0c17dd
+aws-properties-iam-user-loginprofile.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-user-loginprofile.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b84bdb77c3fcebe6b45b35a7c6c5a5df
+aws-properties-iam-user.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-user.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3d14e65a75d1e3decec1b27ffb6c43f5
+aws-properties-lambda-function-code.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b44d12fec277cffe585774cd2e93b620
+aws-properties-logs-metricfilter-metrictransformation.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-logs-metricfilter-metrictransformation.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 3847c59993a8cbf92c092cb23af3c476
+aws-properties-rds-database-instance.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-database-instance.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: dbeea7a6b892f56e7777c59b82fc3d0e
+aws-properties-rds-dbparametergroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-dbparametergroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 9d11a66605cb743106f1ead73c2d7fc6
+aws-properties-rds-optiongroup-optionconfigurations-optionsettings.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-optiongroup-optionconfigurations-optionsettings.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: c1e2157ff4c11efb442ea670ac096455
+aws-properties-rds-optiongroup-optionconfigurations.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-optiongroup-optionconfigurations.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: d96c1f90ebe1c77212bc679bbea4664e
+aws-properties-rds-security-group-rule.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-security-group-rule.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 56ffc0f32a574764d06b9c0cd4d42ee6
+aws-properties-rds-security-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-security-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: eb4404952fd142f7471eccf279cbb9e6
+aws-properties-route53-aliastarget.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: ae4917cb91534b61790608d7e021973f
+aws-properties-route53-healthcheck-healthcheckconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-healthcheck-healthcheckconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 3deb4e5d801b06c0700ce8c2ec55e84c
+aws-properties-route53-healthcheck-healthchecktags.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-healthcheck-healthchecktags.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5ae87b3bfaba35b6999a47187e2d63cb
+aws-properties-route53-hostedzone-hostedzoneconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-hostedzone-hostedzoneconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 6fb34f704a30c577a50522bb122885e1
+aws-properties-route53-hostedzone-hostedzonetags.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-hostedzone-hostedzonetags.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 393111d7f37fa46ed5231b36f7e864f1
+aws-properties-route53-recordset-geolocation.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset-geolocation.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 47adb4ef696f5e55104eafbdbc22d6e1
+aws-properties-route53-recordset.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 9ad23b1a862548b1d58d2f9b8c9cc7e8
+aws-properties-route53-recordsetgroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordsetgroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 28ba7629d28a09567a032482a18e8acf
+aws-properties-s3-bucket-cors-corsrule.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-cors-corsrule.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: eaf2e64218f3a2642a9c5073290d56a1
+aws-properties-s3-bucket-cors.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-cors.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 85dd799b648404573fe4eb7944e6e9db
+aws-properties-s3-bucket-lifecycleconfig-rule-noncurrentversiontransition.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-lifecycleconfig-rule-noncurrentversiontransition.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 1e83f61cc7c90b9ec5c8f8872929239c
+aws-properties-s3-bucket-lifecycleconfig-rule-transition.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-lifecycleconfig-rule-transition.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 4b3c966ef55e8dd93d43b002bb911c98
+aws-properties-s3-bucket-lifecycleconfig-rule.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-lifecycleconfig-rule.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 445d00371b9809bfeaf54b0e3b4ae44e
+aws-properties-s3-bucket-lifecycleconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-lifecycleconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: edf23cdf61152121cf9652669db6510e
+aws-properties-s3-bucket-loggingconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-loggingconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: bc93d98eba9bb65dade7f7ceca5f66cd
+aws-properties-s3-bucket-notificationconfig-lambdaconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig-lambdaconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 33d751d748e8b7fb23b4e6112e862cf4
+aws-properties-s3-bucket-notificationconfig-queueconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig-queueconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 38ce60dd0505ccac3752d5136c7c2dff
+aws-properties-s3-bucket-notificationconfig-topicconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig-topicconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: a5e3e6d3ed4fea38509ba7dadaa48c38
+aws-properties-s3-bucket-notificationconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a58aa14b57cf745780960d8d05bdf0d5
+aws-properties-s3-bucket-notificationconfiguration-config-filter-s3key-rules.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfiguration-config-filter-s3key-rules.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b22c72f670bc8f9e9501f464c2893914
+aws-properties-s3-bucket-notificationconfiguration-config-filter-s3key.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfiguration-config-filter-s3key.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: d42de657278e0f72c531d1146aa0c291
+aws-properties-s3-bucket-notificationconfiguration-config-filter.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-notificationconfiguration-config-filter.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 5030e363a8cce4fb18edecfe3928d3e4
+aws-properties-s3-bucket-replicationconfiguration-rules-destination.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-replicationconfiguration-rules-destination.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 602807448b760f69d24c24f68136af7a
+aws-properties-s3-bucket-replicationconfiguration-rules.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-replicationconfiguration-rules.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 48a8ca90e724859c1aa659d99cb99718
+aws-properties-s3-bucket-replicationconfiguration.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-replicationconfiguration.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 13ebabc019da51a1012d513d49e6fb4e
+aws-properties-s3-bucket-versioningconfig.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-versioningconfig.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: c0e84e9f9794f767c8d572b1e7337ca2
+aws-properties-s3-bucket.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: fef41f975ea884a10698388951f350d4
+aws-properties-s3-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 21e01501c04795af1ac1f49f64fc1811
+aws-properties-s3-websiteconfiguration-routingrules-redirectrule.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration-routingrules-redirectrule.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5d6e44a2787a3e9b1629ca4c6aa422e9
+aws-properties-s3-websiteconfiguration-routingrules-routingrulecondition.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration-routingrules-routingrulecondition.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b8e6e629a03993c0754bd290dc73409f
+aws-properties-s3-websiteconfiguration-routingrules.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration-routingrules.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 31023c7dad338144b099f6f4a49ee039
+aws-properties-s3-websiteconfiguration.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 7489a6a526fe6d3e77a5b5feac47649d
+aws-properties-sns-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sns-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 1d9779e79f766eeee1d1651e6aa8b209
+aws-properties-sns-subscription.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sns-subscription.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 451d93918a78aa7b8423ab047e6b9513
+aws-properties-sns-topic.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sns-topic.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5de4ce959148ba4cf53ce37196c9e711
+aws-properties-sqs-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a4532aeaadff1b870d11f184b034dda7
+aws-properties-sqs-queues-redrivepolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues-redrivepolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 79bf54d7802cc57a962e2607a0bbf93d
+aws-properties-sqs-queues.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 7488bb14a8c353f4facab51d51fed0d8
+aws-properties-waitcondition.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-waitcondition.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a45c68705d3078bc10ffd7dc6b82e1b8
+aws-properties-waitconditionhandle.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-waitconditionhandle.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: a2c7affe25b10f1ab78891fa87555da0
+aws-resource-as-lifecyclehook.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-as-lifecyclehook.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 53bcae00941659a9eaa4b3f52e629747
+aws-resource-as-scheduledaction.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-as-scheduledaction.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 12fcc98a0694196bd7c693296a1621e9
+aws-resource-beanstalk-configurationtemplate.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-beanstalk-configurationtemplate.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: e552d0769ce0601e6f8b5c8f8596fa08
+aws-resource-cloudtrail-trail.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudtrail-trail.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: dc43830c0c36bbb8cbc061a561a0c0ec
+aws-resource-dynamodb-table.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 6d28e2d13d92119c30f42a204fa280aa
+aws-resource-ec2-customer-gateway.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-customer-gateway.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 4f2401289b854b6bbeca101307e8a98d
+aws-resource-ec2-dhcp-options.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-dhcp-options.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: e0978a73a82816eb0cc9fc5ff757c3e8
+aws-resource-ec2-internet-gateway.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internet-gateway.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5abec2fc04bd07c1153cb4b3c7125e9b
+aws-resource-ec2-natgateway.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-natgateway.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f992673de2b44fdcb84b0f242470c444
+aws-resource-ec2-network-acl-entry.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-acl-entry.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: bc9c27826f319a4b537e7611d83e8563
+aws-resource-ec2-network-acl.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-acl.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 99d2157ce41c352e38706fdde898e0c3
+aws-resource-ec2-network-interface-attachment.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-interface-attachment.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 8fda9c4eb1277efb47bcc311c2907736
+aws-resource-ec2-network-interface.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-network-interface.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: ebd3e217c112af80656a85ee8d0bfc8f
+aws-resource-ec2-placementgroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-placementgroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: df3645ec6f2ad790d67536472b15af81
+aws-resource-ec2-route-table.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route-table.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 414c3ebbee63926c9229e284719a4877
+aws-resource-ec2-route.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 9b5e258f8b2d0ee4bdbf66d49a233a56
+aws-resource-ec2-security-group-egress.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-security-group-egress.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: fc9e7b75e74646c57321238de55d0af0
+aws-resource-ec2-spotfleet.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-spotfleet.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: ad0f74f4c51c4230422cdff7a4f317f7
+aws-resource-ec2-subnet-network-acl-assoc.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet-network-acl-assoc.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: a5b3b658957babe5b05c28df51aca366
+aws-resource-ec2-subnet-route-table-assoc.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet-route-table-assoc.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 6330f1999a342005d6fe1bf451f5c57c
+aws-resource-ec2-subnet.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 600e37ed950ca5bfb48f0748488e55b4
+aws-resource-ec2-vpc-dhcp-options-assoc.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-dhcp-options-assoc.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: df3d17df622da0ca0fc3bb4761deb6ce
+aws-resource-ec2-vpc-gateway-attachment.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-gateway-attachment.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 56b1bbf4bf80efb336090772c8db2344
+aws-resource-ec2-vpc.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 2d99b029cb1f192e64858a12d80db1ba
+aws-resource-ec2-vpcendpoint.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcendpoint.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5ef94380fcc2bd64b97014e80b180134
+aws-resource-ec2-vpcpeeringconnection.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpcpeeringconnection.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: db2790f30dd157ebcf6435fe150f56d8
+aws-resource-ec2-vpn-connection-route.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-connection-route.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 28d54a93aeb20e9c3ddadd85e0e47dbd
+aws-resource-ec2-vpn-connection.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-connection.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 2e2fa68857f147d95874fab803c7f982
+aws-resource-ec2-vpn-gateway.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-gateway.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f4a682de0c1c7d26e3f6f6230ec83871
+aws-resource-ec2-vpn-gatewayrouteprop.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpn-gatewayrouteprop.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: f31a6c63b768c9857c039e96005156d4
+aws-resource-ecs-cluster.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 523916a840892f0c3e97e5736cb72cb6
+aws-resource-ecs-service.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 76f6fc2484c324fa40f510103f24bbf5
+aws-resource-ecs-taskdefinition.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 76ef415abb2b27b436216a0605e9e7d9
+aws-resource-efs-filesystem.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-efs-filesystem.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: a91724ebe67ef1a6c598d1f70565c100
+aws-resource-efs-mounttarget.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-efs-mounttarget.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: eaa6abb369d775929240392614e85212
+aws-resource-elasticache-replicationgroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticache-replicationgroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 440c0dcdd43f872596d3baba272b64b0
+aws-resource-iam-instanceprofile.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-instanceprofile.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 42b7f5c659aa915fa64f210bdb1246e5
+aws-resource-iam-managedpolicy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-managedpolicy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: e7c5bcc951cc325e86ef99113dacbc7c
+aws-resource-iam-policy.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-policy.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 786678e7a4f47d6a1748075b215ffc19
+aws-resource-iam-role.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b5264199339770fb602d32145e80105f
+aws-resource-kinesis-stream.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kinesis-stream.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: d1e7687dd1dcf0b67dc427c806f73105
+aws-resource-kms-key.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-key.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: e5b737a580242dee663f028b9c5b1fda
+aws-resource-lambda-eventsourcemapping.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 887edea8b681375d39a52cdf45440d3c
+aws-resource-lambda-function.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 003748f5ad1caf9dceb9884dcf569f60
+aws-resource-lambda-permission.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: d4e2a8f6c69120066bbb2c39a72971c9
+aws-resource-logs-destination.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-destination.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1e0be52b5dffd08fbd3f67de773ea5a5
+aws-resource-logs-loggroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-loggroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: a0f3773087aa2bb203a0fe4cea6115aa
+aws-resource-logs-logstream.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-logstream.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 39d7befcf0b071c3991f5373219bd550
+aws-resource-logs-metricfilter.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-metricfilter.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 0ceea148bd7c43aeaefd2416222a1113
+aws-resource-logs-subscriptionfilter.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-subscriptionfilter.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b409944a32e64457775fb55cbd5429f2
+aws-resource-rds-dbcluster.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbcluster.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 4b03bdeaacea4e3a4d8f1c4160feea14
+aws-resource-rds-dbclusterparametergroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbclusterparametergroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 1b40fefc7f9c030ef614ea2c103f46c6
+aws-resource-rds-dbsubnet-group.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnet-group.html
+  last_modified: Wed, 27 Jul 2016 01:45:14 GMT
+  hash: 7839eee749c1f2b31b246f4df1698556
+aws-resource-rds-eventsubscription.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-eventsubscription.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 855992aa1cb4945ee5482bf0031a504e
+aws-resource-rds-optiongroup.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-optiongroup.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 2f3757fecc3d8d094b984fb92a39a9b5
+aws-resource-rds-security-group-ingress.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-security-group-ingress.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 5cf883daeb95f981dc905ab55e82abfc
+aws-resource-route53-healthcheck.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-route53-healthcheck.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 776d4318605b0a3f8e6cd8f820a0ae98
+aws-resource-route53-hostedzone-hostedzonevpcs.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-route53-hostedzone-hostedzonevpcs.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 9ca6e705a6ba12f09344fbf4c7f9ed9e
+aws-resource-route53-hostedzone.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-route53-hostedzone.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: b92f32b138346cafd46f33edec0a3b7e
+intrinsic-function-reference-base64.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-base64.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: c96d4c8acc7d54b0a73ee9b064b5ca95
+intrinsic-function-reference-conditions.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-conditions.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 0fb49e24ddc10e03bdd3402393d74b17
+intrinsic-function-reference-findinmap.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-findinmap.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 168c58bbcbae01255fbd7dcd455830df
+intrinsic-function-reference-getavailabilityzones.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 7cb14203e07deff74b335b325c3a002a
+intrinsic-function-reference-join.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: bfe2e9ebf7de5a6751e1a3f691f6e260
+intrinsic-function-reference-select.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-select.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 08475b53d08f0741b45ef55c8d98866a
+pseudo-parameter-reference.html:
+  url: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
+  last_modified: Wed, 27 Jul 2016 01:45:15 GMT
+  hash: 959df72aaaf68c00668a691eeb19c914
+instance-types.html:
+  url: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
+  last_modified: Fri, 29 Jul 2016 17:11:25 GMT
+  hash: 85c401ae00f1f5eb99ccf459b46e6987
+API_ChangeResourceRecordSets_Requests.html:
+  url: http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets_Requests.html
+  last_modified: Thu, 28 Jul 2016 21:33:05 GMT
+  hash: f1ace8b1a0ae84ceb1d96aa2e582bf73
