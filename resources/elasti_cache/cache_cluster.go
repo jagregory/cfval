@@ -39,6 +39,14 @@ var CacheCluster = Resource{
 		"ConfigurationEndpoint.Port": Schema{
 			Type: ValueString,
 		},
+		
+		"RedisEndpoint.Address": Schema {
+			Type: ValueString,
+		},
+		
+		"RedisEndpoint.Port": Schema {
+			Type: ValueString,
+		},
 	},
 
 	// Name
